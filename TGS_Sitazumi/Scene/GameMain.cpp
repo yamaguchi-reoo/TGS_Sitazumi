@@ -43,6 +43,18 @@ AbstractScene* GameMain::Update()
 			{
 				stage[i][j]->SetScreenPosition(camera_location);
 				stage[i][j]->Update();
+				//player->CheckCollision(stage[i][j]);
+			}
+		}
+	}
+
+	player->Update(this);
+	for (int i = 0; i < stage_height_num; i++)
+	{
+		for (int j = 0; j < stage_width_num; j++)
+		{
+			if (stage[i][j] != nullptr)
+			{
 				player->CheckCollision(stage[i][j]);
 			}
 		}
@@ -57,9 +69,6 @@ AbstractScene* GameMain::Update()
 	
 #endif
 
-	player->Update(this);
-
-
 	return this;
 }
 
@@ -69,9 +78,14 @@ void GameMain::Draw() const
 	{
 		for (int j = 0; j < stage_width_num; j++)
 		{
-			stage[i][j]->Draw();
+			if (stage[i][j] != nullptr)
+			{
+				stage[i][j]->Draw();
+			}
 		}
 	}
+
+	player->Draw();
 }
 
 void GameMain::UpdateCamera()

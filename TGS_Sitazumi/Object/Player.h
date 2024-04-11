@@ -16,6 +16,7 @@ public:
 private:
 	Location vector; //ベクトル、もしかしらキャラベースに移動かも
 	bool stageHitFlg[2][4]; //上下左右どこと当たっているかを配列に格納 
+	
 public:
 	Player();
 	~Player();
