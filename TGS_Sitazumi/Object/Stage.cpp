@@ -50,27 +50,27 @@ void Stage::Draw()const
 		{
 			//無
 		case 0:
-			DrawFormatStringF(local_location.x, local_location.y, 0xffffff, "%d", type);
+			DrawFormatStringF(local_location.x, local_location.y, 0x000000, "%d", type);
 			break;
 			//地面
 		case 1:
-			DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, 0x4C444D, true);
-			DrawFormatStringF(local_location.x, local_location.y, 0xB3BBB2, "%d", type);
+			DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, 0xffffff, true);
+			DrawFormatStringF(local_location.x, local_location.y, 0x000000, "%d", type);
 			break;
-			//木
+			//色地面:赤
 		case 2:
+			DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, 0xff0000, true);
+			DrawFormatStringF(local_location.x, local_location.y, 0x00ffff, "%d", type);
+			break;
+			//色地面:青
+		case 3:
+			DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, 0x0000ff, true);
+			DrawFormatStringF(local_location.x, local_location.y, 0xffff00, "%d", type);
+			break;
+			//色地面:緑
+		case 4:
 			DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, 0x00ff00, true);
 			DrawFormatStringF(local_location.x, local_location.y, 0xff00ff, "%d", type);
-			break;
-			//岩
-		case 3:
-			DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, 0x333333, true);
-			DrawFormatStringF(local_location.x, local_location.y, 0xCCCCCC, "%d", type);
-			break;
-			//雲
-		case 4:
-			DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, 0xdddddd, true);
-			DrawFormatStringF(local_location.x, local_location.y, 0x222222, "%d", type);
 			break;
 			//無
 		default:
@@ -91,19 +91,19 @@ void Stage::Draw()const
 				break;
 				//地面
 			case 1:
-				DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, 0x4C444D, true);
+				DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, 0xffffff, true);
 				break;
-				//木
+				//色地面:赤
 			case 2:
-				DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, 0x00ff00, true);
+				DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, 0xff0000, true);
 				break;
-				//岩
+				//色地面:青
 			case 3:
-				DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, 0x333333, true);
+				DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, 0x0000ff, true);
 				break;
-				//雲
+				//色地面:緑
 			case 4:
-				DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, 0xdddddd, true);
+				DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, 0x00ff00, true);
 				break;
 				//無
 			default:

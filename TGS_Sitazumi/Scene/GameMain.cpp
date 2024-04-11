@@ -10,15 +10,8 @@
 static Location camera_location = { 0,0};	//カメラの座標
 static Location screen_origin = { (SCREEN_WIDTH / 2),0 };
 
-GameMain::GameMain(int _stage):stage{0},now_stage(0), stage_width_num(0), stage_height_num(0), stage_width(0), stage_height(0)
+GameMain::GameMain(int _stage) :stage{ 0 }, stage_data{0},now_stage(0), stage_width_num(0), stage_height_num(0), stage_width(0), stage_height(0)
 {
-	for (int i = 0; i < MAX_STAGE_HEIGHT; i++)
-	{
-		for (int j = 0; j < MAX_STAGE_WIDTH; j++)
-		{
-			stage_data[i][j] = 0;
-		}
-	}
 	now_stage = _stage;
 	SetStage(now_stage);
 }
@@ -43,8 +36,11 @@ AbstractScene* GameMain::Update()
 	{
 		for (int j = 0; j < stage_width_num; j++)
 		{
-			stage[i][j]->SetScreenPosition(camera_location);
-			stage[i][j]->Update();
+			if (stage[i][j] != nullptr)
+			{
+				stage[i][j]->SetScreenPosition(camera_location);
+				stage[i][j]->Update();
+			}
 		}
 	}
 	return this;
@@ -52,18 +48,14 @@ AbstractScene* GameMain::Update()
 
 void GameMain::Draw() const
 {
-	for (int i = 0; i < 10; i++)
-	{
-		for (int j = 0; j < 10; j++)
-		{
-			DrawFormatString(10 + j * 20, 10 + i * 20, 0x00ff00, "%d",stage_data[i][j]);
-		}
-	}
 	for (int i = 0; i < stage_height_num; i++)
 	{
 		for (int j = 0; j < stage_width_num; j++)
 		{
-			stage[i][j]->Draw();
+			if (stage[i][j] != nullptr)
+			{
+				stage[i][j]->Draw();
+			}
 		}
 	}
 }
@@ -190,7 +182,14 @@ void GameMain::SetStage(int _stage)
 		for (int j = 0; j < stage_width_num; j++)
 		{
 			//ステージ内ブロックを生成
-			stage[i][j] = new Stage((float)(j * BOX_WIDTH), (float)(i * BOX_HEIGHT), BOX_WIDTH, BOX_HEIGHT, stage_data[i][j]);
+			if (stage_data[i][j] != 0)
+			{
+				stage[i][j] = new Stage((float)(j * BOX_WIDTH), (float)(i * BOX_HEIGHT), BOX_WIDTH, BOX_HEIGHT, stage_data[i][j]);
+			}
+			else
+			{
+				stage[i][j] = nullptr;
+			}
 		}
 	}
 
