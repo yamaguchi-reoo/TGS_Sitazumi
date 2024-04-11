@@ -2,7 +2,7 @@
 #include"DxLib.h"
 
 #define IMAGE_NUM 1	//画像の数
-#define DIV_IMAGE_NUM 4	//分割画像の数
+#define DIV_IMAGE_NUM 1	//分割画像の数
 #define SOUND_NUM 1	//効果音の数
 
 #define DIV_IMAGE_MAX 13	//分割画像の最大分割数
@@ -10,16 +10,13 @@
 //使用する画像のパス一覧
 static char image_filepath[IMAGE_NUM][256] =
 {
-
+	"Resource/Image/Sigma.png"
 };
 
 //使用する分割画像のパス一覧
 static char div_image_filepath[DIV_IMAGE_NUM][256] =
 {
-	"images/player_red.png",
-	"images/player_blue.png",
-	"images/player_orange.png",
-	"images/player_green.png"
+
 };
 
 //使用する音源のパス一覧
@@ -39,7 +36,7 @@ public:
 	{
 		for (int i = 0; i < IMAGE_NUM; i++)
 		{
-			image_data[i] = LoadSoundMem(image_filepath[i]);
+			image_data[i] = LoadGraph(image_filepath[i]);
 		}
 
 		//分割数等の数値が違う場合forでは対処出来ないので、１つ１つDivGraphを呼び出す(同じならforで)
