@@ -23,7 +23,7 @@ Stage::Stage(float _x, float _y, float _width, float _height, int _type)
 	draw_rad[LEFT] = 0.75 * M_PI * 2;
 	draw_rad[RIGHT] = 0.25 * M_PI * 2;
 	draw_rad[DOWN] = 0.5 * M_PI * 2;
-	debug_flg = true;
+	debug_flg = false;
 }
 
 Stage::~Stage()
@@ -50,7 +50,7 @@ void Stage::Draw()const
 		{
 			//–³
 		case 0:
-			DrawFormatStringF(local_location.x, local_location.y, 0x000000, "%d", type);
+			DrawFormatStringF(local_location.x, local_location.y, 0xffffff, "%d", type);
 			break;
 			//’n–Ê
 		case 1:

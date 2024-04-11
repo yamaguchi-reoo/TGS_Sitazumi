@@ -3,6 +3,7 @@
 #include "../Utility/PadInput.h"
 #include "../Utility/common.h"
 #include"../Utility/ResourceManager.h"
+#include "EditScene.h"
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -43,6 +44,14 @@ AbstractScene* GameMain::Update()
 			}
 		}
 	}
+
+#ifdef _DEBUG
+	//ステージをいじるシーンへ遷移
+	if (KeyInput::OnPresed(KEY_INPUT_E) && KeyInput::OnPresed(KEY_INPUT_D))
+	{
+		return new EditScene(now_stage);
+	}
+#endif
 	return this;
 }
 
