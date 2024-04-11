@@ -4,7 +4,8 @@
 #include "../Object/Stage.h"
 #include "../Utility/PadInput.h"
 
-#define OBJECT_TYPE_NUM 5  //配置できるオブジェクトの種類数
+#define OBJECT_TYPE_NUM 9  //配置できるオブジェクトの種類数
+#define UI_OBJECT_TYPE_NUM 5  //配置できるオブジェクトの種類数
 #define WIDTH_BUTTON_POS_X 100  //横幅調節ボタンのX位置
 #define WIDTH_BUTTON_POS_Y 40  //横幅調節ボタンのY位置
 #define HEIGHT_BUTTON_POS_X 180  //縦幅調節ボタンのX位置
@@ -18,7 +19,7 @@ enum SelectErea
     SELECT_TYPE,
 };
 
-static char obj_string[OBJECT_TYPE_NUM][256] =
+static char obj_string[UI_OBJECT_TYPE_NUM][256] =
 {
     "無",
     "地面",
@@ -27,17 +28,21 @@ static char obj_string[OBJECT_TYPE_NUM][256] =
     "木",
 };
 
-static int can_select_type[OBJECT_TYPE_NUM] =
+static int can_select_type[UI_OBJECT_TYPE_NUM][2] =
 {
-    0,1,0,0,0,
+    {0,1},
+    {1,5},
+    {0,1},
+    {0,1},
+    {0,1},
 };
-static char obj_type_string[5][256] =
+static char block_type_string[UI_OBJECT_TYPE_NUM][5][256] =
 {
-    "白",
-    "灰",
-    "赤",
-    "青",
-    "緑",
+    {"無"," "," "," "," ",},
+    {"白","灰","赤","青","緑",},
+    {"炎"," "," "," "," ",},
+    {"水"," "," "," "," ",},
+    {"木"," "," "," "," ",},
 };
 
 class EditScene :
@@ -52,6 +57,7 @@ private:
     int old_stage_data[MAX_STAGE_HEIGHT][MAX_STAGE_WIDTH];//ステージの変更前データ格納用
     Stage* stage[MAX_STAGE_HEIGHT][MAX_STAGE_WIDTH];      //床のオブジェクト
     int current_type;                                     //今選ばれているオブジェクトタイプ
+    int ui_current_type;                                  //今選ばれているオブジェクトタイプ(見た目)
     Location width_button_location;                       //ステージ幅変更用ボタンの位置
     Location height_button_location;                       //ステージ高さ変更用ボタンの位置
     bool current_leftbutton_flg;                          //ステージサイズ変更用の左ボタンが選ばれているか
@@ -65,6 +71,8 @@ private:
     bool select_data[MAX_STAGE_HEIGHT][MAX_STAGE_WIDTH];  //そのデータが現在選択中かどうか
     int current_type_select;                              //ブロックのタイプ選択画面が開かれているかどうか(-1=何も開いていない 0以降=その数字の選択画面を開いている)
     int now_current_type;                                 //現在置けるブロックのタイプ
+    Location current_type_location;                       //ブロックのタイプを選択するボックスの座標
+    Erea current_type_erea;                               //ブロックのタイプを選択するボックスの大きさ
 
     int stage_width_num;                                  //ステージのブロックの横の個数 
     int stage_height_num;                                 //ステージのブロックの縦の個数

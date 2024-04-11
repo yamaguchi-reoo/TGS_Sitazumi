@@ -7,7 +7,7 @@
 
 Location camera_location = { 0,0 };
 
-EditScene::EditScene(int _stage): current_type(0), tool_pickup_flg(false), current_leftbutton_flg(false), current_rightbutton_flg(false), current_upbutton_flg(false), current_downbutton_flg(false), button_interval(0), now_select_erea(0), current_type_select(-1), now_current_type(0)
+EditScene::EditScene(int _stage): current_type(0), ui_current_type(0), tool_pickup_flg(false), current_leftbutton_flg(false), current_rightbutton_flg(false), current_upbutton_flg(false), current_downbutton_flg(false), button_interval(0), now_select_erea(0), current_type_select(-1), now_current_type(0), current_type_location{0}, current_type_erea{0}
 {
 	now_stage = _stage;
 	tool_location.x = 100;
@@ -26,6 +26,10 @@ EditScene::EditScene(int _stage): current_type(0), tool_pickup_flg(false), curre
 			select_data[i][j] = false;
 		}
 	}
+	current_type_location.x = tool_location.x;
+	current_type_location.y = 0;
+	current_type_erea.width = 50;
+	current_type_erea.height = 50;
 }
 
 EditScene::~EditScene()
@@ -97,19 +101,29 @@ AbstractScene* EditScene::Update()
 		}
 		break;
 	case TOOL_BOX:
-		for (int i = 0; i < OBJECT_TYPE_NUM; i++)
+		for (int i = 0; i < UI_OBJECT_TYPE_NUM; i++)
 		{
 			if (cursor.x > tool_location.x + (i * 50) && cursor.x < tool_location.x + (i * 50) + 50 && cursor.y>tool_location.y && cursor.y < tool_location.y + 50)
 			{
 				if (KeyInput::OnMouse(MOUSE_INPUT_LEFT))
 				{
-					if (can_select_type[i] == true)
+					if (can_select_type[i][0] == true)
 					{
+						ui_current_type = i;
 						current_type_select = i;
+						current_type_location.x = tool_location.x + i*50;
+						current_type_location.y = tool_location.y;
 					}
 					else
 					{
-						current_type = i;
+						//接地できるブロックの変数を計算する
+						int n = 0;
+						for (int j = 0; j < i; j++)
+						{
+							n += can_select_type[j][1];
+						}
+						current_type = n;
+						ui_current_type = i;
 					}
 				}
 			}
@@ -196,7 +210,23 @@ AbstractScene* EditScene::Update()
 		}
 		break;
 	case SELECT_TYPE:
-
+		//
+		for (int i = 0; i < can_select_type[current_type_select][1]; i++)
+		{
+			if (cursor.x > current_type_location.x && cursor.x < current_type_location.x + current_type_erea.width && cursor.y>current_type_location.y + (i * 50) && cursor.y < current_type_location.y + current_type_erea.height + (i * 50))
+			{
+				if (KeyInput::OnReleaseMouse(MOUSE_INPUT_LEFT))
+				{
+					int n = 0;
+					for (int j = 0; j < current_type_select; j++)
+					{
+						n += can_select_type[j][1];
+					}
+					current_type = n + i;
+					current_type_select = -1;
+				}
+			}
+		}
 		break;
 	default:
 		break;
@@ -295,12 +325,20 @@ void EditScene::Draw()const
 	DrawStringF(tool_location.x + tool_size.width - 270, tool_location.y + 80, "Bキーで保存＆ゲームメインへ戻る", 0xffffff);
 
 	//現在選択中のオブジェクトを分かりやすく	
-	for (int i = 0; i < OBJECT_TYPE_NUM; i++)
+	for (int i = 0; i < UI_OBJECT_TYPE_NUM; i++)
 	{
-		if (current_type == i)
+		if (ui_current_type == i)
 		{
 			DrawBoxAA(tool_location.x + (i * 50), tool_location.y, tool_location.x + (i * 50) + 50, tool_location.y + 50, 0xffffff, true);
 			DrawBoxAA(tool_location.x + (i * 50), tool_location.y, tool_location.x + (i * 50) + 50, tool_location.y + 50, 0x000000, false);
+			//if ()
+			//{
+			//	DrawFormatStringF(tool_location.x + (i * 50), tool_location.y + 15, 0x000000, "%s", block_type_string[i][current_type]);
+			//}
+			//else
+			//{
+			//	DrawFormatStringF(tool_location.x + (i * 50), tool_location.y + 15, 0x000000, "%s", obj_string[i]);
+			//}
 			DrawFormatStringF(tool_location.x + (i * 50), tool_location.y + 15, 0x000000, "%s", obj_string[i]);
 		}
 		else
@@ -385,6 +423,13 @@ void EditScene::Draw()const
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 180);
 		DrawBox(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0x000000, true);
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
+		for (int i = 0; i < can_select_type[current_type_select][1]; i++)
+		{
+			DrawBox(current_type_location.x, current_type_location.y + i*current_type_erea.height, current_type_location.x + current_type_erea.width, current_type_location.y + current_type_erea.height + i * current_type_erea.height, 0x000000, true);
+			DrawBox(current_type_location.x, current_type_location.y + i*current_type_erea.height, current_type_location.x + current_type_erea.width, current_type_location.y + current_type_erea.height + i * current_type_erea.height, 0xffffff, false);
+			SetFontSize(24);
+			DrawFormatString(current_type_location.x, current_type_location.y + i * current_type_erea.height, 0xffffff, "%s", block_type_string[current_type_select][i]);
+		}
 	}
 	SetFontSize(old_size);
 }
@@ -591,8 +636,10 @@ void EditScene::MoveInsideScreen()
 	{
 		tool_location.x = SCREEN_WIDTH - tool_size.width;
 	}
+	//UIを追従
 	width_button_location.x = tool_location.x + (tool_size.width - WIDTH_BUTTON_POS_X);
 	height_button_location.x = tool_location.x + (tool_size.width - HEIGHT_BUTTON_POS_X);
+	current_type_location.x = tool_location.x;
 
 	//スクリーン内から出ないようにツールボックスのY座標をマウスに沿って移動
 	tool_location.y = cursor.y - (tool_size.height / 2);
@@ -604,8 +651,10 @@ void EditScene::MoveInsideScreen()
 	{
 		tool_location.y = SCREEN_HEIGHT - tool_size.height;
 	}
+	//UIを追従
 	width_button_location.y = tool_location.y + WIDTH_BUTTON_POS_Y;
 	height_button_location.y = tool_location.y + HEIGHT_BUTTON_POS_Y;
+	current_type_location.y = tool_location.y;
 }
 
 void EditScene::ResetSelectData()
