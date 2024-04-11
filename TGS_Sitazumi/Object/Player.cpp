@@ -17,7 +17,7 @@ Player::~Player()
 
 void Player::Update(GameMain* main)
 {
-	if (stageHitFlg[bottom] != true) {
+	if (stageHitFlg[0][bottom] != true) {
 		vector.y += 1;
 		if (vector.y > 5) {
 			vector.y = 5;
@@ -60,13 +60,12 @@ bool Player::CheckCollision(Stage* stage)
 
 		//プレイヤーの上側
 		location.y -= tmpe.height / 2;
-		if (stage->HitBox(this)) {
+		if (stage->HitBox(this) && !stageHitFlg[1][top]) {
 			stageHitFlg[0][top] = true;
 			stageHitFlg[1][top] = true;
 		}
 		else {
 			stageHitFlg[0][top] = false;
-			stageHitFlg[1][top] = false;
 		}
 
 		//プレイヤーの下側
