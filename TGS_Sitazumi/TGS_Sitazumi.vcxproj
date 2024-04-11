@@ -22,6 +22,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Object\BoxCollider.cpp" />
     <ClCompile Include="Object\Player.cpp" />
+    <ClCompile Include="Object\Stage.cpp" />
     <ClCompile Include="Scene\GameMain.cpp" />
     <ClCompile Include="Scene\SceneManager.cpp" />
     <ClCompile Include="Scene\Title.cpp" />
@@ -33,6 +34,7 @@
     <ClInclude Include="Object\BoxCollider.h" />
     <ClInclude Include="Object\CharaBase.h" />
     <ClInclude Include="Object\Player.h" />
+    <ClInclude Include="Object\Stage.h" />
     <ClInclude Include="Scene\AbstractScene.h" />
     <ClInclude Include="Scene\GameMain.h" />
     <ClInclude Include="Scene\SceneManager.h" />

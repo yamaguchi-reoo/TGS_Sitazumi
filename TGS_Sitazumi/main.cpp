@@ -6,6 +6,8 @@
 #include "Utility/common.h"
 #include "Scene/Title.h"
 
+#include "Scene/GameMain.h"
+
 #define FRAMERATE 60.0 //フレームレート
 //メインプログラム 開始
 
@@ -24,7 +26,7 @@ int WINAPI WinMain(_In_ HINSTANCE  hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     ResourceManager::LoadResource();
 
     // タイトル シーンオブジェクト作成
-    SceneManager* sceneMng = new SceneManager((AbstractScene*) new Title());
+    SceneManager* sceneMng = new SceneManager((AbstractScene*) new GameMain(0));
 
     //fps制御
     FpsController* FPSC= new FpsController(FRAMERATE, 800);
