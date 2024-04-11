@@ -4,7 +4,7 @@
 #include "../Object/Stage.h"
 #include "../Utility/PadInput.h"
 
-#define OBJECT_TYPE_NUM 8  //配置できるオブジェクトの種類数
+#define OBJECT_TYPE_NUM 9  //配置できるオブジェクトの種類数
 #define WIDTH_BUTTON_POS_X 100  //横幅調節ボタンのX位置
 #define WIDTH_BUTTON_POS_Y 40  //横幅調節ボタンのY位置
 #define HEIGHT_BUTTON_POS_X 180  //縦幅調節ボタンのX位置
@@ -20,7 +20,8 @@ enum SelectErea
 static char obj_string[OBJECT_TYPE_NUM][256] =
 {
     "無",
-    "地面",
+    "白",
+    "灰",
     "赤",
     "青",
     "緑",

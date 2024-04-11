@@ -52,25 +52,42 @@ void Stage::Draw()const
 		case 0:
 			DrawFormatStringF(local_location.x, local_location.y, 0xffffff, "%d", type);
 			break;
-			//地面
+			//地面(白)
 		case 1:
 			DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, 0xffffff, true);
 			DrawFormatStringF(local_location.x, local_location.y, 0x000000, "%d", type);
 			break;
-			//色地面:赤
+			//地面(灰)
 		case 2:
+			DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, 0xaaaaaa, true);
+			DrawFormatStringF(local_location.x, local_location.y, 0x000000, "%d", type);
+			break;
+			//色地面:赤
+		case 3:
 			DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, 0xff0000, true);
 			DrawFormatStringF(local_location.x, local_location.y, 0x00ffff, "%d", type);
 			break;
 			//色地面:青
-		case 3:
+		case 4:
 			DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, 0x0000ff, true);
 			DrawFormatStringF(local_location.x, local_location.y, 0xffff00, "%d", type);
 			break;
 			//色地面:緑
-		case 4:
+		case 5:
 			DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, 0x00ff00, true);
 			DrawFormatStringF(local_location.x, local_location.y, 0xff00ff, "%d", type);
+			break;
+			//炎
+		case 6:
+			DrawStringF(local_location.x, local_location.y, "炎", 0xff0000);
+			break;
+			//水
+		case 7:
+			DrawStringF(local_location.x, local_location.y, "水", 0x0000ff);
+			break;
+			//木
+		case 8:
+			DrawStringF(local_location.x, local_location.y, "木", 0x00ff00);
 			break;
 			//無
 		default:
@@ -89,21 +106,37 @@ void Stage::Draw()const
 				//無
 			case 0:
 				break;
-				//地面
+				//地面(白)
 			case 1:
 				DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, 0xffffff, true);
 				break;
-				//色地面:赤
+				//地面(灰)
 			case 2:
+				DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, 0xaaaaaa, true);
+				break;
+				//色地面:赤
+			case 3:
 				DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, 0xff0000, true);
 				break;
 				//色地面:青
-			case 3:
+			case 4:
 				DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, 0x0000ff, true);
 				break;
 				//色地面:緑
-			case 4:
+			case 5:
 				DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, 0x00ff00, true);
+				break;
+				//炎
+			case 6:
+				DrawStringF(local_location.x, local_location.y, "炎", 0xff0000);
+				break;
+				//水
+			case 7:
+				DrawStringF(local_location.x, local_location.y, "水", 0x0000ff);
+				break;
+				//木
+			case 8:
+				DrawStringF(local_location.x, local_location.y, "木", 0x00ff00);
 				break;
 				//無
 			default:
