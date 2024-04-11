@@ -4,7 +4,7 @@
 #include "../Object/Stage.h"
 #include "../Utility/PadInput.h"
 
-#define OBJECT_TYPE_NUM 9  //配置できるオブジェクトの種類数
+#define OBJECT_TYPE_NUM 5  //配置できるオブジェクトの種類数
 #define WIDTH_BUTTON_POS_X 100  //横幅調節ボタンのX位置
 #define WIDTH_BUTTON_POS_Y 40  //横幅調節ボタンのY位置
 #define HEIGHT_BUTTON_POS_X 180  //縦幅調節ボタンのX位置
@@ -15,19 +15,29 @@ enum SelectErea
 {
     STAGE_EDIT = 0,
     TOOL_BOX,
+    SELECT_TYPE,
 };
 
 static char obj_string[OBJECT_TYPE_NUM][256] =
 {
     "無",
+    "地面",
+    "炎",
+    "水",
+    "木",
+};
+
+static int can_select_type[OBJECT_TYPE_NUM] =
+{
+    0,1,0,0,0,
+};
+static char obj_type_string[5][256] =
+{
     "白",
     "灰",
     "赤",
     "青",
     "緑",
-    "炎",
-    "水",
-    "木",
 };
 
 class EditScene :
@@ -53,9 +63,11 @@ private:
     Erea tool_size;                                       //左上のツールボックスの幅
     bool tool_pickup_flg;                                 //ツールボックスを持っているか判断
     bool select_data[MAX_STAGE_HEIGHT][MAX_STAGE_WIDTH];  //そのデータが現在選択中かどうか
+    int current_type_select;                              //ブロックのタイプ選択画面が開かれているかどうか(-1=何も開いていない 0以降=その数字の選択画面を開いている)
+    int now_current_type;                                 //現在置けるブロックのタイプ
 
-    int stage_width_num;        //ステージのブロックの横の個数 
-    int stage_height_num;       //ステージのブロックの縦の個数
+    int stage_width_num;                                  //ステージのブロックの横の個数 
+    int stage_height_num;                                 //ステージのブロックの縦の個数
 public:
     //コンストラクタ
     EditScene(int _stage);

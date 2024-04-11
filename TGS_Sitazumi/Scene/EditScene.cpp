@@ -7,7 +7,7 @@
 
 Location camera_location = { 0,0 };
 
-EditScene::EditScene(int _stage): current_type(0), tool_pickup_flg(false), current_leftbutton_flg(false), current_rightbutton_flg(false), current_upbutton_flg(false), current_downbutton_flg(false), button_interval(0), now_select_erea(0)
+EditScene::EditScene(int _stage): current_type(0), tool_pickup_flg(false), current_leftbutton_flg(false), current_rightbutton_flg(false), current_upbutton_flg(false), current_downbutton_flg(false), button_interval(0), now_select_erea(0), current_type_select(-1), now_current_type(0)
 {
 	now_stage = _stage;
 	tool_location.x = 100;
@@ -103,7 +103,14 @@ AbstractScene* EditScene::Update()
 			{
 				if (KeyInput::OnMouse(MOUSE_INPUT_LEFT))
 				{
-					current_type = i;
+					if (can_select_type[i] == true)
+					{
+						current_type_select = i;
+					}
+					else
+					{
+						current_type = i;
+					}
 				}
 			}
 		}
@@ -187,6 +194,9 @@ AbstractScene* EditScene::Update()
 		{
 			tool_pickup_flg = true;
 		}
+		break;
+	case SELECT_TYPE:
+
 		break;
 	default:
 		break;
@@ -274,27 +284,6 @@ void EditScene::Draw()const
 			if (select_data[i][j] == true)
 			{
 				DrawBoxAA(stage[i][j]->GetLocalLocation().x, stage[i][j]->GetLocalLocation().y, stage[i][j]->GetLocalLocation().x + BOX_WIDTH, stage[i][j]->GetLocalLocation().y + BOX_HEIGHT, 0xff0000, false);
-			}
-			//各看板
-			if (stage_data[i][j] == 9)
-			{
-				DrawBoxAA(stage[i][j]->GetLocalLocation().x, stage[i][j]->GetLocalLocation().y, stage[i][j]->GetLocalLocation().x + BOX_WIDTH, stage[i][j]->GetLocalLocation().y + BOX_HEIGHT, 0x892F1B, true);
-				DrawStringF(stage[i][j]->GetLocalLocation().x, stage[i][j]->GetLocalLocation().y, "攻撃", 0x76D0E4);
-			}
-			if (stage_data[i][j] == 10)
-			{
-				DrawBoxAA(stage[i][j]->GetLocalLocation().x, stage[i][j]->GetLocalLocation().y, stage[i][j]->GetLocalLocation().x + BOX_WIDTH, stage[i][j]->GetLocalLocation().y + BOX_HEIGHT, 0x892F1B, true);
-				DrawStringF(stage[i][j]->GetLocalLocation().x, stage[i][j]->GetLocalLocation().y, "ジャンプ", 0x76D0E4);
-			}
-			if (stage_data[i][j] == 11)
-			{
-				DrawBoxAA(stage[i][j]->GetLocalLocation().x, stage[i][j]->GetLocalLocation().y, stage[i][j]->GetLocalLocation().x + BOX_WIDTH, stage[i][j]->GetLocalLocation().y + BOX_HEIGHT, 0x892F1B, true);
-				DrawStringF(stage[i][j]->GetLocalLocation().x, stage[i][j]->GetLocalLocation().y, "ジャンプ攻撃", 0x76D0E4);
-			}
-			if (stage_data[i][j] == 12)
-			{
-				DrawBoxAA(stage[i][j]->GetLocalLocation().x, stage[i][j]->GetLocalLocation().y, stage[i][j]->GetLocalLocation().x + BOX_WIDTH, stage[i][j]->GetLocalLocation().y + BOX_HEIGHT, 0x892F1B, true);
-				DrawStringF(stage[i][j]->GetLocalLocation().x, stage[i][j]->GetLocalLocation().y, "強化状態", 0x76D0E4);
 			}
 		}
 	}
@@ -390,7 +379,13 @@ void EditScene::Draw()const
 		DrawBoxAA(height_button_location.x, height_button_location.y + 25, height_button_location.x + 65, height_button_location.y + 40, 0x000000, false);
 		DrawRotaStringF(height_button_location.x + 25, height_button_location.y + 35, 1, 1, 0, 0, 4.7f, 0x000000, 0, 0, "<");
 	}
-
+	
+	if (current_type_select != -1)
+	{
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 180);
+		DrawBox(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0x000000, true);
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
+	}
 	SetFontSize(old_size);
 }
 
@@ -557,7 +552,11 @@ void EditScene::StageShift(int _num)
 
 int EditScene::ChechSelectErea()
 {
-
+	//ブロックのタイプ選択画面が開かれて居るか確認
+	if (current_type_select != -1)
+	{
+		return SELECT_TYPE;
+	}
 	//カーソルがツールボックス内かどうか判断
 	if (cursor.x > tool_location.x && cursor.x < tool_location.x + tool_size.width && cursor.y>tool_location.y && cursor.y < tool_location.y + tool_size.height)
 	{
