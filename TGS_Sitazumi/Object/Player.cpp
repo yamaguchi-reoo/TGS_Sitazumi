@@ -108,9 +108,22 @@ bool Player::CheckCollision(Stage* stage)
 			stageHitFlg[0][bottom] = false;
 		}
 
+		//ƒƒP[ƒVƒ‡ƒ“A‚‚³‚ð–ß‚·
 		location.y = tmpl.y;
-
 		erea.height = tmpe.height;
+		//–„‚Ü‚è–hŽ~(ã‰º)
+		if (stageHitFlg[0][bottom]) {//‰º‚Ì–„‚Ü‚è–hŽ~
+			float t = stage->GetLocation().y - (location.y + erea.height);
+			if (t != 0) {
+				location.y += t;
+			}
+		}
+
+
+		
+
+		//¶‰EƒGƒŠƒA‚ÌÝ’è
+		erea.height = tmpe.height - 10;
 		erea.width = 1;
 
 		//ƒvƒŒƒCƒ„[‚Ì¶‘¤
@@ -136,20 +149,18 @@ bool Player::CheckCollision(Stage* stage)
 
 
 		
-
+		//Œ³‚É–ß‚·
 		location.x = tmpl.x;
-		location.y = tmpl.y;
-
 		erea.height = tmpe.height;
 		erea.width = tmpe.width;
 
-		//–„‚Ü‚è–hŽ~
-		if (stageHitFlg[0][bottom]) {
-			float t = stage->GetLocation().y - (location.y + erea.height);
-			if (t != 0) {
-				location.y += t;
-			}
-		}
+		////–„‚Ü‚è–hŽ~
+		//if (stageHitFlg[0][bottom]) {//‰º‚Ì–„‚Ü‚è–hŽ~
+		//	float t = stage->GetLocation().y - (location.y + erea.height);
+		//	if (t != 0) {
+		//		location.y += t;
+		//	}
+		//}
 
 
 	}

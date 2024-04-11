@@ -48,6 +48,7 @@ AbstractScene* GameMain::Update()
 		}
 	}
 
+	//プレイヤーアップデート
 	player->Update(this);
 	for (int i = 0; i < stage_height_num; i++)
 	{
@@ -55,6 +56,7 @@ AbstractScene* GameMain::Update()
 		{
 			if (stage[i][j] != nullptr)
 			{
+				//ステージとの当たり判定
 				player->CheckCollision(stage[i][j]);
 			}
 		}
