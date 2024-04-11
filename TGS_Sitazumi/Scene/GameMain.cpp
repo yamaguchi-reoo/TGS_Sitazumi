@@ -21,6 +21,8 @@ GameMain::GameMain(int _stage):stage{0},now_stage(0), stage_width_num(0), stage_
 	}
 	now_stage = _stage;
 	SetStage(now_stage);
+
+	player = new Player();
 }
 
 GameMain::~GameMain()
@@ -45,8 +47,12 @@ AbstractScene* GameMain::Update()
 		{
 			stage[i][j]->SetScreenPosition(camera_location);
 			stage[i][j]->Update();
+			player->CheckCollision(stage[i][j]);
 		}
 	}
+	
+	player->Update(this);
+
 	return this;
 }
 
@@ -66,6 +72,8 @@ void GameMain::Draw() const
 			stage[i][j]->Draw();
 		}
 	}
+
+	player->Draw();
 }
 
 void GameMain::UpdateCamera()

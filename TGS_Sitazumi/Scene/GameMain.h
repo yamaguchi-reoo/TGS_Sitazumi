@@ -20,6 +20,8 @@ private:
     int stage_width;        //ステージ横幅
     int stage_height;       //ステージ縦幅
 
+    Player* player;
+
 public:
 
     //コンストラクタ(_stage＝読み込むステージ)
