@@ -28,6 +28,7 @@
     <ClCompile Include="Scene\SceneManager.cpp" />
     <ClCompile Include="Scene\Title.cpp" />
     <ClCompile Include="Utility\FpsController.cpp" />
+    <ClCompile Include="Utility\KeyInput.cpp" />
     <ClCompile Include="Utility\PadInput.cpp" />
     <ClCompile Include="Utility\ResourceManager.cpp" />
   </ItemGroup>
@@ -44,6 +45,7 @@
     <ClInclude Include="Utility\common.h" />
     <ClInclude Include="Utility\fps.h" />
     <ClInclude Include="Utility\FpsController.h" />
+    <ClInclude Include="Utility\KeyInput.h" />
     <ClInclude Include="Utility\PadInput.h" />
     <ClInclude Include="Utility\ResourceManager.h" />
   </ItemGroup>
