@@ -23,6 +23,8 @@ private:
 
     EnemyDeer* enemydeer;
 
+    Player* player;
+
 public:
 
     //�R���X�g���N�^(_stage���ǂݍ��ރX�e�[�W)
