@@ -15,6 +15,7 @@ GameMain::GameMain(int _stage) :stage{ 0 }, stage_data{0},now_stage(0), stage_wi
 {
 	now_stage = _stage;
 	SetStage(now_stage);
+	bat = new EnemyBat();
 }
 
 GameMain::~GameMain()
@@ -57,6 +58,7 @@ AbstractScene* GameMain::Update()
 
 void GameMain::Draw() const
 {
+	bat->Draw();
 	for (int i = 0; i < stage_height_num; i++)
 	{
 		for (int j = 0; j < stage_width_num; j++)

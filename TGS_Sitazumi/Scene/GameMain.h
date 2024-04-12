@@ -3,6 +3,7 @@
 #include "../Object/BoxCollider.h"
 #include "../Object/Player.h"
 #include "../Object/Stage.h"
+#include "../Object/EnemyBat.h"
 
 class Player;
 
@@ -19,6 +20,8 @@ private:
     int stage_height_num;   //ステージブロックの縦数
     int stage_width;        //ステージ横幅
     int stage_height;       //ステージ縦幅
+
+    EnemyBat* bat;
 
 public:
 
