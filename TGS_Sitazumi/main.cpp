@@ -9,38 +9,38 @@
 
 #include "Scene/GameMain.h"
 
-#define FRAMERATE 60.0 //ƒtƒŒ[ƒ€ƒŒ[ƒg
-//ƒƒCƒ“ƒvƒƒOƒ‰ƒ€ ŠJn
+#define FRAMERATE 60.0 //ï¿½tï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½[ï¿½g
+//ï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½vï¿½ï¿½ï¿½Oï¿½ï¿½ï¿½ï¿½ ï¿½Jï¿½n
 
 int WINAPI WinMain(_In_ HINSTANCE  hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR LpCmdLine, _In_ int NCmdShow) {
-    SetMainWindowText("ƒQ[ƒ€ƒ^ƒCƒgƒ‹");         // ƒEƒBƒ“ƒhƒEƒ^ƒCƒgƒ‹‚ğİ’è
+    SetMainWindowText("ï¿½Qï¿½[ï¿½ï¿½ï¿½^ï¿½Cï¿½gï¿½ï¿½");         // ï¿½Eï¿½Bï¿½ï¿½ï¿½hï¿½Eï¿½^ï¿½Cï¿½gï¿½ï¿½ï¿½ï¿½İ’ï¿½
 
-    ChangeWindowMode(TRUE);                        // ƒEƒCƒ“ƒhƒEƒ‚[ƒh‚Å‹N“®
+    ChangeWindowMode(TRUE);                        // ï¿½Eï¿½Cï¿½ï¿½ï¿½hï¿½Eï¿½ï¿½ï¿½[ï¿½hï¿½Å‹Nï¿½ï¿½
 
-    SetGraphMode(SCREEN_WIDTH, SCREEN_HEIGHT, 32); // ƒEƒCƒ“ƒhƒE‚ÌƒTƒCƒY
+    SetGraphMode(SCREEN_WIDTH, SCREEN_HEIGHT, 32); // ï¿½Eï¿½Cï¿½ï¿½ï¿½hï¿½Eï¿½ÌƒTï¿½Cï¿½Y
 
-    if (DxLib_Init() == -1) return -1;             // DXƒ‰ƒCƒuƒ‰ƒŠ‚Ì‰Šú‰»ˆ—
+    if (DxLib_Init() == -1) return -1;             // DXï¿½ï¿½ï¿½Cï¿½uï¿½ï¿½ï¿½ï¿½ï¿½Ìï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-    SetDrawScreen(DX_SCREEN_BACK);                 // •`‰ææ‰æ–Ê‚ğ— ‚É‚·‚éiƒ_ƒuƒ‹ƒoƒbƒtƒ@ƒŠƒ“ƒOj
+    SetDrawScreen(DX_SCREEN_BACK);                 // ï¿½`ï¿½ï¿½ï¿½ï¿½Ê‚ğ— ‚É‚ï¿½ï¿½ï¿½iï¿½_ï¿½uï¿½ï¿½ï¿½oï¿½bï¿½tï¿½@ï¿½ï¿½ï¿½ï¿½ï¿½Oï¿½j
 
-    //ƒf[ƒ^“Ç‚İ‚İ
+    //ï¿½fï¿½[ï¿½^ï¿½Ç‚İï¿½ï¿½ï¿½
     ResourceManager::LoadResource();
 
-    // ƒ^ƒCƒgƒ‹ ƒV[ƒ“ƒIƒuƒWƒFƒNƒgì¬
+    // ï¿½^ï¿½Cï¿½gï¿½ï¿½ ï¿½Vï¿½[ï¿½ï¿½ï¿½Iï¿½uï¿½Wï¿½Fï¿½Nï¿½gï¿½ì¬
     SceneManager* sceneMng = new SceneManager((AbstractScene*) new GameMain(0));
 
-    //fps§Œä
+    //fpsï¿½ï¿½ï¿½ï¿½
     FpsController* FPSC= new FpsController(FRAMERATE, 800);
 
-    // ƒQ[ƒ€ƒ‹[ƒv‚µAƒV[ƒ“ƒ}ƒlƒWƒƒ[‚ÅƒV[ƒ“‚ÌXV
+    // ï¿½Qï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½[ï¿½vï¿½ï¿½ï¿½Aï¿½Vï¿½[ï¿½ï¿½ï¿½}ï¿½lï¿½Wï¿½ï¿½ï¿½[ï¿½ÅƒVï¿½[ï¿½ï¿½ï¿½ÌXï¿½V
     while ((ProcessMessage() == 0) && (sceneMng->Update() != nullptr))
     {
-        ClearDrawScreen(); // ‰æ–Ê‚Ì‰Šú‰»
+        ClearDrawScreen(); // ï¿½ï¿½Ê‚Ìï¿½ï¿½ï¿½ï¿½ï¿½
 
-        PadInput::UpdateKey();//ƒpƒbƒh‚Ì“ü—Íˆ—
-        KeyInput::UpdateKey();//ƒL[ƒ{[ƒh‚Ì“ü—Íˆ—
+        PadInput::UpdateKey();//ï¿½pï¿½bï¿½hï¿½Ì“ï¿½ï¿½Íï¿½ï¿½ï¿½
+        KeyInput::UpdateKey();//ï¿½Lï¿½[ï¿½{ï¿½[ï¿½hï¿½Ì“ï¿½ï¿½Íï¿½ï¿½ï¿½
 
-        // ƒV[ƒ“ƒ}ƒlƒWƒƒ[‚ÅƒV[ƒ“‚Ì•`‰æŠJn
+        // ï¿½Vï¿½[ï¿½ï¿½ï¿½}ï¿½lï¿½Wï¿½ï¿½ï¿½[ï¿½ÅƒVï¿½[ï¿½ï¿½ï¿½Ì•`ï¿½ï¿½Jï¿½n
         sceneMng->Draw();
 
         FPSC->All();
@@ -48,16 +48,16 @@ int WINAPI WinMain(_In_ HINSTANCE  hInstance, _In_opt_ HINSTANCE hPrevInstance, 
         FPSC->Disp();
 #endif
 
-        //‹­§I—¹
-        //EscapeƒL[‚Ü‚½‚ÍƒoƒbƒNƒ{ƒ^ƒ“‚ğ‰Ÿ‚µ‚½‚ç‹­§I—¹
-        if(PadInput::OnButton(XINPUT_BUTTON_BACK)) {  
+        //ï¿½ï¿½ï¿½ï¿½ï¿½Iï¿½ï¿½
+        //Escapeï¿½Lï¿½[ï¿½Ü‚ï¿½ï¿½Íƒoï¿½bï¿½Nï¿½{ï¿½^ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ç‹­ï¿½ï¿½ï¿½Iï¿½ï¿½
+        if(PadInput::OnButton(XINPUT_BUTTON_BACK) || (KeyInput::OnKey(KEY_INPUT_ESCAPE))) {  
             break;
         }
-        ScreenFlip(); // — ‰æ–Ê‚Ì“à—e‚ğ•\‰æ–Ê‚É”½‰f‚·‚é
+        ScreenFlip(); // ï¿½ï¿½ï¿½ï¿½Ê‚Ì“ï¿½eï¿½ï¿½\ï¿½ï¿½Ê‚É”ï¿½ï¿½fï¿½ï¿½ï¿½ï¿½
 
     };
 
-    ResourceManager::DeleteResource(); //‰¹ºƒf[ƒ^‚Ìíœ
-    DxLib_End(); // DXƒ‰ƒCƒuƒ‰ƒŠg—p‚ÌI—¹ˆ—
-    return 0;    // ƒvƒƒOƒ‰ƒ€‚ÌI—¹
+    ResourceManager::DeleteResource(); //ï¿½ï¿½ï¿½ï¿½ï¿½fï¿½[ï¿½^ï¿½Ìíœ
+    DxLib_End(); // DXï¿½ï¿½ï¿½Cï¿½uï¿½ï¿½ï¿½ï¿½ï¿½gï¿½pï¿½ÌIï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    return 0;    // ï¿½vï¿½ï¿½ï¿½Oï¿½ï¿½ï¿½ï¿½ï¿½ÌIï¿½ï¿½
 };

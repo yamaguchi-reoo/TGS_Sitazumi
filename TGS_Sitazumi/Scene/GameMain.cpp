@@ -15,6 +15,8 @@ GameMain::GameMain(int _stage) :stage{ 0 }, stage_data{0},now_stage(0), stage_wi
 {
 	now_stage = _stage;
 	SetStage(now_stage);
+
+	enemydeer = new EnemyDeer;
 }
 
 GameMain::~GameMain()
@@ -26,6 +28,8 @@ GameMain::~GameMain()
 			delete stage[i][j];
 		}
 	}
+
+	delete enemydeer;
 }
 
 AbstractScene* GameMain::Update()
@@ -52,6 +56,9 @@ AbstractScene* GameMain::Update()
 		return new EditScene(now_stage);
 	}
 #endif
+
+	enemydeer->Update(this);
+
 	return this;
 }
 
@@ -67,6 +74,8 @@ void GameMain::Draw() const
 			}
 		}
 	}
+
+	enemydeer->Draw();
 }
 
 void GameMain::UpdateCamera()

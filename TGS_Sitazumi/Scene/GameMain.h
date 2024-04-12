@@ -3,6 +3,7 @@
 #include "../Object/BoxCollider.h"
 #include "../Object/Player.h"
 #include "../Object/Stage.h"
+#include "../Object/EnemyDeer.h"
 
 class Player;
 
@@ -10,40 +11,42 @@ class GameMain :
     public AbstractScene
 {
 private:
-    Stage* stage[MAX_STAGE_HEIGHT][MAX_STAGE_WIDTH];   //°‚ÌƒIƒuƒWƒFƒNƒg
+    Stage* stage[MAX_STAGE_HEIGHT][MAX_STAGE_WIDTH];   //ï¿½ï¿½ï¿½ÌƒIï¿½uï¿½Wï¿½Fï¿½Nï¿½g
 
-    int stage_data[MAX_STAGE_HEIGHT][MAX_STAGE_WIDTH];   //ƒXƒe[ƒWî•ñ
+    int stage_data[MAX_STAGE_HEIGHT][MAX_STAGE_WIDTH];   //ï¿½Xï¿½eï¿½[ï¿½Wï¿½ï¿½ï¿½
 
-    int now_stage;          //Œ»İ‚ÌƒXƒe[ƒW”
-    int stage_width_num;    //ƒXƒe[ƒWƒuƒƒbƒN‚Ì‰¡”
-    int stage_height_num;   //ƒXƒe[ƒWƒuƒƒbƒN‚Ìc”
-    int stage_width;        //ƒXƒe[ƒW‰¡•
-    int stage_height;       //ƒXƒe[ƒWc•
+    int now_stage;          //ï¿½ï¿½ï¿½İ‚ÌƒXï¿½eï¿½[ï¿½Wï¿½ï¿½
+    int stage_width_num;    //ï¿½Xï¿½eï¿½[ï¿½Wï¿½uï¿½ï¿½ï¿½bï¿½Nï¿½Ì‰ï¿½ï¿½ï¿½
+    int stage_height_num;   //ï¿½Xï¿½eï¿½[ï¿½Wï¿½uï¿½ï¿½ï¿½bï¿½Nï¿½Ìcï¿½ï¿½
+    int stage_width;        //ï¿½Xï¿½eï¿½[ï¿½Wï¿½ï¿½ï¿½ï¿½
+    int stage_height;       //ï¿½Xï¿½eï¿½[ï¿½Wï¿½cï¿½ï¿½
+
+    EnemyDeer* enemydeer;
 
 public:
 
-    //ƒRƒ“ƒXƒgƒ‰ƒNƒ^(_stage“Ç‚İ‚ŞƒXƒe[ƒW)
+    //ï¿½Rï¿½ï¿½ï¿½Xï¿½gï¿½ï¿½ï¿½Nï¿½^(_stageï¿½ï¿½ï¿½Ç‚İï¿½ï¿½ŞƒXï¿½eï¿½[ï¿½W)
     GameMain(int _stage);
 
-    //ƒfƒXƒgƒ‰ƒNƒ^
+    //ï¿½fï¿½Xï¿½gï¿½ï¿½ï¿½Nï¿½^
     ~GameMain();
 
-    // •`‰æˆÈŠO‚ÌXV‚ğÀ‘•
+    // ï¿½`ï¿½ï¿½ÈŠOï¿½ÌXï¿½Vï¿½ï¿½ï¿½ï¿½ï¿½
     AbstractScene* Update() override;
 
-    //•`‰æ‚ÉŠÖ‚·‚é‚±‚Æ‚ğÀ‘•
+    //ï¿½`ï¿½ï¿½ÉŠÖ‚ï¿½ï¿½é‚±ï¿½Æ‚ï¿½ï¿½ï¿½ï¿½
     void Draw() const override;
 
-    //ƒJƒƒ‰‚ÌXV•ƒJƒƒ‰‚ğ—h‚ç‚·
+    //ï¿½Jï¿½ï¿½ï¿½ï¿½ï¿½ÌXï¿½Vï¿½ï¿½ï¿½Jï¿½ï¿½ï¿½ï¿½ï¿½ï¿½hï¿½ç‚·
     void UpdateCamera();
 
-    //ƒXƒe[ƒWƒtƒ@ƒCƒ‹‚ğ“Ç‚İ‚Ş
+    //ï¿½Xï¿½eï¿½[ï¿½Wï¿½tï¿½@ï¿½Cï¿½ï¿½ï¿½ï¿½Ç‚İï¿½ï¿½ï¿½
     void LoadStageData(int _stage);
 
-    //Ÿ‚ÌƒXƒe[ƒW‚Ö‘JˆÚ‚·‚é
+    //ï¿½ï¿½ï¿½ÌƒXï¿½eï¿½[ï¿½Wï¿½Ö‘Jï¿½Ú‚ï¿½ï¿½ï¿½
     void SetStage(int _stage);
 
-    //ƒXƒe[ƒW‚É‘¼‚ÌƒXƒe[ƒW‚Ìtypeî•ñ‚ğ“n‚·—p
+    //ï¿½Xï¿½eï¿½[ï¿½Wï¿½É‘ï¿½ï¿½ÌƒXï¿½eï¿½[ï¿½Wï¿½ï¿½typeï¿½ï¿½ï¿½ï¿½nï¿½ï¿½ï¿½p
     int GetStageType(int _i, int _j);
 };
 
