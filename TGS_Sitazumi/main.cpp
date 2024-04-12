@@ -2,6 +2,7 @@
 #include "Scene/SceneManager.h"
 #include "Utility/FpsController.h"
 #include "Utility/PadInput.h"
+#include "Utility/KeyInput.h"
 #include "Utility/ResourceManager.h"
 #include "Utility/common.h"
 #include "Scene/Title.h"

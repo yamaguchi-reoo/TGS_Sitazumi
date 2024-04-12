@@ -7,7 +7,7 @@
 
 Location camera_location = { 0,0 };
 
-EditScene::EditScene(int _stage): current_type(0), ui_current_type(0), tool_pickup_flg(false), current_leftbutton_flg(false), current_rightbutton_flg(false), current_upbutton_flg(false), current_downbutton_flg(false), button_interval(0), now_select_erea(0), current_type_select(-1), now_current_type(0), current_type_location{0}, current_type_erea{0}
+EditScene::EditScene(int _stage): current_type(0), ui_current_type(0), tool_pickup_flg(false), current_leftbutton_flg(false), current_rightbutton_flg(false), current_upbutton_flg(false), current_downbutton_flg(false), button_interval(0), now_select_erea(0), current_type_select(-1), now_current_type(0), current_type_location{0}, current_type_erea{0}, disp_num(0)
 {
 	now_stage = _stage;
 	tool_location.x = 100;
@@ -122,6 +122,7 @@ AbstractScene* EditScene::Update()
 						{
 							n += can_select_type[j][1];
 						}
+						disp_num = 0;
 						current_type = n;
 						ui_current_type = i;
 					}
@@ -210,7 +211,7 @@ AbstractScene* EditScene::Update()
 		}
 		break;
 	case SELECT_TYPE:
-		//
+		//éÌóﬁëIëèàóù
 		for (int i = 0; i < can_select_type[current_type_select][1]; i++)
 		{
 			if (cursor.x > current_type_location.x && cursor.x < current_type_location.x + current_type_erea.width && cursor.y>current_type_location.y + (i * 50) && cursor.y < current_type_location.y + current_type_erea.height + (i * 50))
@@ -222,6 +223,7 @@ AbstractScene* EditScene::Update()
 					{
 						n += can_select_type[j][1];
 					}
+					disp_num = i;
 					current_type = n + i;
 					current_type_select = -1;
 				}
@@ -333,13 +335,13 @@ void EditScene::Draw()const
 			DrawBoxAA(tool_location.x + (i * 50), tool_location.y, tool_location.x + (i * 50) + 50, tool_location.y + 50, 0x000000, false);
 			//if ()
 			//{
-			//	DrawFormatStringF(tool_location.x + (i * 50), tool_location.y + 15, 0x000000, "%s", block_type_string[i][current_type]);
+			//	DrawFormatStringF(tool_location.x + (i * 50), tool_location.y + 15, 0x000000, "%s", block_type_string[disp_num][current_type]);
 			//}
 			//else
 			//{
 			//	DrawFormatStringF(tool_location.x + (i * 50), tool_location.y + 15, 0x000000, "%s", obj_string[i]);
 			//}
-			DrawFormatStringF(tool_location.x + (i * 50), tool_location.y + 15, 0x000000, "%s", obj_string[i]);
+			DrawFormatStringF(tool_location.x + (i * 50), tool_location.y + 15, 0x000000, "%s", block_type_string[i][disp_num]);
 		}
 		else
 		{

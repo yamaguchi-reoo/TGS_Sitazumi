@@ -2,7 +2,7 @@
 #include "AbstractScene.h"
 #include "../Object/BoxCollider.h"
 #include "../Object/Stage.h"
-#include "../Utility/PadInput.h"
+#include "../Utility/KeyInput.h"
 
 #define OBJECT_TYPE_NUM 9  //配置できるオブジェクトの種類数
 #define UI_OBJECT_TYPE_NUM 5  //配置できるオブジェクトの種類数
@@ -70,6 +70,7 @@ private:
     bool tool_pickup_flg;                                 //ツールボックスを持っているか判断
     bool select_data[MAX_STAGE_HEIGHT][MAX_STAGE_WIDTH];  //そのデータが現在選択中かどうか
     int current_type_select;                              //ブロックのタイプ選択画面が開かれているかどうか(-1=何も開いていない 0以降=その数字の選択画面を開いている)
+    int disp_num;                                         //現在選択されているブロックのタイプ
     int now_current_type;                                 //現在置けるブロックのタイプ
     Location current_type_location;                       //ブロックのタイプを選択するボックスの座標
     Erea current_type_erea;                               //ブロックのタイプを選択するボックスの大きさ

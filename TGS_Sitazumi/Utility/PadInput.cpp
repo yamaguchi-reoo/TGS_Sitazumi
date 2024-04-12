@@ -1,12 +1,60 @@
 #include "PadInput.h"
 
-int KeyInput::NowKey[KEY_MAX];
-int KeyInput::OldKey[KEY_MAX];
 char PadInput::NowKey[BUTTONS];
 char PadInput::OldKey[BUTTONS];
 XINPUT_STATE PadInput::Input;
 Stick PadInput::Rstick;
 Stick PadInput::Lstick;
-CURSOR KeyInput::Cursor; 
-int KeyInput::NowMouse[MOUSE_MAX];
-int KeyInput::OldMouse[MOUSE_MAX];
+
+void PadInput::UpdateKey()
+{
+	// 入力キー取得
+	GetJoypadXInputState(DX_INPUT_KEY_PAD1, &Input);
+	for (int i = 0; i < BUTTONS; i++)
+	{
+		OldKey[i] = NowKey[i];
+		NowKey[i] = Input.Buttons[i];
+	}
+
+	//左スティック
+	Lstick.ThumbX = Input.ThumbLX;
+	Lstick.ThumbY = Input.ThumbLY;
+}
+
+bool PadInput::OnButton(int button)
+{
+	bool ret = (NowKey[button] == 1 && OldKey[button] == 0);
+	return ret;
+}
+
+bool PadInput::OnPressed(int button)
+{
+	bool ret = (NowKey[button] == 1);
+	return ret;
+}
+
+bool PadInput::OnRelease(int button)
+{
+	bool ret = (NowKey[button] == 0 && OldKey[button] == 1);
+	return ret;
+}
+
+float PadInput::TipLeftLStick(short StickL)
+{
+	if (StickL == STICKL_X)
+	{
+		float ratioL_X = Input.ThumbLX / MAXL_X;
+
+		//左スティックの横軸を最大値を１とした割合
+		return ratioL_X;
+	}
+	else if (StickL == STICKL_Y)
+	{
+		float ratioL_Y = Input.ThumbLY / MAXL_Y;
+
+		//左スティックの縦軸値の最大値を１とした割合
+		return ratioL_Y;
+	}
+
+	return 0;
+}
