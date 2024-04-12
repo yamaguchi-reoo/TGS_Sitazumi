@@ -65,7 +65,7 @@ void Player::Draw()const
 	}
 	
 	DrawFormatString(20 , 80, 0xff0000, "%f", location.x);
-	DrawFormatString(20 , 100, 0xff0000, "%f", location.y);
+	DrawFormatString(20 , 100, 0xff0000, "%f", location.y);	
 	
 }
 
@@ -91,8 +91,8 @@ void Player::MoveActor()
 void Player::MoveAim()
 {
 	//照準の座標
-	aimLoc.x = location.x + (erea.width / 2) + PadInput::TipLeftLStick(STICKL_X) * 100.f;
-	aimLoc.y = location.y + (erea.height / 2) + PadInput::TipLeftLStick(STICKL_Y) * -100.f;
+	aimLoc.x = (location.x + (erea.width / 2)) + PadInput::TipLeftLStick(STICKL_X) * 100.f;
+	aimLoc.y = (location.y + (erea.height / 2)) + PadInput::TipLeftLStick(STICKL_Y) * -100.f;
 
 	//照準のベクトル
 	Location tmpv;
