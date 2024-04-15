@@ -12,7 +12,7 @@ EditScene::EditScene(int _stage): current_type(0), ui_current_type(0), tool_pick
 	now_stage = _stage;
 	tool_location.x = 100;
 	tool_location.y = 0;
-	tool_size.width = (OBJECT_TYPE_NUM * 50) + 210;
+	tool_size.width = (UI_OBJECT_TYPE_NUM * 50) + 210;
 	tool_size.height = 100;
 	width_button_location = { tool_location.x + tool_size.width - 90, tool_location.y + 25 };
 	height_button_location = { tool_location.x + tool_size.width - 190, tool_location.y + 35 };
@@ -442,16 +442,19 @@ void EditScene::LoadStageData(int _stage)
 	switch (_stage)
 	{
 	case 0:
-		a = "resource/dat/1stStageData.txt";
+		a = "Resource/Dat/1stStageData.txt";
 		break;
 	case 1:
-		a = "resource/dat/2ndStageData.txt";
+		a = "Resource/Dat/2ndStageData.txt";
 		break;
 	case 2:
-		a = "resource/dat/3rdStageData.txt";
+		a = "Resource/Dat/3rdStageData.txt";
 		break;
 	case 3:
-		a = "resource/dat/BossStageData.txt";
+		a = "Resource/Dat/4thStageData.txt";
+		break;
+	case 4:
+		a = "Resource/Dat/BossStageData.txt";
 		break;
 	}
 
@@ -476,21 +479,26 @@ void EditScene::LoadStageData(int _stage)
 void EditScene::UpdateStageData(int _stage)
 {
 	const char* a = "resource/dat/1stStageData.txt";
+
 	switch (_stage)
 	{
 	case 0:
-		a = "resource/dat/1stStageData.txt";
+		a = "Resource/Dat/1stStageData.txt";
 		break;
 	case 1:
-		a = "resource/dat/2ndStageData.txt";
+		a = "Resource/Dat/2ndStageData.txt";
 		break;
 	case 2:
-		a = "resource/dat/3rdStageData.txt";
+		a = "Resource/Dat/3rdStageData.txt";
 		break;
 	case 3:
-		a = "resource/dat/BossStageData.txt";
+		a = "Resource/Dat/4thStageData.txt";
+		break;
+	case 4:
+		a = "Resource/Dat/BossStageData.txt";
 		break;
 	}
+
 	std::ofstream file(a);
 	//ÉtÉ@ÉCÉãÇ™ì«Ç›çûÇﬂÇƒÇ¢ÇΩÇ»ÇÁ
 	if (file)

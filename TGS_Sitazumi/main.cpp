@@ -13,7 +13,7 @@
 //���C���v���O���� �J�n
 
 int WINAPI WinMain(_In_ HINSTANCE  hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR LpCmdLine, _In_ int NCmdShow) {
-    SetMainWindowText("�Q�[���^�C�g��");         // �E�B���h�E�^�C�g����ݒ�
+    SetMainWindowText("下積み");         // �E�B���h�E�^�C�g����ݒ�
 
     ChangeWindowMode(TRUE);                        // �E�C���h�E���[�h�ŋN��
 
