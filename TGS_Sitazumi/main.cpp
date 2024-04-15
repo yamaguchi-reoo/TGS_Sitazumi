@@ -9,38 +9,38 @@
 
 #include "Scene/GameMain.h"
 
-#define FRAMERATE 60.0 //�t���[�����[�g
-//���C���v���O���� �J�n
+#define FRAMERATE 60.0 //フレームレート
+//メインプログラム 開始
 
 int WINAPI WinMain(_In_ HINSTANCE  hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR LpCmdLine, _In_ int NCmdShow) {
-    SetMainWindowText("�Q�[���^�C�g��");         // �E�B���h�E�^�C�g����ݒ�
+    SetMainWindowText("禊(misogi)");         // ウィンドウタイトルを設定
 
-    ChangeWindowMode(TRUE);                        // �E�C���h�E���[�h�ŋN��
+    ChangeWindowMode(TRUE);                        // ウインドウモードで起動
 
-    SetGraphMode(SCREEN_WIDTH, SCREEN_HEIGHT, 32); // �E�C���h�E�̃T�C�Y
+    SetGraphMode(SCREEN_WIDTH, SCREEN_HEIGHT, 32); // ウインドウのサイズ
 
-    if (DxLib_Init() == -1) return -1;             // DX���C�u�����̏���������
+    if (DxLib_Init() == -1) return -1;             // DXライブラリの初期化処理
 
-    SetDrawScreen(DX_SCREEN_BACK);                 // �`����ʂ𗠂ɂ���i�_�u���o�b�t�@�����O�j
+    SetDrawScreen(DX_SCREEN_BACK);                 // 描画先画面を裏にする（ダブルバッファリング）
 
-    //�f�[�^�ǂݍ���
+    //音声データ読み込み
     ResourceManager::LoadResource();
 
-    // �^�C�g�� �V�[���I�u�W�F�N�g�쐬
+    // タイトル シーンオブジェクト作成
     SceneManager* sceneMng = new SceneManager((AbstractScene*) new GameMain(0));
 
-    //fps����
+    //fps制御
     FpsController* FPSC= new FpsController(FRAMERATE, 800);
 
-    // �Q�[�����[�v���A�V�[���}�l�W���[�ŃV�[���̍X�V
+    // ゲームループし、シーンマネジャーでシーンの更新
     while ((ProcessMessage() == 0) && (sceneMng->Update() != nullptr))
     {
-        ClearDrawScreen(); // ��ʂ̏�����
+        ClearDrawScreen();      // 画面の初期化
 
-        PadInput::UpdateKey();//�p�b�h�̓��͏���
-        KeyInput::UpdateKey();//�L�[�{�[�h�̓��͏���
+        PadInput::UpdateKey();  //パッドの入力処理
+        KeyInput::UpdateKey();  //キーボードの入力処理
 
-        // �V�[���}�l�W���[�ŃV�[���̕`��J�n
+        // シーンマネジャーでシーンの描画開始
         sceneMng->Draw();
 
         FPSC->All();
@@ -48,16 +48,16 @@ int WINAPI WinMain(_In_ HINSTANCE  hInstance, _In_opt_ HINSTANCE hPrevInstance, 
         FPSC->Disp();
 #endif
 
-        //�����I��
-        //Escape�L�[�܂��̓o�b�N�{�^����������狭���I��
+        //強制終了
+        //Escapeキーまたはバックボタンを押したら強制終了
         if(PadInput::OnButton(XINPUT_BUTTON_BACK) || (KeyInput::OnKey(KEY_INPUT_ESCAPE))) {  
             break;
         }
-        ScreenFlip(); // ����ʂ̓�e��\��ʂɔ��f����
+        ScreenFlip(); // 裏画面の内容を表画面に反映する
 
     };
 
-    ResourceManager::DeleteResource(); //�����f�[�^�̍폜
-    DxLib_End(); // DX���C�u�����g�p�̏I������
-    return 0;    // �v���O�����̏I��
+    ResourceManager::DeleteResource(); //音声データの削除
+    DxLib_End(); // DXライブラリ使用の終了処理
+    return 0;    // プログラムの終了
 };

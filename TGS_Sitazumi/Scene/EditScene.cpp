@@ -12,7 +12,7 @@ EditScene::EditScene(int _stage): current_type(0), ui_current_type(0), tool_pick
 	now_stage = _stage;
 	tool_location.x = 100;
 	tool_location.y = 0;
-	tool_size.width = (OBJECT_TYPE_NUM * 50) + 210;
+	tool_size.width = (UI_OBJECT_TYPE_NUM * 50) + 210;
 	tool_size.height = 100;
 	width_button_location = { tool_location.x + tool_size.width - 90, tool_location.y + 25 };
 	height_button_location = { tool_location.x + tool_size.width - 190, tool_location.y + 35 };
@@ -79,6 +79,20 @@ AbstractScene* EditScene::Update()
 						//更新
 						if (KeyInput::OnPressedMouse(MOUSE_INPUT_LEFT))
 						{
+							//プレイヤーの初期スポーン地点を設定するブロックを置いたなら、以前のスポーン地点は削除
+							if (current_type == PLAYER_SPAWN_NUM)
+							{
+								for (int n = 0; n < stage_height_num; n++)
+								{
+									for (int m = 0; m < stage_width_num; m++)
+									{
+										if (stage_data[n][m] == PLAYER_SPAWN_NUM)
+										{
+											stage_data[n][m] = 0;
+										}
+									}
+								}
+							}
 							stage_data[i][j] = current_type;
 						}
 					}
@@ -442,16 +456,19 @@ void EditScene::LoadStageData(int _stage)
 	switch (_stage)
 	{
 	case 0:
-		a = "resource/dat/1stStageData.txt";
+		a = "Resource/Dat/1stStageData.txt";
 		break;
 	case 1:
-		a = "resource/dat/2ndStageData.txt";
+		a = "Resource/Dat/2ndStageData.txt";
 		break;
 	case 2:
-		a = "resource/dat/3rdStageData.txt";
+		a = "Resource/Dat/3rdStageData.txt";
 		break;
 	case 3:
-		a = "resource/dat/BossStageData.txt";
+		a = "Resource/Dat/4thStageData.txt";
+		break;
+	case 4:
+		a = "Resource/Dat/BossStageData.txt";
 		break;
 	}
 
@@ -476,21 +493,26 @@ void EditScene::LoadStageData(int _stage)
 void EditScene::UpdateStageData(int _stage)
 {
 	const char* a = "resource/dat/1stStageData.txt";
+
 	switch (_stage)
 	{
 	case 0:
-		a = "resource/dat/1stStageData.txt";
+		a = "Resource/Dat/1stStageData.txt";
 		break;
 	case 1:
-		a = "resource/dat/2ndStageData.txt";
+		a = "Resource/Dat/2ndStageData.txt";
 		break;
 	case 2:
-		a = "resource/dat/3rdStageData.txt";
+		a = "Resource/Dat/3rdStageData.txt";
 		break;
 	case 3:
-		a = "resource/dat/BossStageData.txt";
+		a = "Resource/Dat/4thStageData.txt";
+		break;
+	case 4:
+		a = "Resource/Dat/BossStageData.txt";
 		break;
 	}
+
 	std::ofstream file(a);
 	//ファイルが読み込めていたなら
 	if (file)

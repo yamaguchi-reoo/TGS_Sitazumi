@@ -9,3 +9,5 @@
 #define BOX_HEIGHT	40					//ステージのブロック一つ当たりの高さ
 #define BOX_WIDTH	40				//ステージのブロック一つ当たりの幅
 
+#define PLAYER_SPAWN_NUM 9       //プレイヤーの初期スポーン設定ブロックが何番目か(EditScene用)
+

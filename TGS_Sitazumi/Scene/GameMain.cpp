@@ -9,15 +9,16 @@
 #include <string>
 
 static Location camera_location = { 0,0};	//カメラの座標
-static Location screen_origin = { (SCREEN_WIDTH / 2),0 };
+static Location screen_origin = { (SCREEN_WIDTH / 2),(SCREEN_HEIGHT / 2) };
 
-GameMain::GameMain(int _stage) :stage{ 0 }, stage_data{0},now_stage(0), stage_width_num(0), stage_height_num(0), stage_width(0), stage_height(0)
+GameMain::GameMain(int _stage) :stage{ 0 }, stage_data{0},now_stage(0), stage_width_num(0), stage_height_num(0), stage_width(0), stage_height(0), camera_x_lock_flg(true), camera_y_lock_flg(true), x_pos_set_once(true), y_pos_set_once(true)
 {
-	now_stage = _stage;
-	SetStage(now_stage);
 
 	enemydeer = new EnemyDeer;
 	player = new Player();
+
+	SetStage(_stage);
+	lock_pos = camera_location;
 }
 
 GameMain::~GameMain()
@@ -52,6 +53,7 @@ AbstractScene* GameMain::Update()
 	}
 
 	//プレイヤーアップデート
+	player->SetScreenPosition(camera_location);
 	player->Update(this);
 	for (int i = 0; i < stage_height_num; i++)
 	{
@@ -65,17 +67,36 @@ AbstractScene* GameMain::Update()
 		}
 	}
 
+	enemydeer->Update(this);
+
 #ifdef _DEBUG
 	//ステージをいじるシーンへ遷移
 	if (KeyInput::OnPresed(KEY_INPUT_E) && KeyInput::OnPresed(KEY_INPUT_D))
 	{
 		return new EditScene(now_stage);
 	}
-	
+	//ステージ遷移
+	if (KeyInput::OnPresed(KEY_INPUT_0))
+	{
+		SetStage(0);
+	}
+	if (KeyInput::OnPresed(KEY_INPUT_1))
+	{
+		SetStage(1);
+	}
+	if (KeyInput::OnPresed(KEY_INPUT_2))
+	{
+		SetStage(2);
+	}
+	if (KeyInput::OnPresed(KEY_INPUT_3))
+	{
+		SetStage(3);
+	}
+	if (KeyInput::OnPresed(KEY_INPUT_4))
+	{
+		SetStage(4);
+	}
 #endif
-
-	enemydeer->Update(this);
-
 	return this;
 }
 
@@ -98,76 +119,77 @@ void GameMain::Draw() const
 
 void GameMain::UpdateCamera()
 {
-	////X座標が画面端以外なら
-	//if (player->GetCenterLocation().x > (SCREEN_WIDTH / 2) && player->GetCenterLocation().x < stage_width - (SCREEN_WIDTH / 2))
-	//{
-	//	//X座標のロックをしない
-	//	camera_x_lock_flg = false;
-	//	//ロック時に一度だけ入る処理をリセットする
-	//	x_pos_set_once = false;
-	//}
-	////X座標が画面端なら
-	//else
-	//{
-	//	//X座標のロックをする
-	//	camera_x_lock_flg = true;
-	//	//固定する位置を一度だけ設定する
-	//	if (x_pos_set_once == false)
-	//	{
-	//		lock_pos.x = player->GetCenterLocation().x;
-	//		x_pos_set_once = true;
-	//	}
-	//}
-	////Y座標が画面端以外なら
-	//if (player->GetCenterLocation().y < stage_height - (SCREEN_HEIGHT / 2) - 10 && player->GetCenterLocation().y>(SCREEN_HEIGHT / 2))
-	//{
-	//	//Y座標のロックをしない
-	//	camera_y_lock_flg = false;
-	//	//ロック時に一度だけ入る処理をリセットする
-	//	y_pos_set_once = false;
-	//}
-	////Y座標が画面端なら
-	//else
-	//{
-	//	//Y座標のロックをする
-	//	camera_y_lock_flg = true;
-	//	//固定する位置を一度だけ設定する
-	//	if (y_pos_set_once == false)
-	//	{
-	//		lock_pos.y = player->GetCenterLocation().y;
-	//		y_pos_set_once = true;
-	//	}
-	//}
+	//X座標が画面端以外なら
+	if (player->GetCenterLocation().x > (SCREEN_WIDTH / 2) && player->GetCenterLocation().x < stage_width - (SCREEN_WIDTH / 2))
+	{
+		//X座標のロックをしない
+		camera_x_lock_flg = false;
+		//ロック時に一度だけ入る処理をリセットする
+		x_pos_set_once = false;
+	}
+	//X座標が画面端なら
+	else
+	{
+		//X座標のロックをする
+		camera_x_lock_flg = true;
+		//固定する位置を一度だけ設定する
+		if (x_pos_set_once == false)
+		{
+			lock_pos.x = player->GetCenterLocation().x;
+			x_pos_set_once = true;
+		}
+	}
+	//Y座標が画面端以外なら
+	if (player->GetCenterLocation().y < stage_height - (SCREEN_HEIGHT / 2) - 10 && player->GetCenterLocation().y>(SCREEN_HEIGHT / 2))
+	{
+		//Y座標のロックをしない
+		camera_y_lock_flg = false;
+		//ロック時に一度だけ入る処理をリセットする
+		y_pos_set_once = false;
+	}
+	//Y座標が画面端なら
+	else
+	{
+		//Y座標のロックをする
+		camera_y_lock_flg = true;
+		//固定する位置を一度だけ設定する
+		if (y_pos_set_once == false)
+		{
+			lock_pos.y = player->GetCenterLocation().y;
+			y_pos_set_once = true;
+		}
+	}
 
-	////今のステージが３（ボス）以外で、カメラ固定フラグが立ってないなら
-	//if (now_stage != 3 && (lock_flg == 0 || lock_flg == 6))
-	//{
+	//今のステージが３（ボス）以外で、カメラ固定フラグが立ってないなら
+	if (now_stage != 3)
+	{
 		//カメラ更新
-		//if (camera_x_lock_flg == false && camera_y_lock_flg == false)
-		//{
-		//	CameraLocation(player->GetCenterLocation().x, player->GetCenterLocation().y);
-		//}
-		//else if (camera_x_lock_flg == false && camera_y_lock_flg == true)
-		//{
-		//	CameraLocation(player->GetCenterLocation().x, lock_pos.y);
-		//}
-		//else if (camera_x_lock_flg == true && camera_y_lock_flg == false)
-		//{
-		//	CameraLocation(lock_pos.x, player->GetCenterLocation().y);
-		//}
-		//else
-		//{
-		//	CameraLocation(lock_pos.x, lock_pos.y);
-		//}
-	//}
-	//else if (now_stage == 3)
-	//{
-	//	CameraLocation(screen_origin.x, screen_origin.y + (SCREEN_HEIGHT / 2) + 48);
-	//}
-	//else if (lock_flg != 0)
-	//{
-	//	CameraLocation(battle_start_pos[now_battle].x, battle_start_pos[now_battle].y - (SCREEN_HEIGHT / 2) + 96);
-	//}
+		if (camera_x_lock_flg == false && camera_y_lock_flg == false)
+		{
+			camera_location.x = player->GetCenterLocation().x - (SCREEN_WIDTH / 2);
+			camera_location.y = player->GetCenterLocation().y - (SCREEN_HEIGHT / 2);
+		}
+		else if (camera_x_lock_flg == false && camera_y_lock_flg == true)
+		{
+			camera_location.x = player->GetCenterLocation().x - (SCREEN_WIDTH / 2);
+			camera_location.y = lock_pos.y - (SCREEN_HEIGHT / 2);
+		}
+		else if (camera_x_lock_flg == true && camera_y_lock_flg == false)
+		{
+			camera_location.x = lock_pos.x - (SCREEN_WIDTH / 2);
+			camera_location.y = player->GetCenterLocation().y - (SCREEN_HEIGHT / 2);
+		}
+		else
+		{
+			camera_location.x = lock_pos.x - (SCREEN_WIDTH / 2);
+			camera_location.y = lock_pos.y - (SCREEN_HEIGHT / 2);
+		}
+	}
+	else if (now_stage == 4)
+	{
+		camera_location.x = screen_origin.x - (SCREEN_WIDTH / 2);
+		camera_location.y = screen_origin.y + 48;
+	}
 }
 
 void GameMain::LoadStageData(int _stage)
@@ -185,6 +207,9 @@ void GameMain::LoadStageData(int _stage)
 		a = "Resource/Dat/3rdStageData.txt";
 		break;
 	case 3:
+		a = "Resource/Dat/4thStageData.txt";
+		break;
+	case 4:
 		a = "Resource/Dat/BossStageData.txt";
 		break;
 	}
@@ -211,6 +236,7 @@ void GameMain::LoadStageData(int _stage)
 
 void GameMain::SetStage(int _stage)
 {
+	now_stage = _stage;
 	//ファイルの読込
 	LoadStageData(now_stage);
 	for (int i = 0; i < stage_height_num; i++)
@@ -229,25 +255,16 @@ void GameMain::SetStage(int _stage)
 		}
 	}
 
-	//ステージのマップチップ用
-	//for (int i = 0; i < stage_height_num; i++)
-	//{
-	//	for (int j = 0; j < stage_width_num; j++)
-	//	{
-	//		stage[i][j]->SetDrawType(GetStageType(i - 1, j), GetStageType(i, j - 1), GetStageType(i, j + 1), GetStageType(i + 1, j));
-	//	}
-	//}
-
 	////プレイヤーのリスポーン
 	//Location res_location = { 100,stage_height - 500 };
 	//player->Respawn(res_location);
 
-	////カメラのリセット
-	//ResetCamera();
+	//カメラのリセット
+	ResetCamera();
 
-	////カメラの位置がプレイヤーの位置にならないように
-	//x_pos_set_once = true;
-	//y_pos_set_once = true;
+	//カメラの位置がプレイヤーの位置にならないように
+	x_pos_set_once = true;
+	y_pos_set_once = true;
 }
 
 int GameMain::GetStageType(int _i, int _j)
@@ -263,4 +280,10 @@ int GameMain::GetStageType(int _i, int _j)
 		ret = stage[_i][_j]->GetStageType();
 	}
 	return ret;
+}
+
+void GameMain::ResetCamera()
+{
+	camera_location.x = screen_origin.x;
+	camera_location.y = screen_origin.y;
 }
