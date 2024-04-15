@@ -4,8 +4,9 @@
 #include "BoxCollider.h"
 #include "ColorData.h"
 
-#define ANIM_BLOCK_NUM 10 //�A�j���[�V�����Ɏg���u���b�N�̐�
-//ColorData�i�[�p
+#define ANIM_BLOCK_NUM 10 //エフェクト表示に使うブロックの数
+
+//ColorData格納用
 static int color_data[6]
 {
 	0,
@@ -16,7 +17,7 @@ static int color_data[6]
 	BLUE
 };
 
-//�f�o�b�O�\���p�F���
+//Edit表示用文字色データ
 static int text_color[10]
 {
 	0xffffff,
@@ -31,32 +32,32 @@ static int text_color[10]
 	0x00ff00,
 };
 
-//�A�j���[�V�����p
+//エフェクト用
 struct ANIM
 {
-	Location location;	//���W
-	Erea erea;			//�傫��
-	int time;			//�폜�܂ł̎���
-	float angle;		//�i�s����
+	Location location;	//表示位置
+	Erea erea;			//大きさ
+	int time;			//表示していられる時間
+	float angle;		//移動の向き
 };
 class Stage :
 	public BoxCollider, public ColorData
 {
 private:
-	int frame;					//�t���[������
-	int type;					//���̎��(0=�� 1=�D 2=�� 3=�� 4=�� 5=�� 6=�� 7=��)
-	bool inv_flg;				//����`�悵�Ȃ������f
-	bool debug_flg;				//���̎�ނ�\�����邩
-	int swap_flg;				//�F�̌�����o����u���b�N���ǂ���
-	int anim;						//�A�j���[�V�����p
-	ANIM effect_anim[ANIM_BLOCK_NUM];	//�A�j���[�V�����p���W�ۊ�
+	int frame;					//フレーム測定用
+	int type;					//ブロックの種類(0=無 1=白 2=灰 3=赤 4=緑 5=青 6=炎 7=木 8=水 9=初期スポーン(Editのみ表示))
+	bool inv_flg;				//ブロックに触れるか判断
+	bool debug_flg;				//EditScene用表示をするかどうか
+	int swap_flg;				//色を交換出来るか
+	int anim;						//アニメーション用
+	ANIM effect_anim[ANIM_BLOCK_NUM];	//エフェクトアニメーション用ブロック情報格納
 public:
 	Stage(float _x, float _y, float _width, float _height, int _type);
 	~Stage();
 	void Update();
 	void Draw()const;
 
-	//��ނ�擾(0=�� 1=�D 2=�� 3=�� 4=�� 5=�� 6=�� 7=��)
+	//ステージ(0=無 1=�D 2=�� 3=�� 4=�� 5=�� 6=�� 7=��)
 	int GetStageCollisionType();
 	//��ނ�ݒ�
 	void SetStageType(int _type);
