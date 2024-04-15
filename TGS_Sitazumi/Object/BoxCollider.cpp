@@ -5,31 +5,31 @@ bool BoxCollider::HitBox(BoxCollider* bCollider)
 {
 	bool ret = false;
 
-	//©•ª‚Ì¶ãÀ•W
+	//è‡ªåˆ†ã®å·¦ä¸Šåº§æ¨™
 	float my_x = location.x;
 	float my_y = location.y;
-	//©•ª‚Ì’†‰›À•W
+	//è‡ªåˆ†ã®ä¸­å¤®åº§æ¨™
 	float my_cx = my_x + (erea.width / 2);
 	float my_cy = my_y + (erea.height / 2);
-	//©•ª‚Ì•‚Æ‚‚³‚Ì”¼•ª
+	//è‡ªåˆ†ã®å¹…ã¨é«˜ã•ã®åŠåˆ†
 	float my_harf_width = erea.width / 2;
 	float my_harf_height = erea.height / 2;
 
-	//‘Šè‚Ì¶ãÀ•W
+	//ç›¸æ‰‹ã®å·¦ä¸Šåº§æ¨™
 	float sub_x = bCollider->GetLocation().x;
 	float sub_y = bCollider->GetLocation().y;
-	//‘Šè‚Ì’†‰›À•W
+	//ç›¸æ‰‹ã®ä¸­å¤®åº§æ¨™
 	float sub_cx = sub_x + (bCollider->GetErea().width / 2);
 	float sub_cy = sub_y + (bCollider->GetErea().height / 2);
-	//‘Šè‚Ì•‚Æ‚‚³‚Ì”¼•ª
+	//ç›¸æ‰‹ã®å¹…ã¨é«˜ã•ã®åŠåˆ†
 	float sub_harf_width = bCollider->GetErea().width / 2;
 	float sub_harf_height = bCollider->GetErea().height / 2;
 
-	//©•ª‚Æ‘Šè‚Ì’†SÀ•W‚Ì·
+	//è‡ªåˆ†ã¨ç›¸æ‰‹ã®ä¸­å¿ƒåº§æ¨™ã®å·®
 	float diff_x = my_cx - sub_cx;
 	float diff_y = my_cy - sub_cy;
 
-	//“–‚½‚è”»’è‚Ì‰‰Z
+	//å½“ãŸã‚Šåˆ¤å®šã®æ¼”ç®—
 	if (fabsf(diff_x) < my_harf_width + sub_harf_width &&
 		fabsf(diff_y) < my_harf_height + sub_harf_height)
 	{

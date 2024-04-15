@@ -2,43 +2,43 @@
 #include "dxlib.h"
 #include"../Utility/common.h"
 
-//’†SÀ•W
+//ä¸­å¿ƒåº§æ¨™
 struct Location
 {
-	float x;	//¶ãÀ•W(x)
-	float y;	//¶ãÀ•W(y)
+	float x;	//å·¦ä¸Šåº§æ¨™(x)
+	float y;	//å·¦ä¸Šåº§æ¨™(y)
 };
 
-//”ÍˆÍ
+//ç¯„å›²
 struct Erea
 {
-	float height;	//‚‚³
-	float width;	//•
+	float height;	//é«˜ã•
+	float width;	//å¹…
 };
 
 class BoxCollider
 {
 protected:
-	Location location;			//’†SÀ•W
-	Location local_location;	//‰æ–Êã‚Å‚ÌÀ•W
-	Erea erea;					//”ÍˆÍ
+	Location location;			//ä¸­å¿ƒåº§æ¨™
+	Location local_location;	//ç”»é¢ä¸Šã§ã®åº§æ¨™
+	Erea erea;					//ç¯„å›²
 public:
 
-	//“–‚½‚è”»’è (0,0 = “–‚½‚Á‚Ä‚¢‚È‚¢ ‚»‚êˆÈŠO = ‘Šè‚Ì’†SÀ•W)
+	//å½“ãŸã‚Šåˆ¤å®š (0,0 = å½“ãŸã£ã¦ã„ãªã„ ãã‚Œä»¥å¤– = ç›¸æ‰‹ã®ä¸­å¿ƒåº§æ¨™)
 	bool HitBox(BoxCollider* bCollider);
 
-	//¶ãÀ•W‚Ìæ“¾
+	//å·¦ä¸Šåº§æ¨™ã®å–å¾—
 	Location GetLocation()const;
 
-	//’†SÀ•W‚Ìæ“¾
+	//ä¸­å¿ƒåº§æ¨™ã®å–å¾—
 	Location GetCenterLocation()const;
 
-	//ƒ[ƒJƒ‹À•W‚Ìæ“¾
+	//ãƒ­ãƒ¼ã‚«ãƒ«åº§æ¨™ã®å–å¾—
 	Location GetLocalLocation()const;
 
-	//’¼Œa‚Ìæ“¾
+	//ç›´å¾„ã®å–å¾—
 	Erea GetErea()const;
 
-	//ƒIƒuƒWƒFƒNƒg‚Ìƒ[ƒ‹ƒhÀ•W‚ğƒXƒNƒŠ[ƒ“À•W‚É•ÏŠ·‚·‚é
+	//ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ãƒ¯ãƒ¼ãƒ«ãƒ‰åº§æ¨™ã‚’ã‚¹ã‚¯ãƒªãƒ¼ãƒ³åº§æ¨™ã«å¤‰æ›ã™ã‚‹
 	void SetScreenPosition(Location _world_to_screen);
 };

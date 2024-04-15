@@ -1,7 +1,7 @@
 #pragma once
 #include"BoxCollider.h"
 
-//‰¼‘zƒNƒ‰ƒX
+//ä»®æƒ³ã‚¯ãƒ©ã‚¹
 class GameMain;
 
 class CharaBase : public BoxCollider

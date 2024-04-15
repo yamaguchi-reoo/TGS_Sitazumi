@@ -7,12 +7,12 @@
 class ColorData
 {
 protected:
-	//Fî•ñ
-	//ƒ}ƒNƒ‚Ì4F‚©‚ç“ü‚ê‚é
+	//è‰²æƒ…å ±
+	//ãƒã‚¯ãƒ­ã®4è‰²ã‹ã‚‰å…¥ã‚Œã‚‹
 	int color;
 
 public:
-	//F‚ÌŒğŠ·
+	//è‰²ã®äº¤æ›
 	void ChangeColor(ColorData cd);
 
 	void SetColorData(int c)

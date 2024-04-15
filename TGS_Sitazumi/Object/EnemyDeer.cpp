@@ -79,11 +79,11 @@ void EnemyDeer::Draw()const
 	DrawFormatString(0, 60, GetColor(255, 0, 0), "MouseX : %d MouseY : %d", KeyInput::GetMouseCursor().x, KeyInput::GetMouseCursor().y);
 	DrawFormatString(0, 80, 0xff0000, "File open? %d", NotOpen);	//ファイルが開けているか確認 TRUE or FALSE
 	DrawFormatString(0, 120, 0xff0000, "Number : %d X number : %d Y wnumber : %d", ArrayNumber, ArrayNumberX - 2, ArrayNumberY - 2);
-	DrawFormatString(0, 140, 0xff0000, "Number : %d X : %d Y : %d",ArrayNumber, KeepCursor[ArrayNumber][ArrayNumberX - 2], KeepCursor[ArrayNumber][ArrayNumberY - 2]);
+	DrawFormatString(0, 140, 0xff0000, "Number : %d X : %d Y : %d", ArrayNumber, KeepCursor[ArrayNumber][ArrayNumberX - 2], KeepCursor[ArrayNumber][ArrayNumberY - 2]);
 
 	DrawQuadrangle(KeepCursor[ArrayNumber][0], KeepCursor[ArrayNumber][1], KeepCursor[ArrayNumber][2], KeepCursor[ArrayNumber][3],
 		KeepCursor[ArrayNumber][4], KeepCursor[ArrayNumber][5], KeepCursor[ArrayNumber][6], KeepCursor[ArrayNumber][7], 0xffffff, FALSE);
-	
+
 	//角 左から
 	//DrawQuadrangle(295, 260, 310, 260, 310, 290, 300, 290, 0xffffff, FALSE);
 	//頭
@@ -118,7 +118,7 @@ void EnemyDeer::EnemyDeerOfs()
 	DeerOfs.open("Resource/Dat/EnemyCoordinate.txt");
 
 	if (!DeerOfs) //  ファイルが開けない場合の処理
-	{            
+	{
 		NotOpen = FALSE;
 	}
 	else
