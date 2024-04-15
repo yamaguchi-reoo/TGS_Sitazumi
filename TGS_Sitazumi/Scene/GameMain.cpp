@@ -17,6 +17,7 @@ GameMain::GameMain(int _stage) :stage{ 0 }, stage_data{0},now_stage(0), stage_wi
 	SetStage(now_stage);
 
 	enemydeer = new EnemyDeer;
+	enemybat = new EnemyBat;
 	player = new Player();
 }
 
@@ -75,6 +76,7 @@ AbstractScene* GameMain::Update()
 #endif
 
 	enemydeer->Update(this);
+	enemybat->Update(this);
 
 	return this;
 }
@@ -93,6 +95,7 @@ void GameMain::Draw() const
 	}
 
 	enemydeer->Draw();
+	enemybat->Draw();
 	player->Draw();
 }
 

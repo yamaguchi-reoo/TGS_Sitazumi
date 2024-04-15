@@ -6,6 +6,10 @@ class EnemyBat:
 {
 private:
 
+	//int KeepMouseX[10], KeepMouseY[10];
+	int number;
+
+	int frame;
 public:
 	EnemyBat();
 	~EnemyBat();
