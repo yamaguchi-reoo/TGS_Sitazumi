@@ -15,7 +15,9 @@ GameMain::GameMain(int _stage) :stage{ 0 }, stage_data{0},now_stage(0), stage_wi
 {
 	now_stage = _stage;
 	SetStage(now_stage);
-	bat = new EnemyBat();
+
+	enemydeer = new EnemyDeer;
+	player = new Player();
 }
 
 GameMain::~GameMain()
@@ -27,6 +29,8 @@ GameMain::~GameMain()
 			delete stage[i][j];
 		}
 	}
+
+	delete enemydeer;
 }
 
 AbstractScene* GameMain::Update()
@@ -42,6 +46,21 @@ AbstractScene* GameMain::Update()
 			{
 				stage[i][j]->SetScreenPosition(camera_location);
 				stage[i][j]->Update();
+				//player->CheckCollision(stage[i][j]);
+			}
+		}
+	}
+
+	//プレイヤーアップデート
+	player->Update(this);
+	for (int i = 0; i < stage_height_num; i++)
+	{
+		for (int j = 0; j < stage_width_num; j++)
+		{
+			if (stage[i][j] != nullptr)
+			{
+				//ステージとの当たり判定
+				player->CheckCollision(stage[i][j]);
 			}
 		}
 	}
@@ -52,13 +71,16 @@ AbstractScene* GameMain::Update()
 	{
 		return new EditScene(now_stage);
 	}
+	
 #endif
+
+	enemydeer->Update(this);
+
 	return this;
 }
 
 void GameMain::Draw() const
 {
-	bat->Draw();
 	for (int i = 0; i < stage_height_num; i++)
 	{
 		for (int j = 0; j < stage_width_num; j++)
@@ -69,6 +91,9 @@ void GameMain::Draw() const
 			}
 		}
 	}
+
+	enemydeer->Draw();
+	player->Draw();
 }
 
 void GameMain::UpdateCamera()

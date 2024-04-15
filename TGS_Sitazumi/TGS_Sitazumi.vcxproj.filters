@@ -66,8 +66,14 @@
     <ClCompile Include="Scene\EditScene.cpp">
       <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="Object\ColorData.cpp">
+      <Filter>ソース ファイル\Object</Filter>
+    </ClCompile>
     <ClCompile Include="Utility\KeyInput.cpp">
       <Filter>ソース ファイル\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\EnemyDeer.cpp">
+      <Filter>ソース ファイル\Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -113,8 +119,14 @@
     <ClInclude Include="Scene\EditScene.h">
       <Filter>ヘッダー ファイル\Scene</Filter>
     </ClInclude>
+    <ClInclude Include="Object\ColorData.h">
+      <Filter>ヘッダー ファイル\Object</Filter>
+    </ClInclude>
     <ClInclude Include="Utility\KeyInput.h">
       <Filter>ヘッダー ファイル\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\EnemyDeer.h">
+      <Filter>ヘッダー ファイル\Object</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

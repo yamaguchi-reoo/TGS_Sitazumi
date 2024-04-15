@@ -21,7 +21,8 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Object\BoxCollider.cpp" />
-    <ClCompile Include="Object\EnemyBat.cpp" />
+    <ClCompile Include="Object\EnemyDeer.cpp" />
+    <ClCompile Include="Object\ColorData.cpp" />
     <ClCompile Include="Object\Player.cpp" />
     <ClCompile Include="Object\Stage.cpp" />
     <ClCompile Include="Scene\EditScene.cpp" />
@@ -36,7 +37,8 @@
   <ItemGroup>
     <ClInclude Include="Object\BoxCollider.h" />
     <ClInclude Include="Object\CharaBase.h" />
-    <ClInclude Include="Object\EnemyBat.h" />
+    <ClInclude Include="Object\EnemyDeer.h" />
+    <ClInclude Include="Object\ColorData.h" />
     <ClInclude Include="Object\Player.h" />
     <ClInclude Include="Object\Stage.h" />
     <ClInclude Include="Scene\AbstractScene.h" />

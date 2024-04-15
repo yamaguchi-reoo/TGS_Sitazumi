@@ -24,8 +24,8 @@ static char obj_string[UI_OBJECT_TYPE_NUM][256] =
     "–³",
     "’n–Ê",
     "‰Š",
-    "…",
     "–Ø",
+    "…",
 };
 
 static int can_select_type[UI_OBJECT_TYPE_NUM][2] =
@@ -39,10 +39,10 @@ static int can_select_type[UI_OBJECT_TYPE_NUM][2] =
 static char block_type_string[UI_OBJECT_TYPE_NUM][5][256] =
 {
     {"–³"," "," "," "," ",},
-    {"”’","ŠD","Ô","Â","—Î",},
+    {"”’","ŠD","Ô","—Î","Â",},
     {"‰Š"," "," "," "," ",},
-    {"…"," "," "," "," ",},
     {"–Ø"," "," "," "," ",},
+    {"…"," "," "," "," ",},
 };
 
 class EditScene :
