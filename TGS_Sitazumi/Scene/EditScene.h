@@ -1,15 +1,16 @@
 #pragma once
+#include "../Utility/common.h"
 #include "AbstractScene.h"
 #include "../Object/BoxCollider.h"
 #include "../Object/Stage.h"
 #include "../Utility/KeyInput.h"
 
-#define OBJECT_TYPE_NUM 9  //配置できるオブジェクトの種類数
-#define UI_OBJECT_TYPE_NUM 5  //配置できるオブジェクトの種類数
-#define WIDTH_BUTTON_POS_X 100  //横幅調節ボタンのX位置
-#define WIDTH_BUTTON_POS_Y 40  //横幅調節ボタンのY位置
+#define OBJECT_TYPE_NUM 10       //配置できるオブジェクトの種類数
+#define UI_OBJECT_TYPE_NUM 6     //配置できるオブジェクトの種類数
+#define WIDTH_BUTTON_POS_X 100   //横幅調節ボタンのX位置
+#define WIDTH_BUTTON_POS_Y 40    //横幅調節ボタンのY位置
 #define HEIGHT_BUTTON_POS_X 180  //縦幅調節ボタンのX位置
-#define HEIGHT_BUTTON_POS_Y 35 //縦幅調節ボタンのY位置
+#define HEIGHT_BUTTON_POS_Y 35   //縦幅調節ボタンのY位置
 
 //エリア区分
 enum SelectErea
@@ -26,12 +27,14 @@ static char obj_string[UI_OBJECT_TYPE_NUM][256] =
     "炎",
     "木",
     "水",
+    "初期リス",
 };
 
 static int can_select_type[UI_OBJECT_TYPE_NUM][2] =
 {
     {0,1},
     {1,5},
+    {0,1},
     {0,1},
     {0,1},
     {0,1},
@@ -43,6 +46,7 @@ static char block_type_string[UI_OBJECT_TYPE_NUM][5][256] =
     {"炎"," "," "," "," ",},
     {"木"," "," "," "," ",},
     {"水"," "," "," "," ",},
+    {"初期リス"," "," "," "," ",},
 };
 
 class EditScene :

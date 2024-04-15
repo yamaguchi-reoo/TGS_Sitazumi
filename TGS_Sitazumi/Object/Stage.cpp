@@ -1,6 +1,8 @@
 #include "Stage.h"
+#define _USE_MATH_DEFINES
+#include <math.h>
 
-Stage::Stage(float _x, float _y, float _width, float _height, int _type): inv_flg(false), debug_flg(false)
+Stage::Stage(float _x, float _y, float _width, float _height, int _type): frame(0),inv_flg(false), debug_flg(false), anim(0), effect_anim{0}
 {
 	location.x = _x;
 	location.y = _y;
@@ -19,6 +21,12 @@ Stage::Stage(float _x, float _y, float _width, float _height, int _type): inv_fl
 	{
 		swap_flg = false;
 	}
+	//エフェクト初期定義
+	for (int i = 0; i < ANIM_BLOCK_NUM; i++)
+	{
+		effect_anim[i].time = GetRand(40);
+	}
+
 }
 
 Stage::~Stage()
@@ -28,7 +36,37 @@ Stage::~Stage()
 
 void Stage::Update()
 {
+	frame++;
 	//現在の色情報に応じてブロックの色を変える
+	if (++anim > 60)
+	{
+		anim = 0;
+	}
+	//炎エフェクト処理
+	if (type == 6)
+	{
+		for (int i = 0; i < ANIM_BLOCK_NUM; i++)
+		{
+			if (effect_anim[i].time < 0)
+			{
+				effect_anim[i].location.x = local_location.x;
+				effect_anim[i].location.y = local_location.y + erea.height;
+				effect_anim[i].erea.width = erea.width / 10;
+				effect_anim[i].erea.height = erea.height / 10;
+				effect_anim[i].location.x += (erea.width / 10) * GetRand(10);
+				effect_anim[i].time = 30 + GetRand(30);
+				effect_anim[i].angle = GetRand(3);
+			}
+			else
+			{
+				effect_anim[i].location.x += 0.05 + (effect_anim[i].angle-1)/2;
+				effect_anim[i].location.y -= 1;
+				effect_anim[i].time--;
+				effect_anim[i].erea.width -= 0.05;
+				effect_anim[i].erea.height -= 0.05;
+			}
+		}
+	}
 }
 
 void Stage::Draw()const
@@ -51,11 +89,13 @@ void Stage::Draw()const
 		case 2:
 			DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, 0xaaaaaa, true);
 			break;
-			break;
 			//炎
 		case 6:
-			DrawStringF(local_location.x, local_location.y, "炎", 0xff0000);
-			break;
+			for (int i = 0; i < ANIM_BLOCK_NUM; i++)
+			{
+				DrawBoxAA(effect_anim[i].location.x, effect_anim[i].location.y, effect_anim[i].location.x + effect_anim[i].erea.width, effect_anim[i].location.y + effect_anim[i].erea.height, 0xff0000, true);
+			}
+				break;
 			//木
 		case 7:
 			DrawStringF(local_location.x, local_location.y, "木", 0x00ff00);
@@ -70,8 +110,12 @@ void Stage::Draw()const
 		}
 	}
 	//Editでの表示
-	if (debug_flg == true && type < 6)
+	if (debug_flg == true)
 	{
+		if (type == PLAYER_SPAWN_NUM)
+		{
+			DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, 0xffff00, true);
+		}
 		DrawFormatStringF(local_location.x, local_location.y, text_color[type], "%d", type);
 	}
 }

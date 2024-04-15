@@ -79,6 +79,20 @@ AbstractScene* EditScene::Update()
 						//更新
 						if (KeyInput::OnPressedMouse(MOUSE_INPUT_LEFT))
 						{
+							//プレイヤーの初期スポーン地点を設定するブロックを置いたなら、以前のスポーン地点は削除
+							if (current_type == PLAYER_SPAWN_NUM)
+							{
+								for (int n = 0; n < stage_height_num; n++)
+								{
+									for (int m = 0; m < stage_width_num; m++)
+									{
+										if (stage_data[n][m] == PLAYER_SPAWN_NUM)
+										{
+											stage_data[n][m] = 0;
+										}
+									}
+								}
+							}
 							stage_data[i][j] = current_type;
 						}
 					}
