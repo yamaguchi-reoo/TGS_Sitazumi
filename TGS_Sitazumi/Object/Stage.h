@@ -4,8 +4,8 @@
 #include "BoxCollider.h"
 #include "ColorData.h"
 
-#define ANIM_BLOCK_NUM 10 //ƒAƒjƒ[ƒVƒ‡ƒ“‚Ég‚¤ƒuƒƒbƒN‚Ì”
-//ColorDataŠi”[—p
+#define ANIM_BLOCK_NUM 10 //ï¿½Aï¿½jï¿½ï¿½ï¿½[ï¿½Vï¿½ï¿½ï¿½ï¿½ï¿½Égï¿½ï¿½ï¿½uï¿½ï¿½ï¿½bï¿½Nï¿½Ìï¿½
+//ColorDataï¿½iï¿½[ï¿½p
 static int color_data[6]
 {
 	0,
@@ -16,7 +16,7 @@ static int color_data[6]
 	BLUE
 };
 
-//ƒfƒoƒbƒO•\¦—pFî•ñ
+//ï¿½fï¿½oï¿½bï¿½Oï¿½\ï¿½ï¿½ï¿½pï¿½Fï¿½ï¿½ï¿½
 static int text_color[10]
 {
 	0xffffff,
@@ -31,38 +31,38 @@ static int text_color[10]
 	0x00ff00,
 };
 
-//ƒAƒjƒ[ƒVƒ‡ƒ“—p
+//ï¿½Aï¿½jï¿½ï¿½ï¿½[ï¿½Vï¿½ï¿½ï¿½ï¿½ï¿½p
 struct ANIM
 {
-	Location location;	//À•W
-	Erea erea;			//‘å‚«‚³
-	int time;			//íœ‚Ü‚Å‚ÌŠÔ
-	float angle;		//is•ûŒü
+	Location location;	//ï¿½ï¿½ï¿½W
+	Erea erea;			//ï¿½å‚«ï¿½ï¿½
+	int time;			//ï¿½íœï¿½Ü‚Å‚Ìï¿½ï¿½ï¿½
+	float angle;		//ï¿½iï¿½sï¿½ï¿½ï¿½ï¿½
 };
 class Stage :
 	public BoxCollider, public ColorData
 {
 private:
-	int frame;					//ƒtƒŒ[ƒ€‘ª’è
-	int type;					//” ‚Ìí—Ş(0=”’ 1=ŠD 2=Ô 3=—Î 4=Â 5=‰Š 6=–Ø 7=…)
-	bool inv_flg;				//‰½‚à•`‰æ‚µ‚È‚¢‚©”»’f
-	bool debug_flg;				//” ‚Ìí—Ş‚ğ•\¦‚·‚é‚©
-	int swap_flg;				//F‚ÌŒğŠ·‚ªo—ˆ‚éƒuƒƒbƒN‚©‚Ç‚¤‚©
-	int anim;						//ƒAƒjƒ[ƒVƒ‡ƒ“—p
-	ANIM effect_anim[ANIM_BLOCK_NUM];	//ƒAƒjƒ[ƒVƒ‡ƒ“—pÀ•W•ÛŠÇ
+	int frame;					//ï¿½tï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	int type;					//ï¿½ï¿½ï¿½Ìï¿½ï¿½(0=ï¿½ï¿½ 1=ï¿½D 2=ï¿½ï¿½ 3=ï¿½ï¿½ 4=ï¿½ï¿½ 5=ï¿½ï¿½ 6=ï¿½ï¿½ 7=ï¿½ï¿½)
+	bool inv_flg;				//ï¿½ï¿½ï¿½ï¿½`ï¿½æ‚µï¿½È‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½f
+	bool debug_flg;				//ï¿½ï¿½ï¿½Ìï¿½Ş‚ï¿½\ï¿½ï¿½ï¿½ï¿½ï¿½é‚©
+	int swap_flg;				//ï¿½Fï¿½ÌŒï¿½ï¿½ï¿½ï¿½ï¿½oï¿½ï¿½ï¿½ï¿½uï¿½ï¿½ï¿½bï¿½Nï¿½ï¿½ï¿½Ç‚ï¿½ï¿½ï¿½
+	int anim;						//ï¿½Aï¿½jï¿½ï¿½ï¿½[ï¿½Vï¿½ï¿½ï¿½ï¿½ï¿½p
+	ANIM effect_anim[ANIM_BLOCK_NUM];	//ï¿½Aï¿½jï¿½ï¿½ï¿½[ï¿½Vï¿½ï¿½ï¿½ï¿½ï¿½pï¿½ï¿½ï¿½Wï¿½ÛŠï¿½
 public:
 	Stage(float _x, float _y, float _width, float _height, int _type);
 	~Stage();
 	void Update();
 	void Draw()const;
 
-	//í—Ş‚ğæ“¾(0=”’ 1=ŠD 2=Ô 3=—Î 4=Â 5=‰Š 6=–Ø 7=…)
+	//ï¿½ï¿½Ş‚ï¿½æ“¾(0=ï¿½ï¿½ 1=ï¿½D 2=ï¿½ï¿½ 3=ï¿½ï¿½ 4=ï¿½ï¿½ 5=ï¿½ï¿½ 6=ï¿½ï¿½ 7=ï¿½ï¿½)
 	int GetStageCollisionType();
-	//í—Ş‚ğİ’è
+	//ï¿½ï¿½Ş‚ï¿½İ’ï¿½
 	void SetStageType(int _type);
-	//í—Ş‚ğæ“¾
+	//ï¿½ï¿½Ş‚ï¿½æ“¾
 	int GetStageType() { return type; }
-	//” ‚Ìí—Ş‚ğ•\¦‚·‚é
+	//ï¿½ï¿½ï¿½Ìï¿½Ş‚ï¿½\ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	void SetDebugFlg() { debug_flg = true; }
 };
 

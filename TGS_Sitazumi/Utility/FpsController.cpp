@@ -2,7 +2,7 @@
 #include "FPSController.h"
 
 void FpsController::Init(float RefreshRate, int UpdateTime) {
-    FrameTime = (int)(1000.0f / RefreshRate); //1ƒtƒŒ[ƒ€‚ÌŠÔ‚ÌŒvZ
+    FrameTime = (int)(1000.0f / RefreshRate); //1ãƒ•ãƒ¬ãƒ¼ãƒ ã®æ™‚é–“ã®è¨ˆç®—
     UpdateTime = UpdateTime;
     WaitTime = 0;
     LastTime = NowTime = 0;
@@ -14,16 +14,16 @@ void FpsController::Init(float RefreshRate, int UpdateTime) {
 void FpsController::Wait() {
     NowTime = GetNowCount();
     WaitTime = FrameTime - (NowTime - LastTime);
-    if (WaitTime > 0) { //‘Ò‚¿ŠÔ‚ª‚ ‚ê‚Î
-        WaitTimer(WaitTime); //w’èŠÔ‘Ò‚Â
+    if (WaitTime > 0) { //å¾…ã¡æ™‚é–“ãŒã‚ã‚Œã°
+        WaitTimer(WaitTime); //æŒ‡å®šæ™‚é–“å¾…ã¤
     }
     LastTime = GetNowCount();
 }
 
 float FpsController::Get() {
     Count += 1.0f;
-    if (UpdateTime < (LastTime - LastUpdate)) { //ƒAƒbƒvƒf[ƒgŠÔ‚É‚È‚Á‚Ä‚¢‚ê‚Î
-        Fps = Count / (float)(LastTime - LastUpdate) * 1000.0f; //FPS’l‚ÌŒvZ
+    if (UpdateTime < (LastTime - LastUpdate)) { //ã‚¢ãƒƒãƒ—ãƒ‡ãƒ¼ãƒˆæ™‚é–“ã«ãªã£ã¦ã„ã‚Œã°
+        Fps = Count / (float)(LastTime - LastUpdate) * 1000.0f; //FPSå€¤ã®è¨ˆç®—
         LastUpdate = LastTime;
         Count = 0.0f;
     }

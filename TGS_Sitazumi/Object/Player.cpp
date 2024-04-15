@@ -71,12 +71,12 @@ void Player::Draw()const
 
 void Player::MoveActor()
 {
-	//ƒWƒƒƒ“ƒv
+	//ï¿½Wï¿½ï¿½ï¿½ï¿½ï¿½v
 	if (PadInput::OnButton(XINPUT_BUTTON_A) && stageHitFlg[1][bottom]) {
 		vector.y = -20.f;
 	}
 
-	//¶‰EˆÚ“®
+	//ï¿½ï¿½ï¿½Eï¿½Ú“ï¿½
 	if (PadInput::TipLeftLStick(STICKL_X) > 0.2) {
 		vector.x = 0.5f;
 	}
@@ -90,18 +90,18 @@ void Player::MoveActor()
 
 void Player::MoveAim()
 {
-	//Æ€‚ÌÀ•W
+	//ï¿½Æï¿½ï¿½Ìï¿½ï¿½W
 	aimLoc.x = (local_location.x + (erea.width / 2)) + PadInput::TipLeftLStick(STICKL_X) * 100.f;
 	aimLoc.y = (local_location.y + (erea.height / 2)) + PadInput::TipLeftLStick(STICKL_Y) * -100.f;
 
-	//Æ€‚ÌƒxƒNƒgƒ‹
+	//ï¿½Æï¿½ï¿½Ìƒxï¿½Nï¿½gï¿½ï¿½
 	Location tmpv;
 	float len;
 	tmpv.x = aimLoc.x - (local_location.x + (erea.width / 2));
 	tmpv.y = aimLoc.y - (local_location.y + (erea.height / 2));
 	len = sqrtf(powf(tmpv.x, 2) + powf(tmpv.y, 2));
 
-	//Æ€‚Ì’PˆÊƒxƒNƒgƒ‹
+	//ï¿½Æï¿½ï¿½Ì’Pï¿½Êƒxï¿½Nï¿½gï¿½ï¿½
 	aimVec.x = tmpv.x / len;
 	aimVec.y = tmpv.y / len;
 
@@ -119,7 +119,7 @@ bool Player::CheckCollision(Stage* stage)
 		erea.height = 1.f;
 		erea.width = tmpe.width - 10.f;
 
-		//ƒvƒŒƒCƒ„[‚Ìã‘¤
+		//ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½Ìã‘¤
 		//location.y -= tmpe.height / 2;
 		if (stage->HitBox(this) && !stageHitFlg[1][top]) {
 			stageHitFlg[0][top] = true;
@@ -129,7 +129,7 @@ bool Player::CheckCollision(Stage* stage)
 			stageHitFlg[0][top] = false;
 		}
 
-		//ƒvƒŒƒCƒ„[‚Ì‰º‘¤
+		//ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½Ì‰ï¿½ï¿½ï¿½
 		location.y += tmpe.height;
 		if (stage->HitBox(this) && !stageHitFlg[1][bottom]) {
 			stageHitFlg[0][bottom] = true;
@@ -139,11 +139,11 @@ bool Player::CheckCollision(Stage* stage)
 			stageHitFlg[0][bottom] = false;
 		}
 
-		//ƒƒP[ƒVƒ‡ƒ“A‚‚³‚ð–ß‚·
+		//ï¿½ï¿½ï¿½Pï¿½[ï¿½Vï¿½ï¿½ï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß‚ï¿½
 		location.y = tmpl.y;
 		erea.height = tmpe.height;
-		//–„‚Ü‚è–hŽ~(ã‰º)
-		if (stageHitFlg[0][bottom]) {//‰º‚Ì–„‚Ü‚è–hŽ~
+		//ï¿½ï¿½ï¿½Ü‚ï¿½hï¿½~(ï¿½ã‰º)
+		if (stageHitFlg[0][bottom]) {//ï¿½ï¿½ï¿½Ì–ï¿½ï¿½Ü‚ï¿½hï¿½~
 			float t = stage->GetLocation().y - (location.y + erea.height);
 			if (t != 0) {
 				location.y += t;
@@ -153,11 +153,11 @@ bool Player::CheckCollision(Stage* stage)
 
 		
 
-		//¶‰EƒGƒŠƒA‚ÌÝ’è
+		//ï¿½ï¿½ï¿½Eï¿½Gï¿½ï¿½ï¿½Aï¿½ÌÝ’ï¿½
 		erea.height = tmpe.height - 10;
 		erea.width = 1;
 
-		//ƒvƒŒƒCƒ„[‚Ì¶‘¤
+		//ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½Ìï¿½ï¿½ï¿½
 		//location.x -= tmpe.width / 2;
 		if (stage->HitBox(this) && !stageHitFlg[1][left]) {
 			stageHitFlg[0][left] = true;
@@ -168,7 +168,7 @@ bool Player::CheckCollision(Stage* stage)
 			stageHitFlg[0][left] = false;
 		}
 
-		//ƒvƒŒƒCƒ„[‚Ì‰E‘¤
+		//ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½Ì‰Eï¿½ï¿½
 		location.x += tmpe.width;
 		if (stage->HitBox(this) && !stageHitFlg[1][right]) {
 			stageHitFlg[0][right] = true;
@@ -180,7 +180,7 @@ bool Player::CheckCollision(Stage* stage)
 
 
 		
-		//Œ³‚É–ß‚·
+		//ï¿½ï¿½ï¿½É–ß‚ï¿½
 		location.x = tmpl.x;
 		erea.height = tmpe.height;
 		erea.width = tmpe.width;

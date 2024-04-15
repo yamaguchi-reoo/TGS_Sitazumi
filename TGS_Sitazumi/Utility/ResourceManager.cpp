@@ -11,7 +11,7 @@ void ResourceManager::LoadResource()
 		image_data[i] = LoadGraph(image_filepath[i]);
 	}
 
-	//•ªŠ„”“™‚Ì”’l‚ªˆá‚¤ê‡for‚Å‚Í‘Îˆo—ˆ‚È‚¢‚Ì‚ÅA‚P‚Â‚P‚ÂDivGraph‚ğŒÄ‚Ño‚·(“¯‚¶‚È‚çfor‚Å)
+	//åˆ†å‰²æ•°ç­‰ã®æ•°å€¤ãŒé•ã†å ´åˆforã§ã¯å¯¾å‡¦å‡ºæ¥ãªã„ã®ã§ã€ï¼‘ã¤ï¼‘ã¤DivGraphã‚’å‘¼ã³å‡ºã™(åŒã˜ãªã‚‰forã§)
 	for (int i = 0; i < DIV_IMAGE_NUM; i++)
 	{
 		LoadDivGraph(div_image_filepath[i], 12, 5, 3, 34, 34, div_image_data[i]);

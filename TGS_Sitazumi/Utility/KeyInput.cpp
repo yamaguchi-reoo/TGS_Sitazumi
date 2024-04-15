@@ -6,9 +6,9 @@ CURSOR KeyInput::Cursor;
 int KeyInput::NowMouse[MOUSE_MAX];
 int KeyInput::OldMouse[MOUSE_MAX];
 
-//ƒpƒbƒhî•ñ‚ÌXV
+//ãƒ‘ãƒƒãƒ‰æƒ…å ±ã®æ›´æ–°
 void KeyInput::UpdateKey() {
-	// “ü—ÍƒL[æ“¾
+	// å…¥åŠ›ã‚­ãƒ¼å–å¾—
 	for (int i = 0; i < KEY_MAX; i++) {
 		OldKey[i] = NowKey[i];
 		NowKey[i] = CheckHitKey(i);

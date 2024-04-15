@@ -10,18 +10,18 @@ Stage::Stage(float _x, float _y, float _width, float _height, int _type): frame(
 	erea.width = _width;
 	type = _type;	
 	color = 0;
-	//F‚ğŒğŠ·‚Å‚«‚éƒXƒe[ƒWƒuƒƒbƒN‚Ìİ’è
+	//ï¿½Fï¿½ï¿½ï¿½ï¿½ï¿½Å‚ï¿½ï¿½ï¿½Xï¿½eï¿½[ï¿½Wï¿½uï¿½ï¿½ï¿½bï¿½Nï¿½Ìİ’ï¿½
 	if (type == 1 || type == 3 || type == 4 || type == 5)
 	{
 		swap_flg = true;
 		SetColorData(color_data[type]);
 	}
-	//F‚ğŒğŠ·‚Å‚«‚È‚¢ƒXƒe[ƒWƒuƒƒbƒN‚Ìİ’è
+	//ï¿½Fï¿½ï¿½ï¿½ï¿½ï¿½Å‚ï¿½ï¿½È‚ï¿½ï¿½Xï¿½eï¿½[ï¿½Wï¿½uï¿½ï¿½ï¿½bï¿½Nï¿½Ìİ’ï¿½
 	else
 	{
 		swap_flg = false;
 	}
-	//ƒGƒtƒFƒNƒg‰Šú’è‹`
+	//ï¿½Gï¿½tï¿½Fï¿½Nï¿½gï¿½ï¿½ï¿½ï¿½ï¿½ï¿½`
 	for (int i = 0; i < ANIM_BLOCK_NUM; i++)
 	{
 		effect_anim[i].time = GetRand(40);
@@ -37,12 +37,12 @@ Stage::~Stage()
 void Stage::Update()
 {
 	frame++;
-	//Œ»İ‚ÌFî•ñ‚É‰‚¶‚ÄƒuƒƒbƒN‚ÌF‚ğ•Ï‚¦‚é
+	//ï¿½ï¿½ï¿½İ‚ÌFï¿½ï¿½ï¿½É‰ï¿½ï¿½ï¿½ï¿½Äƒuï¿½ï¿½ï¿½bï¿½Nï¿½ÌFï¿½ï¿½Ï‚ï¿½ï¿½ï¿½
 	if (++anim > 60)
 	{
 		anim = 0;
 	}
-	//‰ŠƒGƒtƒFƒNƒgˆ—
+	//ï¿½ï¿½ï¿½Gï¿½tï¿½Fï¿½Nï¿½gï¿½ï¿½ï¿½ï¿½
 	if (type == 6)
 	{
 		for (int i = 0; i < ANIM_BLOCK_NUM; i++)
@@ -75,41 +75,41 @@ void Stage::Draw()const
 	{
 		switch (type)
 		{
-			//–³
+			//ï¿½ï¿½
 		case 0:
 			break;
-			//’n–Ê(”’AÔA—ÎAÂ)
+			//ï¿½nï¿½ï¿½(ï¿½ï¿½ï¿½Aï¿½ÔAï¿½ÎAï¿½ï¿½)
 		case 1:
 		case 3:
 		case 4:
 		case 5:
 			DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, true);
 			break;
-			//’n–Ê(ŠD)
+			//ï¿½nï¿½ï¿½(ï¿½D)
 		case 2:
 			DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, 0xaaaaaa, true);
 			break;
-			//‰Š
+			//ï¿½ï¿½
 		case 6:
 			for (int i = 0; i < ANIM_BLOCK_NUM; i++)
 			{
 				DrawBoxAA(effect_anim[i].location.x, effect_anim[i].location.y, effect_anim[i].location.x + effect_anim[i].erea.width, effect_anim[i].location.y + effect_anim[i].erea.height, 0xff0000, true);
 			}
 				break;
-			//–Ø
+			//ï¿½ï¿½
 		case 7:
-			DrawStringF(local_location.x, local_location.y, "–Ø", 0x00ff00);
+			DrawStringF(local_location.x, local_location.y, "ï¿½ï¿½", 0x00ff00);
 			break;
-			//…
+			//ï¿½ï¿½
 		case 8:
-			DrawStringF(local_location.x, local_location.y, "…", 0x0000ff);
+			DrawStringF(local_location.x, local_location.y, "ï¿½ï¿½", 0x0000ff);
 			break;
-			//–³
+			//ï¿½ï¿½
 		default:
 			break;
 		}
 	}
-	//Edit‚Å‚Ì•\¦
+	//Editï¿½Å‚Ì•\ï¿½ï¿½
 	if (debug_flg == true)
 	{
 		if (type == PLAYER_SPAWN_NUM)

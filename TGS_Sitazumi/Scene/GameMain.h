@@ -4,6 +4,7 @@
 #include "../Object/Player.h"
 #include "../Object/Stage.h"
 #include "../Object/EnemyDeer.h"
+#include"../Object/EnemyBat.h"
 
 class Player;
 
@@ -22,6 +23,7 @@ private:
     int stage_height;       //�X�e�[�W�c��
 
     EnemyDeer* enemydeer;
+    EnemyBat* enemybat;
 
     Player* player;
 

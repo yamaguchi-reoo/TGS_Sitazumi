@@ -6,11 +6,11 @@
 class Fps
 {
 private:
-	int start_time;		//‘ª’èŠJŽnŽž
-	int count;			//ƒJƒEƒ“ƒg
+	int start_time;		//æ¸¬å®šé–‹å§‹æ™‚åˆ»
+	int count;			//ã‚«ã‚¦ãƒ³ãƒˆ
 	float fps;			//fps
-	static const int average = 10;	//•½‹Ï‚ðƒJƒEƒ“ƒg”
-	static const int frame = 60;//ƒtƒŒ[ƒ€ƒŒ[ƒgÝ’è
+	static const int average = 10;	//å¹³å‡ã‚’ã‚«ã‚¦ãƒ³ãƒˆæ•°
+	static const int frame = 60;//ãƒ•ãƒ¬ãƒ¼ãƒ ãƒ¬ãƒ¼ãƒˆè¨­å®š
 public:
 	Fps()
 	{
@@ -20,12 +20,12 @@ public:
 	}
 	bool Update()
 	{
-		//1ƒtƒŒ[ƒ€–Ú‚È‚çŽž‚ð‹L‰¯
+		//1ãƒ•ãƒ¬ãƒ¼ãƒ ç›®ãªã‚‰æ™‚åˆ»ã‚’è¨˜æ†¶
 		if (count == 0)
 		{
 			start_time = GetNowCount();
 		}
-		//10ƒtƒŒ[ƒ€–Ú‚È‚ç•½‹Ï‚ðŒvŽZ‚·‚é
+		//10ãƒ•ãƒ¬ãƒ¼ãƒ ç›®ãªã‚‰å¹³å‡ã‚’è¨ˆç®—ã™ã‚‹
 		if (count == average)
 		{
 			int t = GetNowCount();
@@ -38,18 +38,18 @@ public:
 	}
 	void Draw()
 	{
-		//fps•`‰æ
+		//fpsæç”»
 		DrawFormatString(0, 0, GetColor(255, 255, 255), "%.1f", fps);
 	}
 	void Wait()
 	{
-		//‚©‚©‚Á‚½ŽžŠÔ
+		//ã‹ã‹ã£ãŸæ™‚é–“
 		int took_time = GetNowCount() - start_time;
-		//‘Ò‚Â‚×‚«ŽžŠÔ
+		//å¾…ã¤ã¹ãæ™‚é–“
 		int wait_time = count * 1000 / frame - took_time;
 		if (wait_time > 0)
 		{
-			//‘Ò‹@
+			//å¾…æ©Ÿ
 			Sleep(wait_time);
 		}
 	}

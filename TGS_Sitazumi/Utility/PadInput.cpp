@@ -8,7 +8,7 @@ Stick PadInput::Lstick;
 
 void PadInput::UpdateKey()
 {
-	// “ü—ÍƒL[æ“¾
+	// å…¥åŠ›ã‚­ãƒ¼å–å¾—
 	GetJoypadXInputState(DX_INPUT_KEY_PAD1, &Input);
 	for (int i = 0; i < BUTTONS; i++)
 	{
@@ -16,7 +16,7 @@ void PadInput::UpdateKey()
 		NowKey[i] = Input.Buttons[i];
 	}
 
-	//¶ƒXƒeƒBƒbƒN
+	//å·¦ã‚¹ãƒ†ã‚£ãƒƒã‚¯
 	Lstick.ThumbX = Input.ThumbLX;
 	Lstick.ThumbY = Input.ThumbLY;
 }
@@ -45,14 +45,14 @@ float PadInput::TipLeftLStick(short StickL)
 	{
 		float ratioL_X = Input.ThumbLX / MAXL_X;
 
-		//¶ƒXƒeƒBƒbƒN‚Ì‰¡²‚ğÅ‘å’l‚ğ‚P‚Æ‚µ‚½Š„‡
+		//å·¦ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã®æ¨ªè»¸ã‚’æœ€å¤§å€¤ã‚’ï¼‘ã¨ã—ãŸå‰²åˆ
 		return ratioL_X;
 	}
 	else if (StickL == STICKL_Y)
 	{
 		float ratioL_Y = Input.ThumbLY / MAXL_Y;
 
-		//¶ƒXƒeƒBƒbƒN‚Ìc²’l‚ÌÅ‘å’l‚ğ‚P‚Æ‚µ‚½Š„‡
+		//å·¦ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã®ç¸¦è»¸å€¤ã®æœ€å¤§å€¤ã‚’ï¼‘ã¨ã—ãŸå‰²åˆ
 		return ratioL_Y;
 	}
 

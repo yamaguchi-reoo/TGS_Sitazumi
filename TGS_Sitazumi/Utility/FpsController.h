@@ -3,18 +3,18 @@
 
 class FpsController {
 private:
-    int FrameTime; //1ƒtƒŒ[ƒ€‚ÌŠÔ(ƒ~ƒŠ•b)
-    int WaitTime; //‘Ò‚¿ŠÔ
-    int LastTime, NowTime; //ÅŒã‚Éæ“¾‚µ‚½ŠÔ‚ÆC¡‚ÌŠÔ
-    float Count; //ƒtƒŒ[ƒ€‚ÌƒJƒEƒ“ƒg
-    float Fps; //•\¦‚·‚é‚µ‚½FPS’l
-    int UpdateTime; //•\¦’l‚ğXV‚·‚éŠÔ
-    int LastUpdate; //ÅŒã‚É•\¦’l‚ğXV‚µ‚½ŠÔ
-    //‰Šú‰»
+    int FrameTime; //1ãƒ•ãƒ¬ãƒ¼ãƒ ã®æ™‚é–“(ãƒŸãƒªç§’)
+    int WaitTime; //å¾…ã¡æ™‚é–“
+    int LastTime, NowTime; //æœ€å¾Œã«å–å¾—ã—ãŸæ™‚é–“ã¨ï¼Œä»Šã®æ™‚é–“
+    float Count; //ãƒ•ãƒ¬ãƒ¼ãƒ ã®ã‚«ã‚¦ãƒ³ãƒˆ
+    float Fps; //è¡¨ç¤ºã™ã‚‹ã—ãŸFPSå€¤
+    int UpdateTime; //è¡¨ç¤ºå€¤ã‚’æ›´æ–°ã™ã‚‹æ™‚é–“
+    int LastUpdate; //æœ€å¾Œã«è¡¨ç¤ºå€¤ã‚’æ›´æ–°ã—ãŸæ™‚é–“
+    //åˆæœŸåŒ–
     void Init(float RefreshRate, int UpdateTime);
 public:
 
-    //ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+    //ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
     FpsController(float RefreshRate, int UpdateTime) {
         Init(RefreshRate, UpdateTime);
     }
@@ -22,19 +22,19 @@ public:
         Init(60.0f, 800);
     }
 
-    //‘Ò‚¿ŠÔ‚ÌŒvZ
+    //å¾…ã¡æ™‚é–“ã®è¨ˆç®—
     void Wait();
 
-    //FPS’l‚ÌŒvZ
+    //FPSå€¤ã®è¨ˆç®—
     float Get();
 
-    //•`‰æˆ—
+    //æç”»å‡¦ç†
     void Disp() {
         SetFontSize(10);
         DrawFormatString(10, 10, 0xffffff, "fps:%0.1f", Fps);
         SetFontSize(24);
     }
-    //ˆ—‚ğ‚Ü‚Æ‚ß‚½‚à‚Ì
+    //å‡¦ç†ã‚’ã¾ã¨ã‚ãŸã‚‚ã®
     float All() {
         Get();
         Wait();

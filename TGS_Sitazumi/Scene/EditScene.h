@@ -5,14 +5,14 @@
 #include "../Object/Stage.h"
 #include "../Utility/KeyInput.h"
 
-#define OBJECT_TYPE_NUM 10       //”z’u‚Å‚«‚éƒIƒuƒWƒFƒNƒg‚Ìí—Ş”
-#define UI_OBJECT_TYPE_NUM 6     //”z’u‚Å‚«‚éƒIƒuƒWƒFƒNƒg‚Ìí—Ş”
-#define WIDTH_BUTTON_POS_X 100   //‰¡•’²ßƒ{ƒ^ƒ“‚ÌXˆÊ’u
-#define WIDTH_BUTTON_POS_Y 40    //‰¡•’²ßƒ{ƒ^ƒ“‚ÌYˆÊ’u
-#define HEIGHT_BUTTON_POS_X 180  //c•’²ßƒ{ƒ^ƒ“‚ÌXˆÊ’u
-#define HEIGHT_BUTTON_POS_Y 35   //c•’²ßƒ{ƒ^ƒ“‚ÌYˆÊ’u
+#define OBJECT_TYPE_NUM 10       //é…ç½®ã§ãã‚‹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ç¨®é¡æ•°
+#define UI_OBJECT_TYPE_NUM 6     //é…ç½®ã§ãã‚‹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ç¨®é¡æ•°
+#define WIDTH_BUTTON_POS_X 100   //æ¨ªå¹…èª¿ç¯€ãƒœã‚¿ãƒ³ã®Xä½ç½®
+#define WIDTH_BUTTON_POS_Y 40    //æ¨ªå¹…èª¿ç¯€ãƒœã‚¿ãƒ³ã®Yä½ç½®
+#define HEIGHT_BUTTON_POS_X 180  //ç¸¦å¹…èª¿ç¯€ãƒœã‚¿ãƒ³ã®Xä½ç½®
+#define HEIGHT_BUTTON_POS_Y 35   //ç¸¦å¹…èª¿ç¯€ãƒœã‚¿ãƒ³ã®Yä½ç½®
 
-//ƒGƒŠƒA‹æ•ª
+//ã‚¨ãƒªã‚¢åŒºåˆ†
 enum SelectErea
 {
     STAGE_EDIT = 0,
@@ -22,12 +22,12 @@ enum SelectErea
 
 static char obj_string[UI_OBJECT_TYPE_NUM][256] =
 {
-    "–³",
-    "’n–Ê",
-    "‰Š",
-    "–Ø",
-    "…",
-    "‰ŠúƒŠƒX",
+    "ç„¡",
+    "åœ°é¢",
+    "ç‚",
+    "æœ¨",
+    "æ°´",
+    "åˆæœŸãƒªã‚¹",
 };
 
 static int can_select_type[UI_OBJECT_TYPE_NUM][2] =
@@ -41,12 +41,12 @@ static int can_select_type[UI_OBJECT_TYPE_NUM][2] =
 };
 static char block_type_string[UI_OBJECT_TYPE_NUM][5][256] =
 {
-    {"–³"," "," "," "," ",},
-    {"”’","ŠD","Ô","—Î","Â",},
-    {"‰Š"," "," "," "," ",},
-    {"–Ø"," "," "," "," ",},
-    {"…"," "," "," "," ",},
-    {"‰ŠúƒŠƒX"," "," "," "," ",},
+    {"ç„¡"," "," "," "," ",},
+    {"ç™½","ç°","èµ¤","ç·‘","é’",},
+    {"ç‚"," "," "," "," ",},
+    {"æœ¨"," "," "," "," ",},
+    {"æ°´"," "," "," "," ",},
+    {"åˆæœŸãƒªã‚¹"," "," "," "," ",},
 };
 
 class EditScene :
@@ -54,67 +54,67 @@ class EditScene :
 {
 
 private:
-    int now_select_erea;                                  //Œ»İ‘I‘ğ’†‚ÌƒGƒŠƒA(0=ƒc[ƒ‹ƒ{ƒbƒNƒX 1=ƒXƒe[ƒW)
-    int now_stage;                                        //Œ»İ•ÒW’†‚ÌƒXƒe[ƒW
-    CURSOR cursor;                                        //ƒ}ƒEƒXƒJ[ƒ\ƒ‹
-    int stage_data[MAX_STAGE_HEIGHT][MAX_STAGE_WIDTH];    //ƒXƒe[ƒW‚Ìƒf[ƒ^Ši”[—p
-    int old_stage_data[MAX_STAGE_HEIGHT][MAX_STAGE_WIDTH];//ƒXƒe[ƒW‚Ì•ÏX‘Oƒf[ƒ^Ši”[—p
-    Stage* stage[MAX_STAGE_HEIGHT][MAX_STAGE_WIDTH];      //°‚ÌƒIƒuƒWƒFƒNƒg
-    int current_type;                                     //¡‘I‚Î‚ê‚Ä‚¢‚éƒIƒuƒWƒFƒNƒgƒ^ƒCƒv
-    int ui_current_type;                                  //¡‘I‚Î‚ê‚Ä‚¢‚éƒIƒuƒWƒFƒNƒgƒ^ƒCƒv(Œ©‚½–Ú)
-    Location width_button_location;                       //ƒXƒe[ƒW••ÏX—pƒ{ƒ^ƒ“‚ÌˆÊ’u
-    Location height_button_location;                       //ƒXƒe[ƒW‚‚³•ÏX—pƒ{ƒ^ƒ“‚ÌˆÊ’u
-    bool current_leftbutton_flg;                          //ƒXƒe[ƒWƒTƒCƒY•ÏX—p‚Ì¶ƒ{ƒ^ƒ“‚ª‘I‚Î‚ê‚Ä‚¢‚é‚©
-    bool current_rightbutton_flg;                         //ƒXƒe[ƒWƒTƒCƒY•ÏX—p‚Ì‰Eƒ{ƒ^ƒ“‚ª‘I‚Î‚ê‚Ä‚¢‚é‚©
-    bool current_upbutton_flg;                            //ƒXƒe[ƒWƒTƒCƒY•ÏX—p‚Ìãƒ{ƒ^ƒ“‚ª‘I‚Î‚ê‚Ä‚¢‚é‚©
-    bool current_downbutton_flg;                          //ƒXƒe[ƒWƒTƒCƒY•ÏX—p‚Ì‰ºƒ{ƒ^ƒ“‚ª‘I‚Î‚ê‚Ä‚¢‚é‚©
-    int button_interval;                                  //ƒXƒe[ƒW••ÏX‚ÌƒCƒ“ƒ^[ƒoƒ‹
-    Location tool_location;                               //ƒc[ƒ‹ƒ{ƒbƒNƒX‚Ì¶ãÀ•W
-    Erea tool_size;                                       //¶ã‚Ìƒc[ƒ‹ƒ{ƒbƒNƒX‚Ì•
-    bool tool_pickup_flg;                                 //ƒc[ƒ‹ƒ{ƒbƒNƒX‚ğ‚Á‚Ä‚¢‚é‚©”»’f
-    bool select_data[MAX_STAGE_HEIGHT][MAX_STAGE_WIDTH];  //‚»‚Ìƒf[ƒ^‚ªŒ»İ‘I‘ğ’†‚©‚Ç‚¤‚©
-    int current_type_select;                              //ƒuƒƒbƒN‚Ìƒ^ƒCƒv‘I‘ğ‰æ–Ê‚ªŠJ‚©‚ê‚Ä‚¢‚é‚©‚Ç‚¤‚©(-1=‰½‚àŠJ‚¢‚Ä‚¢‚È‚¢ 0ˆÈ~=‚»‚Ì”š‚Ì‘I‘ğ‰æ–Ê‚ğŠJ‚¢‚Ä‚¢‚é)
-    int disp_num;                                         //Œ»İ‘I‘ğ‚³‚ê‚Ä‚¢‚éƒuƒƒbƒN‚Ìƒ^ƒCƒv
-    int now_current_type;                                 //Œ»İ’u‚¯‚éƒuƒƒbƒN‚Ìƒ^ƒCƒv
-    Location current_type_location;                       //ƒuƒƒbƒN‚Ìƒ^ƒCƒv‚ğ‘I‘ğ‚·‚éƒ{ƒbƒNƒX‚ÌÀ•W
-    Erea current_type_erea;                               //ƒuƒƒbƒN‚Ìƒ^ƒCƒv‚ğ‘I‘ğ‚·‚éƒ{ƒbƒNƒX‚Ì‘å‚«‚³
+    int now_select_erea;                                  //ç¾åœ¨é¸æŠä¸­ã®ã‚¨ãƒªã‚¢(0=ãƒ„ãƒ¼ãƒ«ãƒœãƒƒã‚¯ã‚¹ 1=ã‚¹ãƒ†ãƒ¼ã‚¸)
+    int now_stage;                                        //ç¾åœ¨ç·¨é›†ä¸­ã®ã‚¹ãƒ†ãƒ¼ã‚¸
+    CURSOR cursor;                                        //ãƒã‚¦ã‚¹ã‚«ãƒ¼ã‚½ãƒ«
+    int stage_data[MAX_STAGE_HEIGHT][MAX_STAGE_WIDTH];    //ã‚¹ãƒ†ãƒ¼ã‚¸ã®ãƒ‡ãƒ¼ã‚¿æ ¼ç´ç”¨
+    int old_stage_data[MAX_STAGE_HEIGHT][MAX_STAGE_WIDTH];//ã‚¹ãƒ†ãƒ¼ã‚¸ã®å¤‰æ›´å‰ãƒ‡ãƒ¼ã‚¿æ ¼ç´ç”¨
+    Stage* stage[MAX_STAGE_HEIGHT][MAX_STAGE_WIDTH];      //åºŠã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
+    int current_type;                                     //ä»Šé¸ã°ã‚Œã¦ã„ã‚‹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚¿ã‚¤ãƒ—
+    int ui_current_type;                                  //ä»Šé¸ã°ã‚Œã¦ã„ã‚‹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚¿ã‚¤ãƒ—(è¦‹ãŸç›®)
+    Location width_button_location;                       //ã‚¹ãƒ†ãƒ¼ã‚¸å¹…å¤‰æ›´ç”¨ãƒœã‚¿ãƒ³ã®ä½ç½®
+    Location height_button_location;                       //ã‚¹ãƒ†ãƒ¼ã‚¸é«˜ã•å¤‰æ›´ç”¨ãƒœã‚¿ãƒ³ã®ä½ç½®
+    bool current_leftbutton_flg;                          //ã‚¹ãƒ†ãƒ¼ã‚¸ã‚µã‚¤ã‚ºå¤‰æ›´ç”¨ã®å·¦ãƒœã‚¿ãƒ³ãŒé¸ã°ã‚Œã¦ã„ã‚‹ã‹
+    bool current_rightbutton_flg;                         //ã‚¹ãƒ†ãƒ¼ã‚¸ã‚µã‚¤ã‚ºå¤‰æ›´ç”¨ã®å³ãƒœã‚¿ãƒ³ãŒé¸ã°ã‚Œã¦ã„ã‚‹ã‹
+    bool current_upbutton_flg;                            //ã‚¹ãƒ†ãƒ¼ã‚¸ã‚µã‚¤ã‚ºå¤‰æ›´ç”¨ã®ä¸Šãƒœã‚¿ãƒ³ãŒé¸ã°ã‚Œã¦ã„ã‚‹ã‹
+    bool current_downbutton_flg;                          //ã‚¹ãƒ†ãƒ¼ã‚¸ã‚µã‚¤ã‚ºå¤‰æ›´ç”¨ã®ä¸‹ãƒœã‚¿ãƒ³ãŒé¸ã°ã‚Œã¦ã„ã‚‹ã‹
+    int button_interval;                                  //ã‚¹ãƒ†ãƒ¼ã‚¸å¹…å¤‰æ›´ã®ã‚¤ãƒ³ã‚¿ãƒ¼ãƒãƒ«
+    Location tool_location;                               //ãƒ„ãƒ¼ãƒ«ãƒœãƒƒã‚¯ã‚¹ã®å·¦ä¸Šåº§æ¨™
+    Erea tool_size;                                       //å·¦ä¸Šã®ãƒ„ãƒ¼ãƒ«ãƒœãƒƒã‚¯ã‚¹ã®å¹…
+    bool tool_pickup_flg;                                 //ãƒ„ãƒ¼ãƒ«ãƒœãƒƒã‚¯ã‚¹ã‚’æŒã£ã¦ã„ã‚‹ã‹åˆ¤æ–­
+    bool select_data[MAX_STAGE_HEIGHT][MAX_STAGE_WIDTH];  //ãã®ãƒ‡ãƒ¼ã‚¿ãŒç¾åœ¨é¸æŠä¸­ã‹ã©ã†ã‹
+    int current_type_select;                              //ãƒ–ãƒ­ãƒƒã‚¯ã®ã‚¿ã‚¤ãƒ—é¸æŠç”»é¢ãŒé–‹ã‹ã‚Œã¦ã„ã‚‹ã‹ã©ã†ã‹(-1=ä½•ã‚‚é–‹ã„ã¦ã„ãªã„ 0ä»¥é™=ãã®æ•°å­—ã®é¸æŠç”»é¢ã‚’é–‹ã„ã¦ã„ã‚‹)
+    int disp_num;                                         //ç¾åœ¨é¸æŠã•ã‚Œã¦ã„ã‚‹ãƒ–ãƒ­ãƒƒã‚¯ã®ã‚¿ã‚¤ãƒ—
+    int now_current_type;                                 //ç¾åœ¨ç½®ã‘ã‚‹ãƒ–ãƒ­ãƒƒã‚¯ã®ã‚¿ã‚¤ãƒ—
+    Location current_type_location;                       //ãƒ–ãƒ­ãƒƒã‚¯ã®ã‚¿ã‚¤ãƒ—ã‚’é¸æŠã™ã‚‹ãƒœãƒƒã‚¯ã‚¹ã®åº§æ¨™
+    Erea current_type_erea;                               //ãƒ–ãƒ­ãƒƒã‚¯ã®ã‚¿ã‚¤ãƒ—ã‚’é¸æŠã™ã‚‹ãƒœãƒƒã‚¯ã‚¹ã®å¤§ãã•
 
-    int stage_width_num;                                  //ƒXƒe[ƒW‚ÌƒuƒƒbƒN‚Ì‰¡‚ÌŒÂ” 
-    int stage_height_num;                                 //ƒXƒe[ƒW‚ÌƒuƒƒbƒN‚Ìc‚ÌŒÂ”
+    int stage_width_num;                                  //ã‚¹ãƒ†ãƒ¼ã‚¸ã®ãƒ–ãƒ­ãƒƒã‚¯ã®æ¨ªã®å€‹æ•° 
+    int stage_height_num;                                 //ã‚¹ãƒ†ãƒ¼ã‚¸ã®ãƒ–ãƒ­ãƒƒã‚¯ã®ç¸¦ã®å€‹æ•°
 public:
-    //ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+    //ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
     EditScene(int _stage);
-    //ƒfƒXƒgƒ‰ƒNƒ^
+    //ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
     ~EditScene();
 
-    // •`‰æˆÈŠO‚ÌXV‚ğÀ‘•
+    // æç”»ä»¥å¤–ã®æ›´æ–°ã‚’å®Ÿè£…
     AbstractScene* Update() override;
 
-    //•`‰æ‚ÉŠÖ‚·‚é‚±‚Æ‚ğÀ‘•
+    //æç”»ã«é–¢ã™ã‚‹ã“ã¨ã‚’å®Ÿè£…
     void Draw() const override;
 
-    //ƒXƒe[ƒW‚ğ¶¬‚·‚é
+    //ã‚¹ãƒ†ãƒ¼ã‚¸ã‚’ç”Ÿæˆã™ã‚‹
     void LoadStageData(int _stage);
 
-    //ƒXƒe[ƒW‚Ìƒtƒ@ƒCƒ‹‚ğXV‚·‚é
+    //ã‚¹ãƒ†ãƒ¼ã‚¸ã®ãƒ•ã‚¡ã‚¤ãƒ«ã‚’æ›´æ–°ã™ã‚‹
     void UpdateStageData(int _stage);
 
-    //ƒXƒe[ƒW‚Ì‰¡•A—§•‚ğXV‚·‚é
+    //ã‚¹ãƒ†ãƒ¼ã‚¸ã®æ¨ªå¹…ã€ç«‹å¹…ã‚’æ›´æ–°ã™ã‚‹
     void UpdateStage(int _width, int _height);
 
-    //‚Ğ‚Æ‚Â‘O‚Ìƒf[ƒ^‚Ì•Û
+    //ã²ã¨ã¤å‰ã®ãƒ‡ãƒ¼ã‚¿ã®ä¿æŒ
     void SaveOldData();
 
-    //ƒXƒe[ƒW‘S‘Ì‚ğc‚É‚¸‚ç‚·
+    //ã‚¹ãƒ†ãƒ¼ã‚¸å…¨ä½“ã‚’ç¸¦ã«ãšã‚‰ã™
     void StageShift(int _num);
 
-    //¡‚Ç‚ÌƒGƒŠƒA‚ÉƒJ[ƒ\ƒ‹‚ª‚ ‚é‚©
+    //ä»Šã©ã®ã‚¨ãƒªã‚¢ã«ã‚«ãƒ¼ã‚½ãƒ«ãŒã‚ã‚‹ã‹
     int ChechSelectErea();
 
-    //ƒc[ƒ‹ƒ{ƒbƒNƒX‚ª‰æ–ÊŠO‚Éo‚È‚¢‚æ‚¤‚ÉˆÚ“®‚·‚é
+    //ãƒ„ãƒ¼ãƒ«ãƒœãƒƒã‚¯ã‚¹ãŒç”»é¢å¤–ã«å‡ºãªã„ã‚ˆã†ã«ç§»å‹•ã™ã‚‹
     void MoveInsideScreen();
 
-    //‚Ç‚Ì” ‚ª‘I‘ğ’†‚©‚Ìî•ñ‚ğƒŠƒZƒbƒg‚·‚é
+    //ã©ã®ç®±ãŒé¸æŠä¸­ã‹ã®æƒ…å ±ã‚’ãƒªã‚»ãƒƒãƒˆã™ã‚‹
     void ResetSelectData();
 };
 
