@@ -71,7 +71,27 @@ AbstractScene* GameMain::Update()
 	{
 		return new EditScene(now_stage);
 	}
-	
+	//ステージ遷移
+	if (KeyInput::OnPresed(KEY_INPUT_0))
+	{
+		SetStage(0);
+	}
+	if (KeyInput::OnPresed(KEY_INPUT_1))
+	{
+		SetStage(1);
+	}
+	if (KeyInput::OnPresed(KEY_INPUT_2))
+	{
+		SetStage(2);
+	}
+	if (KeyInput::OnPresed(KEY_INPUT_3))
+	{
+		SetStage(3);
+	}
+	if (KeyInput::OnPresed(KEY_INPUT_4))
+	{
+		SetStage(4);
+	}
 #endif
 
 	enemydeer->Update(this);
@@ -185,6 +205,9 @@ void GameMain::LoadStageData(int _stage)
 		a = "Resource/Dat/3rdStageData.txt";
 		break;
 	case 3:
+		a = "Resource/Dat/4thStageData.txt";
+		break;
+	case 4:
 		a = "Resource/Dat/BossStageData.txt";
 		break;
 	}
@@ -211,6 +234,7 @@ void GameMain::LoadStageData(int _stage)
 
 void GameMain::SetStage(int _stage)
 {
+	now_stage = _stage;
 	//ファイルの読込
 	LoadStageData(now_stage);
 	for (int i = 0; i < stage_height_num; i++)
