@@ -1,25 +1,25 @@
 #pragma once
 #include"DxLib.h"
 
-#define IMAGE_NUM 1	//‰æ‘œ‚Ì”
-#define DIV_IMAGE_NUM 1	//•ªŠ„‰æ‘œ‚Ì”
-#define SOUND_NUM 1	//Œø‰Ê‰¹‚Ì”
+#define IMAGE_NUM 1	//ç”»åƒã®æ•°
+#define DIV_IMAGE_NUM 1	//åˆ†å‰²ç”»åƒã®æ•°
+#define SOUND_NUM 1	//åŠ¹æœéŸ³ã®æ•°
 
-#define DIV_IMAGE_MAX 13	//•ªŠ„‰æ‘œ‚ÌÅ‘å•ªŠ„”
+#define DIV_IMAGE_MAX 13	//åˆ†å‰²ç”»åƒã®æœ€å¤§åˆ†å‰²æ•°
 
-//g—p‚·‚é‰æ‘œ‚ÌƒpƒXˆê——
+//ä½¿ç”¨ã™ã‚‹ç”»åƒã®ãƒ‘ã‚¹ä¸€è¦§
 static char image_filepath[IMAGE_NUM][256] =
 {
 	"Resource/Image/Sigma.png"
 };
 
-//g—p‚·‚é•ªŠ„‰æ‘œ‚ÌƒpƒXˆê——
+//ä½¿ç”¨ã™ã‚‹åˆ†å‰²ç”»åƒã®ãƒ‘ã‚¹ä¸€è¦§
 static char div_image_filepath[DIV_IMAGE_NUM][256] =
 {
 
 };
 
-//g—p‚·‚é‰¹Œ¹‚ÌƒpƒXˆê——
+//ä½¿ç”¨ã™ã‚‹éŸ³æºã®ãƒ‘ã‚¹ä¸€è¦§
 static char sound_filepath[SOUND_NUM][256] =
 {
 
@@ -28,26 +28,26 @@ static char sound_filepath[SOUND_NUM][256] =
 class ResourceManager
 {
 private:
-	static int image_data[IMAGE_NUM];							//‰æ‘œŠi”[—p
-	static int div_image_data[DIV_IMAGE_NUM][DIV_IMAGE_MAX];	//•ªŠ„‰æ‘œŠi”[—p
-	static int sound_data[SOUND_NUM];							//‰¹Œ¹Ši”[—p
+	static int image_data[IMAGE_NUM];							//ç”»åƒæ ¼ç´ç”¨
+	static int div_image_data[DIV_IMAGE_NUM][DIV_IMAGE_MAX];	//åˆ†å‰²ç”»åƒæ ¼ç´ç”¨
+	static int sound_data[SOUND_NUM];							//éŸ³æºæ ¼ç´ç”¨
 public:
 
-	//Šeƒf[ƒ^“Çimain‚Åˆê‰ñŒÄ‚Ôj
-	static void LoadResource();	
+	//å„ãƒ‡ãƒ¼ã‚¿èª­è¾¼ï¼ˆmainã§ä¸€å›å‘¼ã¶ï¼‰
+	static void LoadResource();
 
-	//Šeƒf[ƒ^íœimain‚Åˆê‰ñŒÄ‚Ôj
+	//å„ãƒ‡ãƒ¼ã‚¿å‰Šé™¤ï¼ˆmainã§ä¸€å›å‘¼ã¶ï¼‰
 	static void DeleteResource();
 
-	//‰æ‘œŒÄ‚Ño‚µ
+	//ç”»åƒå‘¼ã³å‡ºã—
 	static int GetGraph(int _num);
 
-	//•ªŠ„‰æ‘œŒÄ‚Ño‚µ
-	static int GetDivGraph(int _num1, int _num2);	
+	//åˆ†å‰²ç”»åƒå‘¼ã³å‡ºã—
+	static int GetDivGraph(int _num1, int _num2);
 
-	//‰¹Œ¹Ä¶ŠJn
-	static void StartSound(int _num);				
+	//éŸ³æºå†ç”Ÿé–‹å§‹
+	static void StartSound(int _num);
 
-	//‰¹Œ¹Ä¶I—¹
-	static void StopSound(int _num);				
+	//éŸ³æºå†ç”Ÿçµ‚äº†
+	static void StopSound(int _num);
 };

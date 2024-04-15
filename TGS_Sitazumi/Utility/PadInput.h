@@ -4,38 +4,38 @@
 #define BUTTONS 16
 #define STICKL_X 1		
 #define STICKL_Y 2		
-#define MAXL_X 32767.f  //¶ƒXƒeƒBƒbƒNX²‚ÌÅ‘å’l(floatŒ^)
-#define MAXL_Y 32767.f  //¶ƒXƒeƒBƒbƒNY²‚ÌÅ‘å’l(floatŒ^)
+#define MAXL_X 32767.f  //å·¦ã‚¹ãƒ†ã‚£ãƒƒã‚¯Xè»¸ã®æœ€å¤§å€¤(floatå‹)
+#define MAXL_Y 32767.f  //å·¦ã‚¹ãƒ†ã‚£ãƒƒã‚¯Yè»¸ã®æœ€å¤§å€¤(floatå‹)
 
-//ƒXƒeƒBƒbƒN
+//ã‚¹ãƒ†ã‚£ãƒƒã‚¯
 struct Stick
 {
-	short ThumbX;	//‰¡²’l
-	short ThumbY;	//c²’l
+	short ThumbX;	//æ¨ªè»¸å€¤
+	short ThumbY;	//ç¸¦è»¸å€¤
 };
 
 class PadInput
 {
 private:
-	static char NowKey[BUTTONS]; //¡‰ñ‚Ì“ü—ÍƒL[
-	static char OldKey[BUTTONS]; //‘O‰ñ‚Ì“ü—ÍƒL[
-	static XINPUT_STATE Input; //ƒpƒbƒh
-	static Stick Rstick; //‰EƒXƒeƒBƒbƒN
-	static Stick Lstick; //¶ƒXƒeƒBƒbƒN
-	
+	static char NowKey[BUTTONS]; //ä»Šå›ã®å…¥åŠ›ã‚­ãƒ¼
+	static char OldKey[BUTTONS]; //å‰å›ã®å…¥åŠ›ã‚­ãƒ¼
+	static XINPUT_STATE Input; //ãƒ‘ãƒƒãƒ‰
+	static Stick Rstick; //å³ã‚¹ãƒ†ã‚£ãƒƒã‚¯
+	static Stick Lstick; //å·¦ã‚¹ãƒ†ã‚£ãƒƒã‚¯
+
 public:
-	//ƒpƒbƒhî•ñ‚ÌXV
+	//ãƒ‘ãƒƒãƒ‰æƒ…å ±ã®æ›´æ–°
 	static void UpdateKey();
 
-	//ƒ{ƒ^ƒ“‚ğ‰Ÿ‚³‚ê‚½uŠÔ
+	//ãƒœã‚¿ãƒ³ã‚’æŠ¼ã•ã‚ŒãŸç¬é–“
 	static bool OnButton(int button);
 
-	//ƒ{ƒ^ƒ“‚ğ‰Ÿ‚µ‚Ä‚éŠÔ
+	//ãƒœã‚¿ãƒ³ã‚’æŠ¼ã—ã¦ã‚‹é–“
 	static bool OnPressed(int button);
 
-	//ƒ{ƒ^ƒ“‚ğ—£‚µ‚½uŠÔ
+	//ãƒœã‚¿ãƒ³ã‚’é›¢ã—ãŸç¬é–“
 	static bool OnRelease(int button);
 
-	//ƒXƒeƒBƒbƒN‚ÌŒX‚«Š„‡
+	//ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã®å‚¾ãå‰²åˆ
 	static float TipLeftLStick(short StickL);
 };

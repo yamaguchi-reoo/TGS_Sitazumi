@@ -4,45 +4,45 @@
 #define KEY_MAX 256
 #define MOUSE_MAX 256
 
-//ƒ}ƒEƒXƒJ[ƒ\ƒ‹
+//ãƒã‚¦ã‚¹ã‚«ãƒ¼ã‚½ãƒ«
 struct CURSOR
 {
-	int x;	//‰¡²’l
-	int y;	//c²’l
+	int x;	//æ¨ªè»¸å€¤
+	int y;	//ç¸¦è»¸å€¤
 };
 
-//ƒL[“ü—Í
+//ã‚­ãƒ¼å…¥åŠ›
 class KeyInput
 {
 private:
-	static int NowKey[KEY_MAX];		//¡‰ñ‚Ì“ü—ÍƒL[
-	static int OldKey[KEY_MAX];		//‘O‰ñ‚Ì“ü—ÍƒL[
-	static int NowMouse[MOUSE_MAX]; //¡‰ñ‚Ì“ü—Íƒ}ƒEƒXƒ{ƒ^ƒ“
-	static int OldMouse[MOUSE_MAX]; //‘O‰ñ‚Ì“ü—Íƒ}ƒEƒXƒ{ƒ^ƒ“
-	static CURSOR Cursor; //ƒJ[ƒ\ƒ‹
+	static int NowKey[KEY_MAX];		//ä»Šå›ã®å…¥åŠ›ã‚­ãƒ¼
+	static int OldKey[KEY_MAX];		//å‰å›ã®å…¥åŠ›ã‚­ãƒ¼
+	static int NowMouse[MOUSE_MAX]; //ä»Šå›ã®å…¥åŠ›ãƒã‚¦ã‚¹ãƒœã‚¿ãƒ³
+	static int OldMouse[MOUSE_MAX]; //å‰å›ã®å…¥åŠ›ãƒã‚¦ã‚¹ãƒœã‚¿ãƒ³
+	static CURSOR Cursor; //ã‚«ãƒ¼ã‚½ãƒ«
 public:
-	//ƒpƒbƒhî•ñ‚ÌXV
+	//ãƒ‘ãƒƒãƒ‰æƒ…å ±ã®æ›´æ–°
 	static void UpdateKey();
 
-	//ƒ{ƒ^ƒ“‚ğ‰Ÿ‚µ‚½uŠÔ
+	//ãƒœã‚¿ãƒ³ã‚’æŠ¼ã—ãŸç¬é–“
 	static bool OnKey(int key);
 
-	//ƒ{ƒ^ƒ“‚ğ‰Ÿ‚µ‚½uŠÔ
+	//ãƒœã‚¿ãƒ³ã‚’æŠ¼ã—ãŸç¬é–“
 	static bool OnPresed(int key);
 
-	//ƒ{ƒ^ƒ“‚ğ‰Ÿ‚µ‚½uŠÔ
+	//ãƒœã‚¿ãƒ³ã‚’æŠ¼ã—ãŸç¬é–“
 	static bool OnRelease(int key);
 
-	//ƒ}ƒEƒXƒ{ƒ^ƒ“‚ğ‰Ÿ‚³‚ê‚½uŠÔ
+	//ãƒã‚¦ã‚¹ãƒœã‚¿ãƒ³ã‚’æŠ¼ã•ã‚ŒãŸç¬é–“
 	static bool OnMouse(int mouse);
 
-	//ƒ}ƒEƒXƒ{ƒ^ƒ“‚ğ‰Ÿ‚µ‚Ä‚éŠÔ
+	//ãƒã‚¦ã‚¹ãƒœã‚¿ãƒ³ã‚’æŠ¼ã—ã¦ã‚‹é–“
 	static bool OnPressedMouse(int mouse);
 
-	//ƒ}ƒEƒXƒ{ƒ^ƒ“‚ğ—£‚µ‚½uŠÔ
+	//ãƒã‚¦ã‚¹ãƒœã‚¿ãƒ³ã‚’é›¢ã—ãŸç¬é–“
 	static bool OnReleaseMouse(int mouse);
 
-	//ƒ}ƒEƒXƒJ[ƒ\ƒ‹‚ÌˆÊ’u‚ğ•Ô‚·
+	//ãƒã‚¦ã‚¹ã‚«ãƒ¼ã‚½ãƒ«ã®ä½ç½®ã‚’è¿”ã™
 	static CURSOR GetMouseCursor();
 };
 
