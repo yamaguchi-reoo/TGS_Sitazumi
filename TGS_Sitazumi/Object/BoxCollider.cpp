@@ -5,31 +5,31 @@ bool BoxCollider::HitBox(BoxCollider* bCollider)
 {
 	bool ret = false;
 
-	//©•ª‚Ì¶ãÀ•W
+	//ï¿½ï¿½ï¿½ï¿½ï¿½Ìï¿½ï¿½ï¿½ï¿½ï¿½W
 	float my_x = location.x;
 	float my_y = location.y;
-	//©•ª‚Ì’†‰›À•W
+	//ï¿½ï¿½ï¿½ï¿½ï¿½Ì’ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½W
 	float my_cx = my_x + (erea.width / 2);
 	float my_cy = my_y + (erea.height / 2);
-	//©•ª‚Ì•‚Æ‚‚³‚Ì”¼•ª
+	//ï¿½ï¿½ï¿½ï¿½ï¿½Ì•ï¿½ï¿½Æï¿½ï¿½ï¿½ï¿½Ì”ï¿½ï¿½ï¿½
 	float my_harf_width = erea.width / 2;
 	float my_harf_height = erea.height / 2;
 
-	//‘Šè‚Ì¶ãÀ•W
+	//ï¿½ï¿½ï¿½ï¿½Ìï¿½ï¿½ï¿½ï¿½ï¿½W
 	float sub_x = bCollider->GetLocation().x;
 	float sub_y = bCollider->GetLocation().y;
-	//‘Šè‚Ì’†‰›À•W
+	//ï¿½ï¿½ï¿½ï¿½Ì’ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½W
 	float sub_cx = sub_x + (bCollider->GetErea().width / 2);
 	float sub_cy = sub_y + (bCollider->GetErea().height / 2);
-	//‘Šè‚Ì•‚Æ‚‚³‚Ì”¼•ª
+	//ï¿½ï¿½ï¿½ï¿½Ì•ï¿½ï¿½Æï¿½ï¿½ï¿½ï¿½Ì”ï¿½ï¿½ï¿½
 	float sub_harf_width = bCollider->GetErea().width / 2;
 	float sub_harf_height = bCollider->GetErea().height / 2;
 
-	//©•ª‚Æ‘Šè‚Ì’†SÀ•W‚Ì·
+	//ï¿½ï¿½ï¿½ï¿½ï¿½Æ‘ï¿½ï¿½ï¿½Ì’ï¿½ï¿½Sï¿½ï¿½ï¿½Wï¿½Ìï¿½
 	float diff_x = my_cx - sub_cx;
 	float diff_y = my_cy - sub_cy;
 
-	//“–‚½‚è”»’è‚Ì‰‰Z
+	//ï¿½ï¿½ï¿½ï¿½ï¿½è”»ï¿½ï¿½Ì‰ï¿½ï¿½Z
 	if (fabsf(diff_x) < my_harf_width + sub_harf_width &&
 		fabsf(diff_y) < my_harf_height + sub_harf_height)
 	{
