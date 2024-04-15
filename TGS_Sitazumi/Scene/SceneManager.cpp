@@ -5,7 +5,7 @@ AbstractScene* SceneManager::Update() {
 
 	if (p != mScene) {
 		delete mScene;
-		mScene = p; // Ÿ‚É•\¦‚µ‚½‚¢ƒV[ƒ“
+		mScene = p; // æ¬¡ã«è¡¨ç¤ºã—ãŸã„ã‚·ãƒ¼ãƒ³
 	};
 
 	return p;

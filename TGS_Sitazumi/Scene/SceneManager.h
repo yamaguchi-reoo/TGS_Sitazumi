@@ -3,19 +3,19 @@
 
 class SceneManager : public AbstractScene {
 private:
-	AbstractScene* mScene; // ���݂̃V�[��
+	AbstractScene* mScene; // 現在のシーン
 public:
-	// �R���X�g���N�^
+	// コンストラクタ
 	SceneManager(AbstractScene* scene) : mScene(scene) {}
 
-	// �f�X�g���N�^
+	// デストラクタ
 	~SceneManager() {
 		delete mScene;
 	};
 
-	// �`��ȊO�̍X�V������
+	// 描画以外の更新を実装
 	AbstractScene* Update() override;
 
-	// �`��Ɋւ��邱�Ƃ�����
+	// 描画に関することを実装
 	void Draw() const override;
 };

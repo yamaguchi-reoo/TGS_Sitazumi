@@ -2,13 +2,13 @@
 class AbstractScene
 {
 public:
-	//ƒfƒXƒgƒ‰ƒNƒ^
+	//ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	virtual ~AbstractScene() {};
 
-	//•`‰æˆÈŠO‚ÌXV‚ğÀs
+	//æç”»ä»¥å¤–ã®æ›´æ–°ã‚’å®Ÿè¡Œ
 	virtual AbstractScene* Update() = 0;
 
-	//•`‰æ‚ÉŠÖ‚·‚é‚±‚Æ‚ğÀ‘•
+	//æç”»ã«é–¢ã™ã‚‹ã“ã¨ã‚’å®Ÿè£…
 	virtual void Draw() const = 0;
 
 };
