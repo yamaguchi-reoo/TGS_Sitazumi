@@ -25,6 +25,12 @@ private:
 
     Player* player;
 
+    bool camera_x_lock_flg;   //カメラが動けるか判断(強制戦闘時以外)
+    bool camera_y_lock_flg;   //カメラが動けるか判断(強制戦闘時以外)
+    bool x_pos_set_once;     //カメラのロック位置設定用
+    bool y_pos_set_once;     //カメラのロック位置設定用
+    Location lock_pos;       //カメラが動けない時に画面揺れが発生した時、カメラの位置が戻る場所
+
 public:
 
     //�R���X�g���N�^(_stage���ǂݍ��ރX�e�[�W)
@@ -50,5 +56,8 @@ public:
 
     //�X�e�[�W�ɑ��̃X�e�[�W��type����n���p
     int GetStageType(int _i, int _j);
+
+    //カメラ座標を初期地点に戻す
+    void ResetCamera();
 };
 
