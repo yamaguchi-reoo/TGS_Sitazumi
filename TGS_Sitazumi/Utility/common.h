@@ -11,3 +11,5 @@
 
 
 
+#define PLAYER_SPAWN_NUM 9       //プレイヤーの初期スポーン設定ブロックが何番目か(EditScene用)
+

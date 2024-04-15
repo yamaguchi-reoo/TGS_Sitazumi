@@ -53,11 +53,11 @@ void Player::Update(GameMain* main)
 
 void Player::Draw()const
 {
-	DrawBox(location.x, location.y,location.x + erea.width, location.y + erea.height,color, FALSE);
+	DrawBox(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height,color, FALSE);
 
 	DrawCircle(aimLoc.x, aimLoc.y, 10, color, TRUE);
 
-	DrawLine(location.x + (erea.width / 2), location.y + (erea.height / 2), lineLoc.x, lineLoc.y, color);
+	DrawLine(local_location.x + (erea.width / 2), local_location.y + (erea.height / 2), lineLoc.x, lineLoc.y, color);
 
 	for (int i = 0; i < 4; i++){
 		DrawFormatString(20 + i * 20, 0, 0xff0000, "%d", stageHitFlg[0][i]);
@@ -91,22 +91,22 @@ void Player::MoveActor()
 void Player::MoveAim()
 {
 	//照準の座標
-	aimLoc.x = (location.x + (erea.width / 2)) + PadInput::TipLeftLStick(STICKL_X) * 100.f;
-	aimLoc.y = (location.y + (erea.height / 2)) + PadInput::TipLeftLStick(STICKL_Y) * -100.f;
+	aimLoc.x = (local_location.x + (erea.width / 2)) + PadInput::TipLeftLStick(STICKL_X) * 100.f;
+	aimLoc.y = (local_location.y + (erea.height / 2)) + PadInput::TipLeftLStick(STICKL_Y) * -100.f;
 
 	//照準のベクトル
 	Location tmpv;
 	float len;
-	tmpv.x = aimLoc.x - (location.x + (erea.width / 2));
-	tmpv.y = aimLoc.y - (location.y + (erea.height / 2));
+	tmpv.x = aimLoc.x - (local_location.x + (erea.width / 2));
+	tmpv.y = aimLoc.y - (local_location.y + (erea.height / 2));
 	len = sqrtf(powf(tmpv.x, 2) + powf(tmpv.y, 2));
 
 	//照準の単位ベクトル
 	aimVec.x = tmpv.x / len;
 	aimVec.y = tmpv.y / len;
 
-	lineLoc.x = location.x + (erea.width / 2) + aimVec.x * 1000.f;
-	lineLoc.y = location.y + (erea.height / 2) + aimVec.y * 1000.f;
+	lineLoc.x = local_location.x + (erea.width / 2) + aimVec.x * 1000.f;
+	lineLoc.y = local_location.y + (erea.height / 2) + aimVec.y * 1000.f;
 }
 
 bool Player::CheckCollision(Stage* stage)

@@ -1,3 +1,5 @@
+
+
 #include "EditScene.h"
 #include <fstream>
 #include <iostream>
@@ -7,12 +9,12 @@
 
 Location camera_location = { 0,0 };
 
-EditScene::EditScene(int _stage): current_type(0), ui_current_type(0), tool_pickup_flg(false), current_leftbutton_flg(false), current_rightbutton_flg(false), current_upbutton_flg(false), current_downbutton_flg(false), button_interval(0), now_select_erea(0), current_type_select(-1), now_current_type(0), current_type_location{0}, current_type_erea{0}, disp_num(0)
+EditScene::EditScene(int _stage) : current_type(0), ui_current_type(0), tool_pickup_flg(false), current_leftbutton_flg(false), current_rightbutton_flg(false), current_upbutton_flg(false), current_downbutton_flg(false), button_interval(0), now_select_erea(0), current_type_select(-1), now_current_type(0), current_type_location{ 0 }, current_type_erea{ 0 }, disp_num(0)
 {
 	now_stage = _stage;
 	tool_location.x = 100;
 	tool_location.y = 0;
-	tool_size.width = (OBJECT_TYPE_NUM * 50) + 210;
+	tool_size.width = (UI_OBJECT_TYPE_NUM * 50) + 210;
 	tool_size.height = 100;
 	width_button_location = { tool_location.x + tool_size.width - 90, tool_location.y + 25 };
 	height_button_location = { tool_location.x + tool_size.width - 190, tool_location.y + 35 };
@@ -45,7 +47,7 @@ EditScene::~EditScene()
 
 AbstractScene* EditScene::Update()
 {
-	//ƒJ[ƒ\ƒ‹‚ÌˆÊ’uXV
+	//ã‚«ãƒ¼ã‚½ãƒ«ã®ä½ç½®æ›´æ–°
 	cursor = KeyInput::GetMouseCursor();
 	for (int i = 0; i < stage_height_num; i++)
 	{
@@ -65,32 +67,46 @@ AbstractScene* EditScene::Update()
 
 				if (cursor.x > stage[i][j]->GetLocalLocation().x && cursor.x<stage[i][j]->GetLocalLocation().x + BOX_WIDTH && cursor.y>stage[i][j]->GetLocalLocation().y && cursor.y < stage[i][j]->GetLocalLocation().y + BOX_HEIGHT && tool_pickup_flg == false)
 				{
-					//ƒŠƒZƒbƒg‚µ‚Ä‚©‚ç‘I‘ğ‚³‚ê‚½select_data‚ğtrue‚É‚·‚é
+					//ãƒªã‚»ãƒƒãƒˆã—ã¦ã‹ã‚‰é¸æŠã•ã‚ŒãŸselect_dataã‚’trueã«ã™ã‚‹
 					ResetSelectData();
 					select_data[i][j] = true;
-					//•Ï‚¦‚æ‚¤‚Æ‚µ‚Ä‚¢‚éƒXƒe[ƒW‚Ìƒf[ƒ^‚ª•ÏXŒã‚Ìƒf[ƒ^‚Æˆê‚Å‚È‚¢‚È‚ç
+					//å¤‰ãˆã‚ˆã†ã¨ã—ã¦ã„ã‚‹ã‚¹ãƒ†ãƒ¼ã‚¸ã®ãƒ‡ãƒ¼ã‚¿ãŒå¤‰æ›´å¾Œã®ãƒ‡ãƒ¼ã‚¿ã¨ä¸€ç·’ã§ãªã„ãªã‚‰
 					if (stage_data[i][j] != current_type)
 					{
-						//‚Ğ‚Æ‚Â‘O‚Ìó‘Ô‚ğ•Û
+						//ã²ã¨ã¤å‰ã®çŠ¶æ…‹ã‚’ä¿æŒ
 						if (KeyInput::OnMouse(MOUSE_INPUT_LEFT))
 						{
 							SaveOldData();
 						}
-						//XV
+						//æ›´æ–°
 						if (KeyInput::OnPressedMouse(MOUSE_INPUT_LEFT))
 						{
+							//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®åˆæœŸã‚¹ãƒãƒ¼ãƒ³åœ°ç‚¹ã‚’è¨­å®šã™ã‚‹ãƒ–ãƒ­ãƒƒã‚¯ã‚’ç½®ã„ãŸãªã‚‰ã€ä»¥å‰ã®ã‚¹ãƒãƒ¼ãƒ³åœ°ç‚¹ã¯å‰Šé™¤
+							if (current_type == PLAYER_SPAWN_NUM)
+							{
+								for (int n = 0; n < stage_height_num; n++)
+								{
+									for (int m = 0; m < stage_width_num; m++)
+									{
+										if (stage_data[n][m] == PLAYER_SPAWN_NUM)
+										{
+											stage_data[n][m] = 0;
+										}
+									}
+								}
+							}
 							stage_data[i][j] = current_type;
 						}
 					}
-					//•Ï‚¦‚æ‚¤‚Æ‚µ‚Ä‚¢‚éƒXƒe[ƒW‚Ìƒf[ƒ^‚ª•ÏXŒã‚Ìƒf[ƒ^‚Æˆê‚Å‚È‚¢‚È‚ç
+					//å¤‰ãˆã‚ˆã†ã¨ã—ã¦ã„ã‚‹ã‚¹ãƒ†ãƒ¼ã‚¸ã®ãƒ‡ãƒ¼ã‚¿ãŒå¤‰æ›´å¾Œã®ãƒ‡ãƒ¼ã‚¿ã¨ä¸€ç·’ã§ãªã„ãªã‚‰
 					if (stage_data[i][j] != 0)
 					{
-						//‚Ğ‚Æ‚Â‘O‚Ìó‘Ô‚ğ•Û
+						//ã²ã¨ã¤å‰ã®çŠ¶æ…‹ã‚’ä¿æŒ
 						if (KeyInput::OnMouse(MOUSE_INPUT_RIGHT))
 						{
 							SaveOldData();
 						}
-						//XV
+						//æ›´æ–°
 						if (KeyInput::OnPressedMouse(MOUSE_INPUT_RIGHT))
 						{
 							stage_data[i][j] = 0;
@@ -111,12 +127,12 @@ AbstractScene* EditScene::Update()
 					{
 						ui_current_type = i;
 						current_type_select = i;
-						current_type_location.x = tool_location.x + i*50;
+						current_type_location.x = tool_location.x + i * 50;
 						current_type_location.y = tool_location.y;
 					}
 					else
 					{
-						//Ú’n‚Å‚«‚éƒuƒƒbƒN‚Ì•Ï”‚ğŒvZ‚·‚é
+						//æ¥åœ°ã§ãã‚‹ãƒ–ãƒ­ãƒƒã‚¯ã®å¤‰æ•°ã‚’è¨ˆç®—ã™ã‚‹
 						int n = 0;
 						for (int j = 0; j < i; j++)
 						{
@@ -129,7 +145,7 @@ AbstractScene* EditScene::Update()
 				}
 			}
 		}
-		//•‚ğŒ¸‚ç‚·
+		//å¹…ã‚’æ¸›ã‚‰ã™
 		if (cursor.x > width_button_location.x && cursor.x < width_button_location.x + 15 && cursor.y>width_button_location.y && cursor.y < width_button_location.y + 25)
 		{
 			current_leftbutton_flg = true;
@@ -148,7 +164,7 @@ AbstractScene* EditScene::Update()
 			current_leftbutton_flg = false;
 		}
 
-		//•‚ğ‘‚â‚·
+		//å¹…ã‚’å¢—ã‚„ã™
 		if (cursor.x > width_button_location.x + 65 && cursor.x < width_button_location.x + 80 && cursor.y>width_button_location.y && cursor.y < width_button_location.y + 25)
 		{
 			current_rightbutton_flg = true;
@@ -167,7 +183,7 @@ AbstractScene* EditScene::Update()
 			current_rightbutton_flg = false;
 		}
 
-		//‚‚³‚ğ‘‚â‚·
+		//é«˜ã•ã‚’å¢—ã‚„ã™
 		if (cursor.x > height_button_location.x && cursor.x < height_button_location.x + 65 && cursor.y>height_button_location.y - 15 && cursor.y < height_button_location.y)
 		{
 			current_upbutton_flg = true;
@@ -186,7 +202,7 @@ AbstractScene* EditScene::Update()
 			current_upbutton_flg = false;
 		}
 
-		//‚‚³‚ğŒ¸‚ç‚·
+		//é«˜ã•ã‚’æ¸›ã‚‰ã™
 		if (cursor.x > height_button_location.x && cursor.x < height_button_location.x + 65 && cursor.y>height_button_location.y + 25 && cursor.y < height_button_location.y + 40)
 		{
 			current_downbutton_flg = true;
@@ -204,14 +220,14 @@ AbstractScene* EditScene::Update()
 		{
 			current_downbutton_flg = false;
 		}
-		//‚Â‚©‚ñ‚Å“®‚©‚·
+		//ã¤ã‹ã‚“ã§å‹•ã‹ã™
 		if (KeyInput::OnPressedMouse(MOUSE_INPUT_RIGHT))
 		{
 			tool_pickup_flg = true;
 		}
 		break;
 	case SELECT_TYPE:
-		//í—Ş‘I‘ğˆ—
+		//ç¨®é¡é¸æŠå‡¦ç†
 		for (int i = 0; i < can_select_type[current_type_select][1]; i++)
 		{
 			if (cursor.x > current_type_location.x && cursor.x < current_type_location.x + current_type_erea.width && cursor.y>current_type_location.y + (i * 50) && cursor.y < current_type_location.y + current_type_erea.height + (i * 50))
@@ -233,7 +249,7 @@ AbstractScene* EditScene::Update()
 	default:
 		break;
 	}
-	//‚Â‚©‚ñ‚Å“®‚©‚·
+	//ã¤ã‹ã‚“ã§å‹•ã‹ã™
 	if (tool_pickup_flg == true)
 	{
 		MoveInsideScreen();
@@ -243,7 +259,7 @@ AbstractScene* EditScene::Update()
 		tool_pickup_flg = false;
 	}
 
-	//‘€ìæ‚èÁ‚µ
+	//æ“ä½œå–ã‚Šæ¶ˆã—
 	if (KeyInput::OnPresed(KEY_INPUT_LCONTROL) && KeyInput::OnKey(KEY_INPUT_Z))
 	{
 		for (int i = 0; i < stage_height_num; i++)
@@ -255,7 +271,7 @@ AbstractScene* EditScene::Update()
 		}
 	}
 
-	//ƒXƒe[ƒW‚ÌXV
+	//ã‚¹ãƒ†ãƒ¼ã‚¸ã®æ›´æ–°
 	for (int i = 0; i < stage_height_num; i++)
 	{
 		for (int j = 0; j < stage_width_num; j++)
@@ -264,7 +280,7 @@ AbstractScene* EditScene::Update()
 		}
 	}
 
-	//ƒJƒƒ‰À•W‚ğ“®‚©‚·
+	//ã‚«ãƒ¡ãƒ©åº§æ¨™ã‚’å‹•ã‹ã™
 	if (KeyInput::OnPresed(KEY_INPUT_W))
 	{
 		camera_location.y -= 10;
@@ -282,14 +298,14 @@ AbstractScene* EditScene::Update()
 		camera_location.x += 10;
 	}
 
-	//ƒQ[ƒ€ƒƒCƒ“‚É–ß‚é
+	//ã‚²ãƒ¼ãƒ ãƒ¡ã‚¤ãƒ³ã«æˆ»ã‚‹
 	if (KeyInput::OnKey(KEY_INPUT_B))
 	{
 		UpdateStageData(now_stage);
 		return new GameMain(now_stage);
 	}
 
-	//‘S•”–³‚É
+	//å…¨éƒ¨ç„¡ã«
 	if (KeyInput::OnKey(KEY_INPUT_0))
 	{
 		SaveOldData();
@@ -322,11 +338,11 @@ void EditScene::Draw()const
 	SetFontSize(16);
 	DrawBoxAA(tool_location.x, tool_location.y, tool_location.x + tool_size.width, tool_location.y + tool_size.height, 0x000000, true);
 	DrawBoxAA(tool_location.x, tool_location.y, tool_location.x + tool_size.width, tool_location.y + tool_size.height, 0xffffff, false);
-	DrawStringF(tool_location.x, tool_location.y + 60, "¶ƒNƒŠƒbƒN‚Å‘I‘ğ•”z’u", 0xffffff);
-	DrawStringF(tool_location.x, tool_location.y + 80, "ctrl+z‚Åˆê‚Â–ß‚é", 0xffffff);
-	DrawStringF(tool_location.x + tool_size.width - 270, tool_location.y + 80, "BƒL[‚Å•Û‘¶•ƒQ[ƒ€ƒƒCƒ“‚Ö–ß‚é", 0xffffff);
+	DrawStringF(tool_location.x, tool_location.y + 60, "å·¦ã‚¯ãƒªãƒƒã‚¯ã§é¸æŠï¼†é…ç½®", 0xffffff);
+	DrawStringF(tool_location.x, tool_location.y + 80, "ctrl+zã§ä¸€ã¤æˆ»ã‚‹", 0xffffff);
+	DrawStringF(tool_location.x + tool_size.width - 270, tool_location.y + 80, "Bã‚­ãƒ¼ã§ä¿å­˜ï¼†ã‚²ãƒ¼ãƒ ãƒ¡ã‚¤ãƒ³ã¸æˆ»ã‚‹", 0xffffff);
 
-	//Œ»İ‘I‘ğ’†‚ÌƒIƒuƒWƒFƒNƒg‚ğ•ª‚©‚è‚â‚·‚­	
+	//ç¾åœ¨é¸æŠä¸­ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’åˆ†ã‹ã‚Šã‚„ã™ã	
 	for (int i = 0; i < UI_OBJECT_TYPE_NUM; i++)
 	{
 		if (ui_current_type == i)
@@ -351,15 +367,15 @@ void EditScene::Draw()const
 		}
 	}
 
-	//ƒXƒe[ƒW••ÏX—p•\¦
-	DrawStringF(width_button_location.x - 5, width_button_location.y - 20, "ƒXƒe[ƒW•", 0xffffff);
+	//ã‚¹ãƒ†ãƒ¼ã‚¸å¹…å¤‰æ›´ç”¨è¡¨ç¤º
+	DrawStringF(width_button_location.x - 5, width_button_location.y - 20, "ã‚¹ãƒ†ãƒ¼ã‚¸å¹…", 0xffffff);
 
-	//ƒXƒe[ƒW‚Ì‰¡‚ÌƒuƒƒbƒN”‚ª•\¦‚³‚ê‚éƒGƒŠƒA
+	//ã‚¹ãƒ†ãƒ¼ã‚¸ã®æ¨ªã®ãƒ–ãƒ­ãƒƒã‚¯æ•°ãŒè¡¨ç¤ºã•ã‚Œã‚‹ã‚¨ãƒªã‚¢
 	DrawBoxAA(width_button_location.x + 15, width_button_location.y, width_button_location.x + 65, width_button_location.y + 25, 0x000000, true);
 	DrawBoxAA(width_button_location.x + 15, width_button_location.y, width_button_location.x + 65, width_button_location.y + 25, 0xffffff, false);
 	DrawFormatStringF(width_button_location.x + 25, width_button_location.y + 5, 0xffffff, "%d", stage_width_num);
 
-	//ƒXƒe[ƒWƒTƒCƒY•ÏXƒ{ƒ^ƒ“
+	//ã‚¹ãƒ†ãƒ¼ã‚¸ã‚µã‚¤ã‚ºå¤‰æ›´ãƒœã‚¿ãƒ³
 	if (current_leftbutton_flg == false)
 	{
 		DrawBoxAA(width_button_location.x, width_button_location.y, width_button_location.x + 15, width_button_location.y + 25, 0x000000, true);
@@ -385,15 +401,15 @@ void EditScene::Draw()const
 		DrawStringF(width_button_location.x + 70, width_button_location.y + 5, ">", 0x000000);
 	}
 
-	//ƒXƒe[ƒW‚‚³•ÏX—p•\¦
-	DrawStringF(height_button_location.x - 15, height_button_location.y - 30, "ƒXƒe[ƒW‚‚³", 0xffffff);
+	//ã‚¹ãƒ†ãƒ¼ã‚¸é«˜ã•å¤‰æ›´ç”¨è¡¨ç¤º
+	DrawStringF(height_button_location.x - 15, height_button_location.y - 30, "ã‚¹ãƒ†ãƒ¼ã‚¸é«˜ã•", 0xffffff);
 
-	//ƒXƒe[ƒW‚Ìc‚ÌƒuƒƒbƒN”‚ª•\¦‚³‚ê‚éƒGƒŠƒA
+	//ã‚¹ãƒ†ãƒ¼ã‚¸ã®ç¸¦ã®ãƒ–ãƒ­ãƒƒã‚¯æ•°ãŒè¡¨ç¤ºã•ã‚Œã‚‹ã‚¨ãƒªã‚¢
 	DrawBoxAA(height_button_location.x, height_button_location.y, height_button_location.x + 65, height_button_location.y + 25, 0x000000, true);
 	DrawBoxAA(height_button_location.x, height_button_location.y, height_button_location.x + 65, height_button_location.y + 25, 0xffffff, false);
 	DrawFormatStringF(height_button_location.x + 25, height_button_location.y + 5, 0xffffff, "%d", stage_height_num);
 
-	//ƒXƒe[ƒWƒTƒCƒY•ÏXƒ{ƒ^ƒ“
+	//ã‚¹ãƒ†ãƒ¼ã‚¸ã‚µã‚¤ã‚ºå¤‰æ›´ãƒœã‚¿ãƒ³
 	if (current_upbutton_flg == false)
 	{
 		DrawBoxAA(height_button_location.x, height_button_location.y - 15, height_button_location.x + 65, height_button_location.y, 0x000000, true);
@@ -406,7 +422,7 @@ void EditScene::Draw()const
 		DrawBoxAA(height_button_location.x, height_button_location.y - 15, height_button_location.x + 65, height_button_location.y, 0x000000, false);
 		DrawRotaStringF(height_button_location.x + 40, height_button_location.y - 10, 1, 1, 0, 0, 1.6f, 0x000000, 0, 0, "<");
 	}
-	//ƒXƒe[ƒWƒTƒCƒY•ÏXƒ{ƒ^ƒ“
+	//ã‚¹ãƒ†ãƒ¼ã‚¸ã‚µã‚¤ã‚ºå¤‰æ›´ãƒœã‚¿ãƒ³
 	if (current_downbutton_flg == false)
 	{
 		DrawBoxAA(height_button_location.x, height_button_location.y + 25, height_button_location.x + 65, height_button_location.y + 40, 0x000000, true);
@@ -419,7 +435,7 @@ void EditScene::Draw()const
 		DrawBoxAA(height_button_location.x, height_button_location.y + 25, height_button_location.x + 65, height_button_location.y + 40, 0x000000, false);
 		DrawRotaStringF(height_button_location.x + 25, height_button_location.y + 35, 1, 1, 0, 0, 4.7f, 0x000000, 0, 0, "<");
 	}
-	
+
 	if (current_type_select != -1)
 	{
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 180);
@@ -427,8 +443,8 @@ void EditScene::Draw()const
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 		for (int i = 0; i < can_select_type[current_type_select][1]; i++)
 		{
-			DrawBox(current_type_location.x, current_type_location.y + i*current_type_erea.height, current_type_location.x + current_type_erea.width, current_type_location.y + current_type_erea.height + i * current_type_erea.height, 0x000000, true);
-			DrawBox(current_type_location.x, current_type_location.y + i*current_type_erea.height, current_type_location.x + current_type_erea.width, current_type_location.y + current_type_erea.height + i * current_type_erea.height, 0xffffff, false);
+			DrawBox(current_type_location.x, current_type_location.y + i * current_type_erea.height, current_type_location.x + current_type_erea.width, current_type_location.y + current_type_erea.height + i * current_type_erea.height, 0x000000, true);
+			DrawBox(current_type_location.x, current_type_location.y + i * current_type_erea.height, current_type_location.x + current_type_erea.width, current_type_location.y + current_type_erea.height + i * current_type_erea.height, 0xffffff, false);
 			SetFontSize(24);
 			DrawFormatString(current_type_location.x, current_type_location.y + i * current_type_erea.height, 0xffffff, "%s", block_type_string[current_type_select][i]);
 		}
@@ -442,26 +458,29 @@ void EditScene::LoadStageData(int _stage)
 	switch (_stage)
 	{
 	case 0:
-		a = "resource/dat/1stStageData.txt";
+		a = "Resource/Dat/1stStageData.txt";
 		break;
 	case 1:
-		a = "resource/dat/2ndStageData.txt";
+		a = "Resource/Dat/2ndStageData.txt";
 		break;
 	case 2:
-		a = "resource/dat/3rdStageData.txt";
+		a = "Resource/Dat/3rdStageData.txt";
 		break;
 	case 3:
-		a = "resource/dat/BossStageData.txt";
+		a = "Resource/Dat/4thStageData.txt";
+		break;
+	case 4:
+		a = "Resource/Dat/BossStageData.txt";
 		break;
 	}
 
 	std::ifstream file(a);
-	//ƒtƒ@ƒCƒ‹‚ª“Ç‚İ‚ß‚Ä‚¢‚½‚È‚ç
+	//ãƒ•ã‚¡ã‚¤ãƒ«ãŒèª­ã¿è¾¼ã‚ã¦ã„ãŸãªã‚‰
 	if (file)
 	{
 		file >> stage_width_num;
 		file >> stage_height_num;
-		//ƒ‰ƒ“ƒLƒ“ƒOƒf[ƒ^”z•ª—ñƒf[ƒ^‚ğ“Ç‚İ‚Ş
+		//ãƒ©ãƒ³ã‚­ãƒ³ã‚°ãƒ‡ãƒ¼ã‚¿é…åˆ†åˆ—ãƒ‡ãƒ¼ã‚¿ã‚’èª­ã¿è¾¼ã‚€
 		for (int i = 0; i < stage_height_num; i++)
 		{
 			for (int j = 0; j < stage_width_num; j++)
@@ -476,28 +495,33 @@ void EditScene::LoadStageData(int _stage)
 void EditScene::UpdateStageData(int _stage)
 {
 	const char* a = "resource/dat/1stStageData.txt";
+
 	switch (_stage)
 	{
 	case 0:
-		a = "resource/dat/1stStageData.txt";
+		a = "Resource/Dat/1stStageData.txt";
 		break;
 	case 1:
-		a = "resource/dat/2ndStageData.txt";
+		a = "Resource/Dat/2ndStageData.txt";
 		break;
 	case 2:
-		a = "resource/dat/3rdStageData.txt";
+		a = "Resource/Dat/3rdStageData.txt";
 		break;
 	case 3:
-		a = "resource/dat/BossStageData.txt";
+		a = "Resource/Dat/4thStageData.txt";
+		break;
+	case 4:
+		a = "Resource/Dat/BossStageData.txt";
 		break;
 	}
+
 	std::ofstream file(a);
-	//ƒtƒ@ƒCƒ‹‚ª“Ç‚İ‚ß‚Ä‚¢‚½‚È‚ç
+	//ãƒ•ã‚¡ã‚¤ãƒ«ãŒèª­ã¿è¾¼ã‚ã¦ã„ãŸãªã‚‰
 	if (file)
 	{
 		file << stage_width_num << "\n";
 		file << stage_height_num << "\n";
-		//ƒ‰ƒ“ƒLƒ“ƒOƒf[ƒ^”z•ª—ñƒf[ƒ^‚ğ“Ç‚İ‚Ş
+		//ãƒ©ãƒ³ã‚­ãƒ³ã‚°ãƒ‡ãƒ¼ã‚¿é…åˆ†åˆ—ãƒ‡ãƒ¼ã‚¿ã‚’èª­ã¿è¾¼ã‚€
 		for (int i = 0; i < stage_height_num; i++)
 		{
 			for (int j = 0; j < stage_width_num; j++)
@@ -514,7 +538,7 @@ void EditScene::UpdateStage(int _width, int _height)
 	stage_width_num = _width;
 	stage_height_num = _height;
 	int stage_height_shift = stage_height_num - old_stage_height_num;
-	//Šg’£‚ÌãŒÀ‚Æk¬‚Ì‰ºŒÀ
+	//æ‹¡å¼µã®ä¸Šé™ã¨ç¸®å°ã®ä¸‹é™
 	if (stage_width_num > MAX_STAGE_WIDTH)
 	{
 		stage_width_num = MAX_STAGE_WIDTH;
@@ -599,19 +623,19 @@ void EditScene::StageShift(int _num)
 
 int EditScene::ChechSelectErea()
 {
-	//ƒuƒƒbƒN‚Ìƒ^ƒCƒv‘I‘ğ‰æ–Ê‚ªŠJ‚©‚ê‚Ä‹‚é‚©Šm”F
+	//ãƒ–ãƒ­ãƒƒã‚¯ã®ã‚¿ã‚¤ãƒ—é¸æŠç”»é¢ãŒé–‹ã‹ã‚Œã¦å±…ã‚‹ã‹ç¢ºèª
 	if (current_type_select != -1)
 	{
 		return SELECT_TYPE;
 	}
-	//ƒJ[ƒ\ƒ‹‚ªƒc[ƒ‹ƒ{ƒbƒNƒX“à‚©‚Ç‚¤‚©”»’f
+	//ã‚«ãƒ¼ã‚½ãƒ«ãŒãƒ„ãƒ¼ãƒ«ãƒœãƒƒã‚¯ã‚¹å†…ã‹ã©ã†ã‹åˆ¤æ–­
 	if (cursor.x > tool_location.x && cursor.x < tool_location.x + tool_size.width && cursor.y>tool_location.y && cursor.y < tool_location.y + tool_size.height)
 	{
 		return TOOL_BOX;
 	}
 	else
 	{
-		//ƒc[ƒ‹ƒ{ƒbƒNƒX‚ğ‚Â‚©‚ñ‚Å‚¢‚È‚¯‚ê‚Îƒc[ƒ‹ƒ{ƒbƒNƒXŠO‚Ìˆ—
+		//ãƒ„ãƒ¼ãƒ«ãƒœãƒƒã‚¯ã‚¹ã‚’ã¤ã‹ã‚“ã§ã„ãªã‘ã‚Œã°ãƒ„ãƒ¼ãƒ«ãƒœãƒƒã‚¯ã‚¹å¤–ã®å‡¦ç†
 		for (int i = 0; i < stage_height_num; i++)
 		{
 			for (int j = 0; j < stage_width_num; j++)
@@ -628,7 +652,7 @@ int EditScene::ChechSelectErea()
 
 void EditScene::MoveInsideScreen()
 {
-	//ƒXƒNƒŠ[ƒ““à‚©‚ço‚È‚¢‚æ‚¤‚Éƒc[ƒ‹ƒ{ƒbƒNƒX‚ÌXÀ•W‚ğƒ}ƒEƒX‚É‰ˆ‚Á‚ÄˆÚ“®
+	//ã‚¹ã‚¯ãƒªãƒ¼ãƒ³å†…ã‹ã‚‰å‡ºãªã„ã‚ˆã†ã«ãƒ„ãƒ¼ãƒ«ãƒœãƒƒã‚¯ã‚¹ã®Xåº§æ¨™ã‚’ãƒã‚¦ã‚¹ã«æ²¿ã£ã¦ç§»å‹•
 	tool_location.x = cursor.x - (tool_size.width / 2);
 	if (tool_location.x < 0)
 	{
@@ -638,12 +662,12 @@ void EditScene::MoveInsideScreen()
 	{
 		tool_location.x = SCREEN_WIDTH - tool_size.width;
 	}
-	//UI‚ğ’Ç]
+	//UIã‚’è¿½å¾“
 	width_button_location.x = tool_location.x + (tool_size.width - WIDTH_BUTTON_POS_X);
 	height_button_location.x = tool_location.x + (tool_size.width - HEIGHT_BUTTON_POS_X);
 	current_type_location.x = tool_location.x;
 
-	//ƒXƒNƒŠ[ƒ““à‚©‚ço‚È‚¢‚æ‚¤‚Éƒc[ƒ‹ƒ{ƒbƒNƒX‚ÌYÀ•W‚ğƒ}ƒEƒX‚É‰ˆ‚Á‚ÄˆÚ“®
+	//ã‚¹ã‚¯ãƒªãƒ¼ãƒ³å†…ã‹ã‚‰å‡ºãªã„ã‚ˆã†ã«ãƒ„ãƒ¼ãƒ«ãƒœãƒƒã‚¯ã‚¹ã®Yåº§æ¨™ã‚’ãƒã‚¦ã‚¹ã«æ²¿ã£ã¦ç§»å‹•
 	tool_location.y = cursor.y - (tool_size.height / 2);
 	if (tool_location.y < 0)
 	{
@@ -653,7 +677,7 @@ void EditScene::MoveInsideScreen()
 	{
 		tool_location.y = SCREEN_HEIGHT - tool_size.height;
 	}
-	//UI‚ğ’Ç]
+	//UIã‚’è¿½å¾“
 	width_button_location.y = tool_location.y + WIDTH_BUTTON_POS_Y;
 	height_button_location.y = tool_location.y + HEIGHT_BUTTON_POS_Y;
 	current_type_location.y = tool_location.y;

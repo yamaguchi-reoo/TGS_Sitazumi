@@ -12,16 +12,16 @@ class Title :
 private:
 
 public:
-    //ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+    //ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
     Title();
 
-    //ƒfƒXƒgƒ‰ƒNƒ^
+    //ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
     ~Title();
 
-    //•`‰æˆÈŠO‚ÌXV‚ğÀs
+    //æç”»ä»¥å¤–ã®æ›´æ–°ã‚’å®Ÿè¡Œ
     AbstractScene* Update() override;
 
-    //•`‰æ‚ÉŠÖ‚·‚é‚±‚Æ‚ğÀ‘•
+    //æç”»ã«é–¢ã™ã‚‹ã“ã¨ã‚’å®Ÿè£…
     void Draw() const override;
 };
 
