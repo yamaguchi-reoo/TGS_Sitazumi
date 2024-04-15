@@ -57,13 +57,13 @@ public:
 	void Update();
 	void Draw()const;
 
-	//ステージ(0=無 1=�D 2=�� 3=�� 4=�� 5=�� 6=�� 7=��)
+	//ステージの当たり判定の種類取得(0=当たり判定無し1=当たり判定あり)
 	int GetStageCollisionType();
-	//��ނ�ݒ�
+	//ステージのタイプ設定
 	void SetStageType(int _type);
-	//��ނ�擾
+	//ステージのタイプ取得(0=無 1=�白 2=灰 3=赤 4=緑 5=青 6=炎 7=木 8=水 9=初期リスポーン)
 	int GetStageType() { return type; }
-	//���̎�ނ�\������
+	//Edit表示設定
 	void SetDebugFlg() { debug_flg = true; }
 };
 

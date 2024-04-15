@@ -112,7 +112,7 @@ void Stage::Draw()const
 	//Edit用表示
 	if (debug_flg == true)
 	{
-		//初期スポーン地点を分かりやすく
+		//初期スポーン地点を分かりやすく4
 		if (type == PLAYER_SPAWN_NUM)
 		{
 			DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, 0xffff00, true);
@@ -123,9 +123,10 @@ void Stage::Draw()const
 int Stage::GetStageCollisionType()
 {
 	int col_type = 0;
-	if (type <= 5)
+	//１～５は当たり判定有り
+	if (type > 0 && type <= 5)
 	{
-		col_type = type;
+		col_type = 1;
 	}
 	return col_type;
 }
