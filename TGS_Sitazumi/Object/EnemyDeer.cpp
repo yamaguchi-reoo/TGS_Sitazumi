@@ -9,8 +9,28 @@ EnemyDeer::EnemyDeer()
 		KeepMouseY[i] = 0;
 	}
 
+	for (int i = 0; i < 99; i++)
+	{
+		for (int j = 0; j < 8; j++)
+		{
+			KeepCursor[i][j] = 0;
+		}
+	}
+
+	for (int z = 0; z < 100; z++)
+	{
+		String[z] = 0;
+	}
+
 	number = 0;
 	akusel = 0;
+	EnemyFileOpenFlg = true;
+	EnemyFileHandle = 0;
+	NotOpen = TRUE;
+
+	ArrayNumberX = 0;
+	ArrayNumberY = 1;
+	ArrayNumber = 0;
 }
 
 EnemyDeer::~EnemyDeer()
@@ -20,55 +40,50 @@ EnemyDeer::~EnemyDeer()
 
 void EnemyDeer::Update(GameMain* main)
 {
-	if (number > 9)number = 0;
+	NotOpen = EnemyDeerfs();
 
-	akusel++;
+	//添え字の初期化
+	/*if (ArrayNumber > 98)
+	{
+		ArrayNumber = 0;
+	}*/
 
-	if (akusel > 60)akusel = 0;
-
+	//左クリックが押されたら座標を配列に格納したい
 	if (KeyInput::OnMouse(MOUSE_INPUT_LEFT) == 1)
 	{
-		KeepMouseX[number] = KeyInput::GetMouseCursor().x;
-		KeepMouseY[number] = KeyInput::GetMouseCursor().y;
+		KeepCursor[ArrayNumber][ArrayNumberX] = KeyInput::GetMouseCursor().x; //偶数の配列に格納する [0][0] [0][2] [0][4] [0][6] [0][8]
+		KeepCursor[ArrayNumber][ArrayNumberY] = KeyInput::GetMouseCursor().y; //奇数の配列に格納する [0][1] [0][3] [0][5] [0][7] [0][9]
 
-		number++;
+		if (Deerfs)
+		{
+			Deerfs << KeepCursor[ArrayNumber][ArrayNumberX] << "\n";
+			Deerfs << KeepCursor[ArrayNumber][ArrayNumberY] << "\n";
+		}
+
+		if (ArrayNumberX >= 8 && ArrayNumberY >= 9)
+		{
+			ArrayNumber++;
+			ArrayNumberX = 0;
+			ArrayNumberY = 1;
+		}
+
+		ArrayNumberX += 2;
+		ArrayNumberY += 2;
 	}
+
+	Deerfs.close();
 }
 
 void EnemyDeer::Draw()const
 {
 	DrawFormatString(0, 60, GetColor(255, 0, 0), "MouseX : %d MouseY : %d", KeyInput::GetMouseCursor().x, KeyInput::GetMouseCursor().y);
-	//DrawFormatString(0, 120, 0xff0000, "QuadRangleBox X1 : %d Y1 : %d", KeepMouseX[number * 0], KeepMouseY[number * 0]); // 1 * 0 = 0
-	//DrawFormatString(0, 140, 0xff0000, "QuadRangleBox X2 : %d Y2 : %d", KeepMouseX[number - 1], KeepMouseY[number - 1]); // 2 * 1 - 1 = 1
-	//DrawFormatString(0, 160, 0xff0000, "QuadRangleBox X3 : %d Y3 : %d", KeepMouseX[number - 2], KeepMouseY[number - 2]); // 3 * 1 - 1 = 2
-	//DrawFormatString(0, 180, 0xff0000, "QuadRangleBox X4 : %d Y4 : %d", KeepMouseX[number * 1 - 1], KeepMouseY[number * 1 - 1]); // 4 * 
-	//DrawFormatString(0, 120, GetColor(255, 0, 0), "Flg : %d", KeyInput::OnMouse(MOUSE_INPUT_LEFT));
-	DrawFormatString(0, 80, 0xff0000, "number : %d", number);
+	DrawFormatString(0, 80, 0xff0000, "File open? %d", NotOpen);	//ファイルが開けているか確認 TRUE or FALSE
+	DrawFormatString(0, 120, 0xff0000, "Number : %d X number : %d Y wnumber : %d", ArrayNumber, ArrayNumberX - 2, ArrayNumberY - 2);
+	DrawFormatString(0, 140, 0xff0000, "Number : %d X : %d Y : %d",ArrayNumber, KeepCursor[ArrayNumber][ArrayNumberX - 2], KeepCursor[ArrayNumber][ArrayNumberY - 2]);
 
-
-	if (KeepMouseX[number * 0] && KeepMouseY[number * 0] != 0)
-	{
-		DrawCircle(KeepMouseX[number * 0], KeepMouseY[number * 0], 2, 0xff0000, 1);
-
-		if (KeepMouseX[number - 1] && KeepMouseY[number - 1] != 0)
-		{
-			DrawCircle(KeepMouseX[number - 1], KeepMouseY[number - 1], 2, 0x00ff00, 1);
-
-			if (KeepMouseX[number - 3] && KeepMouseY[number - 3] != 0)
-			{
-				DrawCircle(KeepMouseX[number - 3], KeepMouseY[number - 3], 2, 0xff00ff, 1);
-
-				if (KeepMouseX[number - 4] && KeepMouseY[number - 4] != 0)
-				{
-					DrawCircle(KeepMouseX[number - 4], KeepMouseY[number - 4], 2, 0x0000ff, 1);
-
-					DrawQuadrangle(KeepMouseX[number - 4], KeepMouseY[number - 4], KeepMouseX[number - 3], KeepMouseY[number - 3],
-						KeepMouseX[number - 1], KeepMouseY[number - 1], KeepMouseX[number - 2], KeepMouseY[number - 2], 0xffffff, FALSE);
-				}
-			}
-		}
-	}
-
+	DrawQuadrangle(KeepCursor[ArrayNumber][0], KeepCursor[ArrayNumber][1], KeepCursor[ArrayNumber][2], KeepCursor[ArrayNumber][3],
+		KeepCursor[ArrayNumber][4], KeepCursor[ArrayNumber][5], KeepCursor[ArrayNumber][6], KeepCursor[ArrayNumber][7], 0xffffff, FALSE);
+	
 	//角 左から
 	//DrawQuadrangle(295, 260, 310, 260, 310, 290, 300, 290, 0xffffff, FALSE);
 	//頭
@@ -84,7 +99,45 @@ void EnemyDeer::Draw()const
 	DrawBox(360 + akusel, 380, 370 + akusel, 410, 0xffffff, FALSE);
 	DrawQuadrangle(380 + akusel, 380, 390 + akusel, 380, 400 + akusel, 410, 390 + akusel, 410, 0xffffff, FALSE);
 
-
 	/*DrawQuadrangle(KeepMouseX[number - 1], KeepMouseY[number - 1], KeepMouseX[number - 2], KeepMouseY[number - 2],
 		KeepMouseX[number - 3], KeepMouseY[number - 3], KeepMouseX[number - 4], KeepMouseY[number - 4], 0xffffff, FALSE);*/
+}
+
+void EnemyDeer::EnemyDeerIfs()
+{
+	DeerIfs.open("Resource/Dat/EnemyCoordinate.txt");
+
+	if (!DeerIfs) //  ファイルが開けない場合の処理
+	{
+		NotOpen = FALSE;
+	}
+}
+
+void EnemyDeer::EnemyDeerOfs()
+{
+	DeerOfs.open("Resource/Dat/EnemyCoordinate.txt");
+
+	if (!DeerOfs) //  ファイルが開けない場合の処理
+	{            
+		NotOpen = FALSE;
+	}
+	else
+	{
+		DeerOfs << "Hello world!" << endl;    //  ofs に出力
+		DeerOfs << "This is a pen." << endl;    //  ofs に出力
+	}
+}
+
+int EnemyDeer::EnemyDeerfs()
+{
+	Deerfs.open("Resource/Dat/EnemyCoordinate.txt", ios::app);
+
+	if (!Deerfs)	//ファイルが開けなかった
+	{
+		return FALSE;
+	}
+	else //ファイルが開けた
+	{
+		return TRUE;
+	}
 }
