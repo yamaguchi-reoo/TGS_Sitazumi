@@ -54,10 +54,20 @@ void EnemyDeer::Update(GameMain* main)
 		KeepCursor[ArrayNumber][ArrayNumberX] = KeyInput::GetMouseCursor().x; //偶数の配列に格納する [0][0] [0][2] [0][4] [0][6] [0][8]
 		KeepCursor[ArrayNumber][ArrayNumberY] = KeyInput::GetMouseCursor().y; //奇数の配列に格納する [0][1] [0][3] [0][5] [0][7] [0][9]
 
+		//ファイルを開けたら
 		if (Deerfs)
 		{
-			Deerfs << KeepCursor[ArrayNumber][ArrayNumberX] << "\n";
-			Deerfs << KeepCursor[ArrayNumber][ArrayNumberY] << "\n";
+			Deerfs << KeepCursor[ArrayNumber][ArrayNumberX];
+			Deerfs << ",";
+			Deerfs << KeepCursor[ArrayNumber][ArrayNumberY];
+			if (ArrayNumberX >= 8 && ArrayNumberY >= 9)
+			{
+				Deerfs << "\n";
+			}
+			else 
+			{
+				Deerfs << ",";
+			}
 		}
 
 		if (ArrayNumberX >= 8 && ArrayNumberY >= 9)
@@ -87,17 +97,16 @@ void EnemyDeer::Draw()const
 	//角 左から
 	//DrawQuadrangle(295, 260, 310, 260, 310, 290, 300, 290, 0xffffff, FALSE);
 	//頭
-	DrawBox(300 + akusel, 300, 330 + akusel, 320, GetColor(255, 255, 255), FALSE);
+	DrawBox(300 + akusel, 300, 330 + akusel, 320, GetColor(255, 255, 255), TRUE);
 	//首
-	DrawBox(315 + akusel, 325, 330 + akusel, 350, GetColor(255, 255, 255), FALSE);
+	DrawBox(315 + akusel, 325, 330 + akusel, 350, GetColor(255, 255, 255), TRUE);
 	//胴体
-	DrawBox(315 + akusel, 355, 390 + akusel, 375, 0xfffffff, FALSE);
+	DrawBox(315 + akusel, 355, 390 + akusel, 375, 0xfffffff, TRUE);
 	//足 左から
-	//DrawBox(315, 380, 325, 420, 0xffffff, FALSE);
-	DrawQuadrangle(315 + akusel, 380, 325 + akusel, 380, 315 + akusel, 410, 305 + akusel, 410, 0xffffff, FALSE);
-	DrawBox(330 + akusel, 380, 340 + akusel, 410, 0xffffff, FALSE);
-	DrawBox(360 + akusel, 380, 370 + akusel, 410, 0xffffff, FALSE);
-	DrawQuadrangle(380 + akusel, 380, 390 + akusel, 380, 400 + akusel, 410, 390 + akusel, 410, 0xffffff, FALSE);
+	DrawQuadrangle(315 + akusel, 380, 325 + akusel, 380, 315 + akusel, 410, 305 + akusel, 410, 0xffffff, TRUE);
+	DrawBox(330 + akusel, 380, 340 + akusel, 410, 0xffffff, TRUE);
+	DrawBox(360 + akusel, 380, 370 + akusel, 410, 0xffffff, TRUE);
+	DrawQuadrangle(380 + akusel, 380, 390 + akusel, 380, 400 + akusel, 410, 390 + akusel, 410, 0xffffff, TRUE);
 
 	/*DrawQuadrangle(KeepMouseX[number - 1], KeepMouseY[number - 1], KeepMouseX[number - 2], KeepMouseY[number - 2],
 		KeepMouseX[number - 3], KeepMouseY[number - 3], KeepMouseX[number - 4], KeepMouseY[number - 4], 0xffffff, FALSE);*/
@@ -135,6 +144,7 @@ int EnemyDeer::EnemyDeerfs()
 	if (!Deerfs)	//ファイルが開けなかった
 	{
 		return FALSE;
+		exit(1);
 	}
 	else //ファイルが開けた
 	{
