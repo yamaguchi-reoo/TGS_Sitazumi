@@ -42,7 +42,7 @@ Stage::~Stage()
 
 void Stage::Update()
 {
-	frame++;
+	x_move++;
 	//アニメーション用変数
 	if (++anim > 60)
 	{
