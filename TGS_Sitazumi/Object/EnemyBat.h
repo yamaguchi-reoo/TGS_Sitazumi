@@ -16,8 +16,10 @@ class EnemyBat:
 	public CharaBase
 {
 private:
-	std::vector<std::vector<int>>vertices;
+	//std::vector<std::vector<int>>vertices;
 	int x_move;
+	Location vertices[32];
+
 public:
 	EnemyBat();
 	~EnemyBat();
@@ -25,6 +27,7 @@ public:
 	void Draw()const override;
 public:
 	void Move();
+	void BatArray();
 
 };
 
