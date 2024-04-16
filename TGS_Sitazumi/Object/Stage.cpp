@@ -2,7 +2,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-Stage::Stage(float _x, float _y, float _width, float _height, int _type): frame(0),inv_flg(false), debug_flg(false), anim(0), effect_anim{0}
+Stage::Stage(float _x, float _y, float _width, float _height, int _type): frame(0),inv_flg(false), debug_flg(false), anim(0), fire_anim{0},wood_anim{0}
 {
 	location.x = _x;
 	location.y = _y;
@@ -24,9 +24,14 @@ Stage::Stage(float _x, float _y, float _width, float _height, int _type): frame(
 	//エフェクトのアニメーション用初期定義
 	for (int i = 0; i < ANIM_BLOCK_NUM; i++)
 	{
-		effect_anim[i].time = GetRand(40);
+		fire_anim[i].time = GetRand(40);
+		/*int rand = GetRand(10);*/
+		wood_anim[i].shift = GetRand(10);
+		wood_anim[i].shift1.x = (erea.width / 10) * i;
+		wood_anim[i].shift2.x = (erea.width / 10) * i;
+		wood_anim[i].shift1.y = erea.height;
+		wood_anim[i].shift2.y = GetRand(20);
 	}
-
 }
 
 Stage::~Stage()
@@ -47,23 +52,38 @@ void Stage::Update()
 	{
 		for (int i = 0; i < ANIM_BLOCK_NUM; i++)
 		{
-			if (effect_anim[i].time < 0)
+			if (fire_anim[i].time < 0)
 			{
-				effect_anim[i].location.x = local_location.x;
-				effect_anim[i].location.y = local_location.y + erea.height;
-				effect_anim[i].erea.width = erea.width / 10;
-				effect_anim[i].erea.height = erea.height / 10;
-				effect_anim[i].location.x += (erea.width / 10) * GetRand(10);
-				effect_anim[i].time = 30 + GetRand(30);
-				effect_anim[i].angle = GetRand(3);
+				fire_anim[i].shift.x = 0;
+				fire_anim[i].shift.y = erea.height;
+				fire_anim[i].erea.width = erea.width / 10;
+				fire_anim[i].erea.height = erea.height / 10;
+				fire_anim[i].shift.x += (erea.width / 10) * GetRand(10);
+				fire_anim[i].time = 30 + GetRand(30);
+				fire_anim[i].angle = GetRand(3);
 			}
 			else
 			{
-				effect_anim[i].location.x += 0.05 + (effect_anim[i].angle-1)/2;
-				effect_anim[i].location.y -= 1;
-				effect_anim[i].time--;
-				effect_anim[i].erea.width -= 0.05;
-				effect_anim[i].erea.height -= 0.05;
+				fire_anim[i].shift.x += 0.05 + (fire_anim[i].angle-1)/2;
+				fire_anim[i].shift.y -= 1;
+				fire_anim[i].time--;
+				fire_anim[i].erea.width -= 0.05;
+				fire_anim[i].erea.height -= 0.05;
+			}
+		}
+	}
+	//木エフェクト用
+	if (type == 7)
+	{
+		for (int i = 0; i < ANIM_BLOCK_NUM; i++)
+		{
+			if (anim < 30)
+			{
+				wood_anim[i].shift2.x += (wood_anim[i].shift/50)+0.1;
+			}
+			else
+			{
+				wood_anim[i].shift2.x -= (wood_anim[i].shift/50)+0.1;
 			}
 		}
 	}
@@ -93,12 +113,21 @@ void Stage::Draw()const
 		case 6:
 			for (int i = 0; i < ANIM_BLOCK_NUM; i++)
 			{
-				DrawBoxAA(effect_anim[i].location.x, effect_anim[i].location.y, effect_anim[i].location.x + effect_anim[i].erea.width, effect_anim[i].location.y + effect_anim[i].erea.height, 0xff0000, true);
+				DrawBoxAA(fire_anim[i].shift.x + local_location.x, 
+						  fire_anim[i].shift.y + local_location.y, 
+						  fire_anim[i].shift.x + fire_anim[i].erea.width + local_location.x, 
+						  fire_anim[i].shift.y + fire_anim[i].erea.height + local_location.y, 0xff0000, true);
 			}
 			break;
 			//木
 		case 7:
-			DrawStringF(local_location.x, local_location.y, "��", 0x00ff00);
+			for (int i = 0; i < ANIM_BLOCK_NUM; i++)
+			{
+				DrawLineAA(wood_anim[i].shift1.x + local_location.x,
+						   wood_anim[i].shift1.y + local_location.y,
+						   wood_anim[i].shift2.x + local_location.x,
+						   wood_anim[i].shift2.y + local_location.y, 0x00ff00, true);
+			}
 			break;
 			//水
 		case 8:
@@ -120,13 +149,13 @@ void Stage::Draw()const
 		DrawFormatStringF(local_location.x, local_location.y, text_color[type], "%d", type);
 	}
 }
-int Stage::GetStageCollisionType()
+bool Stage::GetStageCollisionType()
 {
-	int col_type = 0;
+	bool col_type = false;
 	//１～５は当たり判定有り
 	if (type > 0 && type <= 5)
 	{
-		col_type = 1;
+		col_type = true;
 	}
 	return col_type;
 }
