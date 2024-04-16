@@ -68,8 +68,6 @@ AbstractScene* GameMain::Update()
 		}
 	}
 
-	enemydeer->Update(this);
-
 #ifdef _DEBUG
 	//ステージをいじるシーンへ遷移
 	if (KeyInput::OnPresed(KEY_INPUT_E) && KeyInput::OnPresed(KEY_INPUT_D))
