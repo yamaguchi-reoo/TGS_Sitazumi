@@ -10,7 +10,7 @@ private:
 	int count;			//カウント
 	float fps;			//fps
 	static const int average = 10;	//平均をカウント数
-	static const int frame = 60;//フレームレート設定
+	static const int x_move = 60;//フレームレート設定
 public:
 	Fps()
 	{
@@ -46,7 +46,7 @@ public:
 		//かかった時間
 		int took_time = GetNowCount() - start_time;
 		//待つべき時間
-		int wait_time = count * 1000 / frame - took_time;
+		int wait_time = count * 1000 / x_move - took_time;
 		if (wait_time > 0)
 		{
 			//待機

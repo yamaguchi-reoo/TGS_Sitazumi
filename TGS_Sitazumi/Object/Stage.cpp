@@ -2,7 +2,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-Stage::Stage(float _x, float _y, float _width, float _height, int _type): frame(0),inv_flg(false), debug_flg(false), anim(0), effect_anim{0}
+Stage::Stage(float _x, float _y, float _width, float _height, int _type): x_move(0),inv_flg(false), debug_flg(false), anim(0), effect_anim{0}
 {
 	location.x = _x;
 	location.y = _y;
@@ -36,7 +36,7 @@ Stage::~Stage()
 
 void Stage::Update()
 {
-	frame++;
+	x_move++;
 	//アニメーション用変数
 	if (++anim > 60)
 	{

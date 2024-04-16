@@ -44,7 +44,7 @@ class Stage :
 	public BoxCollider, public ColorData
 {
 private:
-	int frame;					//フレーム測定用
+	int x_move;					//フレーム測定用
 	int type;					//ブロックの種類(0=無 1=白 2=灰 3=赤 4=緑 5=青 6=炎 7=木 8=水 9=初期スポーン(Editのみ表示))
 	bool inv_flg;				//ブロックに触れるか判断
 	bool debug_flg;				//EditScene用表示をするかどうか

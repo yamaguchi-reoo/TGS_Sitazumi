@@ -1,19 +1,30 @@
 #pragma once
 #include "CharaBase.h"
+#include<vector>
+#include<fstream>
+#include<iostream>
+#include<sstream>
+
+enum class BatState {
+	IDLE = 0,
+	LEFT,
+	RIGHT,
+	DEATH
+};
 
 class EnemyBat:
 	public CharaBase
 {
 private:
-
-	//int KeepMouseX[10], KeepMouseY[10];
-	int number;
-
-	int frame;
+	std::vector<std::vector<int>>vertices;
+	int x_move;
 public:
 	EnemyBat();
 	~EnemyBat();
 	void Update(GameMain* main)override;
 	void Draw()const override;
+public:
+	void Move();
+
 };
 
