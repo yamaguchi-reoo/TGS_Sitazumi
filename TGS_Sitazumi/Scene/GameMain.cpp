@@ -11,7 +11,7 @@
 static Location camera_location = { 0,0};	//カメラの座標
 static Location screen_origin = { (SCREEN_WIDTH / 2),(SCREEN_HEIGHT / 2) };
 
-GameMain::GameMain(int _stage) :stage{ 0 }, stage_data{0},now_stage(0), stage_width_num(0), stage_height_num(0), stage_width(0), stage_height(0), camera_x_lock_flg(true), camera_y_lock_flg(true), x_pos_set_once(true), y_pos_set_once(true)
+GameMain::GameMain(int _stage) :stage_data{0},now_stage(0), stage_width_num(0), stage_height_num(0), stage_width(0), stage_height(0), camera_x_lock_flg(true), camera_y_lock_flg(true), x_pos_set_once(true), y_pos_set_once(true)
 {
 	CreateObject(new Player);
 	CreateObject(new EnemyDeer);
@@ -22,7 +22,6 @@ GameMain::GameMain(int _stage) :stage{ 0 }, stage_data{0},now_stage(0), stage_wi
 
 GameMain::~GameMain()
 {
-
 	for (int i = 0; i < OBJECT_NUM; i++)
 	{
 		//生成済みのオブジェクトを削除
@@ -42,7 +41,7 @@ AbstractScene* GameMain::Update()
 	{
 		chara_object[i]->SetScreenPosition(camera_location);
 		chara_object[i]->Update();
-		for (int j = i; chara_object[j] != nullptr; j++)
+		for (int j = i+1; chara_object[j] != nullptr; j++)
 		{
 			if (chara_object[i]->HitBox(chara_object[j]))
 			{
@@ -102,7 +101,7 @@ void GameMain::UpdateCamera()
 		//固定する位置を一度だけ設定する
 		if (x_pos_set_once == false)
 		{
-			lock_pos.x = player->GetCenterLocation().x;
+			lock_pos.x = chara_object[0]->GetCenterLocation().x;
 			x_pos_set_once = true;
 		}
 	}
@@ -233,21 +232,6 @@ void GameMain::SetStage(int _stage)
 	//カメラの位置がプレイヤーの位置にならないように
 	x_pos_set_once = true;
 	y_pos_set_once = true;
-}
-
-int GameMain::GetStageType(int _i, int _j)
-{
-	int ret = -1;
-	if (stage[_i][_j] == nullptr || _i >= stage_height_num || _j >= stage_width_num)
-	{
-		//無を返す
-		ret = -1;
-	}
-	else
-	{
-		ret = stage[_i][_j]->GetStageType();
-	}
-	return ret;
 }
 
 void GameMain::ResetCamera()

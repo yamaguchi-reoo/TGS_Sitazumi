@@ -3,6 +3,7 @@
 
 EnemyBat::EnemyBat()
 {
+	type = ENEMY;
 	x_move = 0;
 	local_location.x = 877;
 	local_location.y = 300;
@@ -20,9 +21,6 @@ EnemyBat::EnemyBat()
 	//	{853,334,816,310,814,380},
 	//	{855,334,816,310,835,375},
 	//};
-	type = ENEMY;
-	number = 0;
-	frame = 0;
 }
 
 EnemyBat::~EnemyBat()
