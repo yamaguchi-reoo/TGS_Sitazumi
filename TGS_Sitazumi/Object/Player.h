@@ -4,7 +4,7 @@
 #include "ColorData.h"
 
 class Player :
-	public CharaBase , public ColorData
+	public CharaBase, public ColorData
 {
 public:
 	enum hitPosition
@@ -15,24 +15,24 @@ public:
 		right
 	};
 private:
-	Location vector; //ƒxƒNƒgƒ‹A‚à‚µ‚©‚µ‚çƒLƒƒƒ‰ƒx[ƒX‚ÉˆÚ“®‚©‚à
-	bool stageHitFlg[2][4]; //ã‰º¶‰E‚Ç‚±‚Æ“–‚½‚Á‚Ä‚¢‚é‚©‚ğ”z—ñ‚ÉŠi”[
-							//0‚Ìs‚Í1‚Â‚ÌƒuƒƒbƒN‚É“–‚½‚Á‚Ä‚¢‚é‚©
-							//1‚Ìs‚ÍƒXƒe[ƒW‘S‘Ì‚É‘Î‚µ‚Ä‚Ì“–‚½‚Á‚Ä‚¢‚é‚©
+	Location vector; //ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ãƒ™ã‚¯ãƒˆãƒ«
+	bool stageHitFlg[2][4]; //ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¨ã‚¹ãƒ†ãƒ¼ã‚¸ã®å½“ãŸã‚Šåˆ¤å®š
+	//0ã®è¡Œã¯ã‚¹ãƒ†ãƒ¼ã‚¸ã®ãƒ–ãƒ­ãƒƒã‚¯ä¸€ã¤ä¸€ã¤ã«å¯¾ã—ã¦ã®åˆ¤å®š
+	//1ã®è¡Œã¯1ãƒ•ãƒ¬ãƒ¼ãƒ ã§ã‚¹ãƒ†ãƒ¼ã‚¸å…¨ä½“ã¨ã®åˆ¤å®š
 
-	Location aimLoc; //Æ€‚ÌÀ•W
-	Location aimVec; //Æ€‚Ì•ûŒü
-	Location lineLoc; //ü‚ÌI’[À•W
-	
+	Location aimLoc; //ç…§æº–åº§æ¨™
+	Location aimVec; //ç…§æº–ãƒ™ã‚¯ãƒˆãƒ«
+	Location lineLoc; //ç·šã®åº§æ¨™
+
 public:
 	Player();
 	~Player();
 	void Update(GameMain* main)override;
 	void Draw()const override;
 
-	void MoveActor();
-	void MoveAim();
+	void MoveActor(); //ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼ã®ç§»å‹•
+	void MoveAim(); //ç…§æº–ã®ç§»å‹•
 
-	bool CheckCollision(Stage* stage);
+	bool CheckCollision(Stage* stage); //ã‚¹ãƒ†ãƒ¼ã‚¸ã¨ã®å½“ãŸã‚Šåˆ¤å®š
 };
 
