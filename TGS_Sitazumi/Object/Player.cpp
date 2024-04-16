@@ -6,6 +6,7 @@
 
 Player::Player()
 {
+	type = PLAYER;
 	color = WHITE;
 
 	location = { 40,200 };
@@ -26,7 +27,7 @@ Player::~Player()
 	
 }
 
-void Player::Update(GameMain* main)
+void Player::Update()
 {
 	if (stageHitFlg[1][bottom] != true) {
 		vector.y += 1.f;
@@ -67,6 +68,85 @@ void Player::Draw()const
 	DrawFormatString(20 , 80, 0xff0000, "%f", location.x);
 	DrawFormatString(20 , 100, 0xff0000, "%f", location.y);	
 	
+}
+
+void Player::Hit(Location _location, Erea _erea, int _type)
+{
+	//ブロックと当たった時の処理
+	if (_type == BLOCK)
+	{
+		Location tmpl = location;
+		Erea tmpe = erea;
+
+		erea.height = 1.f;
+		erea.width = tmpe.width - 10.f;
+
+		//�v���C���[�̏㑤
+		//location.y -= tmpe.height / 2;
+		if (!stageHitFlg[1][top]) {
+			stageHitFlg[0][top] = true;
+			stageHitFlg[1][top] = true;
+		}
+		else {
+			stageHitFlg[0][top] = false;
+		}
+
+		//�v���C���[�̉���
+		location.y += tmpe.height;
+		if (!stageHitFlg[1][bottom]) {
+			stageHitFlg[0][bottom] = true;
+			stageHitFlg[1][bottom] = true;
+		}
+		else {
+			stageHitFlg[0][bottom] = false;
+		}
+
+		//���P�[�V�����A������߂�
+		location.y = tmpl.y;
+		erea.height = tmpe.height;
+		//���܂�h�~(�㉺)
+		if (stageHitFlg[0][bottom]) {//���̖��܂�h�~
+			float t = _location.y - (location.y + erea.height);
+			if (t != 0) {
+				location.y += t;
+			}
+		}
+
+
+
+
+		//���E�G���A�̐ݒ�
+		erea.height = tmpe.height - 10;
+		erea.width = 1;
+
+		//�v���C���[�̍���
+		//location.x -= tmpe.width / 2;
+		if (!stageHitFlg[1][left]) {
+			stageHitFlg[0][left] = true;
+			stageHitFlg[1][left] = true;
+
+		}
+		else {
+			stageHitFlg[0][left] = false;
+		}
+
+		//�v���C���[�̉E��
+		location.x += tmpe.width;
+		if (!stageHitFlg[1][right]) {
+			stageHitFlg[0][right] = true;
+			stageHitFlg[1][right] = true;
+		}
+		else {
+			stageHitFlg[0][right] = false;
+		}
+
+
+
+		//���ɖ߂�
+		location.x = tmpl.x;
+		erea.height = tmpe.height;
+		erea.width = tmpe.width;
+	}
 }
 
 void Player::MoveActor()

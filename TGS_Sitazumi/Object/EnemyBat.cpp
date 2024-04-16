@@ -3,6 +3,7 @@
 
 EnemyBat::EnemyBat()
 {
+	type = ENEMY;
 	number = 0;
 	frame = 0;
 }
@@ -11,7 +12,7 @@ EnemyBat::~EnemyBat()
 {
 }
 
-void EnemyBat::Update(GameMain* main)
+void EnemyBat::Update()
 {
 	frame++;
 	if (frame > 60)
@@ -38,4 +39,9 @@ void EnemyBat::Draw() const
 	DrawTriangle(853, 344, 816, 310, 787, 385, GetColor(255, 255, 255), FALSE);
 	DrawTriangle(853, 344, 816, 310, 814, 380, GetColor(255, 255, 255), FALSE);
 	DrawTriangle(855, 344, 816, 310, 835, 375, GetColor(255, 255, 255), FALSE);
+}
+
+void EnemyBat::Hit(Location _location, Erea _erea, int _type)
+{
+
 }

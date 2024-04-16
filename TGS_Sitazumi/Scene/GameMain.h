@@ -5,6 +5,7 @@
 #include "../Object/Stage.h"
 #include "../Object/EnemyDeer.h"
 #include"../Object/EnemyBat.h"
+#include"../Object/Object.h"
 
 class Player;
 
@@ -22,6 +23,7 @@ private:
     int stage_width;        //�X�e�[�W����
     int stage_height;       //�X�e�[�W�c��
 
+    Object* chara_object[OBJECT_NUM];    //キャラのオブジェクト格納
     EnemyDeer* enemydeer;
     EnemyBat* enemybat;
 
@@ -46,6 +48,9 @@ public:
 
     //�`��Ɋւ��邱�Ƃ����
     void Draw() const override;
+
+    //オブジェクトの生成
+    void CreateObject(Object* _object);
 
     //�J�����̍X�V���J������h�炷
     void UpdateCamera();

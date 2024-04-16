@@ -1,8 +1,8 @@
 #pragma once
-#include "CharaBase.h"
+#include "Object.h"
 
 class EnemyBat:
-	public CharaBase
+	public Object
 {
 private:
 
@@ -13,7 +13,8 @@ private:
 public:
 	EnemyBat();
 	~EnemyBat();
-	void Update(GameMain* main)override;
+	void Update()override;
 	void Draw()const override;
+	void Hit(Location _location, Erea _erea, int _type)override;
 };
 

@@ -3,6 +3,7 @@
 
 EnemyDeer::EnemyDeer()
 {
+	type = ENEMY;
 	for (int i = 0; i < 10; i++)
 	{
 		KeepMouseX[i] = 0;
@@ -38,7 +39,7 @@ EnemyDeer::~EnemyDeer()
 
 }
 
-void EnemyDeer::Update(GameMain* main)
+void EnemyDeer::Update()
 {
 	NotOpen = EnemyDeerfs();
 
@@ -101,6 +102,11 @@ void EnemyDeer::Draw()const
 
 	/*DrawQuadrangle(KeepMouseX[number - 1], KeepMouseY[number - 1], KeepMouseX[number - 2], KeepMouseY[number - 2],
 		KeepMouseX[number - 3], KeepMouseY[number - 3], KeepMouseX[number - 4], KeepMouseY[number - 4], 0xffffff, FALSE);*/
+}
+
+void EnemyDeer::Hit(Location _location, Erea _erea, int _type)
+{
+
 }
 
 void EnemyDeer::EnemyDeerIfs()

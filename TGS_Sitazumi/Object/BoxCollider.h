@@ -24,7 +24,7 @@ protected:
 	Erea erea;					//範囲
 public:
 
-	//当たり判定 (0,0 = 当たっていない それ以外 = 相手の中心座標)
+	//当たり判定 (false = 当たっていない true= 当たっている)
 	bool HitBox(BoxCollider* bCollider);
 
 	//左上座標の取得

@@ -4,17 +4,18 @@
 
 Stage::Stage(float _x, float _y, float _width, float _height, int _type): frame(0),inv_flg(false), debug_flg(false), anim(0), fire_anim{0},wood_anim{0}
 {
+	type = BLOCK;
 	location.x = _x;
 	location.y = _y;
 	erea.height = _height;
 	erea.width = _width;
-	type = _type;	
+	block_type = _type;
 	color = 0;
 	//色を交換出来るブロックの設定
-	if (type == 1 || type == 3 || type == 4 || type == 5)
+	if (block_type == 1 || block_type == 3 || block_type == 4 || block_type == 5)
 	{
 		swap_flg = true;
-		SetColorData(color_data[type]);
+		SetColorData(color_data[block_type]);
 	}
 	//色を交換出来ないブロックの設定
 	else
@@ -48,7 +49,7 @@ void Stage::Update()
 		anim = 0;
 	}
 	//炎エフェクト用
-	if (type == 6)
+	if (block_type == 6)
 	{
 		for (int i = 0; i < ANIM_BLOCK_NUM; i++)
 		{
@@ -73,7 +74,7 @@ void Stage::Update()
 		}
 	}
 	//木エフェクト用
-	if (type == 7)
+	if (block_type == 7)
 	{
 		for (int i = 0; i < ANIM_BLOCK_NUM; i++)
 		{
@@ -93,7 +94,7 @@ void Stage::Draw()const
 {
 	if (inv_flg == false)
 	{
-		switch (type)
+		switch (block_type)
 		{
 			//無
 		case 0:
@@ -146,14 +147,23 @@ void Stage::Draw()const
 		{
 			DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, 0xffff00, true);
 		}
-		DrawFormatStringF(local_location.x, local_location.y, text_color[type], "%d", type);
+		DrawFormatStringF(local_location.x, local_location.y, text_color[type], "%d", block_type);
 	}
 }
+
+void Stage::Hit(Location _location, Erea _erea, int _type)
+{
+	if (_type == PLAYER)
+	{
+		debug_flg = true;
+	}
+}
+
 bool Stage::GetStageCollisionType()
 {
 	bool col_type = false;
 	//１～５は当たり判定有り
-	if (type > 0 && type <= 5)
+	if (block_type > 0 && block_type <= 5)
 	{
 		col_type = true;
 	}

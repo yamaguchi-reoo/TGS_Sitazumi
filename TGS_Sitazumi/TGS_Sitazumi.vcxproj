@@ -37,7 +37,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Object\BoxCollider.h" />
-    <ClInclude Include="Object\CharaBase.h" />
+    <ClInclude Include="Object\Object.h" />
     <ClInclude Include="Object\EnemyBat.h" />
     <ClInclude Include="Object\EnemyDeer.h" />
     <ClInclude Include="Object\ColorData.h" />

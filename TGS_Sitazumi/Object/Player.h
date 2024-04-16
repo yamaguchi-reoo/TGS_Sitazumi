@@ -1,10 +1,9 @@
 #pragma once
-#include "CharaBase.h"
+#include "Object.h"
 #include "Stage.h"
-#include "ColorData.h"
 
 class Player :
-	public CharaBase , public ColorData
+	public Object
 {
 public:
 	enum hitPosition
@@ -15,20 +14,21 @@ public:
 		right
 	};
 private:
-	Location vector; //ƒxƒNƒgƒ‹A‚à‚µ‚©‚µ‚çƒLƒƒƒ‰ƒx[ƒX‚ÉˆÚ“®‚©‚à
-	bool stageHitFlg[2][4]; //ã‰º¶‰E‚Ç‚±‚Æ“–‚½‚Á‚Ä‚¢‚é‚©‚ğ”z—ñ‚ÉŠi”[
-							//0‚Ìs‚Í1‚Â‚ÌƒuƒƒbƒN‚É“–‚½‚Á‚Ä‚¢‚é‚©
-							//1‚Ìs‚ÍƒXƒe[ƒW‘S‘Ì‚É‘Î‚µ‚Ä‚Ì“–‚½‚Á‚Ä‚¢‚é‚©
+	Location vector; //ï¿½xï¿½Nï¿½gï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Lï¿½ï¿½ï¿½ï¿½ï¿½xï¿½[ï¿½Xï¿½ÉˆÚ“ï¿½ï¿½ï¿½ï¿½ï¿½
+	bool stageHitFlg[2][4]; //ï¿½ã‰ºï¿½ï¿½ï¿½Eï¿½Ç‚ï¿½ï¿½Æ“ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½é‚©ï¿½ï¿½zï¿½ï¿½ÉŠiï¿½[
+							//0ï¿½Ìsï¿½ï¿½1ï¿½Â‚Ìƒuï¿½ï¿½ï¿½bï¿½Nï¿½É“ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½é‚©
+							//1ï¿½Ìsï¿½ÍƒXï¿½eï¿½[ï¿½Wï¿½Sï¿½Ì‚É‘Î‚ï¿½ï¿½Ä‚Ì“ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½é‚©
 
-	Location aimLoc; //Æ€‚ÌÀ•W
-	Location aimVec; //Æ€‚Ì•ûŒü
-	Location lineLoc; //ü‚ÌI’[À•W
+	Location aimLoc; //ï¿½Æï¿½ï¿½Ìï¿½ï¿½W
+	Location aimVec; //ï¿½Æï¿½ï¿½Ì•ï¿½ï¿½ï¿½
+	Location lineLoc; //ï¿½ï¿½ï¿½ÌIï¿½[ï¿½ï¿½ï¿½W
 	
 public:
 	Player();
 	~Player();
-	void Update(GameMain* main)override;
+	void Update()override;
 	void Draw()const override;
+	void Hit(Location _location, Erea _erea, int _type)override;
 
 	void MoveActor();
 	void MoveAim();
