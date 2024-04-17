@@ -22,13 +22,10 @@ GameMain::GameMain(int _stage) :stage_data{0},now_stage(0), stage_width_num(0), 
 
 GameMain::~GameMain()
 {
-	for (int i = 0; i < OBJECT_NUM; i++)
+	for (int i = 0; object[i] != nullptr; i++)
 	{
 		//生成済みのオブジェクトを削除
-		if (object[i] != nullptr)
-		{
-			delete object[i];
-		}
+		delete object[i];
 	}
 }
 
