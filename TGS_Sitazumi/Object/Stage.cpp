@@ -2,7 +2,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-Stage::Stage(float _x, float _y, float _width, float _height, int _type): frame(0),inv_flg(false), debug_flg(false), anim(0), fire_anim{0},wood_anim{0}
+Stage::Stage(float _x, float _y, float _width, float _height, int _type): frame(0),inv_flg(false), debug_flg(false), anim(0), fire_anim{0},wood_anim{0}, hit_flg(false),hit_timer(-1)
 {
 	type = BLOCK;
 	location.x = _x;
@@ -42,11 +42,22 @@ Stage::~Stage()
 
 void Stage::Update()
 {
+	//リセット
+	hit_flg = false;
 	frame++;
 	//アニメーション用変数
 	if (++anim > 60)
 	{
 		anim = 0;
+	}
+	//hit_timerに0が入ったらアニメーション開始
+	if (hit_timer >= 0)
+	{
+		if (++hit_timer>10)
+		{
+			//アニメーション終了
+			hit_timer = -1;
+		}
 	}
 	//炎エフェクト用
 	if (block_type == 6)
@@ -100,18 +111,25 @@ void Stage::Draw()const
 		case 0:
 			break;
 			//地面(白、赤、緑、青)
-		case 1:
-		case 3:
-		case 4:
-		case 5:
-			DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, true);
+		case WHITE_BLOCK:
+		case RED_BLOCK:
+		case GREEN_BLOCK:
+		case BLUE_BLOCK:
+			if (hit_timer >= 0)
+			{
+				DrawBoxAA(local_location.x, local_location.y + stage_shift[hit_timer], local_location.x + erea.width, local_location.y + erea.height + stage_shift[hit_timer], color, true);
+			}
+			else
+			{
+				DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, true);
+			}
 			break;
 			//地面（灰）
-		case 2:
+		case GRAY_BLOCK:
 			DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, 0xaaaaaa, true);
 			break;
 			//炎
-		case 6:
+		case FIRE:
 			for (int i = 0; i < ANIM_BLOCK_NUM; i++)
 			{
 				DrawBoxAA(fire_anim[i].shift.x + local_location.x, 
@@ -121,7 +139,7 @@ void Stage::Draw()const
 			}
 			break;
 			//木
-		case 7:
+		case WOOD:
 			for (int i = 0; i < ANIM_BLOCK_NUM; i++)
 			{
 				DrawLineAA(wood_anim[i].shift1.x + local_location.x,
@@ -131,7 +149,7 @@ void Stage::Draw()const
 			}
 			break;
 			//水
-		case 8:
+		case WATER:
 			DrawStringF(local_location.x, local_location.y, "��", 0x0000ff);
 			break;
 			//その他（無）
@@ -153,17 +171,18 @@ void Stage::Draw()const
 
 void Stage::Hit(Location _location, Erea _erea, int _type)
 {
+	//上から何かがぶつかったなら、ブロックを揺らす
 	if (_type == PLAYER)
 	{
-		debug_flg = true;
+		hit_timer = 0;
 	}
 }
 
 bool Stage::GetStageCollisionType()
 {
 	bool col_type = false;
-	//１～５は当たり判定有り
-	if (block_type > 0 && block_type <= 5)
+	//１、３、４、５は当たり判定有り
+	if (block_type == 1 || block_type == 3 || block_type == 4 || block_type == 5)
 	{
 		col_type = true;
 	}
