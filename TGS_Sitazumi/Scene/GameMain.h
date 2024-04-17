@@ -13,7 +13,7 @@ class GameMain :
     public AbstractScene
 {
 private:
-    Object* chara_object[OBJECT_NUM];    //キャラのオブジェクト格納
+    Object* object[OBJECT_NUM];    //オブジェクト格納
     //↓なぜか消したらエラー
     EnemyDeer* enemydeer;  
     int stage_data[MAX_STAGE_HEIGHT][MAX_STAGE_WIDTH];   //�X�e�[�W���
@@ -46,6 +46,9 @@ public:
 
     //オブジェクトの生成
     void CreateObject(Object* _object);
+
+    //オブジェクトの削除
+    void DeleteObject(int i);
 
     //�J�����̍X�V���J������h�炷
     void UpdateCamera();

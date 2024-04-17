@@ -25,9 +25,9 @@ GameMain::~GameMain()
 	for (int i = 0; i < OBJECT_NUM; i++)
 	{
 		//生成済みのオブジェクトを削除
-		if (chara_object[i] != nullptr)
+		if (object[i] != nullptr)
 		{
-			delete chara_object[i];
+			delete object[i];
 		}
 	}
 }
@@ -37,16 +37,18 @@ AbstractScene* GameMain::Update()
 	//カメラの更新
 	UpdateCamera();
 
-	for (int i = 0; chara_object[i] != nullptr; i++)
+	//各オブジェクトの更新
+	for (int i = 0; object[i] != nullptr; i++)
 	{
-		chara_object[i]->SetScreenPosition(camera_location);
-		chara_object[i]->Update();
-		for (int j = i+1; chara_object[j] != nullptr; j++)
+		object[i]->SetScreenPosition(camera_location);
+		object[i]->Update();
+		//各オブジェクトとの当たり判定
+		for (int j = i+1; object[j] != nullptr; j++)
 		{
-			if (chara_object[i]->HitBox(chara_object[j]))
+			if (object[i]->HitBox(object[j]))
 			{
-				chara_object[i]->Hit(chara_object[j]->GetLocation(), chara_object[j]->GetErea(), chara_object[j]->GetObjectType());
-				chara_object[j]->Hit(chara_object[i]->GetLocation(), chara_object[i]->GetErea(), chara_object[i]->GetObjectType());
+				object[i]->Hit(object[j]->GetLocation(), object[j]->GetErea(), object[j]->GetObjectType());
+				object[j]->Hit(object[i]->GetLocation(), object[i]->GetErea(), object[i]->GetObjectType());
 			}
 		}
 	}
@@ -64,9 +66,9 @@ AbstractScene* GameMain::Update()
 
 void GameMain::Draw() const
 {
-	for (int i = 0; chara_object[i] != nullptr; i++)
+	for (int i = 0; object[i] != nullptr; i++)
 	{
-		chara_object[i]->Draw();
+		object[i]->Draw();
 	}
 }
 
@@ -75,18 +77,27 @@ void GameMain::CreateObject(Object* _object)
 	for (int i = 0; i < OBJECT_NUM; i++)
 	{
 		//空いている場所に格納する
-		if (chara_object[i] == nullptr)
+		if (object[i] == nullptr)
 		{
-			chara_object[i] = _object;
+			object[i] = _object;
 			break;
 		}
+	}
+}
+
+void GameMain::DeleteObject(int i)
+{
+	//オブジェクトを前に寄せる
+	for (int j = i; object[j] != nullptr; j++)
+	{
+		object[j] = object[j + 1];
 	}
 }
 
 void GameMain::UpdateCamera()
 {
 	//X座標が画面端以外なら
-	if (chara_object[0]->GetCenterLocation().x > (SCREEN_WIDTH / 2) && chara_object[0]->GetCenterLocation().x < stage_width - (SCREEN_WIDTH / 2))
+	if (object[0]->GetCenterLocation().x > (SCREEN_WIDTH / 2) && object[0]->GetCenterLocation().x < stage_width - (SCREEN_WIDTH / 2))
 	{
 		//X座標のロックをしない
 		camera_x_lock_flg = false;
@@ -101,12 +112,12 @@ void GameMain::UpdateCamera()
 		//固定する位置を一度だけ設定する
 		if (x_pos_set_once == false)
 		{
-			lock_pos.x = chara_object[0]->GetCenterLocation().x;
+			lock_pos.x = object[0]->GetCenterLocation().x;
 			x_pos_set_once = true;
 		}
 	}
 	//Y座標が画面端以外なら
-	if (chara_object[0]->GetCenterLocation().y < stage_height - (SCREEN_HEIGHT / 2) - 10 && chara_object[0]->GetCenterLocation().y>(SCREEN_HEIGHT / 2))
+	if (object[0]->GetCenterLocation().y < stage_height - (SCREEN_HEIGHT / 2) - 10 && object[0]->GetCenterLocation().y>(SCREEN_HEIGHT / 2))
 	{
 		//Y座標のロックをしない
 		camera_y_lock_flg = false;
@@ -121,7 +132,7 @@ void GameMain::UpdateCamera()
 		//固定する位置を一度だけ設定する
 		if (y_pos_set_once == false)
 		{
-			lock_pos.y = chara_object[0]->GetCenterLocation().y;
+			lock_pos.y = object[0]->GetCenterLocation().y;
 			y_pos_set_once = true;
 		}
 	}
@@ -132,18 +143,18 @@ void GameMain::UpdateCamera()
 		//カメラ更新
 		if (camera_x_lock_flg == false && camera_y_lock_flg == false)
 		{
-			camera_location.x = chara_object[0]->GetCenterLocation().x - (SCREEN_WIDTH / 2);
-			camera_location.y = chara_object[0]->GetCenterLocation().y - (SCREEN_HEIGHT / 2);
+			camera_location.x = object[0]->GetCenterLocation().x - (SCREEN_WIDTH / 2);
+			camera_location.y = object[0]->GetCenterLocation().y - (SCREEN_HEIGHT / 2);
 		}
 		else if (camera_x_lock_flg == false && camera_y_lock_flg == true)
 		{
-			camera_location.x = chara_object[0]->GetCenterLocation().x - (SCREEN_WIDTH / 2);
+			camera_location.x = object[0]->GetCenterLocation().x - (SCREEN_WIDTH / 2);
 			camera_location.y = lock_pos.y - (SCREEN_HEIGHT / 2);
 		}
 		else if (camera_x_lock_flg == true && camera_y_lock_flg == false)
 		{
 			camera_location.x = lock_pos.x - (SCREEN_WIDTH / 2);
-			camera_location.y = chara_object[0]->GetCenterLocation().y - (SCREEN_HEIGHT / 2);
+			camera_location.y = object[0]->GetCenterLocation().y - (SCREEN_HEIGHT / 2);
 		}
 		else
 		{
@@ -213,12 +224,7 @@ void GameMain::SetStage(int _stage)
 			if (stage_data[i][j] != 0)
 			{
 				CreateObject(new Stage((float)(j * BOX_WIDTH), (float)(i * BOX_HEIGHT), BOX_WIDTH, BOX_HEIGHT, stage_data[i][j]));
-				/*stage[i][j] = new Stage((float)(j * BOX_WIDTH), (float)(i * BOX_HEIGHT), BOX_WIDTH, BOX_HEIGHT, stage_data[i][j]);*/
 			}
-			//else
-			//{
-			//	stage[i][j] = nullptr;
-			//}
 		}
 	}
 

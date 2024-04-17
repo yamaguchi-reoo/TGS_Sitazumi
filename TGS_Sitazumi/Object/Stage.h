@@ -4,6 +4,16 @@
 
 #define ANIM_BLOCK_NUM 10 //エフェクト表示に使うブロックの数
 
+//StageとEditで使う識別用
+#define WHITE_BLOCK 1
+#define GRAY_BLOCK 2
+#define RED_BLOCK	3	
+#define GREEN_BLOCK 4	
+#define BLUE_BLOCK 5	
+#define FIRE 6	
+#define WOOD 7	
+#define WATER 8	
+
 //ColorData格納用
 static int color_data[6]
 {
@@ -30,14 +40,21 @@ static int text_color[10]
 	0x00ff00,
 };
 
+//ブロックアニメーション用
+static int stage_shift[10]
+{
+	3,5,5,4,4,3,3,2,2,1
+};
+
 //炎エフェクト用
 struct FireAnim
 {
-	Location shift;	//表示位置
+	Location shift;		//表示位置
 	Erea erea;			//大きさ
 	int time;			//表示していられる時間
 	float angle;		//移動の向き
 };
+
 //木エフェクト用
 struct WoodAnim
 {
@@ -45,20 +62,22 @@ struct WoodAnim
 	Location shift2;			//実際の位置二点目
 	float shift;				//表示位置ずれ用
 };
+
 class Stage :
 	public Object
 {
 private:
-	int x_move;					//フレーム測定用
-	int type;					//ブロックの種類(0=無 1=白 2=灰 3=赤 4=緑 5=青 6=炎 7=木 8=水 9=初期スポーン(Editのみ表示))
-	int frame;					//フレーム測定用
-	int block_type;				//ブロックの種類(0=無 1=白 2=灰 3=赤 4=緑 5=青 6=炎 7=木 8=水 9=初期スポーン(Editのみ表示))
-	bool inv_flg;				//ブロックに触れるか判断
-	bool debug_flg;				//EditScene用表示をするかどうか
-	int swap_flg;				//色を交換出来るか
-	int anim;						//アニメーション用
+	int type;							//ブロックの種類(0=無 1=白 2=灰 3=赤 4=緑 5=青 6=炎 7=木 8=水 9=初期スポーン(Editのみ表示))
+	int frame;							//フレーム測定用
+	int block_type;						//ブロックの種類(0=無 1=白 2=灰 3=赤 4=緑 5=青 6=炎 7=木 8=水 9=初期スポーン(Editのみ表示))
+	bool inv_flg;						//ブロックに触れるか判断
+	bool debug_flg;						//EditScene用表示をするかどうか
+	int swap_flg;						//色を交換出来るか
+	int anim;							//アニメーション用
 	FireAnim fire_anim[ANIM_BLOCK_NUM];	//炎アニメーション用ブロック情報格納
 	WoodAnim wood_anim[ANIM_BLOCK_NUM];	//木アニメーション用ブロック情報格納
+	bool hit_flg;						//何かが当たった時用
+	int hit_timer;						//何かが当たった時のアニメーション用
 public:
 	Stage(float _x, float _y, float _width, float _height, int _type);
 	~Stage();
