@@ -42,7 +42,7 @@ Stage::~Stage()
 
 void Stage::Update()
 {
-	x_move++;
+	frame++;
 	//アニメーション用変数
 	if (++anim > 60)
 	{
@@ -142,12 +142,12 @@ void Stage::Draw()const
 	//Edit用表示
 	if (debug_flg == true)
 	{
-		//初期スポーン地点を分かりやすく4
-		if (type == PLAYER_SPAWN_NUM)
+		//初期スポーン地点を分かりやすく
+		if (block_type == PLAYER_SPAWN_NUM)
 		{
 			DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, 0xffff00, true);
 		}
-		DrawFormatStringF(local_location.x, local_location.y, text_color[type], "%d", block_type);
+		DrawFormatStringF(local_location.x, local_location.y, text_color[block_type], "%d", block_type);
 	}
 }
 
@@ -172,9 +172,9 @@ bool Stage::GetStageCollisionType()
 
 void Stage::SetStageType(int _type) 
 { 
-	type = _type; 
-	if (type == 1 || type == 3 || type == 4 || type == 5)
+	block_type = _type;
+	if (block_type == 1 || block_type == 3 || block_type == 4 || block_type == 5)
 	{
-		SetColorData(color_data[type]);
+		SetColorData(color_data[block_type]);
 	}
 }
