@@ -1,9 +1,7 @@
 #pragma once
 #include "CharaBase.h"
-#include<vector>
-#include<fstream>
-#include<iostream>
-#include<sstream>
+#include <vector>
+#include "../Utility/common.h"
 #include "Object.h"
 
 #define NUM_VERTICES 32 //頂点の数
@@ -20,6 +18,8 @@ class EnemyBat:
 {
 private:
 	std::vector<Location> vertices;
+
+	bool leftwall_flg;
 
 public:
 	EnemyBat();
