@@ -12,6 +12,10 @@ EnemyBat::~EnemyBat()
 
 void EnemyBat::Update()
 {
+	for (int i = 0; i < NUM_VERTICES; i++) {
+		local_location.x = vertices[i].x;
+		local_location.y = vertices[i].y;
+	}
 	Move();
 	BatArray();
 }
@@ -19,7 +23,7 @@ void EnemyBat::Update()
 void EnemyBat::Draw() const
 {
 	// 配列の各頂点を利用して三角形を描画する
-	for (int i = 0; i < NUM_VERTICES - 2; i += 3) {
+	for (int i = 0; i < NUM_VERTICES; i += 3) {
 		if (i < 22) {
 			DrawTriangle(vertices[i].x, vertices[i].y,vertices[i + 1].x, vertices[i + 1].y,vertices[i + 2].x, vertices[i + 2].y,GetColor(255, 255,255), TRUE);
 		}
@@ -34,17 +38,12 @@ void EnemyBat::Draw() const
 }
 
 void EnemyBat::Move()
-{
-	// vertices の各要素の座標を local_location にコピーする
-	for (int i = 0; i < NUM_VERTICES; ++i) {
-		local_location.x = vertices[i].x;
-		local_location.y = vertices[i].y;
-	}
-	
+{	
 }
 
 void EnemyBat::BatArray()
 {
+
 }
 
 void EnemyBat::Hit(Location _location, Erea _erea, int _type)
