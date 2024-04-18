@@ -63,7 +63,7 @@ private:
     int current_type;                                     //今選ばれているオブジェクトタイプ
     int ui_current_type;                                  //今選ばれているオブジェクトタイプ(見た目)
     Location width_button_location;                       //ステージ幅変更用ボタンの位置
-    Location height_button_location;                       //ステージ高さ変更用ボタンの位置
+    Location height_button_location;                      //ステージ高さ変更用ボタンの位置
     bool current_leftbutton_flg;                          //ステージサイズ変更用の左ボタンが選ばれているか
     bool current_rightbutton_flg;                         //ステージサイズ変更用の右ボタンが選ばれているか
     bool current_upbutton_flg;                            //ステージサイズ変更用の上ボタンが選ばれているか

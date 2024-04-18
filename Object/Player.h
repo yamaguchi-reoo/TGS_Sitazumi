@@ -1,10 +1,10 @@
 #pragma once
-#include "CharaBase.h"
+#include "Object.h"
 #include "Stage.h"
 #include "ColorData.h"
 
 class Player :
-	public CharaBase, public ColorData
+	public Object
 {
 public:
 	enum hitPosition
@@ -24,15 +24,23 @@ private:
 	Location aimVec; //照準ベクトル
 	Location lineLoc; //線の座標
 
+	float searchedLen; //交換できるオブジェクトとの距離
+	Object* searchedObj; //一番近い色を交換できるオブジェクト
+	bool searchFlg;
+
 public:
 	Player();
 	~Player();
-	void Update(GameMain* main)override;
+	void Update()override;
 	void Draw()const override;
+	void Hit(Location _location, Erea _erea, int _type)override;
 
 	void MoveActor(); //キャラクターの移動
-	void MoveAim(); //照準の移動
+	void MoveAim(); //照準の移動 近くの色の検知
 
-	bool CheckCollision(Stage* stage); //ステージとの当たり判定
+	bool SearchColor(Object* ob) override;
+	bool ChangePlayerColor();
+
+	bool CheckCollision(Location l, Erea e); //ステージとの当たり判定
 };
 

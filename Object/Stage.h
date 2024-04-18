@@ -1,8 +1,6 @@
 #pragma once
 #include "../Utility/common.h"
-
-#include "BoxCollider.h"
-#include "ColorData.h"
+#include "Object.h"
 
 #define ANIM_BLOCK_NUM 10 //エフェクト表示に使うブロックの数
 
@@ -32,33 +30,46 @@ static int text_color[10]
 	0x00ff00,
 };
 
-//エフェクト用
-struct ANIM
+//炎エフェクト用
+struct FireAnim
 {
-	Location location;	//表示位置
+	Location shift;	//表示位置
 	Erea erea;			//大きさ
 	int time;			//表示していられる時間
 	float angle;		//移動の向き
 };
+//木エフェクト用
+struct WoodAnim
+{
+	Location shift1;			//実際の位置一点目
+	Location shift2;			//実際の位置二点目
+	float shift;				//表示位置ずれ用
+};
 class Stage :
-	public BoxCollider, public ColorData
+	public Object
 {
 private:
+	int x_move;					//フレーム測定用
+	//int type;					//ブロックの種類(0=無 1=白 2=灰 3=赤 4=緑 5=青 6=炎 7=木 8=水 9=初期スポーン(Editのみ表示))
 	int frame;					//フレーム測定用
-	int type;					//ブロックの種類(0=無 1=白 2=灰 3=赤 4=緑 5=青 6=炎 7=木 8=水 9=初期スポーン(Editのみ表示))
+	int block_type;				//ブロックの種類(0=無 1=白 2=灰 3=赤 4=緑 5=青 6=炎 7=木 8=水 9=初期スポーン(Editのみ表示))
 	bool inv_flg;				//ブロックに触れるか判断
 	bool debug_flg;				//EditScene用表示をするかどうか
 	int swap_flg;				//色を交換出来るか
 	int anim;						//アニメーション用
-	ANIM effect_anim[ANIM_BLOCK_NUM];	//エフェクトアニメーション用ブロック情報格納
+	FireAnim fire_anim[ANIM_BLOCK_NUM];	//炎アニメーション用ブロック情報格納
+	WoodAnim wood_anim[ANIM_BLOCK_NUM];	//木アニメーション用ブロック情報格納
 public:
 	Stage(float _x, float _y, float _width, float _height, int _type);
 	~Stage();
-	void Update();
-	void Draw()const;
-
+	void Update()override;
+	void Draw()const override;
+	void Hit(Location _location, Erea _erea, int _type)override;
+	bool SearchColor(Object* ob) override {
+		return false;
+	}
 	//ステージの当たり判定の種類取得(0=当たり判定無し1=当たり判定あり)
-	int GetStageCollisionType();
+	bool GetStageCollisionType();
 	//ステージのタイプ設定
 	void SetStageType(int _type);
 	//ステージのタイプ取得(0=無 1=�白 2=灰 3=赤 4=緑 5=青 6=炎 7=木 8=水 9=初期リスポーン)

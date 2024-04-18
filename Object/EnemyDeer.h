@@ -1,12 +1,12 @@
 #pragma once
-#include "../Object/CharaBase.h"
+#include "Object.h"
 #include <iostream>
 #include <fstream>
 
 using namespace std;
 
 class EnemyDeer :
-	public CharaBase
+	public Object
 {
 private:
 
@@ -35,8 +35,12 @@ public:
 
 	EnemyDeer();
 	~EnemyDeer();
-	void Update(GameMain* main)override;
+	void Update()override;
 	void Draw()const override;
+	void Hit(Location _location, Erea _erea, int _type)override;
+	bool SearchColor(Object* ob) override {
+		return false;
+	}
 
 	void EnemyDeerOfs(void);	
 	void EnemyDeerIfs(void);	

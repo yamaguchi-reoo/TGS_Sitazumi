@@ -5,6 +5,7 @@
 #include "../Object/Stage.h"
 #include "../Object/EnemyDeer.h"
 #include"../Object/EnemyBat.h"
+#include"../Object/Object.h"
 
 class Player;
 
@@ -12,8 +13,9 @@ class GameMain :
     public AbstractScene
 {
 private:
-    Stage* stage[MAX_STAGE_HEIGHT][MAX_STAGE_WIDTH];   //���̃I�u�W�F�N�g
-
+    Object* chara_object[OBJECT_NUM];    //キャラのオブジェクト格納
+    //↓なぜか消したらエラー
+    EnemyDeer* enemydeer;  
     int stage_data[MAX_STAGE_HEIGHT][MAX_STAGE_WIDTH];   //�X�e�[�W���
 
     int now_stage;          //���݂̃X�e�[�W��
@@ -21,11 +23,6 @@ private:
     int stage_height_num;   //�X�e�[�W�u���b�N�̏c��
     int stage_width;        //�X�e�[�W����
     int stage_height;       //�X�e�[�W�c��
-
-    EnemyDeer* enemydeer;
-    EnemyBat* enemybat;
-
-    Player* player;
 
     bool camera_x_lock_flg;   //カメラが動けるか判断(強制戦闘時以外)
     bool camera_y_lock_flg;   //カメラが動けるか判断(強制戦闘時以外)
@@ -46,6 +43,9 @@ public:
 
     //�`��Ɋւ��邱�Ƃ����
     void Draw() const override;
+
+    //オブジェクトの生成
+    void CreateObject(Object* _object);
 
     //�J�����̍X�V���J������h�炷
     void UpdateCamera();
