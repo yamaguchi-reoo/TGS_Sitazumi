@@ -31,5 +31,8 @@ public:
 	void BatArray();
 
 	void Hit(Location _location, Erea _erea, int _type)override;
+	bool SearchColor(Object* ob) {
+		return 0;
+	}
 };
 
