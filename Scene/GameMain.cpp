@@ -48,9 +48,9 @@ AbstractScene* GameMain::Update()
 				object[j]->Hit(object[i]->GetLocation(), object[i]->GetErea(), object[i]->GetObjectType());
 			}
 
-			if (chara_object[i]->GetObjectType() == PLAYER) {
-				if (chara_object[j]->GetObjectType() == BLOCK) {
-					chara_object[i]->SearchColor(chara_object[j]);
+			if (object[i]->GetObjectType() == PLAYER) {
+				if (object[j]->GetObjectType() == BLOCK) {
+					object[i]->SearchColor(object[j]);
 				}
 			}
 		}

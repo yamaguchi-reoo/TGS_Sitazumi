@@ -6,6 +6,8 @@
 #include<sstream>
 #include "Object.h"
 
+#define NUM_VERTICES 32 //頂点の数
+
 enum class BatState {
 	IDLE = 0,
 	LEFT,
@@ -17,9 +19,7 @@ class EnemyBat:
 	public Object
 {
 private:
-	//std::vector<std::vector<int>>vertices;
-	int x_move;
-	Location vertices[32];
+	std::vector<Location> vertices;
 
 public:
 	EnemyBat();
@@ -31,8 +31,5 @@ public:
 	void BatArray();
 
 	void Hit(Location _location, Erea _erea, int _type)override;
-	bool SearchColor(Object* ob) override {
-		return false;
-	}
 };
 
