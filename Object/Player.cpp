@@ -9,6 +9,7 @@ Player::Player()
 {
 	type = PLAYER;
 	color = WHITE;
+	can_swap = TRUE;
 
 	location = { 200,200 };
 	erea = { 120,60 };

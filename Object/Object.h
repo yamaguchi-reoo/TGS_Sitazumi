@@ -15,7 +15,8 @@ class GameMain;
 class Object : public BoxCollider, public ColorData
 {
 protected:
-	int type;	//Objectの種類格納
+	int type;		//Objectの種類格納
+	bool can_swap;	//交換できるオブジェクトか
 public:
 
 	virtual void Update() = 0;
@@ -28,4 +29,6 @@ public:
 	virtual bool SearchColor(Object* ob) = 0;
 
 	int GetObjectType() { return type; }
+
+	bool GetCanSwap() { return can_swap; }
 };

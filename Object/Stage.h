@@ -72,7 +72,6 @@ private:
 	int block_type;						//ブロックの種類(0=無 1=白 2=灰 3=赤 4=緑 5=青 6=炎 7=木 8=水 9=初期スポーン(Editのみ表示))
 	bool inv_flg;						//ブロックに触れるか判断
 	bool debug_flg;						//EditScene用表示をするかどうか
-	int swap_flg;						//色を交換出来るか
 	int anim;							//アニメーション用
 	FireAnim fire_anim[ANIM_BLOCK_NUM];	//炎アニメーション用ブロック情報格納
 	WoodAnim wood_anim[ANIM_BLOCK_NUM];	//木アニメーション用ブロック情報格納

@@ -14,13 +14,13 @@ Stage::Stage(float _x, float _y, float _width, float _height, int _type) : frame
 	//色を交換出来るブロックの設定
 	if (block_type == 1 || block_type == 3 || block_type == 4 || block_type == 5)
 	{
-		swap_flg = true;
+		can_swap = true;
 		SetColorData(color_data[block_type]);
 	}
 	//色を交換出来ないブロックの設定
 	else
 	{
-		swap_flg = false;
+		can_swap = false;
 	}
 	//エフェクトのアニメーション用初期定義
 	for (int i = 0; i < ANIM_BLOCK_NUM; i++)
