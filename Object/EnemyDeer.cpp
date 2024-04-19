@@ -4,6 +4,7 @@
 EnemyDeer::EnemyDeer()
 {
 	type = ENEMY;
+	can_swap = TRUE;
 	for (int i = 0; i < 10; i++)
 	{
 		KeepMouseX[i] = 0;

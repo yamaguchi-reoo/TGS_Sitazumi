@@ -6,6 +6,7 @@ EnemyBat::EnemyBat()
 	type = ENEMY;
 	leftwall_flg = false;
 
+	can_swap = TRUE;
 	vertices = {
 		// 耳
 		{850, 300}, {850, 325}, {862, 312},

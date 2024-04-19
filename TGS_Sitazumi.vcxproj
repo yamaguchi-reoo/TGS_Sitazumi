@@ -24,6 +24,7 @@
     <ClCompile Include="Object\EnemyBat.cpp" />
     <ClCompile Include="Object\EnemyDeer.cpp" />
     <ClCompile Include="Object\ColorData.cpp" />
+    <ClCompile Include="Object\Object.cpp" />
     <ClCompile Include="Object\Player.cpp" />
     <ClCompile Include="Object\Stage.cpp" />
     <ClCompile Include="Scene\EditScene.cpp" />
