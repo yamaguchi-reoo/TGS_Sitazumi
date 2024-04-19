@@ -64,7 +64,7 @@ void EnemyBat::BatArray()
 
 }
 
-void EnemyBat::Hit(Location _location, Erea _erea, int _type)
+void EnemyBat::Hit(Location _location, Erea _erea, int _type, int _color_data)
 {
 
 }

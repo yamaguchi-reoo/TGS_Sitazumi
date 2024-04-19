@@ -114,7 +114,7 @@ void EnemyDeer::Draw()const
 		KeepMouseX[number - 3], KeepMouseY[number - 3], KeepMouseX[number - 4], KeepMouseY[number - 4], 0xffffff, FALSE);*/
 }
 
-void EnemyDeer::Hit(Location _location, Erea _erea, int _type)
+void EnemyDeer::Hit(Location _location, Erea _erea, int _type, int _color_data)
 {
 
 }
