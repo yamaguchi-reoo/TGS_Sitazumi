@@ -24,8 +24,11 @@ private:
 public:
 	EnemyBat();
 	~EnemyBat();
+	void Initialize(Location _location, Erea _erea, int _color_data)override;
 	void Update()override;
 	void Draw()const override;
+	void Finalize()override;
+
 public:
 	void Move();
 	void BatArray();

@@ -26,7 +26,7 @@ static int color_data[6]
 };
 
 //Edit表示用文字色データ
-static int text_color[10]
+static int text_color[16]
 {
 	0xffffff,
 	0x000000,
@@ -38,6 +38,12 @@ static int text_color[10]
 	0x00ff00,
 	0x0000ff,
 	0x00ff00,
+	0x00ffff,
+	0xff00ff,
+	0xffff00,
+	0x00ffff,
+	0xff00ff,
+	0xffff00,
 };
 
 //ブロックアニメーション用
@@ -78,10 +84,13 @@ private:
 	bool hit_flg;						//何かが当たった時用
 	int hit_timer;						//何かが当たった時のアニメーション用
 public:
-	Stage(float _x, float _y, float _width, float _height, int _type);
+	Stage(int _type);
 	~Stage();
+	void Initialize(Location _location, Erea _erea, int _color_data)override;
 	void Update()override;
 	void Draw()const override;
+	void Finalize()override;
+
 	void Hit(Location _location, Erea _erea, int _type, int _color_data)override;
 	bool SearchColor(Object* ob) override {
 		return false;

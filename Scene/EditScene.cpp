@@ -19,11 +19,21 @@ EditScene::EditScene(int _stage) : current_type(0), ui_current_type(0), tool_pic
 	width_button_location = { tool_location.x + tool_size.width - 90, tool_location.y + 25 };
 	height_button_location = { tool_location.x + tool_size.width - 190, tool_location.y + 35 };
 	LoadStageData(now_stage);
+
+	//stageのintialize用仮格納場所
+	Location kari_location;
+	Erea kari_erea;
+
 	for (int i = 0; i < stage_height_num; i++)
 	{
 		for (int j = 0; j < stage_width_num; j++)
 		{
-			stage[i][j] = new Stage((float)(j * BOX_WIDTH), (float)(i * BOX_HEIGHT), BOX_WIDTH, BOX_HEIGHT, stage_data[i][j]);
+			stage[i][j] = new Stage(stage_data[i][j]);
+			kari_location.x = (float)(j * BOX_WIDTH);
+			kari_location.y = (float)(i * BOX_HEIGHT);
+			kari_erea.width = BOX_WIDTH;
+			kari_erea.height = BOX_HEIGHT;
+			stage[i][j]->Initialize(kari_location, kari_erea, stage_data[i][j]);
 			stage[i][j]->SetDebugFlg();
 			select_data[i][j] = false;
 		}
@@ -534,6 +544,9 @@ void EditScene::UpdateStageData(int _stage)
 
 void EditScene::UpdateStage(int _width, int _height)
 {
+	//stageのintialize用仮格納場所
+	Location kari_location;
+	Erea kari_erea;
 	int old_stage_height_num = stage_height_num;
 	stage_width_num = _width;
 	stage_height_num = _height;
@@ -562,7 +575,12 @@ void EditScene::UpdateStage(int _width, int _height)
 			if (stage_data[i][j] < 0)
 			{
 				stage_data[i][j] = 0;
-				stage[i][j] = new Stage((float)(j * BOX_WIDTH), (float)(i * BOX_HEIGHT), BOX_WIDTH, BOX_HEIGHT, stage_data[i][j]);
+				stage[i][j] = new Stage(stage_data[i][j]);
+				kari_location.x = (float)(j * BOX_WIDTH);
+				kari_location.y = (float)(i * BOX_HEIGHT);
+				kari_erea.width = BOX_WIDTH;
+				kari_erea.height = BOX_HEIGHT;
+				stage[i][j]->Initialize(kari_location, kari_erea, stage_data[i][j]);
 				stage[i][j]->SetDebugFlg();
 				select_data[i][j] = false;
 			}

@@ -8,11 +8,9 @@
 Player::Player()
 {
 	type = PLAYER;
-	color = WHITE;
 	can_swap = TRUE;	//プレイヤーのcan_swapは真でも偽でも大丈夫
+	can_hit = TRUE;
 
-	location = { 200,200 };
-	erea = { 120,60 };
 	vector = { 0,0 };
 
 	for (int i = 0; i < 4; i++) {
@@ -31,6 +29,13 @@ Player::Player()
 Player::~Player()
 {
 
+}
+
+void Player::Initialize(Location _location, Erea _erea, int _color_data)
+{
+	location = _location;
+	erea = _erea;
+	color = _color_data;
 }
 
 void Player::Update()
@@ -91,6 +96,11 @@ void Player::Draw()const
 
 	DrawFormatString(80, 80, 0xffff00, "%f", location.x);
 	DrawFormatString(20, 100, 0xff0000, "%f", location.y);
+
+}
+
+void Player::Finalize()
+{
 
 }
 

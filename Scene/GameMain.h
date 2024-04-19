@@ -14,6 +14,7 @@ class GameMain :
 {
 private:
     Object* object[OBJECT_NUM];    //オブジェクト格納
+    int player_object;             //プレイヤーが配列の何番目に格納されているか
     //↓なぜか消したらエラー
     EnemyDeer* enemydeer;  
     int stage_data[MAX_STAGE_HEIGHT][MAX_STAGE_WIDTH];   //�X�e�[�W���
@@ -45,7 +46,7 @@ public:
     void Draw() const override;
 
     //オブジェクトの生成
-    void CreateObject(Object* _object);
+    void CreateObject(Object* _object, Location _location, Erea _erea, int _color_data);
 
     //オブジェクトの削除
     void DeleteObject(int i);

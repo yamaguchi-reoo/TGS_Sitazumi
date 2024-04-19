@@ -5,6 +5,8 @@ EnemyDeer::EnemyDeer()
 {
 	type = ENEMY;
 	can_swap = TRUE;
+	can_hit = TRUE;
+
 	for (int i = 0; i < 10; i++)
 	{
 		KeepMouseX[i] = 0;
@@ -38,6 +40,13 @@ EnemyDeer::EnemyDeer()
 EnemyDeer::~EnemyDeer()
 {
 
+}
+
+void EnemyDeer::Initialize(Location _location, Erea _erea, int _color_data)
+{
+	location = _location;
+	erea = _erea;
+	color = _color_data;
 }
 
 void EnemyDeer::Update()
@@ -112,6 +121,11 @@ void EnemyDeer::Draw()const
 
 	/*DrawQuadrangle(KeepMouseX[number - 1], KeepMouseY[number - 1], KeepMouseX[number - 2], KeepMouseY[number - 2],
 		KeepMouseX[number - 3], KeepMouseY[number - 3], KeepMouseX[number - 4], KeepMouseY[number - 4], 0xffffff, FALSE);*/
+}
+
+void EnemyDeer::Finalize()
+{
+
 }
 
 void EnemyDeer::Hit(Location _location, Erea _erea, int _type, int _color_data)

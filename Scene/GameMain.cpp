@@ -11,11 +11,8 @@
 static Location camera_location = { 0,0};	//カメラの座標
 static Location screen_origin = { (SCREEN_WIDTH / 2),(SCREEN_HEIGHT / 2) };
 
-GameMain::GameMain(int _stage) :stage_data{0},now_stage(0), stage_width_num(0), stage_height_num(0), stage_width(0), stage_height(0), camera_x_lock_flg(true), camera_y_lock_flg(true), x_pos_set_once(true), y_pos_set_once(true)
+GameMain::GameMain(int _stage) :stage_data{0},now_stage(0), stage_width_num(0), stage_height_num(0), stage_width(0), stage_height(0), camera_x_lock_flg(true), camera_y_lock_flg(true), x_pos_set_once(false), y_pos_set_once(false),player_object(0)
 {
-	CreateObject(new Player);
-	CreateObject(new EnemyDeer);
-	CreateObject(new EnemyBat);
 	SetStage(_stage);
 	lock_pos = camera_location;
 }
@@ -25,6 +22,7 @@ GameMain::~GameMain()
 	for (int i = 0; object[i] != nullptr; i++)
 	{
 		//生成済みのオブジェクトを削除
+		object[i]->Finalize();
 		delete object[i];
 	}
 }
@@ -42,7 +40,7 @@ AbstractScene* GameMain::Update()
 		for (int j = i+1; object[j] != nullptr; j++)
 		{
 			//各オブジェクトとの当たり判定
-			if (object[i]->HitBox(object[j]))
+			if (object[i]->HitBox(object[j]) && object[i]->GetCanHit()==TRUE && object[j]->GetCanHit() == TRUE)
 			{
 				object[i]->Hit(object[j]->GetLocation(), object[j]->GetErea(), object[j]->GetObjectType(), object[j]->GetColerData());
 				object[j]->Hit(object[i]->GetLocation(), object[i]->GetErea(), object[i]->GetObjectType(), object[i]->GetColerData());
@@ -74,7 +72,7 @@ void GameMain::Draw() const
 	}
 }
 
-void GameMain::CreateObject(Object* _object)
+void GameMain::CreateObject(Object* _object, Location _location, Erea _erea, int _color_data)
 {
 	for (int i = 0; i < OBJECT_NUM; i++)
 	{
@@ -82,6 +80,12 @@ void GameMain::CreateObject(Object* _object)
 		if (object[i] == nullptr)
 		{
 			object[i] = _object;
+			object[i]->Initialize(_location, _erea, _color_data);
+			//プレイヤーの配列上の位置格納
+			if (object[i]->GetObjectType() == PLAYER)
+			{
+				player_object = i;
+			}
 			break;
 		}
 	}
@@ -99,7 +103,7 @@ void GameMain::DeleteObject(int i)
 void GameMain::UpdateCamera()
 {
 	//X座標が画面端以外なら
-	if (object[0]->GetCenterLocation().x > (SCREEN_WIDTH / 2) && object[0]->GetCenterLocation().x < stage_width - (SCREEN_WIDTH / 2))
+	if (object[player_object]->GetCenterLocation().x > (SCREEN_WIDTH / 2) && object[player_object]->GetCenterLocation().x < stage_width - (SCREEN_WIDTH / 2))
 	{
 		//X座標のロックをしない
 		camera_x_lock_flg = false;
@@ -114,12 +118,12 @@ void GameMain::UpdateCamera()
 		//固定する位置を一度だけ設定する
 		if (x_pos_set_once == false)
 		{
-			lock_pos.x = object[0]->GetCenterLocation().x;
+			lock_pos.x = object[player_object]->GetCenterLocation().x;
 			x_pos_set_once = true;
 		}
 	}
 	//Y座標が画面端以外なら
-	if (object[0]->GetCenterLocation().y < stage_height - (SCREEN_HEIGHT / 2) - 10 && object[0]->GetCenterLocation().y>(SCREEN_HEIGHT / 2))
+	if (object[player_object]->GetCenterLocation().y < stage_height - (SCREEN_HEIGHT / 2) - 10 && object[player_object]->GetCenterLocation().y>(SCREEN_HEIGHT / 2))
 	{
 		//Y座標のロックをしない
 		camera_y_lock_flg = false;
@@ -134,7 +138,7 @@ void GameMain::UpdateCamera()
 		//固定する位置を一度だけ設定する
 		if (y_pos_set_once == false)
 		{
-			lock_pos.y = object[0]->GetCenterLocation().y;
+			lock_pos.y = object[player_object]->GetCenterLocation().y;
 			y_pos_set_once = true;
 		}
 	}
@@ -145,18 +149,18 @@ void GameMain::UpdateCamera()
 		//カメラ更新
 		if (camera_x_lock_flg == false && camera_y_lock_flg == false)
 		{
-			camera_location.x = object[0]->GetCenterLocation().x - (SCREEN_WIDTH / 2);
-			camera_location.y = object[0]->GetCenterLocation().y - (SCREEN_HEIGHT / 2);
+			camera_location.x = object[player_object]->GetCenterLocation().x - (SCREEN_WIDTH / 2);
+			camera_location.y = object[player_object]->GetCenterLocation().y - (SCREEN_HEIGHT / 2);
 		}
 		else if (camera_x_lock_flg == false && camera_y_lock_flg == true)
 		{
-			camera_location.x = object[0]->GetCenterLocation().x - (SCREEN_WIDTH / 2);
+			camera_location.x = object[player_object]->GetCenterLocation().x - (SCREEN_WIDTH / 2);
 			camera_location.y = lock_pos.y - (SCREEN_HEIGHT / 2);
 		}
 		else if (camera_x_lock_flg == true && camera_y_lock_flg == false)
 		{
 			camera_location.x = lock_pos.x - (SCREEN_WIDTH / 2);
-			camera_location.y = object[0]->GetCenterLocation().y - (SCREEN_HEIGHT / 2);
+			camera_location.y = object[player_object]->GetCenterLocation().y - (SCREEN_HEIGHT / 2);
 		}
 		else
 		{
@@ -215,6 +219,9 @@ void GameMain::LoadStageData(int _stage)
 
 void GameMain::SetStage(int _stage)
 {
+	//オブジェクト作成用変数
+	Location spawn;
+	Erea size;
 	now_stage = _stage;
 	//ファイルの読込
 	LoadStageData(now_stage);
@@ -222,15 +229,53 @@ void GameMain::SetStage(int _stage)
 	{
 		for (int j = 0; j < stage_width_num; j++)
 		{
-			//ステージ内ブロックを生成
-			if (stage_data[i][j] != 0)
+			//絶対もっと簡略化出来る 一旦これで
+			switch (stage_data[i][j])
 			{
-				CreateObject(new Stage((float)(j * BOX_WIDTH), (float)(i * BOX_HEIGHT), BOX_WIDTH, BOX_HEIGHT, stage_data[i][j]));
+			case 0:
+				break;
+			case 1:
+			case 2:
+			case 3:
+			case 4:
+			case 5:
+			case 6:
+			case 7:
+			case 8:
+				//ステージ内ブロックを生成
+				CreateObject(new Stage(stage_data[i][j]), { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { BOX_WIDTH ,BOX_HEIGHT }, stage_data[i][j]);
+				break;
+			case 9:
+				//プレイヤーの生成
+				CreateObject(new Player, { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { 150,75 }, RED);
+				break;
+			case 10:
+				//敵（赤鹿）の生成
+				CreateObject(new EnemyDeer, { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { 100,100 }, RED);
+				break;
+			case 11:
+				//敵（緑鹿）の生成
+				CreateObject(new EnemyDeer, { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { 100,100 }, GREEN);
+				break;
+			case 12:
+				//敵（青鹿）の生成
+				CreateObject(new EnemyDeer, { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { 100,100 }, BLUE);
+				break;
+			case 13:
+				//敵（赤コウモリ）の生成
+				CreateObject(new EnemyBat, { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { 100,100 }, RED);
+				break;
+			case 14:
+				//敵（緑コウモリ）の生成
+				CreateObject(new EnemyBat, { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { 100,100 }, GREEN);
+				break;
+			case 15:
+				//敵（青コウモリ）の生成
+				CreateObject(new EnemyBat, { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { 100,100 }, BLUE);
+				break;
+			default:
+				break;
 			}
-			//else
-			//{
-			//	stage[i][j] = nullptr;
-			//}
 		}
 	}
 

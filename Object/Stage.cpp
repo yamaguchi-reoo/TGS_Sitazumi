@@ -2,19 +2,34 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-Stage::Stage(float _x, float _y, float _width, float _height, int _type) : frame(0), inv_flg(false), debug_flg(false), anim(0), fire_anim{ 0 }, wood_anim{ 0 }, hit_flg(false), hit_timer(-1)
+Stage::Stage(int _type) : frame(0), inv_flg(false), debug_flg(false), anim(0), fire_anim{ 0 }, wood_anim{ 0 }, hit_flg(false), hit_timer(-1)
 {
 	type = BLOCK;
-	location.x = _x;
-	location.y = _y;
-	erea.height = _height;
-	erea.width = _width;
 	block_type = _type;
+	if (block_type > 5)
+	{
+		can_hit = FALSE;
+	}
+	else
+	{
+		can_hit = TRUE;
+	}
+}
+
+Stage::~Stage()
+{
+
+}
+
+void Stage::Initialize(Location _location, Erea _erea, int _color_data)
+{
+	location = _location;
+	erea = _erea;
 	//色を交換出来るブロックの設定
-	if (block_type == 1 || block_type == 3 || block_type == 4 || block_type == 5)
+	if (_color_data == 1 || _color_data == 3 || _color_data == 4 || _color_data == 5)
 	{
 		can_swap = TRUE;
-		SetColorData(color_data[block_type]);
+		SetColorData(color_data[_color_data]);
 	}
 	//色を交換出来ないブロックの設定
 	else
@@ -22,6 +37,7 @@ Stage::Stage(float _x, float _y, float _width, float _height, int _type) : frame
 		can_swap = TRUE;
 		color = 0;
 	}
+
 	//エフェクトのアニメーション用初期定義
 	for (int i = 0; i < ANIM_BLOCK_NUM; i++)
 	{
@@ -33,13 +49,8 @@ Stage::Stage(float _x, float _y, float _width, float _height, int _type) : frame
 		wood_anim[i].shift1.y = erea.height;
 		wood_anim[i].shift2.y = GetRand(20);
 	}
-}
-
-Stage::~Stage()
-{
 
 }
-
 void Stage::Update()
 {
 	//リセット
@@ -167,6 +178,11 @@ void Stage::Draw()const
 		}
 		DrawFormatStringF(local_location.x, local_location.y, text_color[block_type], "%d", block_type);
 	}
+}
+
+void Stage::Finalize()
+{
+
 }
 
 void Stage::Hit(Location _location, Erea _erea, int _type, int _color_data)

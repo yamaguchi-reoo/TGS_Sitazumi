@@ -31,8 +31,11 @@ private:
 public:
 	Player();
 	~Player();
+	void Initialize(Location _location, Erea _erea, int _color_data)override;
 	void Update()override;
 	void Draw()const override;
+	void Finalize()override;
+
 	void Hit(Location _location, Erea _erea, int _type, int _color_data)override;
 
 	void MoveActor(); //キャラクターの移動

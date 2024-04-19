@@ -5,6 +5,8 @@ EnemyBat::EnemyBat()
 {
 	type = ENEMY;
 	can_swap = TRUE;
+	can_hit = TRUE;
+
 	vertices = {
 		// 耳
 		{850, 300}, {850, 325}, {862, 312},
@@ -27,6 +29,13 @@ EnemyBat::EnemyBat()
 
 EnemyBat::~EnemyBat()
 {
+}
+
+void EnemyBat::Initialize(Location _location, Erea _erea, int _color_data)
+{
+	location = _location;
+	erea = _erea;
+	color = _color_data;
 }
 
 void EnemyBat::Update()
@@ -53,6 +62,11 @@ void EnemyBat::Draw() const
 
 	//配列の各頂点を利用して三角形を描画する
 	DrawFormatString(300, 300, 0xfffff, "%f    %f", local_location.x, local_location.y);
+}
+
+void EnemyBat::Finalize()
+{
+
 }
 
 void EnemyBat::Move()
