@@ -13,7 +13,7 @@ protected:
 
 public:
 	//色の交換
-	void ChangeColor(ColorData cd);
+	void ChangeColor(ColorData* cd);
 
 	void SetColorData(int c)
 	{

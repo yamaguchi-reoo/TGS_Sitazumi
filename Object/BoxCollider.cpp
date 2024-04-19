@@ -30,8 +30,8 @@ bool BoxCollider::HitBox(BoxCollider* bCollider)
 	float diff_y = my_cy - sub_cy;
 
 	//当たり判定の演算
-	if (fabsf(diff_x) < my_harf_width + sub_harf_width &&
-		fabsf(diff_y) < my_harf_height + sub_harf_height)
+	if (fabsf(diff_x) <= my_harf_width + sub_harf_width &&
+		fabsf(diff_y) <= my_harf_height + sub_harf_height)
 	{
 		ret = true;
 	}
