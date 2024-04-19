@@ -94,7 +94,7 @@ void Player::Draw()const
 
 }
 
-void Player::Hit(Location _location, Erea _erea, int _type)
+void Player::Hit(Location _location, Erea _erea, int _type, int _color_data)
 {
 	
 	//ブロックと当たった時の処理
