@@ -34,6 +34,8 @@ EnemyDeer::EnemyDeer()
 	ArrayNumberY = 1;
 	ArrayNumber = 0;
 
+	deer_state = DeerState::LEFT;
+
 	//location == 当たり判定用 local_location == 画像を動かすだけの物
 	//locationの中に値を入れると 上記の変数のどちらでも値を使用できる
 	// { x , y }
@@ -47,7 +49,9 @@ EnemyDeer::~EnemyDeer()
 
 void EnemyDeer::Update()
 {
-	NotOpen = EnemyDeerfs();
+	//NotOpen = EnemyDeerfs();
+
+	EnemyDeerMove();
 
 	//添え字の初期化
 	/*if (ArrayNumber > 98)
@@ -58,8 +62,8 @@ void EnemyDeer::Update()
 	//左クリックが押されたら座標を配列に格納したい
 	if (KeyInput::OnMouse(MOUSE_INPUT_LEFT) == 1)
 	{
-		KeepCursor[ArrayNumber][ArrayNumberX] = KeyInput::GetMouseCursor().x; //偶数の配列に格納する [0][0] [0][2] [0][4] [0][6] [0][8]
-		KeepCursor[ArrayNumber][ArrayNumberY] = KeyInput::GetMouseCursor().y; //奇数の配列に格納する [0][1] [0][3] [0][5] [0][7] [0][9]
+		//KeepCursor[ArrayNumber][ArrayNumberX] = KeyInput::GetMouseCursor().x; //偶数の配列に格納する [0][0] [0][2] [0][4] [0][6] [0][8]
+		//KeepCursor[ArrayNumber][ArrayNumberY] = KeyInput::GetMouseCursor().y; //奇数の配列に格納する [0][1] [0][3] [0][5] [0][7] [0][9]
 
 		//ファイルを開けたら
 		/*if (Deerfs)
@@ -90,15 +94,15 @@ void EnemyDeer::Update()
 
 	//akusel++;
 
-	Deerfs.close();
+	//Deerfs.close();
 }
 
 void EnemyDeer::Draw()const
 {
 	DrawFormatString(0, 60, GetColor(255, 0, 0), "MouseX : %d MouseY : %d", KeyInput::GetMouseCursor().x, KeyInput::GetMouseCursor().y);
-	DrawFormatString(0, 80, 0xff0000, "File open? %d", NotOpen);	//ファイルが開けているか確認 TRUE or FALSE
-	DrawFormatString(0, 120, 0xff0000, "Number : %d X number : %d Y wnumber : %d", ArrayNumber, ArrayNumberX - 2, ArrayNumberY - 2);
-	DrawFormatString(0, 140, 0xff0000, "Number : %d X : %d Y : %d", ArrayNumber, KeepCursor[ArrayNumber][ArrayNumberX - 2], KeepCursor[ArrayNumber][ArrayNumberY - 2]);
+	//DrawFormatString(0, 80, 0xff0000, "File open? %d", NotOpen);	//ファイルが開けているか確認 TRUE or FALSE
+	//DrawFormatString(0, 120, 0xff0000, "Number : %d X number : %d Y wnumber : %d", ArrayNumber, ArrayNumberX - 2, ArrayNumberY - 2);
+	//DrawFormatString(0, 140, 0xff0000, "Number : %d X : %d Y : %d", ArrayNumber, KeepCursor[ArrayNumber][ArrayNumberX - 2], KeepCursor[ArrayNumber][ArrayNumberY - 2]);
 
 	//DrawQuadrangle(KeepCursor[ArrayNumber][0], KeepCursor[ArrayNumber][1], KeepCursor[ArrayNumber][2], KeepCursor[ArrayNumber][3],
 		//KeepCursor[ArrayNumber][4], KeepCursor[ArrayNumber][5], KeepCursor[ArrayNumber][6], KeepCursor[ArrayNumber][7], 0xffffff, FALSE);
@@ -136,12 +140,45 @@ void EnemyDeer::Draw()const
 	DrawQuadrangle(local_location.x + 80, local_location.y + 80, local_location.x + 90, local_location.y + 80, local_location.x + 100, local_location.y + 110, local_location.x + 90, local_location.y + 110, 0xffffff, TRUE);
 
 
-	DrawFormatString(0, 500, 0xff0000, "ワールド座標 X：%0.1f Y：%0.1f", local_location.x, local_location.y + akusel);
+	/*DrawFormatString(0, 500, 0xff0000, "ワールド座標 X：%0.1f Y：%0.1f", local_location.x, local_location.y + akusel);
+	DrawFormatString(30, 520, 0xff0000, "location.x : %0.1f", DrawTest1);
+	DrawFormatString(30, 540, 0xff0000, "location.y : %0.1f", DrawTest2);
+	DrawFormatString(30, 560, 0xff0000, "erea.height: %0.1f", DrawTest3);
+	DrawFormatString(30, 580, 0xff0000, "erea.width : %0.1f", DrawTest4);
+	DrawFormatString(30, 600, 0xff0000, "type		   : %d", DrawTest5);
+	DrawFormatString(30, 620, 0xff0000, "color_data : %d", DrawTest6);*/
+	//DrawFormatString(30, 620, 0xff0000, "color_data : %d", DrawTest6);
+}
+
+void EnemyDeer::EnemyDeerMove()
+{
+	if (deer_state == DeerState::LEFT)
+	{
+		location.x -= 1;
+	}
+	else if(deer_state == DeerState::RIGHT)
+	{
+		location.x += 1;
+	}
 }
 
 void EnemyDeer::Hit(Location _location, Erea _erea, int _type, int _color_data)
 {
+	DrawTest1 = _location.x;
+	DrawTest2 = _location.y;
+	DrawTest3 = _erea.height;
+	DrawTest4 = _erea.width;
+	DrawTest5 = _type;
+	DrawTest6 = _color_data;
 
+	if (location.x < _location.x + _erea.width && _type == BLOCK)
+	{
+		deer_state = DeerState::RIGHT;
+	}
+	/*else if (_type == 0)
+	{
+		deer_state = DeerState::LEFT;
+	}*/
 }
 
 void EnemyDeer::EnemyDeerIfs()
