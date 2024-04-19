@@ -19,6 +19,7 @@ class EnemyBat:
 private:
 	std::vector<Location> vertices;
 
+	BatState bat_state;
 	bool leftwall_flg;
 
 public:
