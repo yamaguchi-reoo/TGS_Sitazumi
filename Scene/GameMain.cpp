@@ -46,6 +46,7 @@ AbstractScene* GameMain::Update()
 			{
 				object[i]->Hit(object[j]->GetLocation(), object[j]->GetErea(), object[j]->GetObjectType());
 				object[j]->Hit(object[i]->GetLocation(), object[i]->GetErea(), object[i]->GetObjectType());
+				
 			}
 			//各オブジェクトの色交換
 			if (object[i]->GetObjectType() == PLAYER) {
@@ -68,10 +69,17 @@ AbstractScene* GameMain::Update()
 
 void GameMain::Draw() const
 {
+	int pn;
 	for (int i = 0; object[i] != nullptr; i++)
 	{
+		if (object[i]->GetObjectType() == PLAYER) {
+			pn = i;
+			continue;
+		}
 		object[i]->Draw();
 	}
+	//プレイヤーを最後に描画
+	object[pn]->Draw();
 }
 
 void GameMain::CreateObject(Object* _object)

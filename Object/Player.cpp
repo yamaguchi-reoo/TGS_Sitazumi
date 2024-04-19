@@ -45,15 +45,16 @@ void Player::Update()
 		vector.y = 0.f;
 	}
 
-	if (PadInput::OnButton(XINPUT_BUTTON_Y)) {
-		ChangePlayerColor();
-	}
-
+	//Bボタンで色の交換ができるモードと切り替え
 	if (PadInput::OnButton(XINPUT_BUTTON_B) && !searchFlg) {
 		searchFlg = true;
 	}
 	else if (PadInput::OnButton(XINPUT_BUTTON_B) && searchFlg) {
 		searchFlg = false;
+	}
+	//Yボタンで色の交換
+	if (PadInput::OnButton(XINPUT_BUTTON_Y) && searchFlg) {
+		ChangePlayerColor();
 	}
 
 
@@ -71,6 +72,7 @@ void Player::Update()
 	searchedLen = 1000.f;
 	searchedObj = nullptr;
 
+	fps++;
 }
 
 void Player::Draw()const
@@ -80,8 +82,9 @@ void Player::Draw()const
 
 	DrawCircle(aimLoc.x, aimLoc.y, 10, color, TRUE);
 
-	if (searchedObj != nullptr) {
-		DrawCircle(searchedObj->GetLocalLocation().x, searchedObj->GetLocalLocation().y, 50, 0xffff00, TRUE);
+	if (searchedObj != nullptr && searchFlg) {
+		DrawCircle(searchedObj->GetLocalLocation().x + searchedObj->GetErea().width / 2, 
+			searchedObj->GetLocalLocation().y + searchedObj->GetErea().height / 2, 20, 0x000000, FALSE);
 		DrawFormatString(640, 80, 0xffff00, "%f", searchedObj->GetLocalLocation().x);
 		DrawFormatString(640, 100, 0xff0000, "%f", searchedObj->GetLocalLocation().y);
 	}
@@ -89,100 +92,30 @@ void Player::Draw()const
 		DrawLine(local_location.x + (erea.width / 2), local_location.y + (erea.height / 2), lineLoc.x, lineLoc.y, color);
 	}
 
-	DrawFormatString(80, 80, 0xffff00, "%f", location.x);
-	DrawFormatString(20, 100, 0xff0000, "%f", location.y);
+	DrawFormatString(400, 20, 0xffff00, "l.x%f", location.x);
+	DrawFormatString(400, 40, 0xff0000, "l.y%f", location.y);
+	DrawFormatString(400, 60, 0xffff00, "e.w%f", erea.width);
+	DrawFormatString(400, 80, 0xff0000, "e.h%f", erea.height);
+
+	DrawFormatString(700, 20, 0xffff00, "v.x%f", vector.x);
+	DrawFormatString(700, 40, 0xff0000, "v.y%f", vector.y);
+
+	DrawFormatString(400, 00, 0xff0000, "%d", stageHitFlg[1][bottom]);
+
+	//DrawBox(location.x, location.y, location.x + 1, location.y + erea.height, 0xffffff, TRUE);
 
 }
 
 void Player::Hit(Location _location, Erea _erea, int _type)
 {
-	
+	fps1++;
 	//ブロックと当たった時の処理
 	if (_type == BLOCK)
 	{
 		Location tmpl = location;
 		Erea tmpe = erea;
 
-		erea.height = 1.f;
-		erea.width = tmpe.width - 0.f;
-
-		//プレイヤー下方向の判定
-		location.y += tmpe.height;
-		if (CheckCollision(_location,_erea) && !stageHitFlg[1][bottom]) {
-			stageHitFlg[0][bottom] = true;
-			stageHitFlg[1][bottom] = true;
-		}
-		else {
-			stageHitFlg[0][bottom] = false;
-		}
-
-		//戻す
-		location.y = tmpl.y;
-		erea.height = tmpe.height;
-		erea.width = tmpe.width;
-
-
-		//下方向に埋まらないようにする
-		if (stageHitFlg[0][bottom]) {//下方向に埋まっていたら
-			float t = _location.y - (location.y + erea.height);
-			if (t != 0) {
-				location.y += t;
-			}
-		}
-
-
-		//高さ、幅の変更
-		erea.height = tmpe.height - 0.f;
-		erea.width = 1;
-
-		//プレイヤー左方向の判定
-		//location.x -= tmpe.width / 2;
-		if (CheckCollision(_location, _erea) && !stageHitFlg[1][left]) {
-			stageHitFlg[0][left] = true;
-			stageHitFlg[1][left] = true;
-
-		}
-		else {
-			stageHitFlg[0][left] = false;
-		}
-
-		//プレイヤー右方向の判定
-		location.x += tmpe.width;
-		if (CheckCollision(_location, _erea) && !stageHitFlg[1][right]) {
-			stageHitFlg[0][right] = true;
-			stageHitFlg[1][right] = true;
-		}
-		else {
-			stageHitFlg[0][right] = false;
-		}
-
-		//最初の値に戻す
-
-		location.x = tmpl.x;
-
-		erea.height = tmpe.height;
-		erea.width = tmpe.width;
-
-
-
-		//左方向に埋まらないようにする
-		if (stageHitFlg[0][left]) {//左方向に埋まっていたら
-			float t = (_location.x + _erea.width) - location.x;
-			if (t != 0) {
-				location.x += t;
-			}
-		}
-
-		//右方向に埋まらないようにする
-		if (stageHitFlg[0][right]) {//右方向に埋まっていたら
-			float t = _location.x - (location.x + erea.width);
-			if (t != 0) {
-				location.x += t;
-			}
-		}
-
-
-		location.x += 10;
+		location.x += 10.f;
 		erea.height = 1.f;
 		erea.width = tmpe.width - 10.f;
 
@@ -201,10 +134,103 @@ void Player::Hit(Location _location, Erea _erea, int _type)
 			float t = (_location.y + _erea.height) - location.y;
 			if (t != 0) {
 				location.y += t;
+				vector.y = 0.f;
 			}
 		}
 
-		location.x -= 10;
+		location.x -= 10.f;
+		tmpl.y = location.y;
+
+
+
+
+		erea.height = 1.f;
+		erea.width = tmpe.width - 10.f;
+		location.x = tmpl.x + 10.f;
+
+		//プレイヤー下方向の判定
+		location.y += tmpe.height + 1;
+		if (CheckCollision(_location,_erea) && !stageHitFlg[1][bottom]) {
+			stageHitFlg[0][bottom] = true;
+			stageHitFlg[1][bottom] = true;
+		}
+		else {
+			stageHitFlg[0][bottom] = false;
+		}
+
+		//戻す
+		location.x = tmpl.x;
+		location.y = tmpl.y;
+		erea.height = tmpe.height;
+		erea.width = tmpe.width;
+
+
+		//下方向に埋まらないようにする
+		if (stageHitFlg[0][bottom]) {//下方向に埋まっていたら
+			float t = _location.y - (location.y + erea.height);
+			if (t != 0) {
+				location.y += t;
+			}
+		}
+
+
+		//高さ、幅の変更
+		location.y += 3.f;
+		erea.height = tmpe.height - 3.f;
+		erea.width = 1;
+
+		//プレイヤー左方向の判定
+		//location.x -= tmpe.width / 2;
+		if (CheckCollision(_location, _erea) && !stageHitFlg[1][left]) {
+			stageHitFlg[0][left] = true;
+			stageHitFlg[1][left] = true;
+			int a = CheckCollision(_location, _erea);
+
+		}
+		else {
+			stageHitFlg[0][left] = false;
+		}
+		
+
+		//プレイヤー右方向の判定
+		location.x += tmpe.width;
+		if (CheckCollision(_location, _erea) && !stageHitFlg[1][right]) {
+			stageHitFlg[0][right] = true;
+			stageHitFlg[1][right] = true;
+		}
+		else {
+			stageHitFlg[0][right] = false;
+		}
+
+		//最初の値に戻す
+
+		location.x = tmpl.x;
+		location.y += -3.f;
+		erea.height = tmpe.height;
+		erea.width = tmpe.width;
+
+
+
+		//左方向に埋まらないようにする
+		if (stageHitFlg[0][left]) {//左方向に埋まっていたら
+			float t = (_location.x + _erea.width) - location.x;
+			if (t != 0) {
+				location.x += t;
+				vector.x = 0.f;
+			}
+		}
+
+		//右方向に埋まらないようにする
+		if (stageHitFlg[0][right]) {//右方向に埋まっていたら
+			float t = _location.x - (location.x + erea.width);
+			if (t != 0) {
+				location.x += t;
+				vector.x = 0.f;
+			}
+		}
+
+		
+
 
 		erea.height = tmpe.height;
 		erea.width = tmpe.width;
@@ -306,7 +332,7 @@ bool Player::SearchColor(Object* ob)
 
 bool Player::ChangePlayerColor()
 {
-	color = RED;
+	ChangeColor(searchedObj);
 	return false;
 }
 

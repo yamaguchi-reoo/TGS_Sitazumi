@@ -30,6 +30,7 @@ private:
     bool y_pos_set_once;     //カメラのロック位置設定用
     Location lock_pos;       //カメラが動けない時に画面揺れが発生した時、カメラの位置が戻る場所
 
+    int fps = 0;
 public:
 
     //�R���X�g���N�^(_stage���ǂݍ��ރX�e�[�W)
