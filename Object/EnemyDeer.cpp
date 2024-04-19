@@ -104,9 +104,9 @@ void EnemyDeer::Draw()const
 		//KeepCursor[ArrayNumber][4], KeepCursor[ArrayNumber][5], KeepCursor[ArrayNumber][6], KeepCursor[ArrayNumber][7], 0xffffff, FALSE);
 
 	//角 左から
-	DrawQuadrangle(295, 260, 310, 260, 310, 290, 300, 290, 0xffffff, FALSE);
+	//DrawQuadrangle(295, 260, 310, 260, 310, 290, 300, 290, 0xffffff, FALSE);
 	//頭
-	DrawBox(300 + akusel, 300, 330 + akusel, 320, GetColor(255, 255, 255), TRUE);
+	//DrawBox(300 + akusel, 300, 330 + akusel, 320, GetColor(255, 255, 255), TRUE);
 	//首
 	//DrawBox(315 + akusel, 325, 330 + akusel, 350, GetColor(255, 255, 255), TRUE);
 	//胴体
@@ -119,14 +119,22 @@ void EnemyDeer::Draw()const
 
 	/*DrawQuadrangle(KeepMouseX[number - 1], KeepMouseY[number - 1], KeepMouseX[number - 2], KeepMouseY[number - 2],
 		KeepMouseX[number - 3], KeepMouseY[number - 3], KeepMouseX[number - 4], KeepMouseY[number - 4], 0xffffff, FALSE);*/
-
+	
+	//頭
 	DrawBox(local_location.x, local_location.y, local_location.x + 30, local_location.y + 20, 0xffffff, TRUE);
+
+	//首
 	DrawBox(local_location.x + 15, local_location.y + 25, local_location.x + 30, local_location.y + 50, 0xffffff, TRUE);
+
+	//胴体
 	DrawBox(local_location.x + 15, local_location.y + 55, local_location.x + 90, local_location.y + 75, 0xffffff, TRUE);
+
+	//足　左から
 	DrawQuadrangle(local_location.x + 15, local_location.y + 80, local_location.x + 25, local_location.y + 80, local_location.x + 15, local_location.y + 110, local_location.x + 5, local_location.y + 110, 0xffffff, TRUE);
 	DrawBox(local_location.x + 30, local_location.y + 80, local_location.x + 40, local_location.y + 110, 0xffffff, TRUE);
 	DrawBox(local_location.x + 60, local_location.y + 80, local_location.x + 70, local_location.y + 110, 0xffffff, TRUE);
 	DrawQuadrangle(local_location.x + 80, local_location.y + 80, local_location.x + 90, local_location.y + 80, local_location.x + 100, local_location.y + 110, local_location.x + 90, local_location.y + 110, 0xffffff, TRUE);
+
 
 	DrawFormatString(0, 500, 0xff0000, "ワールド座標 X：%0.1f Y：%0.1f", local_location.x, local_location.y + akusel);
 }
