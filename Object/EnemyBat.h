@@ -4,7 +4,6 @@
 #include "../Utility/common.h"
 #include "Object.h"
 
-#define NUM_VERTICES 32 //頂点の数
 
 enum class BatState {
 	IDLE = 0,
