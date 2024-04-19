@@ -33,6 +33,11 @@ EnemyDeer::EnemyDeer()
 	ArrayNumberX = 0;
 	ArrayNumberY = 1;
 	ArrayNumber = 0;
+
+	//location == 当たり判定用 local_location == 画像を動かすだけの物
+	//locationの中に値を入れると 上記の変数のどちらでも値を使用できる
+	// { x , y }
+	location = { 500, 850 };
 }
 
 EnemyDeer::~EnemyDeer()
@@ -57,7 +62,7 @@ void EnemyDeer::Update()
 		KeepCursor[ArrayNumber][ArrayNumberY] = KeyInput::GetMouseCursor().y; //奇数の配列に格納する [0][1] [0][3] [0][5] [0][7] [0][9]
 
 		//ファイルを開けたら
-		if (Deerfs)
+		/*if (Deerfs)
 		{
 			Deerfs << KeepCursor[ArrayNumber][ArrayNumberX];
 			Deerfs << ",";
@@ -80,8 +85,10 @@ void EnemyDeer::Update()
 		}
 
 		ArrayNumberX += 2;
-		ArrayNumberY += 2;
+		ArrayNumberY += 2;*/
 	}
+
+	//akusel++;
 
 	Deerfs.close();
 }
@@ -93,25 +100,35 @@ void EnemyDeer::Draw()const
 	DrawFormatString(0, 120, 0xff0000, "Number : %d X number : %d Y wnumber : %d", ArrayNumber, ArrayNumberX - 2, ArrayNumberY - 2);
 	DrawFormatString(0, 140, 0xff0000, "Number : %d X : %d Y : %d", ArrayNumber, KeepCursor[ArrayNumber][ArrayNumberX - 2], KeepCursor[ArrayNumber][ArrayNumberY - 2]);
 
-	DrawQuadrangle(KeepCursor[ArrayNumber][0], KeepCursor[ArrayNumber][1], KeepCursor[ArrayNumber][2], KeepCursor[ArrayNumber][3],
-		KeepCursor[ArrayNumber][4], KeepCursor[ArrayNumber][5], KeepCursor[ArrayNumber][6], KeepCursor[ArrayNumber][7], 0xffffff, FALSE);
+	//DrawQuadrangle(KeepCursor[ArrayNumber][0], KeepCursor[ArrayNumber][1], KeepCursor[ArrayNumber][2], KeepCursor[ArrayNumber][3],
+		//KeepCursor[ArrayNumber][4], KeepCursor[ArrayNumber][5], KeepCursor[ArrayNumber][6], KeepCursor[ArrayNumber][7], 0xffffff, FALSE);
 
 	//角 左から
-	//DrawQuadrangle(295, 260, 310, 260, 310, 290, 300, 290, 0xffffff, FALSE);
+	DrawQuadrangle(295, 260, 310, 260, 310, 290, 300, 290, 0xffffff, FALSE);
 	//頭
 	DrawBox(300 + akusel, 300, 330 + akusel, 320, GetColor(255, 255, 255), TRUE);
 	//首
-	DrawBox(315 + akusel, 325, 330 + akusel, 350, GetColor(255, 255, 255), TRUE);
+	//DrawBox(315 + akusel, 325, 330 + akusel, 350, GetColor(255, 255, 255), TRUE);
 	//胴体
-	DrawBox(315 + akusel, 355, 390 + akusel, 375, 0xfffffff, TRUE);
+	//DrawBox(315 + akusel, 355, 390 + akusel, 375, 0xfffffff, TRUE);
 	//足 左から
-	DrawQuadrangle(315 + akusel, 380, 325 + akusel, 380, 315 + akusel, 410, 305 + akusel, 410, 0xffffff, TRUE);
-	DrawBox(330 + akusel, 380, 340 + akusel, 410, 0xffffff, TRUE);
-	DrawBox(360 + akusel, 380, 370 + akusel, 410, 0xffffff, TRUE);
-	DrawQuadrangle(380 + akusel, 380, 390 + akusel, 380, 400 + akusel, 410, 390 + akusel, 410, 0xffffff, TRUE);
+	//DrawQuadrangle(315 + akusel, 380, 325 + akusel, 380, 315 + akusel, 410, 305 + akusel, 410, 0xffffff, TRUE);
+	//DrawBox(330 + akusel, 380, 340 + akusel, 410, 0xffffff, TRUE);
+	//DrawBox(360 + akusel, 380, 370 + akusel, 410, 0xffffff, TRUE);
+	//DrawQuadrangle(380 + akusel, 380, 390 + akusel, 380, 400 + akusel, 410, 390 + akusel, 410, 0xffffff, TRUE);
 
 	/*DrawQuadrangle(KeepMouseX[number - 1], KeepMouseY[number - 1], KeepMouseX[number - 2], KeepMouseY[number - 2],
 		KeepMouseX[number - 3], KeepMouseY[number - 3], KeepMouseX[number - 4], KeepMouseY[number - 4], 0xffffff, FALSE);*/
+
+	DrawBox(local_location.x, local_location.y, local_location.x + 30, local_location.y + 20, 0xffffff, TRUE);
+	DrawBox(local_location.x + 15, local_location.y + 25, local_location.x + 30, local_location.y + 50, 0xffffff, TRUE);
+	DrawBox(local_location.x + 15, local_location.y + 55, local_location.x + 90, local_location.y + 75, 0xffffff, TRUE);
+	DrawQuadrangle(local_location.x + 15, local_location.y + 80, local_location.x + 25, local_location.y + 80, local_location.x + 15, local_location.y + 110, local_location.x + 5, local_location.y + 110, 0xffffff, TRUE);
+	DrawBox(local_location.x + 30, local_location.y + 80, local_location.x + 40, local_location.y + 110, 0xffffff, TRUE);
+	DrawBox(local_location.x + 60, local_location.y + 80, local_location.x + 70, local_location.y + 110, 0xffffff, TRUE);
+	DrawQuadrangle(local_location.x + 80, local_location.y + 80, local_location.x + 90, local_location.y + 80, local_location.x + 100, local_location.y + 110, local_location.x + 90, local_location.y + 110, 0xffffff, TRUE);
+
+	DrawFormatString(0, 500, 0xff0000, "ワールド座標 X：%0.1f Y：%0.1f", local_location.x, local_location.y + akusel);
 }
 
 void EnemyDeer::Hit(Location _location, Erea _erea, int _type)
