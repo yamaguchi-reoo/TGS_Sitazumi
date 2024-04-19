@@ -4,6 +4,8 @@
 EnemyBat::EnemyBat()
 {
 	type = ENEMY;
+	leftwall_flg = false;
+
 	can_swap = TRUE;
 	vertices = {
 		// 耳
@@ -23,6 +25,11 @@ EnemyBat::EnemyBat()
 		{865, 345}, {880, 368}, {865, 395}, {850, 368},
 	};
 
+
+	location = { 850 ,300 };
+	erea = { 100,100 };
+
+	bat_state = BatState::LEFT;
 }
 
 EnemyBat::~EnemyBat()
@@ -31,32 +38,63 @@ EnemyBat::~EnemyBat()
 
 void EnemyBat::Update()
 {
-	/*Move();
-	BatArray();*/
+	Move();
+	BatArray();
 }
 
 void EnemyBat::Draw() const
 {
-	//配列の各頂点を利用して三角形を描画する
-	for (int i = 0; i < vertices.size(); i += 3) {
-		if (i < 22) {
-			//DrawTriangle(vertices[i].x, vertices[i].y,vertices[i + 1].x, vertices[i + 1].y,vertices[i + 2].x, vertices[i + 2].y,GetColor(255, 255,255), TRUE);
-			DrawTriangle(vertices[i].x, vertices[i].y,vertices[i + 1].x, vertices[i + 1].y,vertices[i + 2].x, vertices[i + 2].y,GetColor(255, 255,255), TRUE);
-		}
-		//ひし形の描画
-		else
-		{
-			DrawQuadrangle(vertices[i].x, vertices[i].y,vertices[i + 1].x, vertices[i + 1].y,vertices[i + 2].x, vertices[i + 2].y,vertices[i + 3].x, vertices[i + 3].y,GetColor(255, 255, 255), TRUE);
-			i++;
-		}
-	}
+	DrawBox(local_location.x - 68, local_location.y, local_location.x + erea.width, local_location.y + erea.height, GetColor(255, 255, 255), FALSE);
 
 	//配列の各頂点を利用して三角形を描画する
-	DrawFormatString(300, 300, 0xfffff, "%f    %f", local_location.x, local_location.y);
+	//for (int i = 0; i < vertices.size(); i += 3) {
+	//	if (i < 22) {
+	//		//DrawTriangle(vertices[i].x, vertices[i].y,vertices[i + 1].x, vertices[i + 1].y,vertices[i + 2].x, vertices[i + 2].y,GetColor(255, 255,255), TRUE);
+	//		DrawTriangle(vertices[i].x, vertices[i].y,vertices[i + 1].x, vertices[i + 1].y,vertices[i + 2].x, vertices[i + 2].y,GetColor(255, 255,255), TRUE);
+	//	}
+	//	//ひし形の描画
+	//	else
+	//	{
+	//		DrawQuadrangle(vertices[i].x, vertices[i].y,vertices[i + 1].x, vertices[i + 1].y,vertices[i + 2].x, vertices[i + 2].y,vertices[i + 3].x, vertices[i + 3].y,GetColor(255, 255, 255), TRUE);
+	//		i++;
+	//	}
+	//}
+
+	//↓修正予定
+	//耳
+	DrawTriangle(local_location.x, local_location.y, local_location.x, local_location.y + 25, local_location.x + 12, local_location.y + 12,GetColor(255, 255, 255), TRUE);
+	DrawTriangle(local_location.x + 30, local_location.y, local_location.x + 30, local_location.y + 25, local_location.x + 18, local_location.y + 12,GetColor(255, 255, 255), TRUE);
+	//右翼
+	DrawTriangle(local_location.x + 27, local_location.y + 44, local_location.x + 67, local_location.y + 10, local_location.x + 93, local_location.y + 85,GetColor(255, 255, 255), TRUE);
+	DrawTriangle(local_location.x + 27, local_location.y + 44, local_location.x + 67, local_location.y + 10, local_location.x + 66, local_location.y + 80,GetColor(255, 255, 255), TRUE);
+	DrawTriangle(local_location.x + 25, local_location.y + 44, local_location.x + 67, local_location.y + 10, local_location.x + 45, local_location.y + 75,GetColor(255, 255, 255), TRUE);
+	//左翼
+	DrawTriangle(local_location.x + 3, local_location.y + 44, local_location.x - 34, local_location.y + 10, local_location.x - 63, local_location.y + 85, GetColor(255, 255, 255), TRUE);
+	DrawTriangle(local_location.x + 3, local_location.y + 44, local_location.x - 34, local_location.y + 10, local_location.x - 36, local_location.y + 80, GetColor(255, 255, 255), TRUE);
+	DrawTriangle(local_location.x + 5, local_location.y + 44, local_location.x - 34, local_location.y + 10, local_location.x - 15, local_location.y + 75, GetColor(255, 255, 255), TRUE);
+	//頭
+	DrawQuadrangle(local_location.x + 15, local_location.y + 16, local_location.x + 30, local_location.y + 30, local_location.x + 15, local_location.y + 40, local_location.x, local_location.y + 30, GetColor(255, 255, 255), TRUE);
+	//胴体
+	DrawQuadrangle(local_location.x + 15, local_location.y + 45, local_location.x + 30, local_location.y + 68, local_location.x + 15, local_location.y + 95, local_location.x, local_location.y + 68, GetColor(255, 255, 255), TRUE);
+
+
+	if (leftwall_flg == true) {
+		DrawFormatString(300, 300, 0xfffff, "%f    %f", local_location.x, local_location.y);
+	}
+	//配列の各頂点を利用して三角形を描画する
+	
 }
 
 void EnemyBat::Move()
 {
+	
+	if (bat_state == BatState::LEFT) {
+		location.x -= 3;
+	}
+	if (bat_state == BatState::RIGHT) {
+		location.x += 3;
+
+	}
 }
 
 void EnemyBat::BatArray()
@@ -64,7 +102,13 @@ void EnemyBat::BatArray()
 
 }
 
-void EnemyBat::Hit(Location _location, Erea _erea, int _type)
+void EnemyBat::Hit(Location _location, Erea _erea, int _type, int _color_data)
 {
+	if (_type == BLOCK)
+	{
+		if (location.x < _location.x + _erea.width) {
+			bat_state = BatState::RIGHT;
 
+		}
+	}
 }

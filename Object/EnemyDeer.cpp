@@ -139,7 +139,7 @@ void EnemyDeer::Draw()const
 	DrawFormatString(0, 500, 0xff0000, "ワールド座標 X：%0.1f Y：%0.1f", local_location.x, local_location.y + akusel);
 }
 
-void EnemyDeer::Hit(Location _location, Erea _erea, int _type)
+void EnemyDeer::Hit(Location _location, Erea _erea, int _type, int _color_data)
 {
 
 }

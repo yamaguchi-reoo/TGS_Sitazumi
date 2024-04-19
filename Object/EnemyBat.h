@@ -1,9 +1,7 @@
 #pragma once
 #include "CharaBase.h"
-#include<vector>
-#include<fstream>
-#include<iostream>
-#include<sstream>
+#include <vector>
+#include "../Utility/common.h"
 #include "Object.h"
 
 #define NUM_VERTICES 32 //頂点の数
@@ -21,6 +19,9 @@ class EnemyBat:
 private:
 	std::vector<Location> vertices;
 
+	BatState bat_state;
+	bool leftwall_flg;
+
 public:
 	EnemyBat();
 	~EnemyBat();
@@ -30,7 +31,7 @@ public:
 	void Move();
 	void BatArray();
 
-	void Hit(Location _location, Erea _erea, int _type)override;
+	void Hit(Location _location, Erea _erea, int _type, int _color_data)override;
 	bool SearchColor(Object* ob) {
 		return 0;
 	}

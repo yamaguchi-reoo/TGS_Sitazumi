@@ -82,7 +82,7 @@ public:
 	~Stage();
 	void Update()override;
 	void Draw()const override;
-	void Hit(Location _location, Erea _erea, int _type)override;
+	void Hit(Location _location, Erea _erea, int _type, int _color_data)override;
 	bool SearchColor(Object* ob) override {
 		return false;
 	}

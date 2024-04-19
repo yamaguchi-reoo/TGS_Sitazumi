@@ -44,8 +44,8 @@ AbstractScene* GameMain::Update()
 			//各オブジェクトとの当たり判定
 			if (object[i]->HitBox(object[j]))
 			{
-				object[i]->Hit(object[j]->GetLocation(), object[j]->GetErea(), object[j]->GetObjectType());
-				object[j]->Hit(object[i]->GetLocation(), object[i]->GetErea(), object[i]->GetObjectType());
+				object[i]->Hit(object[j]->GetLocation(), object[j]->GetErea(), object[j]->GetObjectType(), object[j]->GetColerData());
+				object[j]->Hit(object[i]->GetLocation(), object[i]->GetErea(), object[i]->GetObjectType(), object[i]->GetColerData());
 			}
 			//各オブジェクトの色交換
 			if (object[i]->GetObjectType() == PLAYER) {

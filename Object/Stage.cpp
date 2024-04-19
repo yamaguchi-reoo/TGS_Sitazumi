@@ -169,7 +169,7 @@ void Stage::Draw()const
 	}
 }
 
-void Stage::Hit(Location _location, Erea _erea, int _type)
+void Stage::Hit(Location _location, Erea _erea, int _type, int _color_data)
 {
 	//上から何かがぶつかったなら、ブロックを揺らす
 	if (_type == PLAYER)
