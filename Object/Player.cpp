@@ -9,7 +9,7 @@ Player::Player()
 {
 	type = PLAYER;
 	color = WHITE;
-	can_swap = TRUE;
+	can_swap = TRUE;	//プレイヤーのcan_swapは真でも偽でも大丈夫
 
 	location = { 200,200 };
 	erea = { 120,60 };

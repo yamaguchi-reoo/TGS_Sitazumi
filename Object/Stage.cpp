@@ -10,17 +10,17 @@ Stage::Stage(float _x, float _y, float _width, float _height, int _type) : frame
 	erea.height = _height;
 	erea.width = _width;
 	block_type = _type;
-	color = 0;
 	//色を交換出来るブロックの設定
 	if (block_type == 1 || block_type == 3 || block_type == 4 || block_type == 5)
 	{
-		can_swap = true;
+		can_swap = TRUE;
 		SetColorData(color_data[block_type]);
 	}
 	//色を交換出来ないブロックの設定
 	else
 	{
-		can_swap = false;
+		can_swap = TRUE;
+		color = 0;
 	}
 	//エフェクトのアニメーション用初期定義
 	for (int i = 0; i < ANIM_BLOCK_NUM; i++)
@@ -91,11 +91,11 @@ void Stage::Update()
 		{
 			if (anim < 30)
 			{
-				wood_anim[i].shift2.x += (wood_anim[i].shift / 50) + 0.1;
+				wood_anim[i].shift2.x += (wood_anim[i].shift / 50);
 			}
 			else
 			{
-				wood_anim[i].shift2.x -= (wood_anim[i].shift / 50) + 0.1;
+				wood_anim[i].shift2.x -= (wood_anim[i].shift / 50);
 			}
 		}
 	}
@@ -129,7 +129,7 @@ void Stage::Draw()const
 			DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, 0xaaaaaa, true);
 			break;
 			//炎
-		case FIRE:
+		case FIRE_BLOCK:
 			for (int i = 0; i < ANIM_BLOCK_NUM; i++)
 			{
 				DrawBoxAA(fire_anim[i].shift.x + local_location.x,
@@ -139,7 +139,7 @@ void Stage::Draw()const
 			}
 			break;
 			//木
-		case WOOD:
+		case WOOD_BLOCK:
 			for (int i = 0; i < ANIM_BLOCK_NUM; i++)
 			{
 				DrawLineAA(wood_anim[i].shift1.x + local_location.x,
@@ -149,7 +149,7 @@ void Stage::Draw()const
 			}
 			break;
 			//水
-		case WATER:
+		case WATER_BLOCK:
 			DrawStringF(local_location.x, local_location.y, "��", 0x0000ff);
 			break;
 			//その他（無）

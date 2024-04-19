@@ -4,6 +4,7 @@
 EnemyBat::EnemyBat()
 {
 	type = ENEMY;
+	can_swap = TRUE;
 	vertices = {
 		// 耳
 		{850, 300}, {850, 325}, {862, 312},

@@ -10,9 +10,9 @@
 #define RED_BLOCK	3	
 #define GREEN_BLOCK 4	
 #define BLUE_BLOCK 5	
-#define FIRE 6	
-#define WOOD 7	
-#define WATER 8	
+#define FIRE_BLOCK 6	
+#define WOOD_BLOCK 7	
+#define WATER_BLOCK 8	
 
 //ColorData格納用
 static int color_data[6]

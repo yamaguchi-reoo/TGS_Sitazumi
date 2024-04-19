@@ -39,17 +39,17 @@ AbstractScene* GameMain::Update()
 	{
 		object[i]->SetScreenPosition(camera_location);
 		object[i]->Update();
-		//各オブジェクトとの当たり判定
 		for (int j = i+1; object[j] != nullptr; j++)
 		{
+			//各オブジェクトとの当たり判定
 			if (object[i]->HitBox(object[j]))
 			{
 				object[i]->Hit(object[j]->GetLocation(), object[j]->GetErea(), object[j]->GetObjectType());
 				object[j]->Hit(object[i]->GetLocation(), object[i]->GetErea(), object[i]->GetObjectType());
 			}
-
+			//各オブジェクトの色交換
 			if (object[i]->GetObjectType() == PLAYER) {
-				if (object[j]->GetObjectType() == BLOCK) {
+				if (object[j]->GetObjectType() == BLOCK && object[j]->GetCanSwap() == TRUE) {
 					object[i]->SearchColor(object[j]);
 				}
 			}
