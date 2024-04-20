@@ -5,6 +5,12 @@
 
 using namespace std;
 
+enum class DeerState {
+	LEFT = 0,
+	RIGHT,
+	DEATH
+};
+
 class EnemyDeer :
 	public Object
 {
@@ -14,6 +20,8 @@ private:
 	ofstream DeerOfs;
 
 	fstream Deerfs ;
+
+	DeerState deer_state;
 
 	int NotOpen;
 
@@ -31,6 +39,9 @@ private:
 	
 	int akusel;
 
+	float DrawTest1, DrawTest2, DrawTest3, DrawTest4;
+	int	DrawTest5, DrawTest6;
+
 public:
 
 	EnemyDeer();
@@ -45,6 +56,7 @@ public:
 		return false;
 	}
 
+	void EnemyDeerMove(void);
 	void EnemyDeerOfs(void);	
 	void EnemyDeerIfs(void);	
 	int EnemyDeerfs(void);		

@@ -28,6 +28,9 @@ private:
 	Object* searchedObj; //一番近い色を交換できるオブジェクト
 	bool searchFlg;
 
+	int fps = 0;
+	int fps1 = 0;
+
 public:
 	Player();
 	~Player();

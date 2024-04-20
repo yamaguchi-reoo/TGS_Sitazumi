@@ -1,12 +1,9 @@
 #pragma once
 #include "CharaBase.h"
-#include<vector>
-#include<fstream>
-#include<iostream>
-#include<sstream>
+#include <vector>
+#include "../Utility/common.h"
 #include "Object.h"
 
-#define NUM_VERTICES 32 //頂点の数
 
 enum class BatState {
 	IDLE = 0,
@@ -20,6 +17,9 @@ class EnemyBat:
 {
 private:
 	std::vector<Location> vertices;
+
+	BatState bat_state;
+	bool leftwall_flg;
 
 public:
 	EnemyBat();
