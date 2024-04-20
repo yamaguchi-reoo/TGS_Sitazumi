@@ -128,16 +128,16 @@ void Stage::Draw()const
 		case BLUE_BLOCK:
 			if (hit_timer >= 0)
 			{
-				DrawBoxAA(local_location.x, local_location.y + stage_shift[hit_timer], local_location.x + erea.width, local_location.y + erea.height + stage_shift[hit_timer], color, true);
+				DrawBox(local_location.x, local_location.y + stage_shift[hit_timer], local_location.x + erea.width, local_location.y + erea.height + stage_shift[hit_timer], color, true);
 			}
 			else
 			{
-				DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, true);
+				DrawBox(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, true);
 			}
 			break;
 			//地面（灰）
 		case GRAY_BLOCK:
-			DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, 0xaaaaaa, true);
+			DrawBox(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, 0xaaaaaa, true);
 			break;
 			//炎
 		case FIRE_BLOCK:
