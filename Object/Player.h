@@ -30,7 +30,8 @@ private:
 
 	int fps = 0;
 	int fps1 = 0;
-
+	float move[4] = { 0,0,0,0 };
+	float move1[4] = { 0,0,0,0 };
 public:
 	Player();
 	~Player();
@@ -48,5 +49,7 @@ public:
 	bool ChangePlayerColor();
 
 	bool CheckCollision(Location l, Erea e); //ステージとの当たり判定
+
+	void TEST();
 };
 

@@ -40,6 +40,8 @@ void Player::Initialize(Location _location, Erea _erea, int _color_data)
 
 void Player::Update()
 {
+	fps = 0;
+
 	if (stageHitFlg[1][bottom] != true) { //重力
 		vector.y += 1.f;
 		if (vector.y > 16.f) {
@@ -62,12 +64,27 @@ void Player::Update()
 		ChangePlayerColor();
 	}
 
+	/*if (stageHitFlg[1][top] || stageHitFlg[1][bottom]) {
+		move1[right] = 0;
+		move1[left] = 0;
+	}*/
+	//if (/*stageHitFlg[1][left] ||*/ stageHitFlg[1][right]) {
+	//	move1[top] = 0;
+	//	move1[bottom] = 0;
+	//}
 
 	MoveActor();
 	MoveAim();
 
 	location.x += vector.x;
 	location.y += vector.y;
+
+	//location.x += move1[right];
+	//location.x += move1[left];
+	//location.y += move1[top];
+	//location.y += move1[bottom];
+
+	//TEST();
 
 	for (int i = 0; i < 4; i++) {
 		stageHitFlg[0][i] = false;
@@ -77,7 +94,10 @@ void Player::Update()
 	searchedLen = 1000.f;
 	searchedObj = nullptr;
 
-	fps++;
+	move1[0] = 0;
+	move1[1] = 0;
+	move1[2] = 0;
+	move1[3] = 0;
 }
 
 void Player::Draw()const
@@ -105,7 +125,18 @@ void Player::Draw()const
 	DrawFormatString(700, 20, 0xffff00, "v.x%f", vector.x);
 	DrawFormatString(700, 40, 0xff0000, "v.y%f", vector.y);
 
+	DrawFormatString(900, 20, 0xffff00, "v.x%f", move1[top]);
+	DrawFormatString(900, 40, 0xff0000, "v.y%f", move1[bottom]);
+	DrawFormatString(900, 60, 0xff0000, "v.y%f", move1[left]);
+	DrawFormatString(900, 80, 0xff0000, "v.y%f", move1[right]);
+
+	DrawFormatString(900, 100, 0xffff00, "v.x%d", stageHitFlg[1][0]);
+	DrawFormatString(900, 120, 0xff0000, "v.y%d", stageHitFlg[1][1]);
+	DrawFormatString(900, 140, 0xff0000, "v.y%d", stageHitFlg[1][2]);
+	DrawFormatString(900, 160, 0xff0000, "v.y%d", stageHitFlg[1][3]);
+
 	DrawFormatString(400, 00, 0xff0000, "%d", stageHitFlg[1][bottom]);
+	DrawFormatString(380, 00, 0xff0000, "%d", fps);
 
 	//DrawBox(location.x, location.y, location.x + 1, location.y + erea.height, 0xffffff, TRUE);
 
@@ -118,7 +149,7 @@ void Player::Finalize()
 
 void Player::Hit(Location _location, Erea _erea, int _type, int _color_data)
 {
-	fps1++;
+	
 	//ブロックと当たった時の処理
 	if (_type == BLOCK)
 	{
@@ -254,11 +285,14 @@ void Player::Hit(Location _location, Erea _erea, int _type, int _color_data)
 		//test
 		Location tmpl = location;
 		Erea tmpe = erea;
-		float move[4] = { 0,0,0,0 };
+		move[0] = 0;
+		move[1] = 0;
+		move[2] = 0;
+		move[3] = 0;
 
 		location.x += 10.f;
 		erea.height = 1.f;
-		erea.width = tmpe.width - 10.f;
+		erea.width = tmpe.width - 15.f;
 
 		//プレイヤー上方向の判定
 		//location.y -= tmpe.height / 2;
@@ -277,6 +311,7 @@ void Player::Hit(Location _location, Erea _erea, int _type, int _color_data)
 				//location.y += t;
 				vector.y = 0.f;
 				move[top] = t;
+				move1[top] = t;
 			}
 		}
 
@@ -287,7 +322,8 @@ void Player::Hit(Location _location, Erea _erea, int _type, int _color_data)
 
 
 		erea.height = 1.f;
-		erea.width = tmpe.width - 10.f;
+		erea.width = tmpe.width - 15.f;
+		//erea.width = 60;
 		location.x = tmpl.x + 10.f;
 
 		//プレイヤー下方向の判定
@@ -313,6 +349,11 @@ void Player::Hit(Location _location, Erea _erea, int _type, int _color_data)
 			if (t != 0) {
 				//location.y += t;
 				move[bottom] = t;
+				move1[bottom] = t;
+				
+			}
+			if (fps == 0) {
+				fps = 1;
 			}
 		}
 
@@ -328,7 +369,6 @@ void Player::Hit(Location _location, Erea _erea, int _type, int _color_data)
 			stageHitFlg[0][left] = true;
 			stageHitFlg[1][left] = true;
 			int a = CheckCollision(_location, _erea);
-
 		}
 		else {
 			stageHitFlg[0][left] = false;
@@ -336,7 +376,8 @@ void Player::Hit(Location _location, Erea _erea, int _type, int _color_data)
 
 
 		//プレイヤー右方向の判定
-		location.x += tmpe.width;
+		//location.x += tmpe.width;
+		location.x = tmpl.x + tmpe.width + 1;
 		if (CheckCollision(_location, _erea) && !stageHitFlg[1][right]) {
 			stageHitFlg[0][right] = true;
 			stageHitFlg[1][right] = true;
@@ -361,6 +402,10 @@ void Player::Hit(Location _location, Erea _erea, int _type, int _color_data)
 				//location.x += t;
 				vector.x = 0.f;
 				move[left] = t;
+				move1[left] = t;
+				if (fps == 0) {
+					fps = 3;
+				}
 			}
 		}
 
@@ -371,25 +416,37 @@ void Player::Hit(Location _location, Erea _erea, int _type, int _color_data)
 				//location.x += t;
 				vector.x = 0.f;
 				move[right] = t;
+				move1[right] = t;
+				if (fps == 0) {
+					fps = 2;
+				}
 			}
 		}
 
 
 		//上下左右の移動量から移動後も埋まってるか調べる
 		if (location.y < _location.y + _erea.height && location.y + erea.height > _location.y) {//左右
-			move[left] = 0.f;
-			move[right] = 0.f;
+			/*move[left] = 0.f;
+			move[right] = 0.f;*/
+			if (stageHitFlg[1][top] || stageHitFlg[1][bottom]) {
+				move[left] = 0.f;
+				move[right] = 0.f;
+			}
 		}
 
 		if (location.x < _location.x + _erea.width && location.x + erea.width > _location.x) {
-			move[top] = 0.f;
-			move[right] = 0.f;
+			/*if (stageHitFlg[1][left] || stageHitFlg[1][right]) {
+				move[top] = 0.f;
+				move[bottom] = 0.f;
+			}*/
 		}
 
-		location.x = move[left];
-		location.x = move[right];
-		location.y = move[top];
-		location.y = move[bottom];
+
+
+		location.x += move[left];
+		location.x += move[right];
+		location.y += move[top];
+		location.y += move[bottom];
 
 		erea.height = tmpe.height;
 		erea.width = tmpe.width;
@@ -400,7 +457,7 @@ void Player::Hit(Location _location, Erea _erea, int _type, int _color_data)
 void Player::MoveActor()
 {
 	//ジャンプ
-	if (PadInput::OnButton(XINPUT_BUTTON_A) && stageHitFlg[1][bottom]) {
+	if ((PadInput::OnButton(XINPUT_BUTTON_A)/*|| PadInput::OnPressed(XINPUT_BUTTON_A)*/) && stageHitFlg[1][bottom] ) {
 		vector.y = -20.f;
 	}
 
@@ -529,4 +586,30 @@ bool Player::CheckCollision(Location l, Erea e)
 		ret = true;
 	}
 	return ret;
+}
+
+void Player::TEST()
+{
+	//上下左右の移動量から移動後も埋まってるか調べる
+	//if (location.y < _location.y + _erea.height && location.y + erea.height > _location.y) {//左右
+		/*move[left] = 0.f;
+		move[right] = 0.f;*/
+		if (stageHitFlg[1][top] || stageHitFlg[1][bottom]) {
+			move[left] = 0.f;
+			move[right] = 0.f;
+		}
+	//}
+
+	//if (location.x < _location.x + _erea.width && location.x + erea.width > _location.x) {
+		/*if (stageHitFlg[1][left] || stageHitFlg[1][right]) {
+			move[top] = 0.f;
+			move[bottom] = 0.f;
+		}*/
+	//}
+
+
+	location.x += move[left];
+	location.x += move[right];
+	location.y += move[top];
+	location.y += move[bottom];
 }
