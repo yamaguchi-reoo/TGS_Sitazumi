@@ -8,14 +8,18 @@
 #include <iostream>
 #include <string>
 
+#define _USE_MATH_DEFINES
+#include <math.h>
+
 static Location camera_location = { 0,0};	//カメラの座標
 static Location screen_origin = { (SCREEN_WIDTH / 2),(SCREEN_HEIGHT / 2) };
 
 GameMain::GameMain(int _stage) :stage_data{0},now_stage(0), stage_width_num(0), stage_height_num(0), stage_width(0), stage_height(0), camera_x_lock_flg(true), camera_y_lock_flg(true), x_pos_set_once(false), y_pos_set_once(false),player_object(0)
 {
+	swap_anim[0].move_flg = false;
+	swap_anim[1].move_flg = false;
 	SetStage(_stage);
 	lock_pos = camera_location;
-	test_img1 = ResourceManager::SetGraph("Resource/Image/Sigma.png");
 	test_img2 = ResourceManager::SetDivGraph("Resource/Image/Sigma.png", 64, 8, 8, 32, 32);
 }
 
@@ -55,6 +59,15 @@ AbstractScene* GameMain::Update()
 			}
 		}
 	}
+	//色交換エフェクトの更新
+	for (int i = 0; i < 2; i++)
+	{
+		if (swap_anim[i].move_flg == true)
+		{
+			swap_anim[i].location.x += 2 * cosf(swap_anim[i].move_rad);
+			swap_anim[i].location.y += 2 * sinf(swap_anim[i].move_rad);
+		}
+	}
 #ifdef _DEBUG
 	//ステージをいじるシーンへ遷移
 	if (KeyInput::OnPresed(KEY_INPUT_E) && KeyInput::OnPresed(KEY_INPUT_D))
@@ -68,7 +81,14 @@ AbstractScene* GameMain::Update()
 
 void GameMain::Draw() const
 {
-	int pn;
+	for (int i = 0; i < 8; i++)
+	{
+		for (int j = 0; j < 8; j++)
+		{
+			DrawGraph(j * 40, i * 40, ResourceManager::GetDivGraph(test_img2, j + i * 8), true);
+		}
+	}
+	int pn = 0;
 	for (int i = 0; object[i] != nullptr; i++)
 	{
 		if (object[i]->GetObjectType() == PLAYER) {
@@ -79,12 +99,13 @@ void GameMain::Draw() const
 	}
 	//プレイヤーを最後に描画
 	object[pn]->Draw();
-	DrawGraph(100, 100, ResourceManager::GetGraph(test_img1), true);
-	for (int i = 0; i < 8; i++)
+	//色交換エフェクトの描画
+	for (int i = 0; i < 2; i++)
 	{
-		for (int j = 0; j < 8; j++)
+		if (swap_anim[i].move_flg == true)
 		{
-			DrawGraph(j*33, i*33, ResourceManager::GetDivGraph(test_img2,j + i*8), true);
+			DrawBox(swap_anim[i].location.x - camera_location.x, swap_anim[i].location.y - camera_location.y, swap_anim[i].location.x + 50 - camera_location.x, swap_anim[i].location.y + 50 - camera_location.y, 0xffffff, true);
+			DrawString(swap_anim[i].location.x - camera_location.x, swap_anim[i].location.y - camera_location.y, "交換エフェクト(予定)", 0x00ff00);
 		}
 	}
 }
@@ -312,4 +333,14 @@ void GameMain::ResetCamera()
 {
 	camera_location.x = screen_origin.x;
 	camera_location.y = screen_origin.y;
+}
+
+void GameMain::Swap(Object* _object1, Object* _object2)
+{
+	swap_anim[0].location = _object1->GetLocation();
+	swap_anim[1].location = _object2->GetLocation();
+	swap_anim[0].move_flg = true;
+	swap_anim[1].move_flg = true;
+	swap_anim[0].move_rad = atan2f(_object2->GetLocation().y - _object1->GetLocation().y, _object2->GetLocation().x - _object1->GetLocation().x);
+	swap_anim[1].move_rad = atan2f(_object1->GetLocation().y - _object2->GetLocation().y, _object1->GetLocation().x - _object2->GetLocation().x);
 }
