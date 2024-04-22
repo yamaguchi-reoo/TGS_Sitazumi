@@ -1,8 +1,11 @@
 #include"EnemyBat.h"
 #include"../Utility/KeyInput.h"
+#include<math.h>
+
+#define PI 3.141592654f
 
 #define ENEMY_SPEED 3
-#define ENEMY_Y_SPEED 2
+#define ENEMY_Y_SPEED 5
 
 EnemyBat::EnemyBat()
 {
@@ -12,6 +15,7 @@ EnemyBat::EnemyBat()
 	can_swap = TRUE;
 	can_hit = TRUE;
 
+	up = 0;
 	/*location = { 790 ,600 };
 
 	erea = { 100,100 };*/
@@ -25,7 +29,7 @@ EnemyBat::~EnemyBat()
 
 void EnemyBat::Initialize(Location _location, Erea _erea, int _color_data)
 {
-	location = { 590 ,800 };//x座標 ,y座標
+	location = { 590 ,700 };//x座標 ,y座標
 	erea = { 100,150 };		//高さ、幅
 	color = _color_data;
 }
@@ -106,18 +110,19 @@ void EnemyBat::Finalize()
 
 void EnemyBat::Move()
 {
+	up += 1;
 	//左移動
 	if (bat_state == BatState::LEFT) {
 		location.x -= ENEMY_SPEED;
+		location.y += sin(PI * 2 / 40  * up) * 10;
+
 	}
 	//右移動
 	if (bat_state == BatState::RIGHT) {
 		location.x += ENEMY_SPEED;
+		location.y -= sin(PI * 2 / 40 * up) * 10;
 	}
-	int i = 0;
-	//if (i++ < 5) {
-		location.y += GetRand(20) - 10;
-	//}
+	
 
 }
 
@@ -131,19 +136,18 @@ void EnemyBat::Hit(Location _location, Erea _erea, int _type, int _color_data)
 	if (_type == BLOCK)
 	{
 		//右壁に当たった時
-		if (location.x < _location.x + _erea.width)
+		if (location.x < _location.x + _erea.width && location.y + erea.height - 12 > _location.y)
 		{
 			bat_state = BatState::LEFT;
 		}
 		//左壁に当たった時
-		if (location.x > _location.x)
+		if (location.x > _location.x && location.y + erea.height - 12 > _location.y)
 		{
-			//location.x =_location.x;
 			bat_state = BatState::RIGHT;
 		}
-		if (location.y < _location.y)
-		{
-			//location.y = _location.y - erea.height;
+		//床に当たった時
+		if (location.y + erea.height - 24 < _location.y) {
+			location.y = _location.y - erea.height;
 		}
 	}
 }

@@ -22,6 +22,8 @@ private:
 	BatState bat_state;
 	bool leftwall_flg;
 
+	int up;
+
 public:
 	EnemyBat();
 	~EnemyBat();
