@@ -42,7 +42,7 @@ AbstractScene* GameMain::Update()
 	for (int i = 0; object[i] != nullptr; i++)
 	{
 		object[i]->SetScreenPosition(camera_location);
-		object[i]->Update();
+		object[i]->Update(this);
 		for (int j = i+1; object[j] != nullptr; j++)
 		{
 			//各オブジェクトとの当たり判定
@@ -337,8 +337,8 @@ void GameMain::ResetCamera()
 
 void GameMain::Swap(Object* _object1, Object* _object2)
 {
-	swap_anim[0].location = _object1->GetLocation();
-	swap_anim[1].location = _object2->GetLocation();
+	swap_anim[0].location = _object1->GetCenterLocation();
+	swap_anim[1].location = _object2->GetCenterLocation();
 	swap_anim[0].move_flg = true;
 	swap_anim[1].move_flg = true;
 	swap_anim[0].move_rad = atan2f(_object2->GetLocation().y - _object1->GetLocation().y, _object2->GetLocation().x - _object1->GetLocation().x);

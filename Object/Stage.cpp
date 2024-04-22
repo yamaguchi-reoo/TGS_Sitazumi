@@ -56,6 +56,124 @@ void Stage::Initialize(Location _location, Erea _erea, int _color_data)
 	}
 
 }
+void Stage::Update(GameMain* _g)
+{
+	//色が変わったらブロックタイプも変える
+	if (old_color != color)
+	{
+		if (color == WHITE)
+		{
+			block_type = 1;
+		}
+		if (color == RED)
+		{
+			block_type = 3;
+		}
+		if (color == GREEN)
+		{
+			block_type = 4;
+		}
+		if (color == BLUE)
+		{
+			block_type = 5;
+		}
+	}
+	old_color = color;
+	//リセット
+	hit_flg = false;
+	frame++;
+	//アニメーション用変数
+	if (++anim > 60)
+	{
+		anim = 0;
+	}
+	//hit_timerに0が入ったらアニメーション開始
+	if (hit_timer >= 0)
+	{
+		if (++hit_timer > 10)
+		{
+			//アニメーション終了
+			hit_timer = -1;
+		}
+	}
+	//色ブロック
+	if (block_type == RED_BLOCK || block_type == GREEN_BLOCK || block_type == BLUE_BLOCK)
+	{
+		for (int i = 0; i < ANIM_BLOCK_NUM; i++)
+		{
+			if (effect_anim[i].time < 0)
+			{
+				effect_anim[i].shift.x = GetRand(38);
+				effect_anim[i].shift.y = GetRand(38);
+				effect_anim[i].erea.width = erea.width / 10;
+				effect_anim[i].erea.height = erea.height / 10;
+				effect_anim[i].time = 30 + GetRand(30);
+			}
+			else
+			{
+				effect_anim[i].time--;
+				effect_anim[i].erea.width -= 0.05;
+				effect_anim[i].erea.height -= 0.05;
+			}
+		}
+	}
+	//炎エフェクト用
+	if (block_type == FIRE_BLOCK)
+	{
+		for (int i = 0; i < ANIM_BLOCK_NUM; i++)
+		{
+			if (fire_anim[i].time < 0)
+			{
+				fire_anim[i].shift.x = 0;
+				fire_anim[i].shift.y = erea.height;
+				fire_anim[i].erea.width = erea.width / 10;
+				fire_anim[i].erea.height = erea.height / 10;
+				fire_anim[i].shift.x += (erea.width / 10) * GetRand(10);
+				fire_anim[i].time = 30 + GetRand(30);
+				fire_anim[i].angle = GetRand(3);
+			}
+			else
+			{
+				fire_anim[i].shift.x += 0.05 + (fire_anim[i].angle - 1) / 2;
+				fire_anim[i].shift.y -= 1;
+				fire_anim[i].time--;
+				fire_anim[i].erea.width -= 0.05;
+				fire_anim[i].erea.height -= 0.05;
+			}
+		}
+	}
+	//木エフェクト用
+	if (block_type == WOOD_BLOCK)
+	{
+		for (int i = 0; i < ANIM_BLOCK_NUM; i++)
+		{
+			if (anim < 30)
+			{
+				wood_anim[i].shift2.x += (wood_anim[i].shift / 50);
+			}
+			else
+			{
+				wood_anim[i].shift2.x -= (wood_anim[i].shift / 50);
+			}
+		}
+	}
+	//水エフェクト用
+	if (block_type == WATER_BLOCK)
+	{
+		for (int i = 0; i < ANIM_BLOCK_NUM; i++)
+		{
+			if (anim <= 30)
+			{
+				water_anim[i].shift1.y += water_anim[i].shift;
+			}
+			else
+			{
+				water_anim[i].shift1.y -= water_anim[i].shift;
+			}
+		}
+	}
+}
+
 void Stage::Update()
 {
 	//色が変わったらブロックタイプも変える
