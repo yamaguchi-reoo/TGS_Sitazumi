@@ -37,11 +37,12 @@ EnemyDeer::EnemyDeer()
 	ArrayNumber = 0;
 
 	deer_state = DeerState::LEFT;
+	//deer_state = DeerState::RIGHT;
 
 	//location == 当たり判定用 local_location == 画像を動かすだけの物
 	//locationの中に値を入れると 上記の変数のどちらでも値を使用できる
 	// { x , y }
-	location = { 500, 850 };
+	//location = { 500, 850 };
 }
 
 EnemyDeer::~EnemyDeer()
@@ -51,112 +52,52 @@ EnemyDeer::~EnemyDeer()
 
 void EnemyDeer::Initialize(Location _location, Erea _erea, int _color_data)
 {
-	location = _location;
+	//一旦引数はパス 鹿がどこにでるかの座標 
+	//地面と完全に座標が一致していると地面に引っかかって動かなくなる
+	location = { 500, 859};
+	//当たり判定の大きさを変更できる
+	//erea = {110, 100};
 	erea = _erea;
 	color = _color_data;
 }
 
 void EnemyDeer::Update()
 {
-	//NotOpen = EnemyDeerfs();
-
 	EnemyDeerMove();
-
-	//添え字の初期化
-	/*if (ArrayNumber > 98)
-	{
-		ArrayNumber = 0;
-	}*/
-
-	//左クリックが押されたら座標を配列に格納したい
-	if (KeyInput::OnMouse(MOUSE_INPUT_LEFT) == 1)
-	{
-		//KeepCursor[ArrayNumber][ArrayNumberX] = KeyInput::GetMouseCursor().x; //偶数の配列に格納する [0][0] [0][2] [0][4] [0][6] [0][8]
-		//KeepCursor[ArrayNumber][ArrayNumberY] = KeyInput::GetMouseCursor().y; //奇数の配列に格納する [0][1] [0][3] [0][5] [0][7] [0][9]
-
-		//ファイルを開けたら
-		/*if (Deerfs)
-		{
-			Deerfs << KeepCursor[ArrayNumber][ArrayNumberX];
-			Deerfs << ",";
-			Deerfs << KeepCursor[ArrayNumber][ArrayNumberY];
-			if (ArrayNumberX >= 8 && ArrayNumberY >= 9)
-			{
-				Deerfs << "\n";
-			}
-			else 
-			{
-				Deerfs << ",";
-			}
-		}
-
-		if (ArrayNumberX >= 8 && ArrayNumberY >= 9)
-		{
-			ArrayNumber++;
-			ArrayNumberX = 0;
-			ArrayNumberY = 1;
-		}
-
-		ArrayNumberX += 2;
-		ArrayNumberY += 2;*/
-	}
-
-	//akusel++;
-
-	//Deerfs.close();
 }
 
 void EnemyDeer::Draw()const
 {
-	DrawFormatString(0, 60, GetColor(255, 0, 0), "MouseX : %d MouseY : %d", KeyInput::GetMouseCursor().x, KeyInput::GetMouseCursor().y);
-	//DrawFormatString(0, 80, 0xff0000, "File open? %d", NotOpen);	//ファイルが開けているか確認 TRUE or FALSE
-	//DrawFormatString(0, 120, 0xff0000, "Number : %d X number : %d Y wnumber : %d", ArrayNumber, ArrayNumberX - 2, ArrayNumberY - 2);
-	//DrawFormatString(0, 140, 0xff0000, "Number : %d X : %d Y : %d", ArrayNumber, KeepCursor[ArrayNumber][ArrayNumberX - 2], KeepCursor[ArrayNumber][ArrayNumberY - 2]);
-
-	//DrawQuadrangle(KeepCursor[ArrayNumber][0], KeepCursor[ArrayNumber][1], KeepCursor[ArrayNumber][2], KeepCursor[ArrayNumber][3],
-		//KeepCursor[ArrayNumber][4], KeepCursor[ArrayNumber][5], KeepCursor[ArrayNumber][6], KeepCursor[ArrayNumber][7], 0xffffff, FALSE);
-
-	//角 左から
-	//DrawQuadrangle(295, 260, 310, 260, 310, 290, 300, 290, 0xffffff, FALSE);
 	//頭
-	//DrawBox(300 + akusel, 300, 330 + akusel, 320, GetColor(255, 255, 255), TRUE);
-	//首
-	//DrawBox(315 + akusel, 325, 330 + akusel, 350, GetColor(255, 255, 255), TRUE);
-	//胴体
-	//DrawBox(315 + akusel, 355, 390 + akusel, 375, 0xfffffff, TRUE);
-	//足 左から
-	//DrawQuadrangle(315 + akusel, 380, 325 + akusel, 380, 315 + akusel, 410, 305 + akusel, 410, 0xffffff, TRUE);
-	//DrawBox(330 + akusel, 380, 340 + akusel, 410, 0xffffff, TRUE);
-	//DrawBox(360 + akusel, 380, 370 + akusel, 410, 0xffffff, TRUE);
-	//DrawQuadrangle(380 + akusel, 380, 390 + akusel, 380, 400 + akusel, 410, 390 + akusel, 410, 0xffffff, TRUE);
-
-	/*DrawQuadrangle(KeepMouseX[number - 1], KeepMouseY[number - 1], KeepMouseX[number - 2], KeepMouseY[number - 2],
-		KeepMouseX[number - 3], KeepMouseY[number - 3], KeepMouseX[number - 4], KeepMouseY[number - 4], 0xffffff, FALSE);*/
-	
-	//頭
-	DrawBox(local_location.x, local_location.y, local_location.x + 30, local_location.y + 20, 0xffffff, TRUE);
+	DrawBoxAA(local_location.x, local_location.y, local_location.x + 30.0f, local_location.y + 20.0f, 0xffffff, TRUE);
 
 	//首
-	DrawBox(local_location.x + 15, local_location.y + 25, local_location.x + 30, local_location.y + 50, 0xffffff, TRUE);
+	DrawBoxAA(local_location.x + 13.0f, local_location.y + 25.0f, local_location.x + 30.0f, local_location.y + 35.0f, 0xffffff, TRUE);
+	DrawBoxAA(local_location.x + 20.0f, local_location.y + 40.0f, local_location.x + 30.0f, local_location.y + 50.0f, 0xffffff, TRUE);
 
 	//胴体
-	DrawBox(local_location.x + 15, local_location.y + 55, local_location.x + 90, local_location.y + 75, 0xffffff, TRUE);
+	DrawBoxAA(local_location.x + 20.0f, local_location.y + 55.0f, local_location.x + 85.0f, local_location.y + 70.0f, 0xffffff, TRUE);
 
 	//足　左から
-	DrawQuadrangle(local_location.x + 15, local_location.y + 80, local_location.x + 25, local_location.y + 80, local_location.x + 15, local_location.y + 110, local_location.x + 5, local_location.y + 110, 0xffffff, TRUE);
-	DrawBox(local_location.x + 30, local_location.y + 80, local_location.x + 40, local_location.y + 110, 0xffffff, TRUE);
-	DrawBox(local_location.x + 60, local_location.y + 80, local_location.x + 70, local_location.y + 110, 0xffffff, TRUE);
-	DrawQuadrangle(local_location.x + 80, local_location.y + 80, local_location.x + 90, local_location.y + 80, local_location.x + 100, local_location.y + 110, local_location.x + 90, local_location.y + 110, 0xffffff, TRUE);
+	DrawQuadrangleAA(local_location.x + 20.0f, local_location.y + 75.0f, local_location.x + 30.0f, local_location.y + 75.0f, local_location.x + 25.0f, local_location.y + 100.0f, local_location.x + 15.0f, local_location.y + 100.0f, 0xffffff, TRUE);
+	DrawBoxAA(local_location.x + 35.0f, local_location.y + 75.0f, local_location.x + 45.0f, local_location.y + 100.0f, 0xffffff, TRUE);
+	DrawBoxAA(local_location.x + 60.0f, local_location.y + 75.0f, local_location.x + 70.0f, local_location.y + 100.0f, 0xffffff, TRUE);
+	DrawQuadrangleAA(local_location.x + 75.0f, local_location.y + 75.0f, local_location.x + 85.0f, local_location.y + 75.0f, local_location.x + 95.0f, local_location.y + 100.0f, local_location.x + 85.0f, local_location.y + 100.0f, 0xffffff, TRUE);
+	
+	//マウス座標
+	DrawFormatString(0, 60, GetColor(255, 0, 0), "MouseX : %d MouseY : %d", KeyInput::GetMouseCursor().x, KeyInput::GetMouseCursor().y);
 
+	//当たり判定のBox
+	DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, GetColor(255, 255, 255), FALSE);
 
-	/*DrawFormatString(0, 500, 0xff0000, "ワールド座標 X：%0.1f Y：%0.1f", local_location.x, local_location.y + akusel);
-	DrawFormatString(30, 520, 0xff0000, "location.x : %0.1f", DrawTest1);
-	DrawFormatString(30, 540, 0xff0000, "location.y : %0.1f", DrawTest2);
-	DrawFormatString(30, 560, 0xff0000, "erea.height: %0.1f", DrawTest3);
-	DrawFormatString(30, 580, 0xff0000, "erea.width : %0.1f", DrawTest4);
-	DrawFormatString(30, 600, 0xff0000, "type		   : %d", DrawTest5);
-	DrawFormatString(30, 620, 0xff0000, "color_data : %d", DrawTest6);*/
-	//DrawFormatString(30, 620, 0xff0000, "color_data : %d", DrawTest6);
+	/*DrawFormatString(50, 240, 0xff0000, "スクリーン座標 X：%0.1f Y：%0.1f", location.x, location.y);
+	DrawFormatString(50, 260, 0xff0000, "ワールド座標 X：%0.1f Y：%0.1f", local_location.x, local_location.y);
+	DrawFormatString(50, 320, 0xff0000, "location.x : %0.1f", DrawTest1);
+	DrawFormatString(50, 340, 0xff0000, "location.y : %0.1f", DrawTest2);
+	DrawFormatString(50, 360, 0xff0000, "erea.height: %0.1f", DrawTest3);
+	DrawFormatString(50, 380, 0xff0000, "erea.width : %0.1f", DrawTest4);
+	DrawFormatString(50, 400, 0xff0000, "type		   : %d", DrawTest5);
+	DrawFormatString(50, 420, 0xff0000, "color_data : %d", DrawTest6);*/
 }
 
 void EnemyDeer::EnemyDeerMove()
@@ -165,7 +106,8 @@ void EnemyDeer::EnemyDeerMove()
 	{
 		location.x -= 1;
 	}
-	else if(deer_state == DeerState::RIGHT)
+
+	if(deer_state == DeerState::RIGHT)
 	{
 		location.x += 1;
 	}
@@ -176,6 +118,9 @@ void EnemyDeer::Finalize()
 
 }
 
+//何かと当たった時の処理 _
+//location=当たった相手の座標 _erea=当たった相手の大きさ _type=当たった相手の種類(0=ステージ 1=プレイヤー 2=敵 3=炎 4=木 5=水)
+//_color_data=当たった相手も色情報
 void EnemyDeer::Hit(Location _location, Erea _erea, int _type, int _color_data)
 {
 	DrawTest1 = _location.x;
@@ -185,14 +130,17 @@ void EnemyDeer::Hit(Location _location, Erea _erea, int _type, int _color_data)
 	DrawTest5 = _type;
 	DrawTest6 = _color_data;
 
+	//_locationは左上の座標を取ってる 左の壁に当たると右に方向転換
 	if (location.x < _location.x + _erea.width && _type == BLOCK)
 	{
 		deer_state = DeerState::RIGHT;
 	}
-	/*else if (_type == 0)
+
+	//右の壁に当たると左に方向転換
+	if (location.x + erea.width < _location.x + _erea.width && _type == BLOCK)
 	{
 		deer_state = DeerState::LEFT;
-	}*/
+	}
 }
 
 void EnemyDeer::EnemyDeerIfs()
