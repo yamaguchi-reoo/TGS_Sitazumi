@@ -1,43 +1,34 @@
 #pragma once
 #include"DxLib.h"
 
-#define IMAGE_NUM 1	//画像の数
-#define DIV_IMAGE_NUM 1	//分割画像の数
-#define SOUND_NUM 1	//効果音の数
+#define IMAGE_NUM 100	//画像の最大数
+#define DIV_IMAGE_NUM 100	//分割画像の最大数
+#define SOUND_NUM 100	//効果音の最大数
 
 #define DIV_IMAGE_MAX 13	//分割画像の最大分割数
-
-//使用する画像のパス一覧
-static char image_filepath[IMAGE_NUM][256] =
-{
-	"Resource/Image/Sigma.png"
-};
-
-//使用する分割画像のパス一覧
-static char div_image_filepath[DIV_IMAGE_NUM][256] =
-{
-
-};
-
-//使用する音源のパス一覧
-static char sound_filepath[SOUND_NUM][256] =
-{
-
-};
 
 class ResourceManager
 {
 private:
+	//使用する画像のパス一覧
+	static char* image_filepath[IMAGE_NUM];					//画像パス格納用
+	static char* div_image_filepath[DIV_IMAGE_NUM];			//分割画像パス格納用
+	static char* sound_filepath[SOUND_NUM];					//音源パス格納用
 	static int image_data[IMAGE_NUM];							//画像格納用
 	static int div_image_data[DIV_IMAGE_NUM][DIV_IMAGE_MAX];	//分割画像格納用
 	static int sound_data[SOUND_NUM];							//音源格納用
 public:
-
-	//各データ読込（mainで一回呼ぶ）
-	static void LoadResource();
-
 	//各データ削除（mainで一回呼ぶ）
 	static void DeleteResource();
+
+	//画像格納
+	static int SetGraph(const char* p);
+
+	//分割画像格納
+	static int SetDivGraph(const char* p, int AllNum, int XNum, int YNum, int  XSize, int YSize);
+
+	//音源格納
+	static int SetSound(const char* p);
 
 	//画像呼び出し
 	static int GetGraph(int _num);
