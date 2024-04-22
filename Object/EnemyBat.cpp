@@ -143,7 +143,7 @@ void EnemyBat::Hit(Location _location, Erea _erea, int _type, int _color_data)
 		}
 		if (location.y < _location.y)
 		{
-			location.y = _location.y - erea.height;
+			//location.y = _location.y - erea.height;
 		}
 	}
 }
