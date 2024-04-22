@@ -15,6 +15,8 @@ GameMain::GameMain(int _stage) :stage_data{0},now_stage(0), stage_width_num(0), 
 {
 	SetStage(_stage);
 	lock_pos = camera_location;
+	test_img1 = ResourceManager::SetGraph("Resource/Image/Sigma.png");
+	test_img2 = ResourceManager::SetDivGraph("Resource/Image/Sigma.png", 64, 8, 8, 32, 32);
 }
 
 GameMain::~GameMain()
@@ -77,6 +79,14 @@ void GameMain::Draw() const
 	}
 	//プレイヤーを最後に描画
 	object[pn]->Draw();
+	DrawGraph(100, 100, ResourceManager::GetGraph(test_img1), true);
+	for (int i = 0; i < 8; i++)
+	{
+		for (int j = 0; j < 8; j++)
+		{
+			DrawGraph(j*33, i*33, ResourceManager::GetDivGraph(test_img2,j + i*8), true);
+		}
+	}
 }
 
 void GameMain::CreateObject(Object* _object, Location _location, Erea _erea, int _color_data)

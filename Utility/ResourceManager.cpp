@@ -1,36 +1,21 @@
 #include "ResourceManager.h"
 
+char* ResourceManager::image_filepath[IMAGE_NUM];
+char* ResourceManager::div_image_filepath[DIV_IMAGE_NUM];
+char* ResourceManager::sound_filepath[SOUND_NUM];
 int ResourceManager::image_data[IMAGE_NUM];
 int ResourceManager::div_image_data[DIV_IMAGE_NUM][DIV_IMAGE_MAX];
 int ResourceManager::sound_data[SOUND_NUM];
 
-void ResourceManager::LoadResource()
-{
-	for (int i = 0; i < IMAGE_NUM; i++)
-	{
-		image_data[i] = LoadGraph(image_filepath[i]);
-	}
-
-	//分割数等の数値が違う場合forでは対処出来ないので、１つ１つDivGraphを呼び出す(同じならforで)
-	for (int i = 0; i < DIV_IMAGE_NUM; i++)
-	{
-		LoadDivGraph(div_image_filepath[i], 12, 5, 3, 34, 34, div_image_data[i]);
-	}
-
-	for (int i = 0; i < SOUND_NUM; i++)
-	{
-		sound_data[i] = LoadSoundMem(sound_filepath[i]);
-	}
-}
 
 void ResourceManager::DeleteResource()
 {
-	for (int i = 0; i < IMAGE_NUM; i++)
+	for (int i = 0; image_data[i] != NULL; i++)
 	{
 		DeleteGraph(image_data[i]);
 	}
 
-	for (int i = 0; i < DIV_IMAGE_NUM; i++)
+	for (int i = 0; div_image_data[i][0] != NULL; i++)
 	{
 		for (int j = 0; j < 12; j++)
 		{
@@ -38,9 +23,66 @@ void ResourceManager::DeleteResource()
 		}
 	}
 
-	for (int i = 0; i < SOUND_NUM; i++)
+	for (int i = 0; sound_data[i] != NULL; i++)
 	{
 		DeleteSoundMem(sound_data[i]);
+	}
+}
+
+int ResourceManager::SetGraph(const char* p)
+{
+	for (int i = 0; i < IMAGE_NUM; i++)
+	{
+		//空の配列に画像を格納する
+		if (image_data[i] == NULL)
+		{
+			image_data[i] = LoadGraph(p);
+			image_filepath[i] = const_cast<char*>(p);
+			return i;
+		}
+		//同じ画像が既にあるならその格納場所を返す
+		else if (image_filepath[i] == p)
+		{
+			return i;
+		}
+	}
+}
+
+int ResourceManager::SetDivGraph(const char* p, int AllNum, int XNum, int YNum, int  XSize, int YSize)
+{
+	for (int i = 0; i < DIV_IMAGE_NUM; i++)
+	{
+		//空の配列に分割画像を格納する
+		if (div_image_data[i][0] == NULL)
+		{
+			LoadDivGraph(p, AllNum, XNum, YNum, XSize, YSize, div_image_data[i]);
+			div_image_filepath[i] = const_cast<char*>(p);
+			return i;
+		}
+		//同じ画像が既にあるならその格納場所を返す
+		else if (div_image_filepath[i] == p)
+		{
+			return i;
+		}
+	}
+}
+
+int ResourceManager::SetSound(const char* p)
+{
+	for (int i = 0; i < SOUND_NUM; i++)
+	{
+		//空の配列に音源を格納する
+		if (sound_data[i] == NULL)
+		{
+			sound_data[i] = LoadSoundMem(p);
+			sound_filepath[i] = const_cast<char*>(p);
+			return i;
+		}
+		//同じ音源が既にあるならその格納場所を返す
+		else if (sound_filepath[i] == p)
+		{
+			return i;
+		}
 	}
 }
 
