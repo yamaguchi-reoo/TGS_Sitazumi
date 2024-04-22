@@ -27,11 +27,13 @@ private:
 	float searchedLen; //交換できるオブジェクトとの距離
 	Object* searchedObj; //一番近い色を交換できるオブジェクト
 	bool searchFlg;
+	bool oldSearchFlg;
+	Location saveVec; //ベクトルの一時保存用
 
 	int fps = 0;
 	int fps1 = 0;
 	float move[4] = { 0,0,0,0 };
-	float move1[4] = { 0,0,0,0 };
+	Location aaa;
 public:
 	Player();
 	~Player();
@@ -49,7 +51,7 @@ public:
 	bool ChangePlayerColor();
 
 	bool CheckCollision(Location l, Erea e); //ステージとの当たり判定
+	float ThreePointAngle(Location l1, Location l2, Location referenceP) const;
 
-	void TEST();
 };
 
