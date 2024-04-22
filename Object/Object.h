@@ -22,7 +22,7 @@ public:
 	//_location _erea=スポーン座標、大きさ ,_color_data=色情報
 	virtual void Initialize(Location _location, Erea _erea, int _color_data) = 0;
 
-	virtual void Update() = 0;
+	virtual void Update(GameMain* _g) = 0;
 
 	virtual void Draw()const = 0;
 

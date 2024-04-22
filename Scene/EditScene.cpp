@@ -449,14 +449,14 @@ void EditScene::Draw()const
 	if (current_type_select != -1)
 	{
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 180);
-		DrawBox(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0x000000, true);
+		DrawBoxAA(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0x000000, true);
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 		for (int i = 0; i < can_select_type[current_type_select][1]; i++)
 		{
-			DrawBox(current_type_location.x, current_type_location.y + i * current_type_erea.height, current_type_location.x + current_type_erea.width, current_type_location.y + current_type_erea.height + i * current_type_erea.height, 0x000000, true);
-			DrawBox(current_type_location.x, current_type_location.y + i * current_type_erea.height, current_type_location.x + current_type_erea.width, current_type_location.y + current_type_erea.height + i * current_type_erea.height, 0xffffff, false);
+			DrawBoxAA(current_type_location.x, current_type_location.y + i * current_type_erea.height, current_type_location.x + current_type_erea.width, current_type_location.y + current_type_erea.height + i * current_type_erea.height, 0x000000, true);
+			DrawBoxAA(current_type_location.x, current_type_location.y + i * current_type_erea.height, current_type_location.x + current_type_erea.width, current_type_location.y + current_type_erea.height + i * current_type_erea.height, 0xffffff, false);
 			SetFontSize(24);
-			DrawFormatString(current_type_location.x, current_type_location.y + i * current_type_erea.height, 0xffffff, "%s", block_type_string[current_type_select][i]);
+			DrawFormatStringF(current_type_location.x, current_type_location.y + i * current_type_erea.height, 0xffffff, "%s", block_type_string[current_type_select][i]);
 		}
 	}
 	SetFontSize(old_size);

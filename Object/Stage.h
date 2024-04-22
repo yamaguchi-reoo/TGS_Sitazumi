@@ -64,30 +64,42 @@ struct FireAnim
 //木エフェクト用
 struct WoodAnim
 {
-	Location shift1;			//実際の位置一点目
-	Location shift2;			//実際の位置二点目
-	float shift;				//表示位置ずれ用
+	Location shift1;	//表示位置一点目
+	Location shift2;	//表示位置二点目
+	float shift;		//表示位置ずれ用
+};
+
+//水エフェクト用
+struct WaterAnim
+{
+	Location shift1;	//表示位置
+	Erea erea;			//大きさ
+	float shift;		//表示位置ずれ用
 };
 
 class Stage :
 	public Object
 {
 private:
-	//int type;							//ブロックの種類(0=無 1=白 2=灰 3=赤 4=緑 5=青 6=炎 7=木 8=水 9=初期スポーン(Editのみ表示))
 	int frame;							//フレーム測定用
+	int old_color;						//一フレーム前の色データ格納
 	int block_type;						//ブロックの種類(0=無 1=白 2=灰 3=赤 4=緑 5=青 6=炎 7=木 8=水 9=初期スポーン(Editのみ表示))
 	bool inv_flg;						//ブロックに触れるか判断
 	bool debug_flg;						//EditScene用表示をするかどうか
 	int anim;							//アニメーション用
 	FireAnim fire_anim[ANIM_BLOCK_NUM];	//炎アニメーション用ブロック情報格納
 	WoodAnim wood_anim[ANIM_BLOCK_NUM];	//木アニメーション用ブロック情報格納
+	WaterAnim water_anim[ANIM_BLOCK_NUM];//水アニメーション用ブロック情報格納
 	bool hit_flg;						//何かが当たった時用
 	int hit_timer;						//何かが当たった時のアニメーション用
+
+	FireAnim effect_anim[ANIM_BLOCK_NUM];	//色交換可能ブロックの強調表示
 public:
 	Stage(int _type);
 	~Stage();
 	void Initialize(Location _location, Erea _erea, int _color_data)override;
-	void Update()override;
+	void Update(GameMain* _g)override;
+	void Update();	//Edit用アップデート
 	void Draw()const override;
 	void Finalize()override;
 
@@ -95,7 +107,7 @@ public:
 	bool SearchColor(Object* ob) override {
 		return false;
 	}
-	//ステージの当たり判定の種類取得(0=当たり判定無し1=当たり判定あり)
+	//ステージの当たり判定の種類取得(false=当たり判定無しtrue=当たり判定あり)
 	bool GetStageCollisionType();
 	//ステージのタイプ設定
 	void SetStageType(int _type);

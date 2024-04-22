@@ -9,6 +9,13 @@
 
 class Player;
 
+struct SwapAnim
+{
+    bool move_flg;          //移動するか判断
+    Location location;   //交換エフェクト用変数
+    float move_rad;        //交換エフェクト移動用
+};
+
 class GameMain :
     public AbstractScene
 {
@@ -30,11 +37,10 @@ private:
     bool x_pos_set_once;     //カメラのロック位置設定用
     bool y_pos_set_once;     //カメラのロック位置設定用
     Location lock_pos;       //カメラが動けない時に画面揺れが発生した時、カメラの位置が戻る場所
-
     int fps = 0;
 
-    int test_img1;               //画像格納テスト用
-    int test_img2;
+    SwapAnim swap_anim[2];  //交換エフェクト用
+    int test_img2;          //画像格納テスト用
 public:
 
     //�R���X�g���N�^(_stage���ǂݍ��ރX�e�[�W)
@@ -69,5 +75,9 @@ public:
 
     //カメラ座標を初期地点に戻す
     void ResetCamera();
+
+    //交換アニメーション
+    void Swap(Object* _object1, Object* _object2);
+
 };
 

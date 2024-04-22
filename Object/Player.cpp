@@ -2,6 +2,7 @@
 #include "../Utility/PadInput.h"
 #include "../Utility/KeyInput.h"
 #include "../Utility/ResourceManager.h"
+#include "../Scene/GameMain.h"
 #include <math.h>
 
 
@@ -39,7 +40,7 @@ void Player::Initialize(Location _location, Erea _erea, int _color_data)
 	color = _color_data;
 }
 
-void Player::Update()
+void Player::Update(GameMain* _g)
 {
 	fps = 0;
 
@@ -60,6 +61,7 @@ void Player::Update()
 	}
 	else if (PadInput::OnButton(XINPUT_BUTTON_B) && searchFlg && searchedObj != nullptr) {
 		ChangePlayerColor();
+		_g->Swap(this, searchedObj);
 		searchFlg = false;
 	}
 	else if (PadInput::OnButton(XINPUT_BUTTON_Y) && searchFlg) {
