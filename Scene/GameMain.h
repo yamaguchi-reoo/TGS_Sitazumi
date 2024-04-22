@@ -32,6 +32,9 @@ private:
     Location lock_pos;       //カメラが動けない時に画面揺れが発生した時、カメラの位置が戻る場所
 
     int fps = 0;
+
+    int test_img1;               //画像格納テスト用
+    int test_img2;
 public:
 
     //�R���X�g���N�^(_stage���ǂݍ��ރX�e�[�W)
