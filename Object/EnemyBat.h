@@ -16,7 +16,8 @@ class EnemyBat:
 	public Object
 {
 private:
-	std::vector<Location> vertices;
+
+	//std::vector<Location> vertices;
 
 	BatState bat_state;
 	bool leftwall_flg;
