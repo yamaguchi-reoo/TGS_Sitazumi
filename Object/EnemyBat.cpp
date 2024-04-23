@@ -34,7 +34,7 @@ void EnemyBat::Initialize(Location _location, Erea _erea, int _color_data)
 	color = _color_data;
 }
 
-void EnemyBat::Update()
+void EnemyBat::Update(GameMain* _g)
 {
 	Move();
 }
