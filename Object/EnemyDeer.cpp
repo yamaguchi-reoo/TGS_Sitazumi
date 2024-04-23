@@ -54,7 +54,7 @@ void EnemyDeer::Initialize(Location _location, Erea _erea, int _color_data)
 {
 	//一旦引数はパス 鹿がどこにでるかの座標 
 	//地面と完全に座標が一致していると地面に引っかかって動かなくなる 859
-	location = { 500, 830};
+	location = { 500, 825};
 	//当たり判定の大きさを変更できる
 	//erea = {110, 100};
 	erea = _erea;
@@ -63,7 +63,7 @@ void EnemyDeer::Initialize(Location _location, Erea _erea, int _color_data)
 
 void EnemyDeer::Update(GameMain* _g)
 {
-	//EnemyDeerMove();
+	EnemyDeerMove();
 }
 
 void EnemyDeer::Draw()const
@@ -71,7 +71,8 @@ void EnemyDeer::Draw()const
 	if (deer_state == DeerState::LEFT)
 	{
 		//角
-		DrawQuadrangleAA(local_location.x - 10.0f, local_location.y - 30.0f, local_location.x, local_location.y - 30.0f, local_location.x, local_location.y - 10.0f, local_location.x - 10.0f, local_location.y - 10.0f, color, TRUE);
+		//DrawQuadrangleAA(local_location.x - 5.0f, local_location.y - 20.0f, local_location.x + 2.0f, local_location.y - 25.0f, local_location.x + 15.0f, local_location.y + 2.0f, local_location.x + 7.0f, local_location.y + 5.0f, color, TRUE);
+		//DrawQuadrangleAA()
 
 		//頭
 		DrawBoxAA(local_location.x, local_location.y, local_location.x + 30.0f, local_location.y + 20.0f, color, TRUE);
@@ -91,6 +92,9 @@ void EnemyDeer::Draw()const
 	}
 	else if (deer_state == DeerState::RIGHT)
 	{
+		//角
+		//DrawQuadrangleAA(local_location.x - 5.0f, local_location.y - 20.0f, local_location.x + 2.0f, local_location.y - 25.0f, local_location.x + 15.0f, local_location.y + 2.0f, local_location.x + 7.0f, local_location.y + 5.0f, color, TRUE);
+
 		//頭
 		DrawBoxAA(local_location.x + 70.0f, local_location.y, local_location.x + 100.0f, local_location.y + 20.0f, color, TRUE);
 
@@ -108,20 +112,28 @@ void EnemyDeer::Draw()const
 		DrawQuadrangleAA(local_location.x + 15.0f, local_location.y + 75.0f, local_location.x + 25.0f, local_location.y + 75.0f, local_location.x + 20.0f, local_location.y + 100.0f, local_location.x + 10.0f, local_location.y + 100.0f, color, TRUE);
 	}
 
+	//DrawCircleAA(local_location.x - 5.0f, local_location.y - 20.0f, 2, 32, 0xffffff, TRUE);
+	//DrawCircleAA(local_location.x + 3.0f, local_location.y - 25.0f, 2, 32, 0xffffff, TRUE);
+	//DrawCircleAA(local_location.x + 15.0f, local_location.y + 2.0f, 2, 32, 0xffffff, TRUE);
+	//DrawCircleAA(local_location.x + 7.0f, local_location.y + 5.0f, 2, 32, 0xffffff, TRUE);
+	//
+	//DrawCircleAA(local_location.x + 14.0f, local_location.y + 5.0f, 2, 32, 0xffffff, TRUE);
+
+
 	//マウス座標
 	DrawFormatString(0, 60, GetColor(255, 0, 0), "MouseX : %d MouseY : %d", KeyInput::GetMouseCursor().x, KeyInput::GetMouseCursor().y);
 
 	//当たり判定のBox
 	DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, GetColor(255, 255, 255), FALSE);
 
-	DrawFormatString(50, 240, 0xff0000, "スクリーン座標 X：%0.1f Y：%0.1f", location.x, location.y);
+	/*DrawFormatString(50, 240, 0xff0000, "スクリーン座標 X：%0.1f Y：%0.1f", location.x, location.y);
 	DrawFormatString(50, 260, 0xff0000, "ワールド座標 X：%0.1f Y：%0.1f", local_location.x, local_location.y);
 	DrawFormatString(50, 320, 0xff0000, "location.x : %0.1f", DrawTest1);
 	DrawFormatString(50, 340, 0xff0000, "location.y : %0.1f", DrawTest2);
 	DrawFormatString(50, 360, 0xff0000, "erea.height: %0.1f", DrawTest3);
 	DrawFormatString(50, 380, 0xff0000, "erea.width : %0.1f", DrawTest4);
 	DrawFormatString(50, 400, 0xff0000, "type		   : %d", DrawTest5);
-	DrawFormatString(50, 420, 0xff0000, "color_data : %d", DrawTest6);
+	DrawFormatString(50, 420, 0xff0000, "color_data : %d", DrawTest6);*/
 }
 
 void EnemyDeer::EnemyDeerMove()
