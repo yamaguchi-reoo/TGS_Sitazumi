@@ -25,6 +25,7 @@ Player::Player()
 	searchedLen = 1000.f;
 	searchedObj = nullptr;
 	searchFlg = false;
+	swapTimer = -1;
 	oldSearchFlg = false;
 }
 
@@ -59,20 +60,35 @@ void Player::Update(GameMain* _g)
 	if (PadInput::OnButton(XINPUT_BUTTON_B) && !searchFlg) {
 		searchFlg = true;
 	}
-	else if (PadInput::OnButton(XINPUT_BUTTON_B) && searchFlg && searchedObj != nullptr) {
-		ChangePlayerColor();
-		_g->Swap(this, searchedObj);
-		searchFlg = false;
+	else if (PadInput::OnButton(XINPUT_BUTTON_B) && searchFlg && searchedObj != nullptr && swapTimer < 0) {
+		//交換エフェクトにかかる時間を受け取る
+		swapTimer = _g->Swap(this, searchedObj);
 	}
 	else if (PadInput::OnButton(XINPUT_BUTTON_Y) && searchFlg) {
 		searchFlg = false;
 	}
 	//Yボタンで色の交換
 
-
+	//交換後エフェクト用の硬直
+	if (swapTimer >= 0)
+	{
+		if (swapTimer == SWAP_EFFECT_STOP_TIME)
+		{
+			ChangePlayerColor();
+		}
+		//硬直が終わったら色を交換
+		if (--swapTimer < 0)
+		{
+			searchFlg = false;
+			swapTimer = -1;
+		}
+	}
 
 	MoveActor();
-	MoveAim();
+	if (swapTimer == -1)
+	{
+		MoveAim();
+	}
 
 	location.x += vector.x;
 	location.y += vector.y;

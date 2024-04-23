@@ -27,6 +27,7 @@ private:
 	float searchedLen; //交換できるオブジェクトとの距離
 	Object* searchedObj; //一番近い色を交換できるオブジェクト
 	bool searchFlg;
+	int swapTimer;		//交換エフェクトの時間測定
 	bool oldSearchFlg;
 	Location saveVec; //ベクトルの一時保存用
 
