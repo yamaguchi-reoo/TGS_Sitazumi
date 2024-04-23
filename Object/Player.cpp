@@ -116,28 +116,28 @@ void Player::Draw()const
 	if (searchedObj != nullptr && searchFlg) {
 		DrawCircle(searchedObj->GetLocalLocation().x + searchedObj->GetErea().width / 2,
 			searchedObj->GetLocalLocation().y + searchedObj->GetErea().height / 2, 40, 0xffff00, TRUE);
-		DrawFormatString(640, 80, 0xffff00, "%f", searchedObj->GetLocalLocation().x);
-		DrawFormatString(640, 100, 0xff0000, "%f", searchedObj->GetLocalLocation().y);
+		/*DrawFormatString(640, 80, 0xffff00, "%f", searchedObj->GetLocalLocation().x);
+		DrawFormatString(640, 100, 0xff0000, "%f", searchedObj->GetLocalLocation().y);*/
 	}
 	if (searchFlg) {
 		DrawLine(local_location.x + (erea.width / 2), local_location.y + (erea.height / 2), lineLoc.x, lineLoc.y, color);
 		DrawCircle(lineLoc.x, lineLoc.y, 10, color, TRUE);
 	}
 
-	DrawFormatString(400, 20, 0xffff00, "l.x%f", location.x);
-	DrawFormatString(400, 40, 0xff0000, "l.y%f", location.y);
-	DrawFormatString(400, 60, 0xffff00, "e.w%f", erea.width);
-	DrawFormatString(400, 80, 0xff0000, "e.h%f", erea.height);
+	//DrawFormatString(400, 20, 0xffff00, "l.x%f", location.x);
+	//DrawFormatString(400, 40, 0xff0000, "l.y%f", location.y);
+	//DrawFormatString(400, 60, 0xffff00, "e.w%f", erea.width);
+	//DrawFormatString(400, 80, 0xff0000, "e.h%f", erea.height);
 
-	DrawFormatString(700, 20, 0xffff00, "v.x%f", saveVec.x);
-	DrawFormatString(700, 40, 0xff0000, "v.y%f", saveVec.y);
-	DrawFormatString(700, 60, 0xffff00, "v.x%f", vector.x);
-	DrawFormatString(700, 80, 0xff0000, "v.y%f", vector.y);
+	//DrawFormatString(700, 20, 0xffff00, "v.x%f", saveVec.x);
+	//DrawFormatString(700, 40, 0xff0000, "v.y%f", saveVec.y);
+	//DrawFormatString(700, 60, 0xffff00, "v.x%f", vector.x);
+	//DrawFormatString(700, 80, 0xff0000, "v.y%f", vector.y);
 
-	DrawFormatString(900, 100, 0xffff00, "v.x%d", stageHitFlg[1][0]);
-	DrawFormatString(900, 120, 0xff0000, "v.y%d", stageHitFlg[1][1]);
-	DrawFormatString(900, 140, 0xff0000, "v.y%d", stageHitFlg[1][2]);
-	DrawFormatString(900, 160, 0xff0000, "v.y%d", stageHitFlg[1][3]);
+	//DrawFormatString(900, 100, 0xffff00, "v.x%d", stageHitFlg[1][0]);
+	//DrawFormatString(900, 120, 0xff0000, "v.y%d", stageHitFlg[1][1]);
+	//DrawFormatString(900, 140, 0xff0000, "v.y%d", stageHitFlg[1][2]);
+	//DrawFormatString(900, 160, 0xff0000, "v.y%d", stageHitFlg[1][3]);
 	if (searchedObj != nullptr) {
 		/*Location l = { searchedObj->GetLocalLocation().x + searchedObj->GetErea().width / 2,
 			searchedObj->GetLocalLocation().y + searchedObj->GetErea().height / 2 };
