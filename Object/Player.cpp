@@ -99,7 +99,7 @@ void Player::Draw()const
 
 	if (searchedObj != nullptr && searchFlg) {
 		DrawCircle(searchedObj->GetLocalLocation().x + searchedObj->GetErea().width / 2,
-			searchedObj->GetLocalLocation().y + searchedObj->GetErea().height / 2, 20, 0x000000, FALSE);
+			searchedObj->GetLocalLocation().y + searchedObj->GetErea().height / 2, 40, 0xffff00, TRUE);
 		DrawFormatString(640, 80, 0xffff00, "%f", searchedObj->GetLocalLocation().x);
 		DrawFormatString(640, 100, 0xff0000, "%f", searchedObj->GetLocalLocation().y);
 	}
@@ -371,8 +371,14 @@ bool Player::SearchColor(Object* ob)
 				break;
 			}
 
-			tmpObLoc.x = ob->GetLocalLocation().x + (ob->GetErea().width / 2);
-			tmpObLoc.y = ob->GetLocalLocation().y + (ob->GetErea().height / 2);
+			if (ob->GetObjectType() == ENEMY) {
+				tmpObLoc.x = ob->GetLocalLocation().x + (ob->GetErea().width / 2);
+				tmpObLoc.y = ob->GetLocalLocation().y + (ob->GetErea().height / 2);
+			}
+			else {
+				tmpObLoc.x = ob->GetLocalLocation().x + (ob->GetErea().width / 2);
+				tmpObLoc.y = ob->GetLocalLocation().y + (ob->GetErea().height / 2);
+			}
 
 			if (!(tmpObLoc.x > 0 && tmpObLoc.x < 1280 && tmpObLoc.y > 0 && tmpObLoc.y < 720)) {
 				break;
