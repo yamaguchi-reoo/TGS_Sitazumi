@@ -12,8 +12,12 @@ class Player;
 struct SwapAnim
 {
     bool move_flg;          //移動するか判断
-    Location location;   //交換エフェクト用変数
+    Location start;          //オブジェクトの座標（アニメーション開始地点）
+    Erea erea;               //オブジェクトのサイズ
+    Location location;      //交換エフェクト用変数
     float move_rad;        //交換エフェクト移動用
+    int color;             //色情報
+    int timer;              //エフェクト時間
 };
 
 class GameMain :
@@ -40,7 +44,7 @@ private:
     int fps = 0;
 
     SwapAnim swap_anim[2];  //交換エフェクト用
-    int test_img2;          //画像格納テスト用
+    int swap_anim_timer;    //交換エフェクト時間用
 public:
 
     //�R���X�g���N�^(_stage���ǂݍ��ރX�e�[�W)
@@ -77,7 +81,7 @@ public:
     void ResetCamera();
 
     //交換アニメーション
-    void Swap(Object* _object1, Object* _object2);
+    int Swap(Object* _object1, Object* _object2);
 
 };
 
