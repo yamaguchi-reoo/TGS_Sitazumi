@@ -54,7 +54,7 @@ void EnemyDeer::Initialize(Location _location, Erea _erea, int _color_data)
 {
 	//一旦引数はパス 鹿がどこにでるかの座標 
 	//地面と完全に座標が一致していると地面に引っかかって動かなくなる 859
-	location = { 500, 825};
+	location = { 500, 859 };
 	//当たり判定の大きさを変更できる
 	//erea = {110, 100};
 	erea = _erea;
@@ -121,7 +121,7 @@ void EnemyDeer::Draw()const
 
 
 	//マウス座標
-	DrawFormatString(0, 60, GetColor(255, 0, 0), "MouseX : %d MouseY : %d", KeyInput::GetMouseCursor().x, KeyInput::GetMouseCursor().y);
+	//DrawFormatString(0, 60, GetColor(255, 0, 0), "MouseX : %d MouseY : %d", KeyInput::GetMouseCursor().x, KeyInput::GetMouseCursor().y);
 
 	//当たり判定のBox
 	DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, GetColor(255, 255, 255), FALSE);
