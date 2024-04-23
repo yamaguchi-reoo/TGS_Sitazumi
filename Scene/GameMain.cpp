@@ -53,7 +53,7 @@ AbstractScene* GameMain::Update()
 			}
 			//各オブジェクトの色交換
 			if (object[i]->GetObjectType() == PLAYER) {
-				if (object[j]->GetObjectType() == BLOCK && object[j]->GetCanSwap() == TRUE) {
+				if (/*object[j]->GetObjectType() == BLOCK && */object[j]->GetCanSwap() == TRUE) {
 					object[i]->SearchColor(object[j]);
 				}
 			}
