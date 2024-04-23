@@ -81,13 +81,13 @@ AbstractScene* GameMain::Update()
 
 void GameMain::Draw() const
 {
-	for (int i = 0; i < 8; i++)
+	/*for (int i = 0; i < 8; i++)
 	{
 		for (int j = 0; j < 8; j++)
 		{
 			DrawGraph(j * 40, i * 40, ResourceManager::GetDivGraph(test_img2, j + i * 8), true);
 		}
-	}
+	}*/
 	int pn = 0;
 	for (int i = 0; object[i] != nullptr; i++)
 	{
