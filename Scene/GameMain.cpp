@@ -20,7 +20,7 @@ GameMain::GameMain(int _stage) :stage_data{0},now_stage(0), stage_width_num(0), 
 	swap_anim[1].move_flg = false;
 	SetStage(_stage);
 	lock_pos = camera_location;
-	test_img2 = ResourceManager::SetDivGraph("Resource/Image/Sigma.png", 64, 8, 8, 32, 32);
+	swap_anim_timer = 0;
 }
 
 GameMain::~GameMain()
@@ -64,8 +64,20 @@ AbstractScene* GameMain::Update()
 	{
 		if (swap_anim[i].move_flg == true)
 		{
-			swap_anim[i].location.x += 2 * cosf(swap_anim[i].move_rad);
-			swap_anim[i].location.y += 2 * sinf(swap_anim[i].move_rad);
+			swap_anim[i].location.x += 20 * cosf(swap_anim[i].move_rad);
+			swap_anim[i].location.y += 20 * sinf(swap_anim[i].move_rad);
+		}
+		if (--swap_anim[i].timer < SWAP_EFFECT_STOP_TIME)
+		{
+			swap_anim[i].move_flg = false;
+		}
+		if (swap_anim[i].timer < SWAP_EFFECT_STOP_TIME && swap_anim[i].timer > 0)
+		{
+			swap_anim_timer++;
+		}
+		else
+		{
+			swap_anim_timer = 0;
 		}
 	}
 #ifdef _DEBUG
@@ -81,13 +93,6 @@ AbstractScene* GameMain::Update()
 
 void GameMain::Draw() const
 {
-	for (int i = 0; i < 8; i++)
-	{
-		for (int j = 0; j < 8; j++)
-		{
-			DrawGraph(j * 40, i * 40, ResourceManager::GetDivGraph(test_img2, j + i * 8), true);
-		}
-	}
 	int pn = 0;
 	for (int i = 0; object[i] != nullptr; i++)
 	{
@@ -104,8 +109,15 @@ void GameMain::Draw() const
 	{
 		if (swap_anim[i].move_flg == true)
 		{
-			DrawBox(swap_anim[i].location.x - camera_location.x, swap_anim[i].location.y - camera_location.y, swap_anim[i].location.x + 50 - camera_location.x, swap_anim[i].location.y + 50 - camera_location.y, 0xffffff, true);
-			DrawString(swap_anim[i].location.x - camera_location.x, swap_anim[i].location.y - camera_location.y, "交換エフェクト(予定)", 0x00ff00);
+			DrawBox(swap_anim[i].start.x - camera_location.x, swap_anim[i].start.y - camera_location.y, swap_anim[i].start.x + swap_anim[i].erea.width - camera_location.x, swap_anim[i].start.y + swap_anim[i].erea.height- camera_location.y, 0x000000, true);
+			DrawBox(swap_anim[i].start.x - camera_location.x, swap_anim[i].start.y - camera_location.y, swap_anim[i].start.x + swap_anim[i].erea.width - camera_location.x, swap_anim[i].start.y + swap_anim[i].erea.height- camera_location.y, 0xffffff, false);
+			DrawBox(swap_anim[i].location.x - camera_location.x, swap_anim[i].location.y - camera_location.y, swap_anim[i].location.x + 40 - camera_location.x, swap_anim[i].location.y + 40 - camera_location.y, swap_anim[i].color, true);
+		}
+		if (swap_anim_timer > 0)
+		{
+			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200 - (swap_anim_timer*20));
+			DrawBox(swap_anim[i].start.x - camera_location.x - (swap_anim_timer*5), swap_anim[i].start.y - camera_location.y - (swap_anim_timer * 5), swap_anim[i].start.x + swap_anim[i].erea.width - camera_location.x + (swap_anim_timer * 5), swap_anim[i].start.y + swap_anim[i].erea.height - camera_location.y + (swap_anim_timer * 5), swap_anim[i].color, true);
+			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255); 
 		}
 	}
 }
@@ -335,12 +347,30 @@ void GameMain::ResetCamera()
 	camera_location.y = screen_origin.y;
 }
 
-void GameMain::Swap(Object* _object1, Object* _object2)
+int GameMain::Swap(Object* _object1, Object* _object2)
 {
-	swap_anim[0].location = _object1->GetCenterLocation();
-	swap_anim[1].location = _object2->GetCenterLocation();
+	swap_anim[0].location = _object1->GetLocation();
+	swap_anim[1].location = _object2->GetLocation();
+	swap_anim[0].start = _object1->GetLocation();
+	swap_anim[1].start = _object2->GetLocation();
+	swap_anim[0].erea = _object1->GetErea();
+	swap_anim[1].erea = _object2->GetErea();
 	swap_anim[0].move_flg = true;
 	swap_anim[1].move_flg = true;
 	swap_anim[0].move_rad = atan2f(_object2->GetLocation().y - _object1->GetLocation().y, _object2->GetLocation().x - _object1->GetLocation().x);
 	swap_anim[1].move_rad = atan2f(_object1->GetLocation().y - _object2->GetLocation().y, _object1->GetLocation().x - _object2->GetLocation().x);
+	swap_anim[0].color = _object1->GetColerData();
+	swap_anim[1].color = _object2->GetColerData();
+
+	//移動にかかる時間測定
+	Location move;
+	float g;
+	move.x = fabsf(_object1->GetCenterLocation().x - _object2->GetCenterLocation().x);
+	move.y = fabsf(_object1->GetCenterLocation().y - _object2->GetCenterLocation().y);
+	g = powf(move.x, 2) + powf(move.y, 2);
+
+	swap_anim[0].timer = (int)(sqrtf(g) / SWAP_EFFECT_SPEED * 0.9f) + SWAP_EFFECT_STOP_TIME;
+	swap_anim[1].timer = (int)(sqrtf(g) / SWAP_EFFECT_SPEED * 0.9f) + SWAP_EFFECT_STOP_TIME;
+
+	return swap_anim[0].timer;
 }
