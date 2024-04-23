@@ -4,14 +4,12 @@
 
 #define PI 3.141592654f
 
-#define ENEMY_SPEED 3
-#define ENEMY_Y_SPEED 5
+#define ENEMY_SPEED 2
 
 EnemyBat::EnemyBat()
 {
 	type = ENEMY;
-	leftwall_flg = false;
-
+	wing_angle = 0.0f;
 	can_swap = TRUE;
 	can_hit = TRUE;
 
@@ -29,13 +27,15 @@ EnemyBat::~EnemyBat()
 
 void EnemyBat::Initialize(Location _location, Erea _erea, int _color_data)
 {
-	location = { 590 ,700 };//x座標 ,y座標
+	location = { 590 ,400 };//x座標 ,y座標
 	erea = { 100,150 };		//高さ、幅
 	color = _color_data;
 }
 
 void EnemyBat::Update(GameMain* _g)
 {
+	// 羽の角度を変化させる
+	wing_angle = sin(PI * 2 / 120 * up) * 30; // 30度の振れ幅で周期的に変化させる
 	Move();
 }
 
@@ -65,20 +65,28 @@ void EnemyBat::Draw() const
 
 	//配列の各頂点を利用して三角形を描画する
 	for (int i = 0; i < vertices.size(); i += 3) {
-		if (i < 22) {
+		//耳
+		if (i < 5) {
 			//DrawTriangle(vertices[i].x, vertices[i].y,vertices[i + 1].x, vertices[i + 1].y,vertices[i + 2].x, vertices[i + 2].y,GetColor(255, 255,255), TRUE);
-			DrawTriangleAA(vertices[i].x, vertices[i].y,vertices[i + 1].x, vertices[i + 1].y,vertices[i + 2].x, vertices[i + 2].y,GetColor(255, 255,255), TRUE);
+			DrawTriangleAA(vertices[i].x, vertices[i].y,vertices[i + 1].x, vertices[i + 1].y,vertices[i + 2].x, vertices[i + 2].y,color, TRUE);
+		}
+		//右羽
+		else if (i > 5 && i < 14) {
+			// 羽の動き
+			DrawTriangleAA(vertices[i].x, vertices[i].y, vertices[i + 1].x, vertices[i + 1].y + wing_angle, vertices[i + 2].x , vertices[i + 2].y, color, TRUE);
+		}
+		//左羽
+		else if (i > 14 && i < 23) {
+			// 羽の動き
+			DrawTriangleAA(vertices[i].x, vertices[i].y , vertices[i + 1].x, vertices[i + 1].y + wing_angle, vertices[i + 2].x , vertices[i + 2].y, color, TRUE);
 		}
 		//ひし形の描画
 		else
 		{
-			DrawQuadrangleAA(vertices[i].x, vertices[i].y,vertices[i + 1].x, vertices[i + 1].y,vertices[i + 2].x, vertices[i + 2].y,vertices[i + 3].x, vertices[i + 3].y,GetColor(255, 255, 255), TRUE);
+			DrawQuadrangleAA(vertices[i].x, vertices[i].y,vertices[i + 1].x, vertices[i + 1].y,vertices[i + 2].x, vertices[i + 2].y,vertices[i + 3].x, vertices[i + 3].y, color, TRUE);
 			i++;
 		}
 	}
-
-
-	////↓修正予定
 	////耳
 	//DrawTriangleAA(local_location.x, local_location.y, local_location.x, local_location.y + 25, local_location.x + 12, local_location.y + 12,GetColor(255, 255, 255), TRUE);
 	//DrawTriangleAA(local_location.x + 30, local_location.y, local_location.x + 30, local_location.y + 25, local_location.x + 18, local_location.y + 12,GetColor(255, 255, 255), TRUE);
@@ -97,7 +105,6 @@ void EnemyBat::Draw() const
 
 
 	//if (leftwall_flg == true) {
-	DrawFormatString(300, 300, 0xfffff, "%f    %f",location.x, location.y);
 	//}
 	//配列の各頂点を利用して三角形を描画する
 	
@@ -114,13 +121,13 @@ void EnemyBat::Move()
 	//左移動
 	if (bat_state == BatState::LEFT) {
 		location.x -= ENEMY_SPEED;
-		location.y += sin(PI * 2 / 40  * up) * 10;
+		location.y += sin(PI * 2 / 40  * up) * 5;
 
 	}
 	//右移動
 	if (bat_state == BatState::RIGHT) {
 		location.x += ENEMY_SPEED;
-		location.y -= sin(PI * 2 / 40 * up) * 10;
+		location.y -= sin(PI * 2 / 40 * up) * 5;
 	}
 	
 
