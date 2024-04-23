@@ -12,3 +12,7 @@
 
 #define PLAYER_SPAWN_NUM 9      //プレイヤーの初期スポーン設定ブロックがUIの何番目か(EditScene専用)
 
+#define SWAP_EFFECT_TIMER 30			//交換のアニメーション時間
+#define SWAP_EFFECT_SPEED 17			//交換のアニメーション速度
+#define SWAP_EFFECT_STOP_TIME 10		//交換のアニメーション後の硬直
+
