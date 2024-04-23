@@ -73,12 +73,12 @@ void EnemyBat::Draw() const
 		//右羽
 		else if (i > 5 && i < 14) {
 			// 羽の動き
-			DrawTriangleAA(vertices[i].x, vertices[i].y, vertices[i + 1].x, vertices[i + 1].y + wing_angle, vertices[i + 2].x , vertices[i + 2].y, color, TRUE);
+			DrawTriangleAA(vertices[i].x, vertices[i].y, vertices[i + 1].x, vertices[i + 1].y + wing_angle, vertices[i + 2].x , vertices[i + 2].y + wing_angle, color, TRUE);
 		}
 		//左羽
 		else if (i > 14 && i < 23) {
 			// 羽の動き
-			DrawTriangleAA(vertices[i].x, vertices[i].y , vertices[i + 1].x, vertices[i + 1].y + wing_angle, vertices[i + 2].x , vertices[i + 2].y, color, TRUE);
+			DrawTriangleAA(vertices[i].x, vertices[i].y , vertices[i + 1].x, vertices[i + 1].y + wing_angle, vertices[i + 2].x , vertices[i + 2].y + wing_angle, color, TRUE);
 		}
 		//ひし形の描画
 		else
