@@ -53,7 +53,7 @@ AbstractScene* GameMain::Update()
 			}
 			//各オブジェクトの色交換
 			if (object[i]->GetObjectType() == PLAYER) {
-				if (object[j]->GetObjectType() == BLOCK && object[j]->GetCanSwap() == TRUE) {
+				if (/*object[j]->GetObjectType() == BLOCK && */object[j]->GetCanSwap() == TRUE) {
 					object[i]->SearchColor(object[j]);
 				}
 			}
@@ -269,6 +269,7 @@ void GameMain::LoadStageData(int _stage)
 
 void GameMain::SetStage(int _stage)
 {
+	bool player_flg = false;	//プレイヤーを生成したか
 	//オブジェクト作成用変数
 	Location spawn;
 	Erea size;
@@ -298,6 +299,7 @@ void GameMain::SetStage(int _stage)
 			case 9:
 				//プレイヤーの生成
 				CreateObject(new Player, { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { 150,75 }, RED);
+				player_flg = true;
 				break;
 			case 10:
 				//敵（赤鹿）の生成
@@ -329,10 +331,12 @@ void GameMain::SetStage(int _stage)
 		}
 	}
 
-	////プレイヤーのリスポーン
-	//Location res_location = { 100,stage_height - 500 };
-	//player->Respawn(res_location);
-
+	//プレイヤーが生成されていないなら
+	if (player_flg == false)
+	{
+		//プレイヤーの生成
+		CreateObject(new Player, { (float)100,(float)100 }, { 150,75 }, RED);
+	}
 	//カメラのリセット
 	ResetCamera();
 
