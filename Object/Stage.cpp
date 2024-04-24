@@ -339,7 +339,7 @@ void Stage::Draw()const
 			//木
 		case WOOD_BLOCK:
 			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 40);
-			DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, 0x0000ff, true);
+			DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, 0x00ff00, true);
 			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 			for (int i = 0; i < ANIM_BLOCK_NUM; i++)
 			{
