@@ -18,6 +18,7 @@ struct SwapAnim
     float move_rad;        //交換エフェクト移動用
     int color;             //色情報
     int timer;              //エフェクト時間
+    int speed;              //エフェクト速度
 };
 
 class GameMain :

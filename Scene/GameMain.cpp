@@ -64,8 +64,8 @@ AbstractScene* GameMain::Update()
 	{
 		if (swap_anim[i].move_flg == true)
 		{
-			swap_anim[i].location.x += 20 * cosf(swap_anim[i].move_rad);
-			swap_anim[i].location.y += 20 * sinf(swap_anim[i].move_rad);
+			swap_anim[i].location.x += swap_anim[0].speed * cosf(swap_anim[i].move_rad);
+			swap_anim[i].location.y += swap_anim[1].speed * sinf(swap_anim[i].move_rad);
 		}
 		if (--swap_anim[i].timer < SWAP_EFFECT_STOP_TIME)
 		{
@@ -373,8 +373,11 @@ int GameMain::Swap(Object* _object1, Object* _object2)
 	move.y = fabsf(_object1->GetCenterLocation().y - _object2->GetCenterLocation().y);
 	g = powf(move.x, 2) + powf(move.y, 2);
 
-	swap_anim[0].timer = (int)(sqrtf(g) / SWAP_EFFECT_SPEED * 0.9f) + SWAP_EFFECT_STOP_TIME;
-	swap_anim[1].timer = (int)(sqrtf(g) / SWAP_EFFECT_SPEED * 0.9f) + SWAP_EFFECT_STOP_TIME;
+	swap_anim[0].speed = (int)(sqrtf(g) / SWAP_EFFECT_SPEED);
+	swap_anim[1].speed = (int)(sqrtf(g) / SWAP_EFFECT_SPEED);
+
+	swap_anim[0].timer = (int)((sqrtf(g) / swap_anim[0].speed) * 0.9f) + SWAP_EFFECT_STOP_TIME;
+	swap_anim[1].timer = (int)((sqrtf(g) / swap_anim[1].speed) * 0.9f) + SWAP_EFFECT_STOP_TIME;
 
 	return swap_anim[0].timer;
 }
