@@ -27,6 +27,15 @@ Player::Player()
 	searchFlg = false;
 	swapTimer = -1;
 	oldSearchFlg = false;
+
+	for (int i = 0; i < OBJECT_NUM; i++)
+	{
+		searchedObjAll[i] = nullptr;
+	}
+	objNum = 0;
+	objSelectNum = 0;
+	oldStick[0] = 0.f;
+	oldStick[1] = 0.f;
 }
 
 Player::~Player()
@@ -43,9 +52,11 @@ void Player::Initialize(Location _location, Erea _erea, int _color_data)
 
 void Player::Update(GameMain* _g)
 {
+	
+
 	fps = 0;
 
-	if (stageHitFlg[1][bottom] != true && !searchFlg) { //重力
+	if (stageHitFlg[1][bottom] != true/* && !searchFlg*/) { //重力
 		vector.y += 1.f;
 		if (vector.y > 16.f) {
 			vector.y = 16.f;
@@ -57,17 +68,22 @@ void Player::Update(GameMain* _g)
 
 	oldSearchFlg = searchFlg;
 	//Bボタンで色の交換ができるモードと切り替え
-	if (PadInput::OnButton(XINPUT_BUTTON_B) && !searchFlg) {
+	if (PadInput::OnPressed(XINPUT_BUTTON_B)/* && !searchFlg*/) {
+		SelectObject();
 		searchFlg = true;
 	}
-	else if (PadInput::OnButton(XINPUT_BUTTON_B) && searchFlg && searchedObj != nullptr && swapTimer < 0) {
+	else if (PadInput::OnRelease(XINPUT_BUTTON_B) && searchFlg && searchedObj != nullptr && swapTimer < 0) {
 		//交換エフェクトにかかる時間を受け取る
 		swapTimer = _g->Swap(this, searchedObj);
 	}
-	else if (PadInput::OnButton(XINPUT_BUTTON_Y) && searchFlg) {
+	/*else if (PadInput::OnButton(XINPUT_BUTTON_B) && searchFlg) {
 		searchFlg = false;
-	}
+	}*/
 	//Yボタンで色の交換
+
+	/*if (searchedObj != nullptr) {
+		objNum = 0;
+	}*/
 
 	//交換後エフェクト用の硬直
 	if (swapTimer >= 0)
@@ -90,8 +106,14 @@ void Player::Update(GameMain* _g)
 		MoveAim();
 	}
 
-	location.x += vector.x;
-	location.y += vector.y;
+	if (searchFlg) {
+		location.x += vector.x * 0.1f;
+		location.y += vector.y * 0.1f;
+	}
+	else {
+		location.x += vector.x;
+		location.y += vector.y;
+	}
 
 
 
@@ -101,8 +123,8 @@ void Player::Update(GameMain* _g)
 	}
 
 	searchedLen = 1000.f;
-	searchedObj = nullptr;
-
+	//searchedObj = nullptr;
+	objNum = 0;
 
 }
 
@@ -337,8 +359,8 @@ void Player::MoveActor()
 		if (!oldSearchFlg) {
 			saveVec = vector;
 		}
-		vector.x = 0.f;
-		vector.y = 0.f;
+		/*vector.x = 0.f;
+		vector.y = 0.f;*/
 	}
 
 
@@ -374,8 +396,13 @@ void Player::MoveAim()
 
 bool Player::SearchColor(Object* ob)
 {
-	if (ob->GetColerData() != 0) {
-		Location tmpLoc = { 20,20 };
+	if (ob->GetColerData() != 0 ){
+		if(ob->GetLocalLocation().x >= 0 && ob->GetLocalLocation().x <= 1280 && ob->GetLocalLocation().y >= 0 && ob->GetLocalLocation().y <= 720) {
+
+			searchedObjAll[objNum] = ob;
+			objNum++;
+		}
+		/*Location tmpLoc = { 20,20 };
 		Location tmpObLoc = { 20,20 };
 		float tmpLen;
 		int i = 1;
@@ -410,7 +437,7 @@ bool Player::SearchColor(Object* ob)
 				}
 			}
 			i++;
-		}
+		}*/
 	}
 
 
@@ -421,6 +448,29 @@ bool Player::ChangePlayerColor()
 {
 	ChangeColor(searchedObj);
 	return false;
+}
+
+void Player::SelectObject()
+{
+	if (PadInput::TipLeftLStick(STICKL_X) > 0.8f && oldStick[0]) {
+		objSelectNum++;
+		oldStick[0] = false;
+		if (objSelectNum > objNum - 1) {
+			objSelectNum = 0;
+		}
+	}
+	else if (PadInput::TipLeftLStick(STICKL_X) < -0.8f && oldStick[1]) {
+		objSelectNum--;
+		oldStick[1] = false;
+		if (objSelectNum < 0) {
+			objSelectNum = objNum - 1;
+		}
+	}
+	else if (PadInput::TipLeftLStick(STICKL_X) < 0.1f && PadInput::TipLeftLStick(STICKL_X) > -0.1f) {
+		oldStick[0] = true;
+		oldStick[1] = true;
+	}
+	searchedObj = searchedObjAll[objSelectNum];
 }
 
 bool Player::CheckCollision(Location l, Erea e)

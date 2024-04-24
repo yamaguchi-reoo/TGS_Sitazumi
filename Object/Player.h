@@ -26,6 +26,10 @@ private:
 
 	float searchedLen; //交換できるオブジェクトとの距離
 	Object* searchedObj; //一番近い色を交換できるオブジェクト
+	Object* searchedObjAll[OBJECT_NUM]; //画面内の色交換できるオブジェクト
+	int objNum;//オブジェクトの添え字
+	int objSelectNum;//オブジェクトの添え字
+	bool oldStick[2];
 	bool searchFlg;
 	int swapTimer;		//交換エフェクトの時間測定
 	bool oldSearchFlg;
@@ -50,6 +54,7 @@ public:
 
 	bool SearchColor(Object* ob) override;
 	bool ChangePlayerColor();
+	void SelectObject();
 
 	bool CheckCollision(Location l, Erea e); //ステージとの当たり判定
 	float ThreePointAngle(Location l1, Location l2, Location referenceP) const;
