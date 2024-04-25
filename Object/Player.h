@@ -30,7 +30,7 @@ private:
 	int objNum;//オブジェクトの添え字
 	int objSelectNum;//オブジェクトの添え字
 	bool oldStick[2];
-	bool searchFlg;
+	//serchFlgの定義をObjectの方に移動して、GameMainで参照出来るようにしました　
 	int swapTimer;		//交換エフェクトの時間測定
 	bool oldSearchFlg;
 	Location saveVec; //ベクトルの一時保存用
