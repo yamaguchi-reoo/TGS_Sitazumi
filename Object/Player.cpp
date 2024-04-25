@@ -33,9 +33,19 @@ Player::Player()
 		searchedObjAll[i] = nullptr;
 	}
 	objNum = 0;
-	objSelectNum = 0;
+	objSelectNum[0] = 0;
+	objSelectNum[1] = 0;
 	oldStick[0] = 0.f;
 	oldStick[1] = 0.f;
+	oldStick[2] = 0.f;
+	oldStick[3] = 0.f;
+	for (int i = 0; i < MAX_STAGE_HEIGHT; i++){
+		for (int j = 0; j < MAX_STAGE_WIDTH; j++){
+			posRelation[i][j] = -1;
+		}
+	}
+	posRelNum[0] = 0;
+	posRelNum[1] = 0;
 }
 
 Player::~Player()
@@ -52,8 +62,6 @@ void Player::Initialize(Location _location, Erea _erea, int _color_data)
 
 void Player::Update(GameMain* _g)
 {
-	
-
 	fps = 0;
 
 	if (stageHitFlg[1][bottom] != true/* && !searchFlg*/) { //重力
@@ -107,8 +115,8 @@ void Player::Update(GameMain* _g)
 	}
 
 	if (searchFlg) {
-		location.x += vector.x * 0.1f;
-		location.y += vector.y * 0.1f;
+		location.x += vector.x * 0.02f;
+		location.y += vector.y * 0.02f;
 	}
 	else {
 		location.x += vector.x;
@@ -125,7 +133,13 @@ void Player::Update(GameMain* _g)
 	searchedLen = 1000.f;
 	//searchedObj = nullptr;
 	objNum = 0;
-
+	for (int i = 0; i < MAX_STAGE_HEIGHT; i++) {
+		for (int j = 0; j < MAX_STAGE_WIDTH; j++) {
+			posRelation[i][j] = -1;
+		}
+	}
+	posRelNum[0] = 0;
+	posRelNum[1] = 0;
 }
 
 void Player::Draw()const
@@ -398,49 +412,15 @@ bool Player::SearchColor(Object* ob)
 {
 	if (ob->GetColerData() != 0 ){
 		if(ob->GetLocalLocation().x >= 0 && ob->GetLocalLocation().x <= 1280 && ob->GetLocalLocation().y >= 0 && ob->GetLocalLocation().y <= 720) {
-
 			searchedObjAll[objNum] = ob;
+			if (objNum > 0 && searchedObjAll[objNum - 1]->GetLocalLocation().y + 40 <= ob->GetLocalLocation().y) {
+				posRelNum[0]++;
+				posRelNum[1] = 0;
+			}
+			posRelation[posRelNum[0]][posRelNum[1]++] = objNum;
 			objNum++;
 		}
-		/*Location tmpLoc = { 20,20 };
-		Location tmpObLoc = { 20,20 };
-		float tmpLen;
-		int i = 1;
-		while (tmpLoc.x > 0 && tmpLoc.x < 1280 && tmpLoc.y > 0 && tmpLoc.y < 720) {
-			tmpLoc.x = local_location.x + (aimVec.x * 10 * i) + (erea.width / 2);
-			tmpLoc.y = local_location.y + (aimVec.y * 10 * i) + (erea.height / 2);
-
-			if (!(tmpLoc.x > 0 && tmpLoc.x < 1280 && tmpLoc.y > 0 && tmpLoc.y < 720)) {
-				break;
-			}
-
-			if (ob->GetObjectType() == ENEMY) {
-				tmpObLoc.x = ob->GetLocalLocation().x + (ob->GetErea().width / 2);
-				tmpObLoc.y = ob->GetLocalLocation().y + (ob->GetErea().height / 2);
-			}
-			else {
-				tmpObLoc.x = ob->GetLocalLocation().x + (ob->GetErea().width / 2);
-				tmpObLoc.y = ob->GetLocalLocation().y + (ob->GetErea().height / 2);
-			}
-
-			if (!(tmpObLoc.x > 0 && tmpObLoc.x < 1280 && tmpObLoc.y > 0 && tmpObLoc.y < 720)) {
-				break;
-			}
-
-			tmpLen = sqrtf(powf(tmpObLoc.x - tmpLoc.x, 2) + powf(tmpObLoc.y - tmpLoc.y, 2));
-
-			if (tmpLen < searchedLen) {
-				searchedLen = tmpLen;
-				searchedObj = ob;
-				if (searchedLen > 200.f) {
-					searchedObj = nullptr;
-				}
-			}
-			i++;
-		}*/
 	}
-
-
 	return false;
 }
 
@@ -452,25 +432,55 @@ bool Player::ChangePlayerColor()
 
 void Player::SelectObject()
 {
-	if (PadInput::TipLeftLStick(STICKL_X) > 0.8f && oldStick[0]) {
-		objSelectNum++;
+	//X軸
+	if ((PadInput::TipLeftLStick(STICKL_X) > 0.8f || PadInput::OnButton(XINPUT_BUTTON_DPAD_RIGHT)) && oldStick[0]) {
+		objSelectNum[1]++;
 		oldStick[0] = false;
-		if (objSelectNum > objNum - 1) {
-			objSelectNum = 0;
+		if (posRelation[objSelectNum[0]][objSelectNum[1]] == -1) {
+			objSelectNum[1] = 0;
+			objSelectNum[0]++;
 		}
 	}
-	else if (PadInput::TipLeftLStick(STICKL_X) < -0.8f && oldStick[1]) {
-		objSelectNum--;
+	else if ((PadInput::TipLeftLStick(STICKL_X) < -0.8f || PadInput::OnButton(XINPUT_BUTTON_DPAD_LEFT)) && oldStick[1]) {
+		objSelectNum[1]--;
 		oldStick[1] = false;
-		if (objSelectNum < 0) {
-			objSelectNum = objNum - 1;
+		if (objSelectNum[1] < 0) {
+			objSelectNum[1] = 0;
+			objSelectNum[0]--;
+			if (objSelectNum[0] < 0) {
+				objSelectNum[0] = 0;
+			}
 		}
 	}
 	else if (PadInput::TipLeftLStick(STICKL_X) < 0.1f && PadInput::TipLeftLStick(STICKL_X) > -0.1f) {
 		oldStick[0] = true;
 		oldStick[1] = true;
 	}
-	searchedObj = searchedObjAll[objSelectNum];
+	//Y軸
+	if ((PadInput::TipLeftLStick(STICKL_Y) > 0.8f || PadInput::OnButton(XINPUT_BUTTON_DPAD_UP)) && oldStick[2]) {
+		objSelectNum[0]--;
+		if (objSelectNum[0] < 0) {
+			objSelectNum[0] = 0;
+		}
+		oldStick[2] = false;
+		if (posRelation[objSelectNum[0]][objSelectNum[1]] == -1) {
+			objSelectNum[0] = 0;
+			objSelectNum[1] = 0;
+		}
+	}
+	else if ((PadInput::TipLeftLStick(STICKL_Y) < -0.8f || PadInput::OnButton(XINPUT_BUTTON_DPAD_DOWN)) && oldStick[3]) {
+		objSelectNum[0]++;
+		oldStick[3] = false;
+		if (posRelation[objSelectNum[0]][objSelectNum[1]] == -1) {
+			objSelectNum[0] = 0;
+		}
+	}
+	else if (PadInput::TipLeftLStick(STICKL_Y) < 0.1f && PadInput::TipLeftLStick(STICKL_Y) > -0.1f) {
+		oldStick[2] = true;
+		oldStick[3] = true;
+	}
+	int a = posRelation[objSelectNum[0]][objSelectNum[1]];
+	searchedObj = searchedObjAll[a];
 }
 
 bool Player::CheckCollision(Location l, Erea e)

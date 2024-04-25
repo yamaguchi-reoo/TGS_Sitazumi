@@ -28,8 +28,10 @@ private:
 	Object* searchedObj; //一番近い色を交換できるオブジェクト
 	Object* searchedObjAll[OBJECT_NUM]; //画面内の色交換できるオブジェクト
 	int objNum;//オブジェクトの添え字
-	int objSelectNum;//オブジェクトの添え字
-	bool oldStick[2];
+	int objSelectNum[2];//オブジェクトの添え字
+	int posRelation[MAX_STAGE_HEIGHT][MAX_STAGE_WIDTH];
+	int posRelNum[2];
+	bool oldStick[4];
 	bool searchFlg;
 	int swapTimer;		//交換エフェクトの時間測定
 	bool oldSearchFlg;
