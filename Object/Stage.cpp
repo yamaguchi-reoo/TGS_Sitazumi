@@ -4,7 +4,26 @@
 
 Stage::Stage(int _type) : frame(0), old_color(0),inv_flg(false), debug_flg(false), anim(0), fire_anim{ 0 }, wood_anim{ 0 }, hit_flg(false), hit_timer(-1)
 {
-	type = BLOCK;
+	//炎
+	if (_type == 3 || _type == 6)
+	{
+		type == FIRE;
+	}
+	//木
+	else if (_type == 4 || _type == 7)
+	{
+		type == WOOD;
+	}
+	//水
+	else if (_type == 5 || _type == 8)
+	{
+		type == WATER;
+	}
+	//それ以外
+	else
+	{
+		type = BLOCK;
+	}
 	block_type = _type;
 	if (block_type > 5)
 	{
@@ -368,12 +387,34 @@ void Stage::Draw()const
 	//Edit用表示
 	if (debug_flg == true)
 	{
-		//初期スポーン地点を分かりやすく
-		if (block_type == PLAYER_SPAWN_NUM)
+		//敵文字表示用
+		switch (block_type)
 		{
+		case 9:
+			//初期スポーン地点を分かりやすく
 			DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, 0xffff00, true);
+			DrawStringF(local_location.x, local_location.y, "プレイヤー", text_color[block_type]);
+			break;
+		case 10:
+		case 11:
+		case 12:
+			DrawStringF(local_location.x, local_location.y,"鹿",text_color[block_type]);
+			break;
+		case 13:
+		case 14:
+		case 15:
+			DrawStringF(local_location.x, local_location.y, "蝙蝠", text_color[block_type]);
+			break;
+		case 16:
+		case 17:
+		case 18:
+			DrawStringF(local_location.x, local_location.y, "蛙", text_color[block_type]);
+			break;
+		default:
+			//ブロックなら数字を表示
+			DrawFormatStringF(local_location.x, local_location.y, text_color[block_type], "%d", block_type);
+			break;
 		}
-		DrawFormatStringF(local_location.x, local_location.y, text_color[block_type], "%d", block_type);
 	}
 }
 

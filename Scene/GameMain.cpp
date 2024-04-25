@@ -46,14 +46,14 @@ AbstractScene* GameMain::Update()
 		for (int j = i+1; object[j] != nullptr; j++)
 		{
 			//各オブジェクトとの当たり判定
-			if (object[i]->HitBox(object[j]) && object[i]->GetCanHit()==TRUE && object[j]->GetCanHit() == TRUE)
+			if (object[i]->GetCanHit() == TRUE && object[j]->GetCanHit() == TRUE && object[i]->HitBox(object[j]))
 			{
 				object[i]->Hit(object[j]->GetLocation(), object[j]->GetErea(), object[j]->GetObjectType(), object[j]->GetColerData());
 				object[j]->Hit(object[i]->GetLocation(), object[i]->GetErea(), object[i]->GetObjectType(), object[i]->GetColerData());
 			}
 			//各オブジェクトの色交換
 			if (object[i]->GetObjectType() == PLAYER) {
-				if (/*object[j]->GetObjectType() == BLOCK && */object[j]->GetCanSwap() == TRUE) {
+				if (object[j]->GetCanSwap() == TRUE) {
 					object[i]->SearchColor(object[j]);
 				}
 			}
@@ -109,8 +109,6 @@ void GameMain::Draw() const
 	{
 		if (swap_anim[i].move_flg == true)
 		{
-			DrawBox(swap_anim[i].start.x - camera_location.x, swap_anim[i].start.y - camera_location.y, swap_anim[i].start.x + swap_anim[i].erea.width - camera_location.x, swap_anim[i].start.y + swap_anim[i].erea.height- camera_location.y, 0x000000, true);
-			DrawBox(swap_anim[i].start.x - camera_location.x, swap_anim[i].start.y - camera_location.y, swap_anim[i].start.x + swap_anim[i].erea.width - camera_location.x, swap_anim[i].start.y + swap_anim[i].erea.height- camera_location.y, 0xffffff, false);
 			DrawBox(swap_anim[i].location.x - camera_location.x, swap_anim[i].location.y - camera_location.y, swap_anim[i].location.x + 40 - camera_location.x, swap_anim[i].location.y + 40 - camera_location.y, swap_anim[i].color, true);
 		}
 		if (swap_anim_timer > 0)
@@ -302,28 +300,22 @@ void GameMain::SetStage(int _stage)
 				player_flg = true;
 				break;
 			case 10:
-				//敵（赤鹿）の生成
-				CreateObject(new EnemyDeer, { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { 100,100 }, RED);
-				break;
 			case 11:
-				//敵（緑鹿）の生成
-				CreateObject(new EnemyDeer, { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { 100,100 }, GREEN);
-				break;
 			case 12:
-				//敵（青鹿）の生成
-				CreateObject(new EnemyDeer, { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { 100,100 }, BLUE);
+				//鹿の生成
+				CreateObject(new EnemyDeer, { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { 100,100 }, ColorList[stage_data[i][j] - 10]);
 				break;
 			case 13:
-				//敵（赤コウモリ）の生成
-				CreateObject(new EnemyBat, { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { 100,100 }, RED);
-				break;
 			case 14:
-				//敵（緑コウモリ）の生成
-				CreateObject(new EnemyBat, { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { 100,100 }, GREEN);
-				break;
 			case 15:
-				//敵（青コウモリ）の生成
-				CreateObject(new EnemyBat, { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { 100,100 }, BLUE);
+				//コウモリの生成
+				CreateObject(new EnemyBat, { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { 100,100 }, ColorList[stage_data[i][j] - 13]);
+				break;
+			case 16:
+			case 17:
+			case 18:
+				//カエルの生成
+				CreateObject(new EnemyFrog, { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { 100,100 }, ColorList[stage_data[i][j] - 16]);
 				break;
 			default:
 				break;
@@ -380,4 +372,9 @@ int GameMain::Swap(Object* _object1, Object* _object2)
 	swap_anim[1].timer = (int)((sqrtf(g) / swap_anim[1].speed) * 0.9f) + SWAP_EFFECT_STOP_TIME;
 
 	return swap_anim[0].timer;
+}
+
+bool GameMain::GetSearchFlg()
+{
+	return object[player_object]->GetSearchFlg();
 }

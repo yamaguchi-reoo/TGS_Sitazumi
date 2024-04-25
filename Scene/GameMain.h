@@ -5,9 +5,18 @@
 #include "../Object/Stage.h"
 #include "../Object/EnemyDeer.h"
 #include"../Object/EnemyBat.h"
+#include"../Object/EnemyFrog.h"
 #include"../Object/Object.h"
 
 class Player;
+
+static int ColorList[4]
+{
+    0xff0000,   //赤
+    0x00ff00,   //緑
+    0x0000ff,   //青
+    0xffffff   //白
+};
 
 struct SwapAnim
 {
@@ -25,17 +34,14 @@ class GameMain :
     public AbstractScene
 {
 private:
-    Object* object[OBJECT_NUM];    //オブジェクト格納
+    int stage_data[MAX_STAGE_HEIGHT][MAX_STAGE_WIDTH];   //ステージデータ格納
     int player_object;             //プレイヤーが配列の何番目に格納されているか
-    //↓なぜか消したらエラー
-    EnemyDeer* enemydeer;  
-    int stage_data[MAX_STAGE_HEIGHT][MAX_STAGE_WIDTH];   //�X�e�[�W���
-
-    int now_stage;          //���݂̃X�e�[�W��
-    int stage_width_num;    //�X�e�[�W�u���b�N�̉���
-    int stage_height_num;   //�X�e�[�W�u���b�N�̏c��
-    int stage_width;        //�X�e�[�W����
-    int stage_height;       //�X�e�[�W�c��
+    Object* object[OBJECT_NUM] = { nullptr };    //オブジェクト格納
+    int now_stage;          //現在のステージ数
+    int stage_width_num;    //ステージの横のブロック数
+    int stage_height_num;   //ステージの縦のブロック数
+    int stage_width;        //ステージの横の大きさ
+    int stage_height;       //ステージの縦の大きさ
 
     bool camera_x_lock_flg;   //カメラが動けるか判断(強制戦闘時以外)
     bool camera_y_lock_flg;   //カメラが動けるか判断(強制戦闘時以外)
@@ -84,5 +90,7 @@ public:
     //交換アニメーション
     int Swap(Object* _object1, Object* _object2);
 
+    //プレイヤーが色交換のスローモーション中か取得
+    bool GetSearchFlg();
 };
 
