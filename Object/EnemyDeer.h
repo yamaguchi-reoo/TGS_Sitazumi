@@ -1,7 +1,7 @@
 #pragma once
 #include "Object.h"
-#include <iostream>
-#include <fstream>
+#include "CharaBase.h"
+#include "../Utility/common.h"
 
 using namespace std;
 
@@ -16,28 +16,7 @@ class EnemyDeer :
 {
 private:
 
-	ifstream DeerIfs;
-	ofstream DeerOfs;
-
-	fstream Deerfs ;
-
 	DeerState deer_state;
-
-	int NotOpen;
-
-	int KeepMouseX[10], KeepMouseY[10];
-	int KeepCursor[99][8];
-	bool EnemyFileOpenFlg;
-	int EnemyFileHandle;
-
-	char String[100];
-
-	int number;
-	int ArrayNumberX;	//Max 6 : 0 2 4 6 
-	int ArrayNumberY;	//Max 7 : 1 3 5 7
-	int ArrayNumber;	//Max 98
-	
-	int akusel;
 
 	float DrawTest1, DrawTest2, DrawTest3, DrawTest4;
 	int	DrawTest5, DrawTest6;
@@ -56,9 +35,6 @@ public:
 		return false;
 	}
 
-	void EnemyDeerMove(void);
-	void EnemyDeerOfs(void);	
-	void EnemyDeerIfs(void);	
-	int EnemyDeerfs(void);		
+	void EnemyDeerMove(void);	
 };
 

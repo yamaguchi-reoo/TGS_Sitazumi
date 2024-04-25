@@ -7,35 +7,6 @@ EnemyDeer::EnemyDeer()
 	can_swap = TRUE;
 	can_hit = TRUE;
 
-	for (int i = 0; i < 10; i++)
-	{
-		KeepMouseX[i] = 0;
-		KeepMouseY[i] = 0;
-	}
-
-	for (int i = 0; i < 99; i++)
-	{
-		for (int j = 0; j < 8; j++)
-		{
-			KeepCursor[i][j] = 0;
-		}
-	}
-
-	for (int z = 0; z < 100; z++)
-	{
-		String[z] = 0;
-	}
-
-	number = 0;
-	akusel = 0;
-	EnemyFileOpenFlg = true;
-	EnemyFileHandle = 0;
-	NotOpen = TRUE;
-
-	ArrayNumberX = 0;
-	ArrayNumberY = 1;
-	ArrayNumber = 0;
-
 	deer_state = DeerState::LEFT;
 	//deer_state = DeerState::RIGHT;
 
@@ -176,45 +147,5 @@ void EnemyDeer::Hit(Location _location, Erea _erea, int _type, int _color_data)
 	if (location.x + erea.width < _location.x + _erea.width && _type == BLOCK)
 	{
 		deer_state = DeerState::LEFT;
-	}
-}
-
-void EnemyDeer::EnemyDeerIfs()
-{
-	DeerIfs.open("Resource/Dat/EnemyCoordinate.txt");
-
-	if (!DeerIfs) //  ファイルが開けない場合の処理
-	{
-		NotOpen = FALSE;
-	}
-}
-
-void EnemyDeer::EnemyDeerOfs()
-{
-	DeerOfs.open("Resource/Dat/EnemyCoordinate.txt");
-
-	if (!DeerOfs) //  ファイルが開けない場合の処理
-	{
-		NotOpen = FALSE;
-	}
-	else
-	{
-		DeerOfs << "Hello world!" << endl;    //  ofs に出力
-		DeerOfs << "This is a pen." << endl;    //  ofs に出力
-	}
-}
-
-int EnemyDeer::EnemyDeerfs()
-{
-	Deerfs.open("Resource/Dat/EnemyCoordinate.txt", ios::app);
-
-	if (!Deerfs)	//ファイルが開けなかった
-	{
-		return FALSE;
-		exit(1);
-	}
-	else //ファイルが開けた
-	{
-		return TRUE;
 	}
 }
