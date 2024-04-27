@@ -105,3 +105,17 @@ void ResourceManager::StopSound(int _num)
 {
 	StopSoundMem(sound_data[_num]);
 }
+
+void ResourceManager::DrawRotaBox(float _x, float _y, float _w, float _h, float _rad, int _color, bool _fill)
+{
+	float loc[4][2];
+	loc[0][0] = _x;
+	loc[0][1] = _y;
+	loc[1][0] = _x + _w;
+	loc[1][1] = _y;
+	loc[2][0] = _x + _w;
+	loc[2][1] = _y + _h;
+	loc[3][0] = _x;
+	loc[3][1] = _y + _h;
+	DrawQuadrangle(loc[0][0], loc[0][1], loc[1][0], loc[1][1], loc[2][0], loc[2][1], loc[3][0], loc[3][1], _color,_fill);
+}

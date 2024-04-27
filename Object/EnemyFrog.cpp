@@ -1,11 +1,12 @@
 #include "EnemyFrog.h"
 #include <math.h>
 #include"../Scene/GameMain.h"
+#include"../Utility/ResourceManager.h"
 
 EnemyFrog::EnemyFrog():frame(0), frog_state(FrogState::LEFT_JUMP), vector{ 0,0 }
 {
 	type = ENEMY;
-	can_swap = TRUE;	//プレイヤーのcan_swapは真でも偽でも大丈夫
+	can_swap = TRUE;
 	can_hit = TRUE;
 }
 
@@ -33,20 +34,6 @@ void EnemyFrog::Update(GameMain* _g)
 	else {
 		vector.y = 0.f;
 	}
-	if (_g->GetSearchFlg()) 
-	{
-		if (frame % 600 == 0)
-		{
-			vector.y = -20.f;
-		}
-	}
-	else
-	{
-		if (frame % 60 == 0)
-		{
-			vector.y = -20.f;
-		}
-	}
 
 	//カエルの状態に応じて更新
 	switch (frog_state)
@@ -56,11 +43,27 @@ void EnemyFrog::Update(GameMain* _g)
 	case FrogState::IDLE_RIGHT:
 		break;
 	case FrogState::LEFT_JUMP:
+		if (_g->GetSearchFlg())
+		{
+			if (frame % 600 == 0)
+			{
+				vector.x = 1.f;
+				vector.y = -20.f;
+			}
+		}
+		else
+		{
+			if (frame % 60 == 0)
+			{
+				vector.x = 1.f;
+				vector.y = -20.f;
+			}
+		}
 		break;
 	case FrogState::RIGHT_JUMP:
 		break;
 	case FrogState::DEATH:
-		location.y--;
+		location.y-=10;
 		break;
 	default:
 		break;
@@ -84,7 +87,8 @@ void EnemyFrog::Update(GameMain* _g)
 void EnemyFrog::Draw()const
 {
 	DrawBox(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, FALSE);
-
+	//回転四角形テスト
+	ResourceManager::DrawRotaBox(100, 100, 100, 100, frame,0xffffff,true);
 }
 
 void EnemyFrog::Finalize()

@@ -7,17 +7,17 @@ Stage::Stage(int _type) : frame(0), old_color(0),inv_flg(false), debug_flg(false
 	//炎
 	if (_type == 3 || _type == 6)
 	{
-		type == FIRE;
+		type = FIRE;
 	}
 	//木
 	else if (_type == 4 || _type == 7)
 	{
-		type == WOOD;
+		type = WOOD;
 	}
 	//水
 	else if (_type == 5 || _type == 8)
 	{
-		type == WATER;
+		type = WATER;
 	}
 	//それ以外
 	else
@@ -25,14 +25,15 @@ Stage::Stage(int _type) : frame(0), old_color(0),inv_flg(false), debug_flg(false
 		type = BLOCK;
 	}
 	block_type = _type;
-	if (block_type > 5)
-	{
-		can_hit = FALSE;
-	}
-	else
-	{
-		can_hit = TRUE;
-	}
+	//if (block_type > 5)
+	//{
+	//	can_hit = FALSE;
+	//}
+	//else
+	//{
+	//	can_hit = TRUE;
+	//}
+	can_hit = TRUE;
 }
 
 Stage::~Stage()
@@ -53,8 +54,8 @@ void Stage::Initialize(Location _location, Erea _erea, int _color_data)
 	//色を交換出来ないブロックの設定
 	else
 	{
-		can_swap = TRUE;
-		color = 0;
+		can_swap = FALSE;
+		color = -1;
 	}
 	old_color = color;
 	//エフェクトのアニメーション用初期定義
@@ -75,6 +76,7 @@ void Stage::Initialize(Location _location, Erea _erea, int _color_data)
 	}
 
 }
+
 void Stage::Update(GameMain* _g)
 {
 	//色が変わったらブロックタイプも変える
