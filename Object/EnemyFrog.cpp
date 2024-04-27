@@ -88,7 +88,7 @@ void EnemyFrog::Draw()const
 {
 	DrawBox(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, FALSE);
 	//回転四角形テスト
-	ResourceManager::DrawRotaBox(100, 100, 100, 100, frame,0xffffff,true);
+	/*ResourceManager::DrawRotaBox(100, 100, 100, 100, frame,0xffffff,true);*/
 }
 
 void EnemyFrog::Finalize()
