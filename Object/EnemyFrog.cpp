@@ -43,22 +43,22 @@ void EnemyFrog::Update(GameMain* _g)
 	case FrogState::IDLE_RIGHT:
 		break;
 	case FrogState::LEFT_JUMP:
-		if (_g->GetSearchFlg())
-		{
-			if (frame % 600 == 0)
-			{
-				vector.x = 1.f;
-				vector.y = -20.f;
-			}
-		}
-		else
-		{
-			if (frame % 60 == 0)
-			{
-				vector.x = 1.f;
-				vector.y = -20.f;
-			}
-		}
+		//if (_g->GetSearchFlg())
+		//{
+		//	if (frame % 600 == 0)
+		//	{
+		//		vector.x = 1.f;
+		//		vector.y = -20.f;
+		//	}
+		//}
+		//else
+		//{
+		//	if (frame % 60 == 0)
+		//	{
+		//		vector.x = 1.f;
+		//		vector.y = -20.f;
+		//	}
+		//}
 		break;
 	case FrogState::RIGHT_JUMP:
 		break;
@@ -88,7 +88,7 @@ void EnemyFrog::Draw()const
 {
 	DrawBox(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, FALSE);
 	//回転四角形テスト
-	/*ResourceManager::DrawRotaBox(100, 100, 100, 100, frame,0xffffff,true);*/
+	ResourceManager::DrawRotaBox(local_location.x, local_location.y, 100,100, frame, 0xffffff, true);
 }
 
 void EnemyFrog::Finalize()

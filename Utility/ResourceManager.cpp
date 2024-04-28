@@ -1,5 +1,8 @@
 #include "ResourceManager.h"
 
+#define _USE_MATH_DEFINES
+#include <math.h>
+
 char* ResourceManager::image_filepath[IMAGE_NUM];
 char* ResourceManager::div_image_filepath[DIV_IMAGE_NUM];
 char* ResourceManager::sound_filepath[SOUND_NUM];
@@ -109,13 +112,31 @@ void ResourceManager::StopSound(int _num)
 void ResourceManager::DrawRotaBox(float _x, float _y, float _w, float _h, float _rad, int _color, bool _fill)
 {
 	float loc[4][2];
-	loc[0][0] = _x;
-	loc[0][1] = _y;
-	loc[1][0] = _x + _w;
-	loc[1][1] = _y;
-	loc[2][0] = _x + _w;
-	loc[2][1] = _y + _h;
-	loc[3][0] = _x;
-	loc[3][1] = _y + _h;
-	DrawQuadrangle(loc[0][0], loc[0][1], loc[1][0], loc[1][1], loc[2][0], loc[2][1], loc[3][0], loc[3][1], _color,_fill);
+	float newloc[4][2];
+	float f1;
+	float f2;
+	float p;
+	float r;
+	float rad;
+
+	//４点のローカル座標を格納
+	loc[0][0] =-(_w / 2);
+	loc[0][1] =-(_h / 2);
+	loc[1][0] =(_w / 2);
+	loc[1][1] =-(_h / 2);
+	loc[2][0] =(_w / 2);
+	loc[2][1] =(_h / 2);
+	loc[3][0] =-(_w / 2);
+	loc[3][1] =(_h / 2);
+
+	rad = _rad * M_PI / 180;
+
+
+	for (int i = 0; i < 4; i++)
+	{
+		newloc[i][0] = (loc[i][0] * cosf(rad)) - (loc[i][1] * sinf(rad)) + _x;
+		newloc[i][1] = (loc[i][0] * sinf(rad)) + (loc[i][1] * cosf(rad)) + _y;
+	}
+
+	DrawQuadrangle(newloc[0][0], newloc[0][1], newloc[1][0], newloc[1][1], newloc[2][0], newloc[2][1], newloc[3][0], newloc[3][1], _color, _fill);
 }
