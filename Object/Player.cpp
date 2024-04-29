@@ -46,6 +46,8 @@ Player::Player()
 	}
 	posRelNum[0] = 0;
 	posRelNum[1] = 0;
+
+	objSelectNumTmp = 0;
 }
 
 Player::~Player()
@@ -434,15 +436,20 @@ void Player::SelectObject()
 {
 	//X軸
 	if ((PadInput::TipLeftLStick(STICKL_X) > 0.8f || PadInput::OnButton(XINPUT_BUTTON_DPAD_RIGHT)) && oldStick[0]) {
-		objSelectNum[1]++;
+		/*objSelectNum[1]++;
 		oldStick[0] = false;
 		if (posRelation[objSelectNum[0]][objSelectNum[1]] == -1) {
 			objSelectNum[1] = 0;
 			objSelectNum[0]++;
+		}*/
+		objSelectNumTmp++;
+		oldStick[0] = false;
+		if (searchedObjAll[objSelectNumTmp] == nullptr) {
+			objSelectNumTmp = 0;
 		}
 	}
 	else if ((PadInput::TipLeftLStick(STICKL_X) < -0.8f || PadInput::OnButton(XINPUT_BUTTON_DPAD_LEFT)) && oldStick[1]) {
-		objSelectNum[1]--;
+		/*objSelectNum[1]--;
 		oldStick[1] = false;
 		if (objSelectNum[1] < 0) {
 			objSelectNum[1] = 0;
@@ -450,6 +457,11 @@ void Player::SelectObject()
 			if (objSelectNum[0] < 0) {
 				objSelectNum[0] = 0;
 			}
+		}*/
+		objSelectNumTmp--;
+		oldStick[1] = false;
+		if (objSelectNumTmp < 0) {
+			objSelectNumTmp = 0;
 		}
 	}
 	else if (PadInput::TipLeftLStick(STICKL_X) < 0.1f && PadInput::TipLeftLStick(STICKL_X) > -0.1f) {
@@ -458,7 +470,7 @@ void Player::SelectObject()
 	}
 	//Y軸
 	if ((PadInput::TipLeftLStick(STICKL_Y) > 0.8f || PadInput::OnButton(XINPUT_BUTTON_DPAD_UP)) && oldStick[2]) {
-		objSelectNum[0]--;
+		/*objSelectNum[0]--;
 		if (objSelectNum[0] < 0) {
 			objSelectNum[0] = 0;
 		}
@@ -466,21 +478,55 @@ void Player::SelectObject()
 		if (posRelation[objSelectNum[0]][objSelectNum[1]] == -1) {
 			objSelectNum[0] = 0;
 			objSelectNum[1] = 0;
+		}*/
+
+		oldStick[2] = false;
+
+		float nearLen = 1000.f;
+		for (int i = 0; searchedObjAll[i] != nullptr; i++)
+		{
+			if (searchedObj->GetLocalLocation().y > searchedObjAll[i]->GetLocalLocation().y)
+			{
+				if (GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation()) < nearLen)
+				{
+					nearLen = GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation());
+					//セレクトオブジェクトここに入れる
+					objSelectNumTmp = i;
+				}
+			}
 		}
 	}
 	else if ((PadInput::TipLeftLStick(STICKL_Y) < -0.8f || PadInput::OnButton(XINPUT_BUTTON_DPAD_DOWN)) && oldStick[3]) {
-		objSelectNum[0]++;
+		/*objSelectNum[0]++;
 		oldStick[3] = false;
 		if (posRelation[objSelectNum[0]][objSelectNum[1]] == -1) {
 			objSelectNum[0] = 0;
+		}*/
+
+		oldStick[3] = false;
+
+		float nearLen = 1000.f;
+		for (int i = 0; searchedObjAll[i] != nullptr; i++)
+		{
+			if (searchedObj->GetLocalLocation().y < searchedObjAll[i]->GetLocalLocation().y)
+			{
+				if (GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation()) < nearLen)
+				{
+					nearLen = GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation());
+					//セレクトオブジェクトここに入れる
+					objSelectNumTmp = i;
+				}
+			}
 		}
 	}
 	else if (PadInput::TipLeftLStick(STICKL_Y) < 0.1f && PadInput::TipLeftLStick(STICKL_Y) > -0.1f) {
 		oldStick[2] = true;
 		oldStick[3] = true;
 	}
-	int a = posRelation[objSelectNum[0]][objSelectNum[1]];
-	searchedObj = searchedObjAll[a];
+	/*int a = posRelation[objSelectNum[0]][objSelectNum[1]];
+	searchedObj = searchedObjAll[a];*/
+
+	searchedObj = searchedObjAll[objSelectNumTmp];
 }
 
 bool Player::CheckCollision(Location l, Erea e)
@@ -563,5 +609,18 @@ float Player::ThreePointAngle(Location l1, Location l2, Location referenceP)cons
 	sita = acosf(cos) * (180.f / 3.14f);
 
 	return sita;
+}
+
+float Player::GetLength(Location l1, Location l2) 
+{
+	float len;
+	float x, y;
+
+	x = l2.x - l1.x;
+	y = l2.y - l1.y;
+
+	len = sqrtf(powf(x, 2) + powf(y, 2));
+
+	return len;
 }
 

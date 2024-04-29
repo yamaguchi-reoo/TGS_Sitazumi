@@ -29,6 +29,7 @@ private:
 	Object* searchedObjAll[OBJECT_NUM]; //画面内の色交換できるオブジェクト
 	int objNum;//オブジェクトの添え字
 	int objSelectNum[2];//オブジェクトの添え字
+	int objSelectNumTmp;//オブジェクトの添え字
 	int posRelation[MAX_STAGE_HEIGHT][MAX_STAGE_WIDTH];
 	int posRelNum[2];
 	bool oldStick[4];
@@ -60,6 +61,8 @@ public:
 
 	bool CheckCollision(Location l, Erea e); //ステージとの当たり判定
 	float ThreePointAngle(Location l1, Location l2, Location referenceP) const;
+
+	float GetLength(Location l1, Location l2);
 
 };
 
