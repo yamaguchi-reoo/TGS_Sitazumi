@@ -33,7 +33,8 @@ private:
 	int posRelation[MAX_STAGE_HEIGHT][MAX_STAGE_WIDTH];
 	int posRelNum[2];
 	bool oldStick[4];
-	bool searchFlg;
+	//bool searchFlg;
+	//serchFlgの定義をObjectの方に移動して、GameMainで参照出来るようにしました　
 	int swapTimer;		//交換エフェクトの時間測定
 	bool oldSearchFlg;
 	Location saveVec; //ベクトルの一時保存用
