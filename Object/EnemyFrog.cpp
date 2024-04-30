@@ -3,7 +3,7 @@
 #include"../Scene/GameMain.h"
 #include"../Utility/ResourceManager.h"
 
-EnemyFrog::EnemyFrog():frame(0), frog_state(FrogState::LEFT_JUMP), vector{ 0,0 }, death_timer(0)
+EnemyFrog::EnemyFrog():frame(0), frog_state(FrogState::LEFT_JUMP), vector{ 0,0 }, death_timer(0), face_rad(0.0f)
 {
 	type = ENEMY;
 	can_swap = TRUE;
@@ -36,7 +36,7 @@ void EnemyFrog::Update(GameMain* _g)
 	else {
 		vector.y = 0.f;
 	}
-
+	UpdataState(_g);
 	//カエルの状態に応じて更新
 	switch (frog_state)
 	{
@@ -49,7 +49,7 @@ void EnemyFrog::Update(GameMain* _g)
 		{
 			if (frame % 600 == 0)
 			{
-				vector.x = 1.f;
+				vector.x = -1.f;
 				vector.y = -20.f;
 			}
 		}
@@ -57,7 +57,7 @@ void EnemyFrog::Update(GameMain* _g)
 		{
 			if (frame % 60 == 0)
 			{
-				vector.x = 1.f;
+				vector.x = -1.f;
 				vector.y = -20.f;
 			}
 		}
@@ -67,7 +67,7 @@ void EnemyFrog::Update(GameMain* _g)
 		{
 			if (frame % 600 == 0)
 			{
-				vector.x = -1.f;
+				vector.x = 1.f;
 				vector.y = -20.f;
 			}
 		}
@@ -75,7 +75,7 @@ void EnemyFrog::Update(GameMain* _g)
 		{
 			if (frame % 60 == 0)
 			{
-				vector.x = -1.f;
+				vector.x = 1.f;
 				vector.y = -20.f;
 			}
 		}
@@ -90,14 +90,7 @@ void EnemyFrog::Update(GameMain* _g)
 		break;
 	}
 
-	if (_g->GetSearchFlg()) {
-		location.x += vector.x * 0.1f;
-		location.y += vector.y * 0.1f;
-	}
-	else {
-		location.x += vector.x;
-		location.y += vector.y;
-	}
+	Move(_g);
 
 	for (int i = 0; i < 4; i++) {
 		stageHitFlg[0][i] = false;
@@ -109,6 +102,7 @@ void EnemyFrog::Draw()const
 {
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 - (death_timer * 4));
 	DrawBox(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, FALSE);
+	ResourceManager::DrawRotaBox(local_location.x+(erea.width/2)+10, local_location.y+(erea.height) + 10, erea.width-20, erea.height-20, face_rad, color, TRUE);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 
 }
@@ -256,10 +250,39 @@ void EnemyFrog::Hit(Location _location, Erea _erea, int _type, int _color_data)
 		if (frog_state != FrogState::DEATH)
 		{
 			frog_state = FrogState::DEATH;
-			vector.x = -vector.x * 10;
-			vector.y = 0;
+			can_swap = FALSE;
 		}
 	}
+}
+
+void EnemyFrog::Move(GameMain* _g)
+{
+	
+	if (_g->GetSearchFlg()) {
+		location.x += vector.x * 0.1f;
+		location.y += vector.y * 0.1f;
+	}
+	else {
+		location.x += vector.x;
+		location.y += vector.y;
+	}
+}
+
+void EnemyFrog::UpdataState(GameMain* _g)
+{
+	if (frog_state != FrogState::DEATH)
+	{
+		//カエルとプレイヤーの座標を比較して、カエルがプレイヤーに向かって行くように
+		if (location.x > _g->GetPlayerLocation().x)
+		{
+			frog_state = FrogState::LEFT_JUMP;
+		}
+		else
+		{
+			frog_state = FrogState::RIGHT_JUMP;
+		}
+	}
+
 }
 
 bool EnemyFrog::CheckCollision(Location l, Erea e)

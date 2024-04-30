@@ -30,6 +30,7 @@ private:
 	bool stageHitFlg[2][4]; //カエルとステージの当たり判定
 	float move[4];			//各方向加速度格納用
 
+	float face_rad;		//顔の向き
 	int death_timer;	//死亡演出
 public:
 	EnemyFrog();
@@ -43,6 +44,8 @@ public:
 		return false;
 	}
 
+	void Move(GameMain* _g);		//移動系処理
+	void UpdataState(GameMain* _g);	//カエルの状態更新
 	bool CheckCollision(Location l, Erea e); //ステージとの当たり判定
 };
 

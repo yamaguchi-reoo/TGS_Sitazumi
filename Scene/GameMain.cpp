@@ -378,3 +378,8 @@ bool GameMain::GetSearchFlg()
 {
 	return object[player_object]->GetSearchFlg();
 }
+
+Location GameMain::GetPlayerLocation()
+{
+	return object[player_object]->GetLocation();
+}
