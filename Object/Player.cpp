@@ -4,7 +4,7 @@
 #include "../Utility/ResourceManager.h"
 #include "../Scene/GameMain.h"
 #include <math.h>
-
+Location Player::player_pos{ 0.0f,0.0f };
 
 Player::Player()
 {
@@ -64,6 +64,7 @@ void Player::Initialize(Location _location, Erea _erea, int _color_data)
 
 void Player::Update(GameMain* _g)
 {
+	player_pos = { location };
 	fps = 0;
 
 	if (stageHitFlg[1][bottom] != true/* && !searchFlg*/) { //重力

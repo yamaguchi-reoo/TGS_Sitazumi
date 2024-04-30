@@ -65,5 +65,6 @@ public:
 
 	float GetLength(Location l1, Location l2);
 
+	static Location player_pos;
 };
 

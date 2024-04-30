@@ -1,6 +1,7 @@
 #include"EnemyBat.h"
 #include"../Utility/KeyInput.h"
 #include<math.h>
+#include "Player.h"
 
 #define PI 3.141592654f
 
@@ -27,8 +28,8 @@ EnemyBat::~EnemyBat()
 
 void EnemyBat::Initialize(Location _location, Erea _erea, int _color_data)
 {
-	location = { 590 ,400 };//x座標 ,y座標
-	erea = { 100,150 };		//高さ、幅
+	location = { _location };//x座標 ,y座標 //590 ,400
+	erea = { _erea };		//高さ、幅	//100,150
 	color = _color_data;
 }
 
@@ -37,6 +38,7 @@ void EnemyBat::Update(GameMain* _g)
 	// 羽の角度を変化させる
 	wing_angle = sin(PI * 2 / 120 * up) * 30; // 30度の振れ幅で周期的に変化させる
 	Move();
+
 }
 
 void EnemyBat::Draw() const
@@ -118,19 +120,38 @@ void EnemyBat::Finalize()
 void EnemyBat::Move()
 {
 	up += 1;
-	//左移動
-	if (bat_state == BatState::LEFT) {
-		location.x -= ENEMY_SPEED;
-		location.y += sin(PI * 2 / 40  * up) * 5;
-
-	}
-	//右移動
-	if (bat_state == BatState::RIGHT) {
-		location.x += ENEMY_SPEED;
-		location.y -= sin(PI * 2 / 40 * up) * 5;
-	}
 	
+	Location player_posi = Player::player_pos;
+	// プレイヤーとの距離を計算
+	float dx = player_posi.x - location.x;
+	float dy = player_posi.y - location.y;
+	float length = sqrt(dx * dx + dy * dy);
 
+	float speed = ENEMY_SPEED;
+
+	// プレイヤーとの距離が一定以下の場合、プレイヤーを追跡
+	if (length < 400) {
+		// 移動方向を決定
+		dx /= length;
+		dy /= length;
+
+		// 移動する
+		location.x += dx * (ENEMY_SPEED + 1);
+		location.y += dy * (ENEMY_SPEED + 1);
+	}
+	else {
+		//左移動
+		if (bat_state == BatState::LEFT) {
+			location.x -= ENEMY_SPEED;
+			location.y += sin(PI * 2 / 40 * up) * 5;
+
+		}
+		//右移動
+		if (bat_state == BatState::RIGHT) {
+			location.x += ENEMY_SPEED;
+			location.y -= sin(PI * 2 / 40 * up) * 5;
+		}
+	}
 }
 
 void EnemyBat::BatArray()
