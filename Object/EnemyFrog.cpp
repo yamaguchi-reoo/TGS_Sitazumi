@@ -83,7 +83,7 @@ void EnemyFrog::Update(GameMain* _g)
 	case FrogState::DEATH:
 		if (++death_timer > 60)
 		{
-			_g->DeleteObject(object_pos);
+			/*_g->DeleteObject(object_pos);*/
 		}
 		break;
 	default:
