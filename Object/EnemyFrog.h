@@ -25,13 +25,16 @@ private:
 	int frame;				//フレーム測定
 	FrogState frog_state;	//カエルの状態
 
+	bool death_flg;		//生きているか
 	Location vector; //カエルのベクトル
 	bool stageHitFlg[2][4]; //カエルとステージの当たり判定
 	float move[4];			//各方向加速度格納用
+
+	int death_timer;	//死亡演出
 public:
 	EnemyFrog();
 	~EnemyFrog();
-	void Initialize(Location _location, Erea _erea, int _color_data)override;
+	void Initialize(Location _location, Erea _erea, int _color_data, int _object_pos)override;
 	void Update(GameMain* _g)override;
 	void Draw()const override;
 	void Finalize()override;
