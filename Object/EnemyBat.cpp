@@ -71,6 +71,19 @@ void EnemyBat::Update(GameMain* _g)
 		location.x += vector.x * 0.1f;
 		location.y += vector.y * 0.1f;
 	}
+	int i = 0;
+	switch (bat_state)
+	{
+	case BatState::IDLE:
+		break;
+	case BatState::LEFT:
+		break;
+	case BatState::RIGHT:
+		break;
+	case BatState::DEATH:
+		//_g->DeleteObject(object_pos);
+		break;
+	}
 }
 
 void EnemyBat::Draw() const
@@ -300,7 +313,12 @@ void EnemyBat::Hit(Location _location, Erea _erea, int _type, int _color_data)
 	}
 	if ((_type == FIRE && this->color == GREEN) || (_type == WATER && this->color == RED) || (_type == WOOD && this->color == BLUE))
 	{
-		bat_state = BatState::DEATH;
+		//死亡状態へ
+		if (bat_state != BatState::DEATH)
+		{
+			bat_state = BatState::DEATH;
+			can_swap = FALSE;
+		}
 	}
 }
 
