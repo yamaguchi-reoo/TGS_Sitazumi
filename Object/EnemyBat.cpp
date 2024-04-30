@@ -2,6 +2,7 @@
 #include"../Utility/KeyInput.h"
 #include<math.h>
 #include "Player.h"
+#include"../Scene/GameMain.h"
 
 #define PI 3.141592654f
 
@@ -41,6 +42,11 @@ void EnemyBat::Update(GameMain* _g)
 	for (int i = 0; i < 4; i++) {
 		stageHitFlg[0][i] = false;
 		stageHitFlg[1][i] = false;
+	}
+
+	if (_g->GetSearchFlg()) {
+		location.x += vector.x * 0.1f;
+		location.y += vector.y * 0.1f;
 	}
 }
 
@@ -289,7 +295,10 @@ void EnemyBat::Hit(Location _location, Erea _erea, int _type, int _color_data)
 		erea.width = tmpe.width;
 
 	}
-
+	if ((_type == FIRE && this->color == GREEN) || (_type == WATER && this->color == RED) || (_type == WOOD && this->color == BLUE))
+	{
+		bat_state = BatState::DEATH;
+	}
 }
 
 bool EnemyBat::CheckCollision(Location l, Erea e)
