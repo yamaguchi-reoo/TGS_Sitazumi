@@ -171,13 +171,13 @@ void Player::Draw()const
 
 	if (searchedObj != nullptr && searchFlg) {
 		DrawCircle(searchedObj->GetLocalLocation().x + searchedObj->GetErea().width / 2,
-			searchedObj->GetLocalLocation().y + searchedObj->GetErea().height / 2, 40, 0xffff00, FALSE);
+			searchedObj->GetLocalLocation().y + searchedObj->GetErea().height / 2, 40, 0xffff00, FALSE, 5);
 		/*DrawFormatString(640, 80, 0xffff00, "%f", searchedObj->GetLocalLocation().x);
 		DrawFormatString(640, 100, 0xff0000, "%f", searchedObj->GetLocalLocation().y);*/
 	}
 	if (searchFlg) {
-		DrawLine(local_location.x + (erea.width / 2), local_location.y + (erea.height / 2), lineLoc.x, lineLoc.y, color);
-		DrawCircle(lineLoc.x, lineLoc.y, 10, color, TRUE);
+		/*DrawLine(local_location.x + (erea.width / 2), local_location.y + (erea.height / 2), lineLoc.x, lineLoc.y, color);
+		DrawCircle(lineLoc.x, lineLoc.y, 10, color, TRUE);*/
 	}
 
 	if (damageFlg) {
