@@ -43,7 +43,7 @@ void EnemyDeer::Update(GameMain* _g)
 
 void EnemyDeer::Draw()const
 {
-	if (deer_state == DeerState::LEFT)
+	if (deer_state == DeerState::LEFT || deer_state == DeerState::GRAVITY || deer_state == DeerState::IDLE)
 	{
 		//角
 		//DrawQuadrangleAA(local_location.x - 5.0f, local_location.y - 20.0f, local_location.x + 2.0f, local_location.y - 25.0f, local_location.x + 15.0f, local_location.y + 2.0f, local_location.x + 7.0f, local_location.y + 5.0f, color, TRUE);
@@ -102,18 +102,18 @@ void EnemyDeer::Draw()const
 	DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, GetColor(255, 255, 255), FALSE);
 
 	//DrawFormatString(50, 240, 0xff0000, "スクリーン座標 X：%0.1f Y：%0.1f", location.x, location.y);
-	DrawFormatString(50, 100, 0xff0000, "ワールド座標 X：%0.1f Y：%0.1f", local_location.x, local_location.y);
-	DrawFormatString(50, 120, 0xff0000, "location.x : %0.1f", DrawTest1);
-	DrawFormatString(50, 140, 0xff0000, "location.y : %0.1f", DrawTest2);
-	DrawFormatString(50, 160, 0xff0000, "erea.height: %0.1f", DrawTest3);
-	DrawFormatString(50, 180, 0xff0000, "erea.width : %0.1f", DrawTest4);
-	DrawFormatString(50, 200, 0xff0000, "type	       : %d", DrawTest5);
-	DrawFormatString(50, 220, 0xff0000, "color_data : %d", DrawTest6);
+	////DrawFormatString(50, 100, 0xff0000, "ワールド座標 X：%0.1f Y：%0.1f", local_location.x, local_location.y);
+	//DrawFormatString(50, 120, 0xff0000, "相手のlocation.x : %0.1f", DrawTest1);
+	//DrawFormatString(50, 140, 0xff0000, "相手のlocation.y : %0.1f", DrawTest2);
+	//DrawFormatString(50, 160, 0xff0000, "erea.height: %0.1f", DrawTest3);
+	//DrawFormatString(50, 180, 0xff0000, "erea.width : %0.1f", DrawTest4);
+	//DrawFormatString(50, 200, 0xff0000, "type	       : %d", DrawTest5);
+	//DrawFormatString(50, 220, 0xff0000, "color_data : %d", DrawTest6);
 
-	DrawFormatString(50, 20, 0xff0000, "DeerState ; %d", deer_state);
+	//DrawFormatString(50, 20, 0xff0000, "DeerState ; %d", deer_state);
 
-	DrawCircleAA(local_location.x - erea.width, local_location.y + erea.height, 2, 32, 0xffffff, TRUE);
-	DrawCircleAA(local_location.x + erea.width, local_location.y + erea.height, 2, 32, 0xff0000, TRUE);
+	//DrawCircleAA(local_location.x, local_location.y + (erea.height / 2) + 10, 2, 32, 0xffffff, TRUE);
+	//DrawCircleAA(local_location.x + erea.width, local_location.y + (erea.height / 2) + 10, 2, 32, 0xff0000, TRUE);
 }
 
 void EnemyDeer::EnemyDeerMove()
@@ -158,49 +158,17 @@ void EnemyDeer::Hit(Location _location, Erea _erea, int _type, int _color_data)
 	DrawTest6 = _color_data;
 
 	//空中から地面に当たると待ち状態に移行
-	if (deer_state == DeerState::GRAVITY && local_location.y + erea.height + erea.height && _type == BLOCK)
+	if (deer_state == DeerState::GRAVITY && location.y + erea.height && _type == BLOCK)
 	{
 		deer_state = DeerState::IDLE;
-		deer_state = DeerState::RIGHT;
-	}
-
-	//右下と左下の頂点座標にブロックが無ければ落ちる
-	/*if (deer_state == DeerState::RIGHT && local_location.y + erea.height + erea.height && _type != BLOCK 
-		|| deer_state == DeerState::LEFT && local_location.x + erea.width + erea.width + erea.height + erea.height && _type != BLOCK)
-	{
-		deer_state = DeerState::GRAVITY;
-	}*/
-	
-	if (deer_state == DeerState::RIGHT)
-	{
-		if (local_location.x + erea.width && +local_location.y + erea.height && _type != BLOCK)
-		{
-			deer_state = DeerState::LEFT;
-		}
+		deer_state = DeerState::LEFT;
 	}
 	
-	/*if(deer_state == DeerState::LEFT)
+	if (deer_state == DeerState::LEFT)
 	{
-		if (local_location.x - erea.width && local_location.y + erea.height && _type != BLOCK && _color_data == -1)
+		if (location.x < _location.x + _erea.width && _type == BLOCK)
 		{
-			deer_state = DeerState::RIGHT;
+			deer_state = DeerState::IDLE;
 		}
-	}*/
-
-	/*if (location.x < _location.x + _erea.width + _erea.height && _type == BLOCK || location.x + erea.width < _location.x + _erea.width + _erea.height && _type == BLOCK)
-	{
-		deer_state = DeerState::IDLE;
-	}*/
-
-	////_locationは左上の座標を取ってる 左の壁に当たると右に方向転換
-	//if (location.x < _location.x + _erea.width && _type == BLOCK)
-	//{
-	//	deer_state = DeerState::RIGHT;
-	//}
-
-	////右の壁に当たると左に方向転換
-	//if (location.x + erea.width < _location.x + _erea.width && _type == BLOCK)
-	//{
-	//	deer_state = DeerState::LEFT;
-	//}
+	}
 }
