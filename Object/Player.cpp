@@ -55,11 +55,13 @@ Player::~Player()
 
 }
 
-void Player::Initialize(Location _location, Erea _erea, int _color_data)
+void Player::Initialize(Location _location, Erea _erea, int _color_data, int _object_pos)
 {
 	location = _location;
 	erea = _erea;
 	color = _color_data;
+
+	object_pos = _object_pos;
 }
 
 void Player::Update(GameMain* _g)
