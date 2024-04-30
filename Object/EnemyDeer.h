@@ -6,7 +6,9 @@
 using namespace std;
 
 enum class DeerState {
-	LEFT = 0,
+	GRAVITY = 0,
+	IDLE,
+	LEFT,
 	RIGHT,
 	DEATH
 };
@@ -17,9 +19,10 @@ class EnemyDeer :
 private:
 
 	DeerState deer_state;
+	bool deer_spawn;
 
-	float DrawTest1, DrawTest2, DrawTest3, DrawTest4;
-	int	DrawTest5, DrawTest6;
+	float DrawTest1 = 0, DrawTest2 = 0, DrawTest3 = 0, DrawTest4 = 0;
+	int	DrawTest5 = 0, DrawTest6 = 0;
 
 public:
 
