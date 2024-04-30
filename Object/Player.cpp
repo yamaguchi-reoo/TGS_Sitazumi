@@ -5,7 +5,6 @@
 #include "../Scene/GameMain.h"
 #include <math.h>
 
-
 Player::Player()
 {
 	type = PLAYER;
