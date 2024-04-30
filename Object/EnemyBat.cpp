@@ -38,8 +38,29 @@ void EnemyBat::Update(GameMain* _g)
 {
 	// 羽の角度を変化させる
 	wing_angle = sin(PI * 2 / 120 * up) * 30; // 30度の振れ幅で周期的に変化させる
-	//移動
-	Move();
+
+	Location player_posi = _g->GetPlayerLocation();
+	// プレイヤーとの距離を計算
+	vector = { 2.f };
+	float dx = player_posi.x - location.x;
+	float dy = player_posi.y - location.y;
+	float length = sqrt(dx * dx + dy * dy);
+
+	// プレイヤーとの距離が一定以下の場合、プレイヤーを追跡
+	if (length < 400) {
+		// 移動方向を決定
+		dx /= length;
+		dy /= length;
+
+		// 移動する
+		location.x += dx * (vector.x + 1);
+		location.y += dy * (vector.y + 1);
+	}
+	else
+	{
+		//移動
+		Move();
+	}
 
 	for (int i = 0; i < 4; i++) {
 		stageHitFlg[0][i] = false;
@@ -131,36 +152,16 @@ void EnemyBat::Finalize()
 void EnemyBat::Move()
 {
 	up += 1;
-	
-	Location player_posi = Player::player_pos;
-	// プレイヤーとの距離を計算
-	vector = { 2.f };
-	float dx = player_posi.x - location.x;
-	float dy = player_posi.y - location.y;
-	float length = sqrt(dx * dx + dy * dy);
+	//左移動
+	if (bat_state == BatState::LEFT) {
+		location.x -= vector.x;
+		location.y += sin(PI * 2 / 40 * up) * 5;
 
-	// プレイヤーとの距離が一定以下の場合、プレイヤーを追跡
-	if (length < 400) {
-		// 移動方向を決定
-		dx /= length;
-		dy /= length;
-
-		// 移動する
-		location.x += dx * (vector.x + 1);
-		location.y += dy * (vector.y + 1);
 	}
-	else {
-		//左移動
-		if (bat_state == BatState::LEFT) {
-			location.x -= vector.x;
-			location.y += sin(PI * 2 / 40 * up) * 5;
-
-		}
-		//右移動
-		if (bat_state == BatState::RIGHT) {
-			location.x += vector.x;
-			location.y -= sin(PI * 2 / 40 * up) * 5;
-		}
+	//右移動
+	if (bat_state == BatState::RIGHT) {
+		location.x += vector.x;
+		location.y -= sin(PI * 2 / 40 * up) * 5;
 	}
 }
 
