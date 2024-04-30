@@ -145,6 +145,10 @@ void GameMain::DeleteObject(int i)
 	for (int j = i; object[j] != nullptr; j++)
 	{
 		object[j] = object[j + 1];
+		if (object[j] != nullptr)
+		{
+			object[j]->SetObjectPos(j);
+		}
 	}
 }
 
