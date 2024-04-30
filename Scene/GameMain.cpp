@@ -128,7 +128,7 @@ void GameMain::CreateObject(Object* _object, Location _location, Erea _erea, int
 		if (object[i] == nullptr)
 		{
 			object[i] = _object;
-			object[i]->Initialize(_location, _erea, _color_data);
+			object[i]->Initialize(_location, _erea, _color_data,i);
 			//プレイヤーの配列上の位置格納
 			if (object[i]->GetObjectType() == PLAYER)
 			{
@@ -309,13 +309,13 @@ void GameMain::SetStage(int _stage)
 			case 14:
 			case 15:
 				//コウモリの生成
-				CreateObject(new EnemyBat, { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { 100,100 }, ColorList[stage_data[i][j] - 13]);
+				CreateObject(new EnemyBat, { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { 100,150 }, ColorList[stage_data[i][j] - 13]);
 				break;
 			case 16:
 			case 17:
 			case 18:
 				//カエルの生成
-				CreateObject(new EnemyFrog, { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { 100,100 }, ColorList[stage_data[i][j] - 16]);
+				CreateObject(new EnemyFrog, {(float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT}, {100,100}, ColorList[stage_data[i][j] - 16]);
 				break;
 			default:
 				break;
@@ -377,4 +377,9 @@ int GameMain::Swap(Object* _object1, Object* _object2)
 bool GameMain::GetSearchFlg()
 {
 	return object[player_object]->GetSearchFlg();
+}
+
+Location GameMain::GetPlayerLocation()
+{
+	return object[player_object]->GetLocation();
 }

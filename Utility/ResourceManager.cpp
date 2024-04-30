@@ -131,7 +131,6 @@ void ResourceManager::DrawRotaBox(float _x, float _y, float _w, float _h, float 
 
 	rad = _rad * M_PI / 180;
 
-
 	for (int i = 0; i < 4; i++)
 	{
 		newloc[i][0] = (loc[i][0] * cosf(rad)) - (loc[i][1] * sinf(rad)) + _x;

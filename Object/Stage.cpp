@@ -41,7 +41,7 @@ Stage::~Stage()
 
 }
 
-void Stage::Initialize(Location _location, Erea _erea, int _color_data)
+void Stage::Initialize(Location _location, Erea _erea, int _color_data,int _object_pos)
 {
 	location = _location;
 	erea = _erea;
@@ -75,6 +75,7 @@ void Stage::Initialize(Location _location, Erea _erea, int _color_data)
 		water_anim[i].erea.height = erea.height/3;
 	}
 
+	object_pos = _object_pos;
 }
 
 void Stage::Update(GameMain* _g)

@@ -103,7 +103,7 @@ private:
 public:
 	Stage(int _type);
 	~Stage();
-	void Initialize(Location _location, Erea _erea, int _color_data)override;
+	void Initialize(Location _location, Erea _erea, int _color_data, int _object_pos)override;
 	void Update(GameMain* _g)override;
 	void Update();	//Edit用アップデート
 	void Draw()const override;

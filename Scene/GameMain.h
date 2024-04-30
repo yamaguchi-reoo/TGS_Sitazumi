@@ -92,5 +92,8 @@ public:
 
     //プレイヤーが色交換のスローモーション中か取得
     bool GetSearchFlg();
+
+    //プレイヤーのワールド座標を取得
+    Location GetPlayerLocation();
 };
 
