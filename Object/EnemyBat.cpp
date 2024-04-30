@@ -25,11 +25,13 @@ EnemyBat::~EnemyBat()
 {
 }
 
-void EnemyBat::Initialize(Location _location, Erea _erea, int _color_data)
+void EnemyBat::Initialize(Location _location, Erea _erea, int _color_data, int _object_pos)
 {
 	location = { 590 ,400 };//x座標 ,y座標
 	erea = { 100,150 };		//高さ、幅
 	color = _color_data;
+
+	object_pos = _object_pos;
 }
 
 void EnemyBat::Update(GameMain* _g)

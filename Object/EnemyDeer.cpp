@@ -23,7 +23,7 @@ EnemyDeer::~EnemyDeer()
 
 }
 
-void EnemyDeer::Initialize(Location _location, Erea _erea, int _color_data)
+void EnemyDeer::Initialize(Location _location, Erea _erea, int _color_data, int _object_pos)
 {
 	//一旦引数はパス 鹿がどこにでるかの座標 
 	//地面と完全に座標が一致していると地面に引っかかって動かなくなる 859
@@ -32,6 +32,8 @@ void EnemyDeer::Initialize(Location _location, Erea _erea, int _color_data)
 	//erea = {110, 100};
 	erea = _erea;
 	color = _color_data;
+
+	object_pos = _object_pos;
 }
 
 void EnemyDeer::Update(GameMain* _g)

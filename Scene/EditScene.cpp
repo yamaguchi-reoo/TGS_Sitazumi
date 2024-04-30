@@ -33,7 +33,7 @@ EditScene::EditScene(int _stage) : current_type(0), ui_current_type(0), tool_pic
 			kari_location.y = (float)(i * BOX_HEIGHT);
 			kari_erea.width = BOX_WIDTH;
 			kari_erea.height = BOX_HEIGHT;
-			stage[i][j]->Initialize(kari_location, kari_erea, stage_data[i][j]);
+			stage[i][j]->Initialize(kari_location, kari_erea, stage_data[i][j], 0);
 			stage[i][j]->SetDebugFlg();
 			select_data[i][j] = false;
 		}
@@ -580,7 +580,7 @@ void EditScene::UpdateStage(int _width, int _height)
 				kari_location.y = (float)(i * BOX_HEIGHT);
 				kari_erea.width = BOX_WIDTH;
 				kari_erea.height = BOX_HEIGHT;
-				stage[i][j]->Initialize(kari_location, kari_erea, stage_data[i][j]);
+				stage[i][j]->Initialize(kari_location, kari_erea, stage_data[i][j],0);
 				stage[i][j]->SetDebugFlg();
 				select_data[i][j] = false;
 			}
