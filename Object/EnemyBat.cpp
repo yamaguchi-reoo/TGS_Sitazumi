@@ -7,19 +7,17 @@
 
 #define ENEMY_SPEED 2
 
-EnemyBat::EnemyBat()
+EnemyBat::EnemyBat() :up(0), bat_state(BatState::LEFT), wing_angle(0.0f), vector{ 0.0f }
 {
 	type = ENEMY;
-	wing_angle = 0.0f;
 	can_swap = TRUE;
 	can_hit = TRUE;
-
-	up = 0;
-	/*location = { 790 ,600 };
-
-	erea = { 100,100 };*/
-
-	bat_state = BatState::LEFT;
+	for (int i = 0; i < 4; i++){
+		move[i] = 0;
+	}
+	for (int i = 0; i < 4; i++) {
+		stageHitFlg[1][i] = false;
+	}
 }
 
 EnemyBat::~EnemyBat()
@@ -37,8 +35,13 @@ void EnemyBat::Update(GameMain* _g)
 {
 	// 羽の角度を変化させる
 	wing_angle = sin(PI * 2 / 120 * up) * 30; // 30度の振れ幅で周期的に変化させる
+	//移動
 	Move();
 
+	for (int i = 0; i < 4; i++) {
+		stageHitFlg[0][i] = false;
+		stageHitFlg[1][i] = false;
+	}
 }
 
 void EnemyBat::Draw() const
@@ -123,11 +126,10 @@ void EnemyBat::Move()
 	
 	Location player_posi = Player::player_pos;
 	// プレイヤーとの距離を計算
+	vector = { 2.f };
 	float dx = player_posi.x - location.x;
 	float dy = player_posi.y - location.y;
 	float length = sqrt(dx * dx + dy * dy);
-
-	float speed = ENEMY_SPEED;
 
 	// プレイヤーとの距離が一定以下の場合、プレイヤーを追跡
 	if (length < 400) {
@@ -136,46 +138,193 @@ void EnemyBat::Move()
 		dy /= length;
 
 		// 移動する
-		location.x += dx * (ENEMY_SPEED + 1);
-		location.y += dy * (ENEMY_SPEED + 1);
+		location.x += dx * (vector.x + 1);
+		location.y += dy * (vector.y + 1);
 	}
 	else {
 		//左移動
 		if (bat_state == BatState::LEFT) {
-			location.x -= ENEMY_SPEED;
+			location.x -= vector.x;
 			location.y += sin(PI * 2 / 40 * up) * 5;
 
 		}
 		//右移動
 		if (bat_state == BatState::RIGHT) {
-			location.x += ENEMY_SPEED;
+			location.x += vector.x;
 			location.y -= sin(PI * 2 / 40 * up) * 5;
 		}
 	}
 }
 
-void EnemyBat::BatArray()
+void EnemyBat::Hit(Location _location, Erea _erea, int _type, int _color_data)
 {
+	//ブロックと当たった時の処理
+	if (_type == BLOCK)
+	{
+		Location tmpl = location;
+		Erea tmpe = erea;
+		move[0] = 0;
+		move[1] = 0;
+		move[2] = 0;
+		move[3] = 0;
+
+		//上下判定用に座標とエリアの調整
+		location.x += 10.f;
+		erea.height = 1.f;
+		erea.width = tmpe.width - 15.f;
+
+		//プレイヤー上方向の判定
+		if (CheckCollision(_location, _erea) && !stageHitFlg[1][top]) {
+			stageHitFlg[0][top] = true;
+			stageHitFlg[1][top] = true;
+		}
+		else {
+			stageHitFlg[0][top] = false;
+		}
+
+		//プレイヤー下方向の判定
+		location.y += tmpe.height + 1;
+		if (CheckCollision(_location, _erea) && !stageHitFlg[1][bottom]) {
+			stageHitFlg[0][bottom] = true;
+			stageHitFlg[1][bottom] = true;
+		}
+		else {
+			stageHitFlg[0][bottom] = false;
+		}
+
+		//戻す
+		location.x = tmpl.x;
+		location.y = tmpl.y;
+		erea.height = tmpe.height;
+		erea.width = tmpe.width;
+
+		//上方向に埋まらないようにする
+		if (stageHitFlg[0][top]) {//上方向に埋まっていたら
+			float t = (_location.y + _erea.height) - location.y;
+			if (t != 0) {
+				vector.y = 0.f;
+				move[top] = t;
+			}
+		}
+
+		//下方向に埋まらないようにする
+		if (stageHitFlg[0][bottom]) {//下方向に埋まっていたら
+			float t = _location.y - (location.y + erea.height);
+			if (t != 0) {
+				move[bottom] = t;
+			}
+		}
+
+
+		//左右判定用に座標とエリアの調整
+		location.y += 3.f;
+		erea.height = tmpe.height - 3.f;
+		erea.width = 1;
+
+		//プレイヤー左方向の判定
+		if (CheckCollision(_location, _erea) && !stageHitFlg[1][left]) {
+			stageHitFlg[0][left] = true;
+			stageHitFlg[1][left] = true;
+			int a = CheckCollision(_location, _erea);
+		}
+		else {
+			stageHitFlg[0][left] = false;
+		}
+
+
+		//プレイヤー右方向の判定
+		location.x = tmpl.x + tmpe.width + 1;
+		if (CheckCollision(_location, _erea) && !stageHitFlg[1][right]) {
+			stageHitFlg[0][right] = true;
+			stageHitFlg[1][right] = true;
+		}
+		else {
+			stageHitFlg[0][right] = false;
+		}
+
+		//最初の値に戻す
+
+		location.x = tmpl.x;
+		location.y += -3.f;
+		erea.height = tmpe.height;
+		erea.width = tmpe.width;
+
+
+
+		//左方向に埋まらないようにする
+		if (stageHitFlg[0][left]) {//左方向に埋まっていたら
+			float t = (_location.x + _erea.width) - location.x;
+			if (t != 0) {
+				vector.x = 0.f;
+				move[left] = t;
+				bat_state = BatState::RIGHT;
+			}
+		}
+
+		//右方向に埋まらないようにする
+		if (stageHitFlg[0][right]) {//右方向に埋まっていたら
+			float t = _location.x - (location.x + erea.width);
+			if (t != 0) {
+				vector.x = 0.f;
+				move[right] = t;
+				bat_state = BatState::LEFT;
+			}
+		}
+
+
+		//上下左右の移動量から移動後も埋まってるか調べる
+		if (location.y < _location.y + _erea.height && location.y + erea.height > _location.y) {//左右
+			if (stageHitFlg[1][top] || stageHitFlg[1][bottom]) {
+				move[left] = 0.f;
+				move[right] = 0.f;
+			}
+		}
+
+		location.x += move[left];
+		location.x += move[right];
+		location.y += move[top];
+		location.y += move[bottom];
+
+		erea.height = tmpe.height;
+		erea.width = tmpe.width;
+
+	}
 
 }
 
-void EnemyBat::Hit(Location _location, Erea _erea, int _type, int _color_data)
+bool EnemyBat::CheckCollision(Location l, Erea e)
 {
-	if (_type == BLOCK)
+	bool ret = false;
+
+	//自分の左上座標
+	float my_x = location.x;
+	float my_y = location.y;
+	//自分の中央座標
+	float my_cx = my_x + (erea.width / 2);
+	float my_cy = my_y + (erea.height / 2);
+	//自分の幅と高さの半分
+	float my_harf_width = erea.width / 2;
+	float my_harf_height = erea.height / 2;
+
+	//相手の左上座標
+	float sub_x = l.x;
+	float sub_y = l.y;
+	//相手の中央座標
+	float sub_cx = sub_x + (e.width / 2);
+	float sub_cy = sub_y + (e.height / 2);
+	//相手の幅と高さの半分
+	float sub_harf_width = e.width / 2;
+	float sub_harf_height = e.height / 2;
+
+	//自分と相手の中心座標の差
+	float diff_x = my_cx - sub_cx;
+	float diff_y = my_cy - sub_cy;
+
+	//当たり判定の演算
+	if (fabsf(diff_x) < my_harf_width + sub_harf_width &&
+		fabsf(diff_y) < my_harf_height + sub_harf_height)
 	{
-		//右壁に当たった時
-		if (location.x < _location.x + _erea.width && location.y + erea.height - 12 > _location.y)
-		{
-			bat_state = BatState::LEFT;
-		}
-		//左壁に当たった時
-		if (location.x > _location.x && location.y + erea.height - 12 > _location.y)
-		{
-			bat_state = BatState::RIGHT;
-		}
-		//床に当たった時
-		if (location.y + erea.height - 24 < _location.y) {
-			location.y = _location.y - erea.height;
-		}
+		ret = true;
 	}
+	return ret;
 }
