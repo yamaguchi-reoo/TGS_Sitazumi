@@ -36,12 +36,17 @@ public:
 
 	virtual bool SearchColor(Object* ob) = 0;
 
-	//各値の取得
+	//各変数の取得
 	int GetObjectType() { return type; }
-
 	bool GetCanSwap() { return can_swap; }
-
 	bool GetCanHit() { return can_hit; }
-
 	bool GetSearchFlg() { return searchFlg;	}
+	int GetObjectPos() { return object_pos; }
+
+	//各変数の変更
+	void SetObjectType(int _num) { type = _num; }
+	void SetCanSwap(bool _flg) { can_swap = _flg; }
+	void SetCanHit(bool _flg) { can_hit = _flg; }
+	void SetSearchFlg(bool _flg) { searchFlg = _flg; }
+	void SetObjectPos(int _num) { object_pos = _num; }
 };
