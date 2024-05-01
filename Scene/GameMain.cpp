@@ -309,7 +309,7 @@ void GameMain::SetStage(int _stage)
 			case 14:
 			case 15:
 				//コウモリの生成
-				CreateObject(new EnemyBat, { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { 100,150 }, ColorList[stage_data[i][j] - 13]);
+				CreateObject(new EnemyBat, { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { 75,120 }, ColorList[stage_data[i][j] - 13]);
 				break;
 			case 16:
 			case 17:
