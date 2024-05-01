@@ -23,6 +23,7 @@ Player::Player()
 
 	searchedLen = 1000.f;
 	searchedObj = nullptr;
+	oldSearchedObj = nullptr;
 	searchFlg = false;
 	swapTimer = -1;
 	oldSearchFlg = false;
@@ -47,6 +48,10 @@ Player::Player()
 	posRelNum[1] = 0;
 
 	objSelectNumTmp = 0;
+	searchedObjFlg = false;
+
+	damageFlg = false;
+	hp = 5;
 }
 
 Player::~Player()
@@ -77,15 +82,26 @@ void Player::Update(GameMain* _g)
 		vector.y = 0.f;
 	}
 
+	if (objNum <= 0) {
+		searchedObjFlg = false;
+	}
+	else {
+		searchedObjFlg = true;
+	}
+
 	oldSearchFlg = searchFlg;
 	//Bボタンで色の交換ができるモードと切り替え
-	if (PadInput::OnPressed(XINPUT_BUTTON_B)/* && !searchFlg*/) {
+	if (PadInput::OnPressed(XINPUT_BUTTON_B)/* && searchedObjFlg*/) {
 		SelectObject();
 		searchFlg = true;
 	}
 	else if (PadInput::OnRelease(XINPUT_BUTTON_B) && searchFlg && searchedObj != nullptr && swapTimer < 0) {
 		//交換エフェクトにかかる時間を受け取る
 		swapTimer = _g->Swap(this, searchedObj);
+		objSelectNumTmp = 0;
+	}
+	else if (PadInput::OnRelease(XINPUT_BUTTON_B) && !searchedObjFlg /*&& searchedObj == nullptr*/) {//交換できるオブジェクトが画面内になかった時
+		searchFlg = false;
 	}
 	/*else if (PadInput::OnButton(XINPUT_BUTTON_B) && searchFlg) {
 		searchFlg = false;
@@ -143,6 +159,8 @@ void Player::Update(GameMain* _g)
 	}
 	posRelNum[0] = 0;
 	posRelNum[1] = 0;
+
+	damageFlg = false;
 }
 
 void Player::Draw()const
@@ -154,13 +172,17 @@ void Player::Draw()const
 
 	if (searchedObj != nullptr && searchFlg) {
 		DrawCircle(searchedObj->GetLocalLocation().x + searchedObj->GetErea().width / 2,
-			searchedObj->GetLocalLocation().y + searchedObj->GetErea().height / 2, 40, 0xffff00, TRUE);
+			searchedObj->GetLocalLocation().y + searchedObj->GetErea().height / 2, 40, 0xffff00, FALSE, 5);
 		/*DrawFormatString(640, 80, 0xffff00, "%f", searchedObj->GetLocalLocation().x);
 		DrawFormatString(640, 100, 0xff0000, "%f", searchedObj->GetLocalLocation().y);*/
 	}
 	if (searchFlg) {
-		DrawLine(local_location.x + (erea.width / 2), local_location.y + (erea.height / 2), lineLoc.x, lineLoc.y, color);
-		DrawCircle(lineLoc.x, lineLoc.y, 10, color, TRUE);
+		/*DrawLine(local_location.x + (erea.width / 2), local_location.y + (erea.height / 2), lineLoc.x, lineLoc.y, color);
+		DrawCircle(lineLoc.x, lineLoc.y, 10, color, TRUE);*/
+	}
+
+	if (damageFlg) {
+		DrawString(local_location.x, local_location.y, "damage", 0xffffff);
 	}
 
 	//DrawFormatString(400, 20, 0xffff00, "l.x%f", location.x);
@@ -168,10 +190,12 @@ void Player::Draw()const
 	//DrawFormatString(400, 60, 0xffff00, "e.w%f", erea.width);
 	//DrawFormatString(400, 80, 0xff0000, "e.h%f", erea.height);
 
-	//DrawFormatString(700, 20, 0xffff00, "v.x%f", saveVec.x);
-	//DrawFormatString(700, 40, 0xff0000, "v.y%f", saveVec.y);
-	//DrawFormatString(700, 60, 0xffff00, "v.x%f", vector.x);
-	//DrawFormatString(700, 80, 0xff0000, "v.y%f", vector.y);
+	if (oldSearchedObj != nullptr && searchedObj != nullptr) {
+		/*DrawFormatString(700, 20, 0xffff00, "v.x%f", oldSearchedObj->GetLocalLocation().x);
+		DrawFormatString(700, 40, 0xff0000, "v.y%f", oldSearchedObj->GetLocalLocation().y);
+		DrawFormatString(700, 60, 0xffff00, "v.x%f", searchedObj->GetLocalLocation().x);
+		DrawFormatString(700, 80, 0xff0000, "v.y%f", searchedObj->GetLocalLocation().y);*/
+	}
 
 	//DrawFormatString(900, 100, 0xffff00, "v.x%d", stageHitFlg[1][0]);
 	//DrawFormatString(900, 120, 0xff0000, "v.y%d", stageHitFlg[1][1]);
@@ -258,7 +282,7 @@ void Player::Hit(Location _location, Erea _erea, int _type, int _color_data)
 
 		//左右判定用に座標とエリアの調整
 		location.y += 3.f;
-		erea.height = tmpe.height - 3.f;
+		erea.height = tmpe.height - 10.f;
 		erea.width = 1;
 
 		//プレイヤー左方向の判定
@@ -327,6 +351,37 @@ void Player::Hit(Location _location, Erea _erea, int _type, int _color_data)
 		erea.width = tmpe.width;
 
 	}
+
+	if (CheckCollision(_location, _erea)) {
+		//色ごとの判定
+		switch (color)
+		{
+		case RED:
+			if (_type == WATER || _color_data == BLUE) {
+				damageFlg = true;
+			}
+			
+			break;
+
+		case BLUE:
+			if (_type == WOOD || _color_data == GREEN) {
+				damageFlg = true;
+			}
+			
+			break;
+
+		case GREEN:
+			if (_type == FIRE || _color_data == FIRE) {
+				damageFlg = true;
+			}
+			
+			break;
+
+		default:
+			break;
+		}
+	}
+
 }
 
 void Player::MoveActor()
@@ -435,99 +490,98 @@ bool Player::ChangePlayerColor()
 
 void Player::SelectObject()
 {
-	//X軸
-	if ((PadInput::TipLeftLStick(STICKL_X) > 0.8f || PadInput::OnButton(XINPUT_BUTTON_DPAD_RIGHT)) && oldStick[0]) {
-		/*objSelectNum[1]++;
-		oldStick[0] = false;
-		if (posRelation[objSelectNum[0]][objSelectNum[1]] == -1) {
-			objSelectNum[1] = 0;
-			objSelectNum[0]++;
-		}*/
-		objSelectNumTmp++;
-		oldStick[0] = false;
-		if (searchedObjAll[objSelectNumTmp] == nullptr) {
-			objSelectNumTmp = 0;
-		}
-	}
-	else if ((PadInput::TipLeftLStick(STICKL_X) < -0.8f || PadInput::OnButton(XINPUT_BUTTON_DPAD_LEFT)) && oldStick[1]) {
-		/*objSelectNum[1]--;
-		oldStick[1] = false;
-		if (objSelectNum[1] < 0) {
-			objSelectNum[1] = 0;
-			objSelectNum[0]--;
-			if (objSelectNum[0] < 0) {
-				objSelectNum[0] = 0;
-			}
-		}*/
-		objSelectNumTmp--;
-		oldStick[1] = false;
-		if (objSelectNumTmp < 0) {
-			objSelectNumTmp = 0;
-		}
-	}
-	else if (PadInput::TipLeftLStick(STICKL_X) < 0.1f && PadInput::TipLeftLStick(STICKL_X) > -0.1f) {
-		oldStick[0] = true;
-		oldStick[1] = true;
-	}
-	//Y軸
-	if ((PadInput::TipLeftLStick(STICKL_Y) > 0.8f || PadInput::OnButton(XINPUT_BUTTON_DPAD_UP)) && oldStick[2]) {
-		/*objSelectNum[0]--;
-		if (objSelectNum[0] < 0) {
-			objSelectNum[0] = 0;
-		}
-		oldStick[2] = false;
-		if (posRelation[objSelectNum[0]][objSelectNum[1]] == -1) {
-			objSelectNum[0] = 0;
-			objSelectNum[1] = 0;
-		}*/
+	if (searchedObjFlg && searchedObj != nullptr) {
+		//X軸
+		if ((PadInput::TipLeftLStick(STICKL_X) > 0.8f || PadInput::OnButton(XINPUT_BUTTON_DPAD_RIGHT)) && oldStick[0]) {
+			oldStick[0] = false;
 
-		oldStick[2] = false;
-
-		float nearLen = 1000.f;
-		for (int i = 0; searchedObjAll[i] != nullptr; i++)
-		{
-			if (searchedObj->GetLocalLocation().y > searchedObjAll[i]->GetLocalLocation().y)
+			float nearLen = 1000.f;
+			for (int i = 0; searchedObjAll[i] != nullptr; i++)
 			{
-				if (GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation()) < nearLen)
+				
+				if (searchedObj->GetLocalLocation().x < searchedObjAll[i]->GetLocalLocation().x)
 				{
-					nearLen = GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation());
-					//セレクトオブジェクトここに入れる
-					objSelectNumTmp = i;
+					if (GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation()) < nearLen)
+					{
+						nearLen = GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation());
+						//セレクトオブジェクトここに入れる
+						objSelectNumTmp = i;
+					}
 				}
 			}
 		}
-	}
-	else if ((PadInput::TipLeftLStick(STICKL_Y) < -0.8f || PadInput::OnButton(XINPUT_BUTTON_DPAD_DOWN)) && oldStick[3]) {
-		/*objSelectNum[0]++;
-		oldStick[3] = false;
-		if (posRelation[objSelectNum[0]][objSelectNum[1]] == -1) {
-			objSelectNum[0] = 0;
-		}*/
+		else if ((PadInput::TipLeftLStick(STICKL_X) < -0.8f || PadInput::OnButton(XINPUT_BUTTON_DPAD_LEFT)) && oldStick[1]) {
+			oldStick[1] = false;
 
-		oldStick[3] = false;
-
-		float nearLen = 1000.f;
-		for (int i = 0; searchedObjAll[i] != nullptr; i++)
-		{
-			if (searchedObj->GetLocalLocation().y < searchedObjAll[i]->GetLocalLocation().y)
+			float nearLen = 1000.f;
+			for (int i = 0; searchedObjAll[i] != nullptr; i++)
 			{
-				if (GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation()) < nearLen)
+				if (searchedObj->GetLocalLocation().x > searchedObjAll[i]->GetLocalLocation().x)
 				{
-					nearLen = GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation());
-					//セレクトオブジェクトここに入れる
-					objSelectNumTmp = i;
+					if (GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation()) < nearLen)
+					{
+						nearLen = GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation());
+						//セレクトオブジェクトここに入れる
+						objSelectNumTmp = i;
+					}
 				}
 			}
 		}
-	}
-	else if (PadInput::TipLeftLStick(STICKL_Y) < 0.1f && PadInput::TipLeftLStick(STICKL_Y) > -0.1f) {
-		oldStick[2] = true;
-		oldStick[3] = true;
-	}
-	/*int a = posRelation[objSelectNum[0]][objSelectNum[1]];
-	searchedObj = searchedObjAll[a];*/
+		else if (PadInput::TipLeftLStick(STICKL_X) < 0.1f && PadInput::TipLeftLStick(STICKL_X) > -0.1f) {
+			oldStick[0] = true;
+			oldStick[1] = true;
+		}
+		//Y軸
+		if ((PadInput::TipLeftLStick(STICKL_Y) > 0.8f || PadInput::OnButton(XINPUT_BUTTON_DPAD_UP)) && oldStick[2]) {
+			oldStick[2] = false;
 
-	searchedObj = searchedObjAll[objSelectNumTmp];
+			float nearLen = 1000.f;
+			for (int i = 0; searchedObjAll[i] != nullptr; i++)
+			{
+				if (searchedObj->GetLocalLocation().y > searchedObjAll[i]->GetLocalLocation().y)
+				{
+					if (GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation()) < nearLen)
+					{
+						nearLen = GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation());
+						//セレクトオブジェクトここに入れる
+						objSelectNumTmp = i;
+					}
+				}
+			}
+		}
+		else if ((PadInput::TipLeftLStick(STICKL_Y) < -0.8f || PadInput::OnButton(XINPUT_BUTTON_DPAD_DOWN)) && oldStick[3]) {
+			oldStick[3] = false;
+
+			float nearLen = 1000.f;
+			for (int i = 0; searchedObjAll[i] != nullptr; i++)
+			{
+				if (searchedObj->GetLocalLocation().y < searchedObjAll[i]->GetLocalLocation().y)
+				{
+					if (GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation()) < nearLen)
+					{
+						nearLen = GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation());
+						//セレクトオブジェクトここに入れる
+						objSelectNumTmp = i;
+					}
+				}
+			}
+		}
+		else if (PadInput::TipLeftLStick(STICKL_Y) < 0.1f && PadInput::TipLeftLStick(STICKL_Y) > -0.1f) {
+			oldStick[2] = true;
+			oldStick[3] = true;
+		}
+
+		if (oldSearchedObj != searchedObj) {
+			oldSearchedObj = searchedObj;
+		}
+		searchedObj = searchedObjAll[objSelectNumTmp];
+	}
+	else if (searchedObjFlg) {
+		searchedObj = searchedObjAll[0];
+	}
+	else {
+		searchedObj = nullptr;
+	}
 }
 
 bool Player::CheckCollision(Location l, Erea e)
