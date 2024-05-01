@@ -14,7 +14,7 @@
 static Location camera_location = { 0,0};	//カメラの座標
 static Location screen_origin = { (SCREEN_WIDTH / 2),(SCREEN_HEIGHT / 2) };
 
-GameMain::GameMain(int _stage) :stage_data{0},now_stage(0), stage_width_num(0), stage_height_num(0), stage_width(0), stage_height(0), camera_x_lock_flg(true), camera_y_lock_flg(true), x_pos_set_once(false), y_pos_set_once(false),player_object(0)
+GameMain::GameMain(int _stage) :stage_data{0},now_stage(0), stage_width_num(0), stage_height_num(0), stage_width(0), stage_height(0), camera_x_lock_flg(true), camera_y_lock_flg(true), x_pos_set_once(false), y_pos_set_once(false),player_object(0),weather(0), weather_timer(0)
 {
 	swap_anim[0].move_flg = false;
 	swap_anim[1].move_flg = false;
@@ -80,6 +80,9 @@ AbstractScene* GameMain::Update()
 			swap_anim_timer = 0;
 		}
 	}
+	//天気の更新
+	weather = 1;
+	WeatherUpdate(weather);
 #ifdef _DEBUG
 	//ステージをいじるシーンへ遷移
 	if (KeyInput::OnPresed(KEY_INPUT_E) && KeyInput::OnPresed(KEY_INPUT_D))
@@ -386,4 +389,22 @@ bool GameMain::GetSearchFlg()
 Location GameMain::GetPlayerLocation()
 {
 	return object[player_object]->GetLocation();
+}
+
+void GameMain::WeatherUpdate(int _type)
+{
+	switch (_type)
+	{
+	case 0:		//通常
+		break;
+	case 1:		//雨
+		CreateObject(new Weather(WATER), { camera_location.x+(GetRand(SCREEN_WIDTH)),camera_location.y}, {20,5}, BLUE);
+		break;
+	case 2:		//火
+		break;
+	case 3:		//木
+		break;
+	default:
+		break;
+	}
 }

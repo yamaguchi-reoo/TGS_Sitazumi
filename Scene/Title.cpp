@@ -20,5 +20,4 @@ AbstractScene* Title::Update()
 void Title::Draw()const
 {
 	DrawString(0, 10, "Title", 0x00ff00);
-	DrawGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, ResourceManager::GetGraph(0), true);
 }

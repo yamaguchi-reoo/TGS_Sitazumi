@@ -28,6 +28,7 @@
     <ClCompile Include="Object\Object.cpp" />
     <ClCompile Include="Object\Player.cpp" />
     <ClCompile Include="Object\Stage.cpp" />
+    <ClCompile Include="Object\Weather.cpp" />
     <ClCompile Include="Scene\EditScene.cpp" />
     <ClCompile Include="Scene\GameMain.cpp" />
     <ClCompile Include="Scene\SceneManager.cpp" />
@@ -46,6 +47,7 @@
     <ClInclude Include="Object\ColorData.h" />
     <ClInclude Include="Object\Player.h" />
     <ClInclude Include="Object\Stage.h" />
+    <ClInclude Include="Object\Weather.h" />
     <ClInclude Include="Scene\AbstractScene.h" />
     <ClInclude Include="Scene\EditScene.h" />
     <ClInclude Include="Scene\GameMain.h" />

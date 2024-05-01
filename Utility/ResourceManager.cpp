@@ -113,10 +113,6 @@ void ResourceManager::DrawRotaBox(float _x, float _y, float _w, float _h, float 
 {
 	float loc[4][2];
 	float newloc[4][2];
-	float f1;
-	float f2;
-	float p;
-	float r;
 	float rad;
 
 	//４点のローカル座標を格納

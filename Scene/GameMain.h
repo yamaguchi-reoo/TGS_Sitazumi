@@ -6,6 +6,7 @@
 #include "../Object/EnemyDeer.h"
 #include"../Object/EnemyBat.h"
 #include"../Object/EnemyFrog.h"
+#include"../Object/Weather.h"
 #include"../Object/Object.h"
 
 class Player;
@@ -49,6 +50,8 @@ private:
     bool y_pos_set_once;     //カメラのロック位置設定用
     Location lock_pos;       //カメラが動けない時に画面揺れが発生した時、カメラの位置が戻る場所
     int fps = 0;
+    int weather;            //現在の天気(0=通常　1=雨　2=火　3=木)
+    int weather_timer;      //天気オブジェクトを生成するスパン
 
     SwapAnim swap_anim[2];  //交換エフェクト用
     int swap_anim_timer;    //交換エフェクト時間用
@@ -95,5 +98,8 @@ public:
 
     //プレイヤーのワールド座標を取得
     Location GetPlayerLocation();
+
+    //天気の更新
+    void WeatherUpdate(int _type);
 };
 
