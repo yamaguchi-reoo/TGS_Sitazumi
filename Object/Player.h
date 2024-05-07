@@ -26,14 +26,14 @@ private:
 
 	float searchedLen; //交換できるオブジェクトとの距離
 	Object* searchedObj; //一番近い色を交換できるオブジェクト
-	Object* oldSearchedObj; //一番近い色を交換できるオブジェクト
+	Object* oldSearchedObj; //前回選択していたオブジェクト
 	Object* searchedObjAll[OBJECT_NUM]; //画面内の色交換できるオブジェクト
 	int objNum;//オブジェクトの添え字
 	int objSelectNum[2];//オブジェクトの添え字
 	int objSelectNumTmp;//オブジェクトの添え字
 	bool searchedObjFlg;//画面内に交換できるオブジェクトがあるかどうか
 
-	int posRelation[MAX_STAGE_HEIGHT][MAX_STAGE_WIDTH];
+	int posRelation[720 / 40][1280 / 40];
 	int posRelNum[2];
 	bool oldStick[4];
 	//bool searchFlg;
@@ -43,7 +43,10 @@ private:
 	Location saveVec; //ベクトルの一時保存用
 
 	bool damageFlg; //ダメージを受けたとき
+	bool damageOldFlg; //ダメージを受けたとき
 	int hp;
+	int damageEffectTime = 60;
+	bool damageEffectFlg = false;
 
 	int fps = 0;
 	int fps1 = 0;
