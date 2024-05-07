@@ -495,26 +495,101 @@ void Player::SelectObject()
 		if ((PadInput::TipLeftLStick(STICKL_X) > 0.8f || PadInput::OnButton(XINPUT_BUTTON_DPAD_RIGHT)) && oldStick[0]) {
 			oldStick[0] = false;
 
-			float nearLen = 1000.f;
-			for (int i = 0; searchedObjAll[i] != nullptr; i++)
+			float nearLen[4] = { 1000.f,1000.f,1000.f,1000.f };
+			int snum[4] = { -1,-1,-1,-1 };
+			/*
+			* 優先順位（右）
+			* 同じｘかつ上
+			* 違うｘかつ上
+			* 同じｘかつ下
+			* 違うｘかつ下
+			* 
+			* このやり方無理かも
+			* 配列に位置関係を保存してそこから求める
+			* 今までのやり方じゃなくて座標を40で割った値を配列の添え字にして場所の関係事保存
+			*/
+			for (int i = 0;  i < objNum; i++)
 			{
-				
-				if (searchedObj->GetLocalLocation().x < searchedObjAll[i]->GetLocalLocation().x)
-				{
-					if (GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation()) < nearLen)
+				if (GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation()) != 0) {
+
+					if (searchedObj->GetLocalLocation().x <= searchedObjAll[i]->GetLocalLocation().x && //同じｘかつうえ
+						searchedObj->GetLocalLocation().y >= searchedObjAll[i]->GetLocalLocation().y)
 					{
-						nearLen = GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation());
-						//セレクトオブジェクトここに入れる
-						objSelectNumTmp = i;
+						if (GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation()) <= nearLen[0])
+						{
+							nearLen[0] = GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation());
+							//セレクトオブジェクトここに入れる
+							snum[0] = i;
+						}
+					}
+
+
+					if (searchedObj->GetLocalLocation().x < searchedObjAll[i]->GetLocalLocation().x &&
+						searchedObj->GetLocalLocation().y > searchedObjAll[i]->GetLocalLocation().y)//ちがうｘかつ上
+					{
+						if (GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation()) <= nearLen[1])
+						{
+							nearLen[1] = GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation());
+							//セレクトオブジェクトここに入れる
+							//objSelectNumTmp = i;
+							snum[1] = i;
+						}
+					}
+
+					
+					if (searchedObj->GetLocalLocation().x < searchedObjAll[i]->GetLocalLocation().x && //おなじｘかつした
+						searchedObj->GetLocalLocation().y < searchedObjAll[i]->GetLocalLocation().y)
+					{
+						if (GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation()) <= nearLen[2])
+						{
+							nearLen[2] = GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation());
+							//セレクトオブジェクトここに入れる
+							snum[2] = i;
+						}
+					}
+
+					if (searchedObj->GetLocalLocation().x <= searchedObjAll[i]->GetLocalLocation().x && //ちがうｘかつした
+						searchedObj->GetLocalLocation().y < searchedObjAll[i]->GetLocalLocation().y)
+					{
+						if (GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation()) <= nearLen[3])
+						{
+							nearLen[3] = GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation());
+							//セレクトオブジェクトここに入れる
+							snum[3] = i;
+						}
 					}
 				}
 			}
+
+			/*if (snum[0] > -1 && GetLength(searchedObj->GetLocalLocation(), searchedObjAll[snum[1]]->GetLocalLocation()) >
+				GetLength(searchedObj->GetLocalLocation(), searchedObjAll[snum[0]]->GetLocalLocation())) {
+				objSelectNumTmp = snum[0];
+			}
+			else if (snum[1] > -1 && GetLength(searchedObj->GetLocalLocation(), searchedObjAll[snum[2]]->GetLocalLocation()) >
+				GetLength(searchedObj->GetLocalLocation(), searchedObjAll[snum[1]]->GetLocalLocation())) {
+				objSelectNumTmp = snum[1];
+			}*/
+
+			if (snum[0] > -1) {
+				objSelectNumTmp = snum[0];
+			}
+			else if (snum[1] > -1) {
+				objSelectNumTmp = snum[1];
+			}
+			else if (snum[2] > -1) {
+				objSelectNumTmp = snum[2];
+			}
+			else if (snum[3] > -1) {
+				objSelectNumTmp = snum[3];
+			}
+
+
 		}
 		else if ((PadInput::TipLeftLStick(STICKL_X) < -0.8f || PadInput::OnButton(XINPUT_BUTTON_DPAD_LEFT)) && oldStick[1]) {
 			oldStick[1] = false;
 
 			float nearLen = 1000.f;
-			for (int i = 0; searchedObjAll[i] != nullptr; i++)
+			for (int i = 0; i < objNum; i++)
 			{
 				if (searchedObj->GetLocalLocation().x > searchedObjAll[i]->GetLocalLocation().x)
 				{
@@ -536,7 +611,7 @@ void Player::SelectObject()
 			oldStick[2] = false;
 
 			float nearLen = 1000.f;
-			for (int i = 0; searchedObjAll[i] != nullptr; i++)
+			for (int i = 0; i < objNum; i++)
 			{
 				if (searchedObj->GetLocalLocation().y > searchedObjAll[i]->GetLocalLocation().y)
 				{
@@ -553,7 +628,7 @@ void Player::SelectObject()
 			oldStick[3] = false;
 
 			float nearLen = 1000.f;
-			for (int i = 0; searchedObjAll[i] != nullptr; i++)
+			for (int i = 0; i < objNum; i++)
 			{
 				if (searchedObj->GetLocalLocation().y < searchedObjAll[i]->GetLocalLocation().y)
 				{
