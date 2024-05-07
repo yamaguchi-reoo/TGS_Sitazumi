@@ -112,10 +112,10 @@ void EnemyFrog::Finalize()
 
 }
 
-void EnemyFrog::Hit(Location _location, Erea _erea, int _type, int _color_data)
+void EnemyFrog::Hit(Object* _object)
 {
 	//ブロックと当たった時の処理
-	if (_type == BLOCK)
+	if (_object->GetObjectType() == BLOCK)
 	{
 		Location tmpl = location;
 		Erea tmpe = erea;
@@ -130,7 +130,7 @@ void EnemyFrog::Hit(Location _location, Erea _erea, int _type, int _color_data)
 		erea.width = tmpe.width - 15.f;
 
 		//プレイヤー上方向の判定
-		if (CheckCollision(_location, _erea) && !stageHitFlg[1][top]) {
+		if (CheckCollision(_object->GetLocation(), _object->GetErea()) && !stageHitFlg[1][top]) {
 			stageHitFlg[0][top] = true;
 			stageHitFlg[1][top] = true;
 		}
@@ -140,7 +140,7 @@ void EnemyFrog::Hit(Location _location, Erea _erea, int _type, int _color_data)
 
 		//プレイヤー下方向の判定
 		location.y += tmpe.height + 1;
-		if (CheckCollision(_location, _erea) && !stageHitFlg[1][bottom]) {
+		if (CheckCollision(_object->GetLocation(), _object->GetErea()) && !stageHitFlg[1][bottom]) {
 			stageHitFlg[0][bottom] = true;
 			stageHitFlg[1][bottom] = true;
 		}
@@ -156,7 +156,7 @@ void EnemyFrog::Hit(Location _location, Erea _erea, int _type, int _color_data)
 
 		//上方向に埋まらないようにする
 		if (stageHitFlg[0][top]) {//上方向に埋まっていたら
-			float t = (_location.y + _erea.height) - location.y;
+			float t = (_object->GetLocation().y + _object->GetErea().height) - location.y;
 			if (t != 0) {
 				vector.y = 0.f;
 				move[top] = t;
@@ -165,7 +165,7 @@ void EnemyFrog::Hit(Location _location, Erea _erea, int _type, int _color_data)
 
 		//下方向に埋まらないようにする
 		if (stageHitFlg[0][bottom]) {//下方向に埋まっていたら
-			float t = _location.y - (location.y + erea.height);
+			float t = _object->GetLocation().y - (location.y + erea.height);
 			if (t != 0) {
 				move[bottom] = t;
 			}
@@ -178,10 +178,10 @@ void EnemyFrog::Hit(Location _location, Erea _erea, int _type, int _color_data)
 		erea.width = 1;
 
 		//プレイヤー左方向の判定
-		if (CheckCollision(_location, _erea) && !stageHitFlg[1][left]) {
+		if (CheckCollision(_object->GetLocation(), _object->GetErea()) && !stageHitFlg[1][left]) {
 			stageHitFlg[0][left] = true;
 			stageHitFlg[1][left] = true;
-			int a = CheckCollision(_location, _erea);
+			int a = CheckCollision(_object->GetLocation(), _object->GetErea());
 		}
 		else {
 			stageHitFlg[0][left] = false;
@@ -190,7 +190,7 @@ void EnemyFrog::Hit(Location _location, Erea _erea, int _type, int _color_data)
 
 		//プレイヤー右方向の判定
 		location.x = tmpl.x + tmpe.width + 1;
-		if (CheckCollision(_location, _erea) && !stageHitFlg[1][right]) {
+		if (CheckCollision(_object->GetLocation(), _object->GetErea()) && !stageHitFlg[1][right]) {
 			stageHitFlg[0][right] = true;
 			stageHitFlg[1][right] = true;
 		}
@@ -209,7 +209,7 @@ void EnemyFrog::Hit(Location _location, Erea _erea, int _type, int _color_data)
 
 		//左方向に埋まらないようにする
 		if (stageHitFlg[0][left]) {//左方向に埋まっていたら
-			float t = (_location.x + _erea.width) - location.x;
+			float t = (_object->GetLocation().x + _object->GetErea().width) - location.x;
 			if (t != 0) {
 				vector.x = 0.f;
 				move[left] = t;
@@ -218,7 +218,7 @@ void EnemyFrog::Hit(Location _location, Erea _erea, int _type, int _color_data)
 
 		//右方向に埋まらないようにする
 		if (stageHitFlg[0][right]) {//右方向に埋まっていたら
-			float t = _location.x - (location.x + erea.width);
+			float t = _object->GetLocation().x - (location.x + erea.width);
 			if (t != 0) {
 				vector.x = 0.f;
 				move[right] = t;
@@ -227,7 +227,7 @@ void EnemyFrog::Hit(Location _location, Erea _erea, int _type, int _color_data)
 
 
 		//上下左右の移動量から移動後も埋まってるか調べる
-		if (location.y < _location.y + _erea.height && location.y + erea.height > _location.y) {//左右
+		if (location.y < _object->GetLocation().y + _object->GetErea().height && location.y + erea.height > _object->GetLocation().y) {//左右
 			if (stageHitFlg[1][top] || stageHitFlg[1][bottom]) {
 				move[left] = 0.f;
 				move[right] = 0.f;
@@ -244,13 +244,14 @@ void EnemyFrog::Hit(Location _location, Erea _erea, int _type, int _color_data)
 
 	}
 
-	if ((_type == FIRE && this->color == GREEN)||(_type == WATER && this->color == RED)||(_type == WOOD && this->color == BLUE))
+	//弱点色に触れた時の処理
+	if ((_object->GetObjectType() == FIRE && this->color == GREEN)||(_object->GetObjectType() == WATER && this->color == RED)||(_object->GetObjectType() == WOOD && this->color == BLUE))
 	{
 		//死亡状態へ
 		if (frog_state != FrogState::DEATH)
 		{
 			frog_state = FrogState::DEATH;
-			can_swap = FALSE;
+			/*can_swap = FALSE;*/
 		}
 	}
 }

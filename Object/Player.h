@@ -57,7 +57,7 @@ public:
 	void Draw()const override;
 	void Finalize()override;
 
-	void Hit(Location _location, Erea _erea, int _type, int _color_data)override;
+	void Hit(Object* _object)override;
 
 	void MoveActor(); //キャラクターの移動
 	void MoveAim(); //照準の移動 近くの色の検知

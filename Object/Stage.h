@@ -109,7 +109,7 @@ public:
 	void Draw()const override;
 	void Finalize()override;
 
-	void Hit(Location _location, Erea _erea, int _type, int _color_data)override;
+	void Hit(Object* _object)override;
 	bool SearchColor(Object* ob) override {
 		return false;
 	}

@@ -155,21 +155,21 @@ void EnemyDeer::Finalize()
 // (0=ステージ(BLOCK) 1=プレイヤー(PLAYER) 2=敵 3=炎(FIRE) 4=木(WOOD) 5=水(WATER))
 //_color_data=当たった相手も色情報
 //自分の当たり判定を取っている部分は 一番下の辺
-void EnemyDeer::Hit(Location _location, Erea _erea, int _type, int _color_data)
+void EnemyDeer::Hit(Object* _object)
 {
-	DrawTest1 = _location.x;
-	DrawTest2 = _location.y;
-	DrawTest3 = _erea.height;
-	DrawTest4 = _erea.width;
-	DrawTest5 = _type;
-	DrawTest6 = _color_data;
+	DrawTest1 = _object->GetLocation().x;
+	DrawTest2 = _object->GetLocation().y;
+	DrawTest3 = _object->GetErea().height;
+	DrawTest4 = _object->GetErea().width;
+	DrawTest5 = _object->GetObjectType();
+	DrawTest6 = _object->GetColerData();
 
 	switch (deer_state)
 	{
 	case DeerState::GRAVITY:
 
 		//空中から重力により地面に当たると待ち状態に移行
-		if (location.y + erea.height >= _location.y && _type == BLOCK && _color_data == -1)
+		if (location.y + erea.height >= _object->GetLocation().y && _object->GetObjectType() == BLOCK && _object->GetColerData() == -1)
 		{
 			deer_state = DeerState::IDLE;
 		}
@@ -200,7 +200,7 @@ void EnemyDeer::Hit(Location _location, Erea _erea, int _type, int _color_data)
 	}
 
 	//死ぬ表示
-	if ((_type == FIRE && this->color == GREEN) || (_type == WATER && this->color == RED) || (_type == WOOD && this->color == BLUE))
+	if ((_object->GetObjectType() == FIRE && this->color == GREEN) || (_object->GetObjectType() == WATER && this->color == RED) || (_object->GetObjectType() == WOOD && this->color == BLUE))
 	{
 		deer_death = true;
 	}

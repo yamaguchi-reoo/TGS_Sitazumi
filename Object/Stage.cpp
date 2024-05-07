@@ -70,7 +70,7 @@ void Stage::Initialize(Location _location, Erea _erea, int _color_data,int _obje
 		wood_anim[i].shift2.y = GetRand(19);
 		water_anim[i].shift = (float)GetRand(9)/10;
 		water_anim[i].shift1.x = GetRand(8)* (erea.width / 10);
-		water_anim[i].shift1.y = GetRand(8)* (erea.height / 10);
+		water_anim[i].shift1.y = GetRand(8)* (erea.height / 10)-20;
 		water_anim[i].erea.width = erea.width/3;
 		water_anim[i].erea.height = erea.height/3;
 	}
@@ -426,7 +426,7 @@ void Stage::Finalize()
 
 }
 
-void Stage::Hit(Location _location, Erea _erea, int _type, int _color_data)
+void Stage::Hit(Object* _object)
 {
 	//上から何かがぶつかったなら、ブロックを揺らす
 	//if (_type == PLAYER)

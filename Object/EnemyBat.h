@@ -43,7 +43,7 @@ public:
 public:
 	void Move();
 
-	void Hit(Location _location, Erea _erea, int _type, int _color_data)override;
+	void Hit(Object* _object)override;
 	bool SearchColor(Object* ob) {
 		return 0;
 	}
