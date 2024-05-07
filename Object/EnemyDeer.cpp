@@ -93,7 +93,7 @@ void EnemyDeer::Draw()const
 	//当たり判定のBox
 	DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, GetColor(255, 255, 255), FALSE);
 
-	DrawFormatString(50, 60, 0xff0000, "スクリーン(location) X：%0.1f + %0.1f Y：%0.1f + %0.1f", location.x, erea.width, location.y, erea.height);
+	/*DrawFormatString(50, 60, 0xff0000, "スクリーン(location) X：%0.1f + %0.1f Y：%0.1f + %0.1f", location.x, erea.width, location.y, erea.height);
 	DrawFormatString(50, 80, 0xff0000, "ワールド(local) X     ：%0.1f Y：%0.1f", local_location.x, local_location.y);
 	DrawFormatString(50, 120, 0xff0000, "相手のlocation.x : %0.1f", DrawTest1);
 	DrawFormatString(50, 140, 0xff0000, "相手のlocation.y : %0.1f", DrawTest2);
@@ -102,7 +102,7 @@ void EnemyDeer::Draw()const
 	DrawFormatString(50, 200, 0xff0000, "type	       : %d", DrawTest5);
 	DrawFormatString(50, 220, 0xff0000, "color_data : %d", DrawTest6);
 
-	DrawFormatString(50, 20, 0xff0000, "DeerState ; %d", deer_state);
+	DrawFormatString(50, 20, 0xff0000, "DeerState ; %d", deer_state);*/
 
 	DrawCircleAA(local_location.x, local_location.y, 2, 32, 0x00ff00, TRUE);
 	DrawCircleAA(local_location.x, local_location.y + erea.height, 2, 32, 0xff00ff, TRUE);
@@ -199,6 +199,7 @@ void EnemyDeer::Hit(Location _location, Erea _erea, int _type, int _color_data)
 		break;
 	}
 
+	//死ぬ表示
 	if ((_type == FIRE && this->color == GREEN) || (_type == WATER && this->color == RED) || (_type == WOOD && this->color == BLUE))
 	{
 		deer_death = true;
