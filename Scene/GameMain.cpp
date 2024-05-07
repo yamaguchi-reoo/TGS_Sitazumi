@@ -136,7 +136,9 @@ void GameMain::Draw() const
 			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255); 
 		}
 	}
+#ifdef _DEBUG
 	DrawFormatString(100, 100, 0xffffff, "Object数:%d", object_num);
+#endif
 }
 
 void GameMain::CreateObject(Object* _object, Location _location, Erea _erea, int _color_data)
