@@ -3,6 +3,7 @@
 #include <vector>
 #include "../Utility/common.h"
 #include "Object.h"
+#include "../Scene/GameMain.h"
 
 
 enum class BatState {
@@ -29,7 +30,6 @@ private:
 
 	BatState bat_state;	//コウモリの状態
 	float wing_angle;	//羽の動かす用
-
 	int up;		//sin波で移動する用
 
 public:
