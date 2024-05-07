@@ -36,6 +36,7 @@ void EnemyBat::Initialize(Location _location, Erea _erea, int _color_data, int _
 
 void EnemyBat::Update(GameMain* _g)
 {
+	up += 1;
 	// 羽の角度を変化させる
 	wing_angle = sin(PI * 2 / 120 * up) * 30; // 30度の振れ幅で周期的に変化させる
 
@@ -46,8 +47,11 @@ void EnemyBat::Update(GameMain* _g)
 	float dy = player_posi.y - location.y;
 	float length = sqrt(dx * dx + dy * dy);
 
-	// プレイヤーとの距離が一定以下の場合、プレイヤーを追跡
-	if (length < 400) {
+	if (_g->GetSearchFlg()) {
+		location.x += vector.x * 0.1f;
+		location.y += vector.y * 0.1f;
+	}
+	else if (length < 400) {
 		// 移動方向を決定
 		dx /= length;
 		dy /= length;
@@ -67,9 +71,18 @@ void EnemyBat::Update(GameMain* _g)
 		stageHitFlg[1][i] = false;
 	}
 
-	if (_g->GetSearchFlg()) {
-		location.x += vector.x * 0.1f;
-		location.y += vector.y * 0.1f;
+	int i = 0;
+	switch (bat_state)
+	{
+	case BatState::IDLE:
+		break;
+	case BatState::LEFT:
+		break;
+	case BatState::RIGHT:
+		break;
+	case BatState::DEATH:
+		_g->DeleteObject(object_pos);
+		break;
 	}
 }
 
@@ -78,24 +91,41 @@ void EnemyBat::Draw() const
 	DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, GetColor(255, 255, 255), FALSE);
 
 	//各頂点をlocal_locationに置き換えた
+	//const std::vector<Location> vertices = {
+	//	// 耳
+	//	{local_location.x + 60, local_location.y}, {local_location.x + 60, local_location.y + 25}, {local_location.x + 72, local_location.y + 12},
+	//	{local_location.x + 90, local_location.y}, {local_location.x + 90, local_location.y + 25}, {local_location.x + 78, local_location.y + 12},
+	//	//右翼
+	//	{local_location.x + 87, local_location.y + 44}, {local_location.x + 127, local_location.y + 10}, {local_location.x + 153, local_location.y + 85},
+	//	{local_location.x + 87, local_location.y + 44}, {local_location.x + 127, local_location.y + 10}, {local_location.x + 126, local_location.y + 80},
+	//	{local_location.x + 85, local_location.y + 44}, {local_location.x + 127, local_location.y + 10}, {local_location.x + 105, local_location.y + 75},
+	//	//左翼
+	//	{local_location.x + 63, local_location.y + 44}, {local_location.x + 26, local_location.y + 10}, {local_location.x - 3, local_location.y + 85},
+	//	{local_location.x + 63, local_location.y + 44}, {local_location.x + 26, local_location.y + 10}, {local_location.x + 24, local_location.y + 80},
+	//	{local_location.x + 65, local_location.y + 44}, {local_location.x + 26, local_location.y + 10}, {local_location.x + 45, local_location.y + 75},
+	//	// 頭
+	//	{local_location.x + 75, local_location.y + 16}, {local_location.x + 90, local_location.y + 30}, {local_location.x + 75, local_location.y + 40}, {local_location.x + 60, local_location.y + 30},
+	//	// 胴体
+	//	{local_location.x + 75, local_location.y + 45}, {local_location.x + 90, local_location.y + 68}, {local_location.x + 75, local_location.y + 95}, {local_location.x + 60, local_location.y + 68},
+	//};
+
 	const std::vector<Location> vertices = {
 		// 耳
-		{local_location.x + 60, local_location.y}, {local_location.x + 60, local_location.y + 25}, {local_location.x + 72, local_location.y + 12},
-		{local_location.x + 90, local_location.y}, {local_location.x + 90, local_location.y + 25}, {local_location.x + 78, local_location.y + 12},
+		{local_location.x + 46, local_location.y}, {local_location.x + 46, local_location.y + 19}, {local_location.x + 55, local_location.y + 9},
+		{local_location.x + 69, local_location.y}, {local_location.x + 69, local_location.y + 19}, {local_location.x + 60, local_location.y + 9},
 		//右翼
-		{local_location.x + 87, local_location.y + 44}, {local_location.x + 127, local_location.y + 10}, {local_location.x + 153, local_location.y + 85},
-		{local_location.x + 87, local_location.y + 44}, {local_location.x + 127, local_location.y + 10}, {local_location.x + 126, local_location.y + 80},
-		{local_location.x + 85, local_location.y + 44}, {local_location.x + 127, local_location.y + 10}, {local_location.x + 105, local_location.y + 75},
+		{local_location.x + 66, local_location.y + 33}, {local_location.x + 97, local_location.y + 7}, {local_location.x + 117, local_location.y + 65},
+		{local_location.x + 66, local_location.y + 33}, {local_location.x + 97, local_location.y + 7}, {local_location.x + 96, local_location.y + 61},
+		{local_location.x + 65, local_location.y + 33}, {local_location.x + 97, local_location.y + 7}, {local_location.x + 80, local_location.y + 57},
 		//左翼
-		{local_location.x + 63, local_location.y + 44}, {local_location.x + 26, local_location.y + 10}, {local_location.x - 3, local_location.y + 85},
-		{local_location.x + 63, local_location.y + 44}, {local_location.x + 26, local_location.y + 10}, {local_location.x + 24, local_location.y + 80},
-		{local_location.x + 65, local_location.y + 44}, {local_location.x + 26, local_location.y + 10}, {local_location.x + 45, local_location.y + 75},
+		{local_location.x + 48, local_location.y + 33}, {local_location.x + 20, local_location.y + 7}, {local_location.x - 2, local_location.y + 65},
+		{local_location.x + 48, local_location.y + 33}, {local_location.x + 20, local_location.y + 7}, {local_location.x + 18, local_location.y + 61},
+		{local_location.x + 50, local_location.y + 33}, {local_location.x + 20, local_location.y + 7}, {local_location.x + 34, local_location.y + 57},
 		// 頭
-		{local_location.x + 75, local_location.y + 16}, {local_location.x + 90, local_location.y + 30}, {local_location.x + 75, local_location.y + 40}, {local_location.x + 60, local_location.y + 30},
+		{local_location.x + 57, local_location.y + 12}, {local_location.x + 69, local_location.y + 23}, {local_location.x + 57, local_location.y + 30}, {local_location.x + 46, local_location.y + 23},
 		// 胴体
-		{local_location.x + 75, local_location.y + 45}, {local_location.x + 90, local_location.y + 68}, {local_location.x + 75, local_location.y + 95}, {local_location.x + 60, local_location.y + 68},
+		{local_location.x + 57, local_location.y + 34}, {local_location.x + 69, local_location.y + 52}, {local_location.x + 57, local_location.y + 73}, {local_location.x + 46, local_location.y + 52},
 	};
-
 
 	//配列の各頂点を利用して三角形を描画する
 	for (int i = 0; i < vertices.size(); i += 3) {
@@ -151,7 +181,7 @@ void EnemyBat::Finalize()
 
 void EnemyBat::Move()
 {
-	up += 1;
+	
 	//左移動
 	if (bat_state == BatState::LEFT) {
 		location.x -= vector.x;
@@ -300,7 +330,12 @@ void EnemyBat::Hit(Location _location, Erea _erea, int _type, int _color_data)
 	}
 	if ((_type == FIRE && this->color == GREEN) || (_type == WATER && this->color == RED) || (_type == WOOD && this->color == BLUE))
 	{
-		bat_state = BatState::DEATH;
+		//死亡状態へ
+		if (bat_state != BatState::DEATH)
+		{
+			bat_state = BatState::DEATH;
+			can_swap = FALSE;
+		}
 	}
 }
 
