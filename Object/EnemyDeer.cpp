@@ -1,5 +1,6 @@
 #include "../Utility/KeyInput.h"
 #include "EnemyDeer.h"
+#include<math.h>
 
 EnemyDeer::EnemyDeer()
 {
@@ -14,6 +15,19 @@ EnemyDeer::EnemyDeer()
 	//locationの中に値を入れると 上記の変数のどちらでも値を使用できる
 	// { x , y }
 	//location = { 500, 850 };
+
+	for (int i = 0; i < 4; i++)
+	{
+		move[i] = 0;
+	}
+
+	for (int i = 0; i < 2; i++)
+	{
+		for (int j = 0; j < 4; j++)
+		{
+			stageHitFlg[i][j] = false;
+		}
+	}
 
 	deer_spawn = true;
 }
@@ -38,19 +52,36 @@ void EnemyDeer::Initialize(Location _location, Erea _erea, int _color_data, int 
 
 void EnemyDeer::Update(GameMain* _g)
 {
+	for (int i = 0; i < 4; i++) {
+		stageHitFlg[0][i] = false;
+		stageHitFlg[1][i] = false;
+	}
+
+	/*
+		r: 角度(ラジアン)
+		x : 元のX座標
+		y : 元のY座標
+
+		X = x * cos(r) - y * sin(r)
+		Y = x * sin(r) + y * cos(r)
+	*/
+
+	//r_x = location.x * cos(PI / 6) - location.y * sin(PI / 6);
+	//r_y = location.x * sin(PI / 6) - location.y * cos(PI / 6);
+
 	EnemyDeerMove();
 }
 
 void EnemyDeer::Draw()const
 {
-	if (deer_state == DeerState::LEFT || deer_state == DeerState::GRAVITY || deer_state == DeerState::IDLE || deer_state == DeerState::DEATH)
+	if (deer_state == DeerState::LEFT || deer_state == DeerState::GRAVITY || deer_state == DeerState::IDLE)
 	{
 		//角
 		//DrawQuadrangleAA(local_location.x - 5.0f, local_location.y - 20.0f, local_location.x + 2.0f, local_location.y - 25.0f, local_location.x + 15.0f, local_location.y + 2.0f, local_location.x + 7.0f, local_location.y + 5.0f, color, TRUE);
 		//DrawQuadrangleAA()
 
 		//頭
-		DrawBoxAA(local_location.x, local_location.y, local_location.x + 30.0f, local_location.y + 20.0f, color, TRUE);
+		DrawBoxAA(local_location.x + r_x, local_location.y + r_y, local_location.x + 30.0f + r_x, local_location.y + 20.0f + r_y, color, TRUE);
 
 		//首
 		DrawBoxAA(local_location.x + 13.0f, local_location.y + 25.0f, local_location.x + 30.0f, local_location.y + 35.0f, color, TRUE);
@@ -104,13 +135,15 @@ void EnemyDeer::Draw()const
 
 	DrawFormatString(50, 20, 0xff0000, "DeerState ; %d", deer_state);*/
 
+	//DrawFormatString(50, 40, 0xff0000, "rx %0.1f ry %0.1f", r_x, r_y);
+
 	DrawCircleAA(local_location.x, local_location.y, 2, 32, 0x00ff00, TRUE);
 	DrawCircleAA(local_location.x, local_location.y + erea.height, 2, 32, 0xff00ff, TRUE);
 	//DrawCircleAA(local_location.x, local_location.y + erea.height, 2, 32, 0x00ff00, TRUE);
 
 	if (deer_death == true)
 	{
-		DrawFormatString(local_location.x, local_location.y, 0xffffff, "DEATH");
+		DrawFormatStringF(local_location.x, local_location.y, 0xffffff, "DEATH");
 	}
 }
 
@@ -120,7 +153,7 @@ void EnemyDeer::EnemyDeerMove()
 	{
 	case DeerState::GRAVITY:
 
-		location.y += 2;
+		location.y += 5;
 
 		break;
 
@@ -133,7 +166,7 @@ void EnemyDeer::EnemyDeerMove()
 
 	case DeerState::LEFT:
 
-		location.x -= 5;
+		location.x -= 1;
 
 		break;
 
@@ -141,6 +174,9 @@ void EnemyDeer::EnemyDeerMove()
 
 		location.x += 1;
 
+		break;
+
+	case DeerState::DEATH:
 		break;
 	}
 }
@@ -157,51 +193,182 @@ void EnemyDeer::Finalize()
 //自分の当たり判定を取っている部分は 一番下の辺
 void EnemyDeer::Hit(Location _location, Erea _erea, int _type, int _color_data)
 {
-	DrawTest1 = _location.x;
+	/*DrawTest1 = _location.x;
 	DrawTest2 = _location.y;
 	DrawTest3 = _erea.height;
 	DrawTest4 = _erea.width;
 	DrawTest5 = _type;
-	DrawTest6 = _color_data;
+	DrawTest6 = _color_data;*/
 
-	switch (deer_state)
+	//ブロックと当たった時の処理
+	if (_type == BLOCK)
 	{
-	case DeerState::GRAVITY:
+		Location tmpl = location;
+		Erea tmpe = erea;
+		move[0] = 0;
+		move[1] = 0;
+		move[2] = 0;
+		move[3] = 0;
 
-		//空中から重力により地面に当たると待ち状態に移行
-		if (location.y + erea.height >= _location.y && _type == BLOCK && _color_data == -1)
-		{
-			deer_state = DeerState::IDLE;
+		//上下判定用に座標とエリアの調整
+		location.x += 10.f;
+		erea.height = 1.f;
+		erea.width = tmpe.width - 15.f;
+
+		//プレイヤー上方向の判定
+		if (CheckCollision(_location, _erea) && !stageHitFlg[1][top]) {
+			stageHitFlg[0][top] = true;
+			stageHitFlg[1][top] = true;
+		}
+		else {
+			stageHitFlg[0][top] = false;
 		}
 
-		break;
+		//プレイヤー下方向の判定
+		location.y += tmpe.height + 1;
+		if (CheckCollision(_location, _erea) && !stageHitFlg[1][bottom]) {
+			stageHitFlg[0][bottom] = true;
+			stageHitFlg[1][bottom] = true;
+		}
+		else {
+			stageHitFlg[0][bottom] = false;
+		}
 
-	case DeerState::IDLE:
+		//戻す
+		location.x = tmpl.x;
+		location.y = tmpl.y;
+		erea.height = tmpe.height;
+		erea.width = tmpe.width;
 
-		//左に動くように変更
-		//deer_state = DeerState::DEATH;
+		//上方向に埋まらないようにする
+		if (stageHitFlg[0][top]) {//上方向に埋まっていたら
+			float t = (_location.y + _erea.height) - location.y;
+			if (t != 0) {
+				move[top] = t;
+			}
+		}
 
-		break;
+		//下方向に埋まらないようにする
+		if (stageHitFlg[0][bottom]) {//下方向に埋まっていたら
+			float t = _location.y - (location.y + erea.height);
+			if (t != 0) {
+				move[bottom] = t;
+			}
+		}
 
-	case DeerState::LEFT:
 
-		/*if (location.x < _location.x + _erea.width && local_location.y - erea.height == _location.y &&_type == BLOCK && _color_data == -1)
-		{
-			deer_state = DeerState::RIGHT;
-		}*/
+		//左右判定用に座標とエリアの調整
+		location.y += 3.f;
+		erea.height = tmpe.height - 3.f;
+		erea.width = 1;
 
-		break;
+		//プレイヤー左方向の判定
+		if (CheckCollision(_location, _erea) && !stageHitFlg[1][left]) {
+			stageHitFlg[0][left] = true;
+			stageHitFlg[1][left] = true;
+			int a = CheckCollision(_location, _erea);
+		}
+		else {
+			stageHitFlg[0][left] = false;
+		}
 
-	case DeerState::RIGHT:
-		break;
 
-	case DeerState::DEATH:
-		break;
+		//プレイヤー右方向の判定
+		location.x = tmpl.x + tmpe.width + 1;
+		if (CheckCollision(_location, _erea) && !stageHitFlg[1][right]) {
+			stageHitFlg[0][right] = true;
+			stageHitFlg[1][right] = true;
+		}
+		else {
+			stageHitFlg[0][right] = false;
+		}
+
+		//最初の値に戻す
+
+		location.x = tmpl.x;
+		location.y += -3.f;
+		erea.height = tmpe.height;
+		erea.width = tmpe.width;
+
+		//左方向に埋まらないようにする
+		if (stageHitFlg[0][left]) {//左方向に埋まっていたら
+			float t = (_location.x + _erea.width) - location.x;
+			if (t != 0) {
+				move[left] = t;
+				deer_state = DeerState::RIGHT;
+			}
+		}
+
+
+		//右方向に埋まらないようにする
+		if (stageHitFlg[0][right]) {//右方向に埋まっていたら
+			float t = _location.x - (location.x + erea.width);
+			if (t != 0) {
+				move[right] = t;
+				deer_state = DeerState::LEFT;
+			}
+		}
+
+
+		//上下左右の移動量から移動後も埋まってるか調べる
+		if (location.y < _location.y + _erea.height && location.y + erea.height > _location.y) {//左右
+			if (stageHitFlg[1][top] || stageHitFlg[1][bottom]) {
+				move[left] = 0.f;
+				move[right] = 0.f;
+			}
+		}
+
+		location.x += move[left];
+		location.x += move[right];
+		location.y += move[top];
+		location.y += move[bottom];
+
+		erea.height = tmpe.height;
+		erea.width = tmpe.width;
+
 	}
 
 	//死ぬ表示
 	if ((_type == FIRE && this->color == GREEN) || (_type == WATER && this->color == RED) || (_type == WOOD && this->color == BLUE))
 	{
+		deer_state = DeerState::DEATH;
 		deer_death = true;
 	}
+}
+
+bool EnemyDeer::CheckCollision(Location l, Erea e)
+{
+	bool ret = false;
+
+	//自分の左上座標
+	float my_x = location.x;
+	float my_y = location.y;
+	//自分の中央座標
+	float my_cx = my_x + (erea.width / 2);
+	float my_cy = my_y + (erea.height / 2);
+	//自分の幅と高さの半分
+	float my_harf_width = erea.width / 2;
+	float my_harf_height = erea.height / 2;
+
+	//相手の左上座標
+	float sub_x = l.x;
+	float sub_y = l.y;
+	//相手の中央座標
+	float sub_cx = sub_x + (e.width / 2);
+	float sub_cy = sub_y + (e.height / 2);
+	//相手の幅と高さの半分
+	float sub_harf_width = e.width / 2;
+	float sub_harf_height = e.height / 2;
+
+	//自分と相手の中心座標の差
+	float diff_x = my_cx - sub_cx;
+	float diff_y = my_cy - sub_cy;
+
+	//当たり判定の演算
+	if (fabsf(diff_x) < my_harf_width + sub_harf_width &&
+		fabsf(diff_y) < my_harf_height + sub_harf_height)
+	{
+		ret = true;
+	}
+	return ret;
 }
