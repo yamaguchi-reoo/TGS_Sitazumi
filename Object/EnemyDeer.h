@@ -20,6 +20,7 @@ private:
 
 	DeerState deer_state;
 	bool deer_spawn;
+	bool deer_death = false;
 
 	float DrawTest1 = 0, DrawTest2 = 0, DrawTest3 = 0, DrawTest4 = 0;
 	int	DrawTest5 = 0, DrawTest6 = 0;

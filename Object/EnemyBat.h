@@ -41,7 +41,7 @@ public:
 	void Finalize()override;
 
 public:
-	void Move(GameMain);
+	void Move();
 
 	void Hit(Location _location, Erea _erea, int _type, int _color_data)override;
 	bool SearchColor(Object* ob) {
