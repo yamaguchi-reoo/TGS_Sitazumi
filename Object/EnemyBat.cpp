@@ -1,8 +1,7 @@
 #include"EnemyBat.h"
 #include"../Utility/KeyInput.h"
 #include<math.h>
-#include "Player.h"
-#include"../Scene/GameMain.h"
+
 
 #define PI 3.141592654f
 
@@ -40,11 +39,11 @@ void EnemyBat::Update(GameMain* _g)
 	// 羽の角度を変化させる
 	wing_angle = sin(PI * 2 / 120 * up) * 30; // 30度の振れ幅で周期的に変化させる
 
-	Location player_posi = _g->GetPlayerLocation();
+	Location player_pos = _g->GetPlayerLocation();
 	// プレイヤーとの距離を計算
 	vector = { 2.f };
-	float dx = player_posi.x - location.x;
-	float dy = player_posi.y - location.y;
+	float dx = player_pos.x - location.x;
+	float dy = player_pos.y - location.y;
 	float length = sqrt(dx * dx + dy * dy);
 
 	if (_g->GetSearchFlg()) {
@@ -64,14 +63,14 @@ void EnemyBat::Update(GameMain* _g)
 	{
 		//移動
 		Move();
+		
 	}
 
 	for (int i = 0; i < 4; i++) {
 		stageHitFlg[0][i] = false;
 		stageHitFlg[1][i] = false;
 	}
-
-	int i = 0;
+	//コウモリの状態
 	switch (bat_state)
 	{
 	case BatState::IDLE:
@@ -131,7 +130,6 @@ void EnemyBat::Draw() const
 	for (int i = 0; i < vertices.size(); i += 3) {
 		//耳
 		if (i < 5) {
-			//DrawTriangle(vertices[i].x, vertices[i].y,vertices[i + 1].x, vertices[i + 1].y,vertices[i + 2].x, vertices[i + 2].y,GetColor(255, 255,255), TRUE);
 			DrawTriangleAA(vertices[i].x, vertices[i].y,vertices[i + 1].x, vertices[i + 1].y,vertices[i + 2].x, vertices[i + 2].y,color, TRUE);
 		}
 		//右羽
@@ -151,26 +149,6 @@ void EnemyBat::Draw() const
 			i++;
 		}
 	}
-	////耳
-	//DrawTriangleAA(local_location.x, local_location.y, local_location.x, local_location.y + 25, local_location.x + 12, local_location.y + 12,GetColor(255, 255, 255), TRUE);
-	//DrawTriangleAA(local_location.x + 30, local_location.y, local_location.x + 30, local_location.y + 25, local_location.x + 18, local_location.y + 12,GetColor(255, 255, 255), TRUE);
-	////右翼
-	//DrawTriangleAA(local_location.x + 27, local_location.y + 44, local_location.x + 67, local_location.y + 10, local_location.x + 93, local_location.y + 85,GetColor(255, 255, 255), TRUE);
-	//DrawTriangleAA(local_location.x + 27, local_location.y + 44, local_location.x + 67, local_location.y + 10, local_location.x + 66, local_location.y + 80,GetColor(255, 255, 255), TRUE);
-	//DrawTriangleAA(local_location.x + 25, local_location.y + 44, local_location.x + 67, local_location.y + 10, local_location.x + 45, local_location.y + 75,GetColor(255, 255, 255), TRUE);
-	////左翼
-	//DrawTriangleAA(local_location.x + 3, local_location.y + 44, local_location.x - 34, local_location.y + 10, local_location.x - 63, local_location.y + 85, GetColor(255, 255, 255), TRUE);
-	//DrawTriangleAA(local_location.x + 3, local_location.y + 44, local_location.x - 34, local_location.y + 10, local_location.x - 36, local_location.y + 80, GetColor(255, 255, 255), TRUE);
-	//DrawTriangleAA(local_location.x + 5, local_location.y + 44, local_location.x - 34, local_location.y + 10, local_location.x - 15, local_location.y + 75, GetColor(255, 255, 255), TRUE);
-	////頭
-	//DrawQuadrangleAA(local_location.x + 15, local_location.y + 16, local_location.x + 30, local_location.y + 30, local_location.x + 15, local_location.y + 40, local_location.x, local_location.y + 30, GetColor(255, 255, 255), TRUE);
-	////胴体
-	//DrawQuadrangleAA(local_location.x + 15, local_location.y + 45, local_location.x + 30, local_location.y + 68, local_location.x + 15, local_location.y + 95, local_location.x, local_location.y + 68, GetColor(255, 255, 255), TRUE);
-
-
-	//if (leftwall_flg == true) {
-	//}
-	//配列の各頂点を利用して三角形を描画する
 	
 }
 
@@ -198,6 +176,7 @@ void EnemyBat::Move()
 void EnemyBat::Hit(Object* _object)
 {
 	//ブロックと当たった時の処理
+	if (_type == BLOCK || _type == ENEMY)
 	if (_object->GetObjectType() == BLOCK)
 	{
 		Location tmpl = location;
@@ -336,6 +315,36 @@ void EnemyBat::Hit(Object* _object)
 			bat_state = BatState::DEATH;
 			can_swap = FALSE;
 		}
+	}
+
+	//赤コウモリ
+	//触れたブロックが緑＆＆自分の色が赤だったら触れた緑ブロックを燃やす
+	if (_type == WOOD && this->color == RED) {
+
+	}
+	//水の中に突っ込むと即死　雨粒は即死だが死ぬ際の動きに変化あり
+	if (_type == WATER && this->color == RED) {
+
+	}
+
+	//青コウモリ
+	//触れたブロックが赤＆＆自分の色が青だったら触れた赤ブロックを消す
+	if (_type == FIRE && this->color == BLUE) {
+
+	}
+	//コウモリの色が吸い取られて死ぬ
+	if (_type == WOOD && this->color == BLUE) {
+
+	}
+
+	//緑コウモリ
+	//触れたブロックが青＆＆自分の色が緑だったら、雨粒は吸い取り　水場などに当たると反射する
+	if (_type == WATER && this->color == GREEN) {
+
+	}
+	//当たったら即死
+	if (_type == FIRE && this->color == GREEN) {
+
 	}
 }
 
