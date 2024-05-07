@@ -80,9 +80,11 @@ AbstractScene* GameMain::Update()
 			swap_anim_timer = 0;
 		}
 	}
+
 	//天気の更新
 	weather = 1;
 	WeatherUpdate(weather);
+
 #ifdef _DEBUG
 	//ステージをいじるシーンへ遷移
 	if (KeyInput::OnPresed(KEY_INPUT_E) && KeyInput::OnPresed(KEY_INPUT_D))
