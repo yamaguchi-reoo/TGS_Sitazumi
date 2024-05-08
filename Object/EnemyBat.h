@@ -10,6 +10,7 @@ enum class BatState {
 	IDLE = 0,
 	LEFT,
 	RIGHT,
+	TRACKING,
 	DEATH
 };
 
@@ -25,12 +26,17 @@ private:
 		right
 	};
 	Location vector; //コウモリのベクトル
-	bool stageHitFlg[2][4]; //カエルとステージの当たり判定
+	BatState bat_state;	//コウモリの状態
+	Object* delete_object;//消すオブジェクト
+	bool stageHitFlg[2][4]; //コウモリとステージの当たり判定
 	float move[4];//各方向加速度格納用
 
-	BatState bat_state;	//コウモリの状態
 	float wing_angle;	//羽の動かす用
 	int up;		//sin波で移動する用
+
+	bool hit_flg[3];
+
+	int death_timer;	//死亡演出
 
 public:
 	EnemyBat();

@@ -7,7 +7,7 @@
 
 #define ENEMY_SPEED 2
 
-EnemyBat::EnemyBat() :up(0), bat_state(BatState::LEFT), wing_angle(0.0f), vector{ 0.0f }
+EnemyBat::EnemyBat() :up(0), bat_state(BatState::LEFT), wing_angle(0.0f), vector{ 0.0f },death_timer(0)
 {
 	type = ENEMY;
 	can_swap = TRUE;
@@ -17,6 +17,9 @@ EnemyBat::EnemyBat() :up(0), bat_state(BatState::LEFT), wing_angle(0.0f), vector
 	}
 	for (int i = 0; i < 4; i++) {
 		stageHitFlg[1][i] = false;
+	}
+	for (int i = 0; i < 3; i++) {
+		hit_flg[i] = false;
 	}
 }
 
@@ -37,7 +40,7 @@ void EnemyBat::Update(GameMain* _g)
 {
 	up += 1;
 	// 羽の角度を変化させる
-	wing_angle = sin(PI * 2 / 120 * up) * 30; // 30度の振れ幅で周期的に変化させる
+	wing_angle = sin(PI * 2.f / 120.f * up) * 30.f; // 30度の振れ幅で周期的に変化させる
 
 	Location player_pos = _g->GetPlayerLocation();
 	// プレイヤーとの距離を計算
@@ -46,11 +49,13 @@ void EnemyBat::Update(GameMain* _g)
 	float dy = player_pos.y - location.y;
 	float length = sqrt(dx * dx + dy * dy);
 
+	//プレイヤーが色変えるときコウモリもスローに
 	if (_g->GetSearchFlg()) {
 		location.x += vector.x * 0.1f;
 		location.y += vector.y * 0.1f;
 	}
-	else if (length < 400) {
+	//プレイヤーの一定範囲内に入ったら
+	else if (length < 400 && bat_state != BatState::DEATH) {
 		// 移動方向を決定
 		dx /= length;
 		dy /= length;
@@ -63,7 +68,6 @@ void EnemyBat::Update(GameMain* _g)
 	{
 		//移動
 		Move();
-		
 	}
 
 	for (int i = 0; i < 4; i++) {
@@ -79,9 +83,25 @@ void EnemyBat::Update(GameMain* _g)
 		break;
 	case BatState::RIGHT:
 		break;
-	case BatState::DEATH:
-		_g->DeleteObject(object_pos);
+	case BatState::TRACKING:
 		break;
+	case BatState::DEATH:
+		//自分の色が青のとき吸われてく
+		if (this->color == BLUE)
+		{
+			if(++death_timer > 60)
+			_g->DeleteObject(object_pos);
+		}
+		else {
+			_g->DeleteObject(object_pos);
+		}
+		break;
+	}
+
+	if (hit_flg[0] == true) {
+		_g->CreateObject(new Stage(6), delete_object->GetLocation(), delete_object->GetErea(), RED);
+		_g->DeleteObject(delete_object->GetObjectPos());
+		hit_flg[0] = false;
 	}
 }
 
@@ -126,6 +146,7 @@ void EnemyBat::Draw() const
 		{local_location.x + 57, local_location.y + 34}, {local_location.x + 69, local_location.y + 52}, {local_location.x + 57, local_location.y + 73}, {local_location.x + 46, local_location.y + 52},
 	};
 
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 - (death_timer * 4));
 	//配列の各頂点を利用して三角形を描画する
 	for (int i = 0; i < vertices.size(); i += 3) {
 		//耳
@@ -149,6 +170,7 @@ void EnemyBat::Draw() const
 			i++;
 		}
 	}
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 	
 }
 
@@ -163,13 +185,13 @@ void EnemyBat::Move()
 	//左移動
 	if (bat_state == BatState::LEFT) {
 		location.x -= vector.x;
-		location.y += sin(PI * 2 / 40 * up) * 5;
+		location.y += sin(PI * 2.f / 40.f * up) * 5.f;
 
 	}
 	//右移動
 	if (bat_state == BatState::RIGHT) {
 		location.x += vector.x;
-		location.y -= sin(PI * 2 / 40 * up) * 5;
+		location.y -= sin(PI * 2.f / 40.f * up) * 5.f;
 	}
 }
 
@@ -306,8 +328,40 @@ void EnemyBat::Hit(Object* _object)
 		erea.width = tmpe.width;
 
 	}
-	if ((_object->GetObjectType() == FIRE && this->color == GREEN) || (_object->GetObjectType() == WATER && this->color == RED) || (_object->GetObjectType() == WOOD && this->color == BLUE))
-	{
+	//if ((_object->GetObjectType() == FIRE && this->color == GREEN) || (_object->GetObjectType() == WATER && this->color == RED) || (_object->GetObjectType() == WOOD && this->color == BLUE))
+	//{
+	//	//死亡状態へ
+	//	if (bat_state != BatState::DEATH)
+	//	{
+	//		bat_state = BatState::DEATH;
+	//		can_swap = FALSE;
+	//	}
+	//}
+
+	delete_object = _object;
+
+
+	if (_object->GetObjectType() == PLAYER) {
+		hit_flg[0] = false;
+	}
+	//赤コウモリ
+	//触れたブロックが緑＆自分の色が赤だったら触れた緑ブロックを燃やす
+	if (_object->GetObjectType() == WOOD && this->color == RED) {
+		hit_flg[0] = true;
+	}
+	//水の中に突っ込むと即死　雨粒は即死だが死ぬ際の動きに変化あり
+	if (_object->GetObjectType() == WATER && this->color == RED) {
+
+	}
+
+	//青コウモリ
+	//触れたブロックが赤＆自分の色が青だったら触れた赤ブロックを消す
+	if (_object->GetObjectType() == FIRE && this->color == BLUE) {
+
+	}
+	//コウモリの色が吸い取られて死ぬ
+	if (_object->GetObjectType() == WOOD && this->color == BLUE) {
+		wing_angle = sin(PI * 2.f / 12.f * up) * 20.f; // 藻掻いているように見える風に
 		//死亡状態へ
 		if (bat_state != BatState::DEATH)
 		{
@@ -316,34 +370,18 @@ void EnemyBat::Hit(Object* _object)
 		}
 	}
 
-	//赤コウモリ
-	//触れたブロックが緑＆＆自分の色が赤だったら触れた緑ブロックを燃やす
-	if (_object->GetObjectType() == WOOD && this->color == RED) {
-
-	}
-	//水の中に突っ込むと即死　雨粒は即死だが死ぬ際の動きに変化あり
-	if (_object->GetObjectType() == WATER && this->color == RED) {
-
-	}
-
-	//青コウモリ
-	//触れたブロックが赤＆＆自分の色が青だったら触れた赤ブロックを消す
-	if (_object->GetObjectType() == FIRE && this->color == BLUE) {
-
-	}
-	//コウモリの色が吸い取られて死ぬ
-	if (_object->GetObjectType() == WOOD && this->color == BLUE) {
-
-	}
-
 	//緑コウモリ
-	//触れたブロックが青＆＆自分の色が緑だったら、雨粒は吸い取り　水場などに当たると反射する
+	//触れたブロックが青＆自分の色が緑だったら、雨粒を吸い取り　水場などに当たると反射する
 	if (_object->GetObjectType() == WATER && this->color == GREEN) {
 
 	}
 	//当たったら即死
 	if (_object->GetObjectType() == FIRE && this->color == GREEN) {
-
+		if (bat_state != BatState::DEATH)
+		{
+			bat_state = BatState::DEATH;
+			can_swap = FALSE;
+		}
 	}
 }
 
