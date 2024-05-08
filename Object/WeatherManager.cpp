@@ -1,7 +1,7 @@
 #include "WeatherManager.h"
 #include "../Scene/GameMain.h"
 
-WeatherManager::WeatherManager():now_weather(0)
+WeatherManager::WeatherManager():frame(0),now_weather(0)
 {
 
 }

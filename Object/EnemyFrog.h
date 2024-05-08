@@ -3,9 +3,7 @@
 
 
 enum class FrogState {
-	IDLE_LEFT = 0,
-	IDLE_RIGHT,
-	LEFT_JUMP,
+	LEFT_JUMP=0,
 	RIGHT_JUMP,
 	DEATH
 };
@@ -23,6 +21,7 @@ public:
 	};
 private:
 	int frame;				//フレーム測定
+	int timer;				//時間測定
 	FrogState frog_state;	//カエルの状態
 
 	bool death_flg;		//生きているか
@@ -30,7 +29,7 @@ private:
 	bool stageHitFlg[2][4]; //カエルとステージの当たり判定
 	float move[4];			//各方向加速度格納用
 
-	float face_rad;		//顔の向き
+	float face_angle;		//顔の向き
 	int death_timer;	//死亡演出
 public:
 	EnemyFrog();

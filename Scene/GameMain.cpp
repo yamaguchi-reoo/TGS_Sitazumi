@@ -89,13 +89,13 @@ AbstractScene* GameMain::Update()
 	}
 
 	//天気の更新
-	if (frame % 100 == 0)
-	{
-		if (++now_weather > 3)
-		{
-			now_weather = 0;
-		}
-	}
+	//if (frame % 100 == 0)
+	//{
+	//	if (++now_weather > 3)
+	//	{
+	//		now_weather = 0;
+	//	}
+	//}
 	weather->Update(this);
 
 #ifdef _DEBUG
