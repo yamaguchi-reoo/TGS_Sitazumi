@@ -135,7 +135,11 @@ void GameMain::Draw() const
 			pn = i;
 			continue;
 		}
-		object[i]->Draw();
+		//エフェクト以外を先に描画
+		if (object[i]->GetObjectType() != EFFECT)
+		{
+			object[i]->Draw();
+		}
 	}
 	//プレイヤーを最後に描画
 	object[pn]->Draw();
@@ -151,6 +155,14 @@ void GameMain::Draw() const
 			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200 - (swap_anim_timer*20));
 			DrawBox(swap_anim[i].start.x - camera_location.x - (swap_anim_timer*5), swap_anim[i].start.y - camera_location.y - (swap_anim_timer * 5), swap_anim[i].start.x + swap_anim[i].erea.width - camera_location.x + (swap_anim_timer * 5), swap_anim[i].start.y + swap_anim[i].erea.height - camera_location.y + (swap_anim_timer * 5), swap_anim[i].color, true);
 			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255); 
+		}
+	}
+	//各エフェクトの描画
+	for (int i = 0; object[i] != nullptr; i++)
+	{
+		if (object[i]->GetObjectType() == EFFECT)
+		{
+			object[i]->Draw();
 		}
 	}
 #ifdef _DEBUG
@@ -338,7 +350,11 @@ void GameMain::SetStage(int _stage)
 				break;
 			case 9:
 				//プレイヤーの生成
-				CreateObject(new Player, { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { 150,75 }, RED);
+				CreateObject(new Player, { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { PLAYER_HEIGHT,PLAYER_WIDTH }, RED);
+				CreateObject(new Effect(1,0.125, 60), {(float)j * BOX_WIDTH + (PLAYER_WIDTH / 2) ,(float)i * BOX_HEIGHT + (PLAYER_HEIGHT / 2) }, {20,20}, RED);
+				CreateObject(new Effect(1,0.375, 60), {(float)j * BOX_WIDTH + (PLAYER_WIDTH / 2) ,(float)i * BOX_HEIGHT + (PLAYER_HEIGHT / 2) }, {20,20}, RED);
+				CreateObject(new Effect(1,0.625, 60), {(float)j * BOX_WIDTH + (PLAYER_WIDTH / 2) ,(float)i * BOX_HEIGHT + (PLAYER_HEIGHT / 2) }, {20,20}, RED);
+				CreateObject(new Effect(1,0.875, 60), {(float)j * BOX_WIDTH + (PLAYER_WIDTH / 2) ,(float)i * BOX_HEIGHT + (PLAYER_HEIGHT / 2) }, {20,20}, RED);
 				player_flg = true;
 				break;
 			case 10:

@@ -4,11 +4,12 @@
 #include "../Object/Player.h"
 #include "../Object/Stage.h"
 #include "../Object/EnemyDeer.h"
-#include"../Object/EnemyBat.h"
-#include"../Object/EnemyFrog.h"
-#include"../Object/Weather.h"
-#include"../Object/Object.h"
-#include"../Object/WeatherManager.h"
+#include "../Object/EnemyBat.h"
+#include "../Object/EnemyFrog.h"
+#include "../Object/Weather.h"
+#include "../Object/Object.h"
+#include "../Object/WeatherManager.h"
+#include "../Object/Effect.h"
 
 class Player;
 
