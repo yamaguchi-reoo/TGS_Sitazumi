@@ -98,7 +98,7 @@ void EnemyBat::Update(GameMain* _g)
 		break;
 	}
 
-	if (hit_flg[0] == true) {
+	if (hit_flg[0] == true && delete_object->GetObjectType() == WOOD) {
 		_g->CreateObject(new Stage(6), delete_object->GetLocation(), delete_object->GetErea(), RED);
 		_g->DeleteObject(delete_object->GetObjectPos());
 		hit_flg[0] = false;
@@ -198,7 +198,7 @@ void EnemyBat::Move()
 void EnemyBat::Hit(Object* _object)
 {
 	//ブロックと当たった時の処理
-	if (_object->GetObjectType() == BLOCK || _object->GetObjectType() == ENEMY)
+	if (_object->GetObjectType() == BLOCK || _object->GetObjectType() == ENEMY || _object->GetObjectType() == WOOD)
 	{
 		Location tmpl = location;
 		Erea tmpe = erea;
@@ -239,18 +239,30 @@ void EnemyBat::Hit(Object* _object)
 
 		//上方向に埋まらないようにする
 		if (stageHitFlg[0][top]) {//上方向に埋まっていたら
-			float t = (_object->GetLocation().y + _object->GetErea().height) - location.y;
-			if (t != 0) {
-				vector.y = 0.f;
-				move[top] = t;
+			if (_object->GetObjectType() == WOOD && this->color == RED)
+			{
+				hit_flg[0] = true;
+			}
+			else{
+				float t = (_object->GetLocation().y + _object->GetErea().height) - location.y;
+				if (t != 0) {
+					vector.y = 0.f;
+					move[top] = t;
+				}
 			}
 		}
 
 		//下方向に埋まらないようにする
 		if (stageHitFlg[0][bottom]) {//下方向に埋まっていたら
-			float t = _object->GetLocation().y - (location.y + erea.height);
-			if (t != 0) {
-				move[bottom] = t;
+			if (_object->GetObjectType() == WOOD && this->color == RED)
+			{
+				hit_flg[0] = true;
+			}
+			else{
+				float t = _object->GetLocation().y - (location.y + erea.height);
+				if (t != 0) {
+					move[bottom] = t;
+				}
 			}
 		}
 
@@ -292,21 +304,34 @@ void EnemyBat::Hit(Object* _object)
 
 		//左方向に埋まらないようにする
 		if (stageHitFlg[0][left]) {//左方向に埋まっていたら
-			float t = (_object->GetLocation().x + _object->GetErea().width) - location.x;
-			if (t != 0) {
-				vector.x = 0.f;
-				move[left] = t;
-				bat_state = BatState::RIGHT;
+			if (_object->GetObjectType() == WOOD && this->color == RED)
+			{
+				hit_flg[0] = true;
+			}
+			else {
+				float t = (_object->GetLocation().x + _object->GetErea().width) - location.x;
+				if (t != 0) {
+					vector.x = 0.f;
+					move[left] = t;
+
+					bat_state = BatState::RIGHT;
+				}
 			}
 		}
 
 		//右方向に埋まらないようにする
 		if (stageHitFlg[0][right]) {//右方向に埋まっていたら
-			float t = _object->GetLocation().x - (location.x + erea.width);
-			if (t != 0) {
-				vector.x = 0.f;
-				move[right] = t;
-				bat_state = BatState::LEFT;
+			if (_object->GetObjectType() == WOOD && this->color == RED)
+			{
+				hit_flg[0] = true;
+			}
+			else {
+				float t = _object->GetLocation().x - (location.x + erea.width);
+				if (t != 0) {
+					vector.x = 0.f;
+					move[right] = t;
+					bat_state = BatState::LEFT;
+				}
 			}
 		}
 
@@ -343,15 +368,26 @@ void EnemyBat::Hit(Object* _object)
 
 	if (_object->GetObjectType() == PLAYER) {
 		hit_flg[0] = false;
+
 	}
 	//赤コウモリ
 	//触れたブロックが緑＆自分の色が赤だったら触れた緑ブロックを燃やす
-	if (_object->GetObjectType() == WOOD && this->color == RED) {
-		hit_flg[0] = true;
-	}
+	//if (delete_object->GetObjectType() == WOOD && this->color == RED && stageHitFlg[0][right] ||
+	//	delete_object->GetObjectType() == WOOD && this->color == RED && stageHitFlg[0][left]  ||
+	//	delete_object->GetObjectType() == WOOD && this->color == RED && stageHitFlg[0][top]   ||
+	//	delete_object->GetObjectType() == WOOD && this->color == RED && stageHitFlg[0][bottom]) {
+	//	hit_flg[0] = true;
+	//	//bat_state = BatState::LEFT;
+	//}
+
 	//水の中に突っ込むと即死　雨粒は即死だが死ぬ際の動きに変化あり
 	if (_object->GetObjectType() == WATER && this->color == RED) {
-
+		//死亡状態へ
+		if (bat_state != BatState::DEATH)
+		{
+			bat_state = BatState::DEATH;
+			can_swap = FALSE;
+		}
 	}
 
 	//青コウモリ
