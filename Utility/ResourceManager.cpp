@@ -109,28 +109,28 @@ void ResourceManager::StopSound(int _num)
 	StopSoundMem(sound_data[_num]);
 }
 
-void ResourceManager::DrawRotaBox(float _x, float _y, float _w, float _h, float _rad, int _color, bool _fill)
+void ResourceManager::DrawRotaBox(float _x, float _y, float _w, float _h, float _cx, float _cy, float _rad, int _color, bool _fill)
 {
 	float loc[4][2];
 	float newloc[4][2];
 	float rad;
 
 	//４点のローカル座標を格納
-	loc[0][0] =-(_w / 2);
-	loc[0][1] =-(_h / 2);
-	loc[1][0] =(_w / 2);
-	loc[1][1] =-(_h / 2);
-	loc[2][0] =(_w / 2);
-	loc[2][1] =(_h / 2);
-	loc[3][0] =-(_w / 2);
-	loc[3][1] =(_h / 2);
+	loc[0][0] = -(_w / 2) + _cx - _x;
+	loc[0][1] =-(_h / 2)  + _cy - _y;
+	loc[1][0] =(_w / 2)   + _cx - _x;
+	loc[1][1] =-(_h / 2)  + _cy - _y;
+	loc[2][0] =(_w / 2)   + _cx - _x;
+	loc[2][1] =(_h / 2)   + _cy - _y;
+	loc[3][0] = -(_w / 2) + _cx - _x;
+	loc[3][1] =(_h / 2)   + _cy - _y;
 
 	rad = _rad * M_PI / 180;
 
 	for (int i = 0; i < 4; i++)
 	{
-		newloc[i][0] = (loc[i][0] * cosf(rad)) - (loc[i][1] * sinf(rad)) + _x;
-		newloc[i][1] = (loc[i][0] * sinf(rad)) + (loc[i][1] * cosf(rad)) + _y;
+		newloc[i][0] = (loc[i][0] * cosf(rad)) - (loc[i][1] * sinf(rad)) + _cx;
+		newloc[i][1] = (loc[i][0] * sinf(rad)) + (loc[i][1] * cosf(rad)) + _cy;
 	}
 
 	DrawQuadrangle(newloc[0][0], newloc[0][1], newloc[1][0], newloc[1][1], newloc[2][0], newloc[2][1], newloc[3][0], newloc[3][1], _color, _fill);
