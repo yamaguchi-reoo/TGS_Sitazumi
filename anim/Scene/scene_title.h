@@ -9,6 +9,9 @@ private:
 	int num = 0;
 	float angle = 0;
 
+	char inputChar;
+	char string[32];
+
 public:
 	//�R���X�g���N�^
 	Title();
