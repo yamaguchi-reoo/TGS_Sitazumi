@@ -276,7 +276,7 @@ void Player::Hit(Object* _object)
 		//上下判定用に座標とエリアの調整
 		location.x += 10.f;
 		erea.height = 1.f;
-		erea.width = tmpe.width - 15.f;
+		erea.width = tmpe.width - 20.f;
 
 		//プレイヤー上方向の判定
 		if (CheckCollision(_object->GetLocation(), _object->GetErea()) && !stageHitFlg[1][top]) {
@@ -321,9 +321,13 @@ void Player::Hit(Object* _object)
 		}
 
 
+		location.y += move[top];
+		location.y += move[bottom];
+
+
 		//左右判定用に座標とエリアの調整
-		location.y += 3.f;
-		erea.height = tmpe.height - 10.f;
+		//location.y += 20.f;
+		erea.height = tmpe.height - 20.f;
 		erea.width = 1;
 
 		//プレイヤー左方向の判定
@@ -347,10 +351,12 @@ void Player::Hit(Object* _object)
 			stageHitFlg[0][right] = false;
 		}
 
+
+
 		//最初の値に戻す
 
 		location.x = tmpl.x;
-		location.y += -3.f;
+		//location.y += -20.f;
 		erea.height = tmpe.height;
 		erea.width = tmpe.width;
 
@@ -376,17 +382,15 @@ void Player::Hit(Object* _object)
 
 
 		//上下左右の移動量から移動後も埋まってるか調べる
-		if (location.y < _object->GetLocation().y + _object->GetErea().height && location.y + erea.height > _object->GetLocation().y) {//左右
-			if (stageHitFlg[1][top] || stageHitFlg[1][bottom]) {
-				move[left] = 0.f;
-				move[right] = 0.f;
-			}
-		}
-
+		//左右移動させてみてまだ埋まってたら戻す
 		location.x += move[left];
 		location.x += move[right];
-		location.y += move[top];
-		location.y += move[bottom];
+		if (location.x + erea.width < _object->GetLocation().x || location.x > _object->GetLocation().x + _object->GetErea().width) {
+			if (stageHitFlg[1][top] || stageHitFlg[1][bottom]) {
+				location.x -= move[left];
+				location.x -= move[right];
+			}
+		}
 
 		erea.height = tmpe.height;
 		erea.width = tmpe.width;
@@ -429,7 +433,7 @@ void Player::MoveActor()
 {
 	//ジャンプ
 	if ((PadInput::OnButton(XINPUT_BUTTON_A)/*|| PadInput::OnPressed(XINPUT_BUTTON_A)*/) && stageHitFlg[1][bottom]) {
-		vector.y = -20.f;
+		vector.y = -23.f;
 	}
 
 	//左右移動
@@ -444,15 +448,15 @@ void Player::MoveActor()
 			stick = PadInput::TipLeftLStick(STICKL_X);
 			vector.x += stick * 1.f;
 			//vector.x = stick * 5.f; //こっちの移動方法を使うかも
-			if (vector.x > 5.f) {
-				vector.x = 5.f;
+			if (vector.x > 7.5f) {
+				vector.x = 7.5f;
 			}
 		}
 		else if (PadInput::TipLeftLStick(STICKL_X) < -0.1f) {
 			stick = PadInput::TipLeftLStick(STICKL_X);
 			vector.x += stick * 1.f;
-			if (vector.x < -5.f) {
-				vector.x = -5.f;
+			if (vector.x < -7.5f) {
+				vector.x = -7.5f;
 			}
 		}
 		else {
@@ -815,8 +819,8 @@ void Player::SelectObject()
 			oldStick[2] = false;
 			flg = true;
 
-			//oldDirection = direction;
-			//direction = top;
+			oldDirection = direction;
+			direction = top;
 
 			float nearLen = 1000.f;
 			for (int i = 0; i < objNum; i++)
@@ -836,8 +840,8 @@ void Player::SelectObject()
 			oldStick[3] = false;
 			flg = true;
 
-			//oldDirection = direction;
-			//direction = bottom;
+			oldDirection = direction;
+			direction = bottom;
 
 
 			float nearLen = 1000.f;
