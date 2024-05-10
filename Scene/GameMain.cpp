@@ -21,8 +21,12 @@ GameMain::GameMain(int _stage) :frame(0),stage_data{0},now_stage(0), object_num(
 	SetStage(_stage);
 	lock_pos = camera_location;
 	swap_anim_timer = 0;
+
 	weather = new WeatherManager();
 	weather->Initialize();
+
+	effect_spawner = new EffectSpawner();
+	effect_spawner->Initialize();
 }
 
 GameMain::~GameMain()
@@ -178,7 +182,7 @@ void GameMain::CreateObject(Object* _object, Location _location, Erea _erea, int
 		if (object[i] == nullptr)
 		{
 			object[i] = _object;
-			object[i]->Initialize(_location, _erea, _color_data,i);
+			object[i]->Initialize(_location, _erea, _color_data, i);
 			//プレイヤーの配列上の位置格納
 			if (object[i]->GetObjectType() == PLAYER)
 			{

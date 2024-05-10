@@ -9,6 +9,7 @@
 #include "../Object/Weather.h"
 #include "../Object/Object.h"
 #include "../Object/WeatherManager.h"
+#include "../Object/EffectSpawner.h"
 #include "../Object/Effect.h"
 
 class Player;
@@ -40,8 +41,11 @@ private:
     int frame;                                           //フレーム測定
     int stage_data[MAX_STAGE_HEIGHT][MAX_STAGE_WIDTH];   //ステージデータ格納
     int player_object;             //プレイヤーが配列の何番目に格納されているか
+
     Object* object[OBJECT_NUM] = { nullptr };    //オブジェクト格納
     WeatherManager* weather;                        //天気管理オブジェクト
+    EffectSpawner* effect_spawner;                  //エフェクト管理オブジェクト
+
     int object_num;         //オブジェクト数
     int now_stage;          //現在のステージ数
     int stage_width_num;    //ステージの横のブロック数
