@@ -30,12 +30,16 @@ private:
 
 	DeerState deer_state;
 	bool deer_spawn;
-	bool deer_death = false;
+
+	float tn = 0.0f;
 
 	float move[4]; //各方向加速度格納用
-	bool stageHitFlg[2][4]; //カエルとステージの当たり判定
+	bool stageHitFlg[2][4]; //プレイヤーステージの当たり判定
+	//0の行はステージのブロック一つ一つに対しての判定
+	//1の行は1フレームでステージ全体との判定
 
 	float r_x = 0.0f, r_y = 0.0f;
+	float d_rad = 0.0f;
 
 	//デバック用
 	float DrawTest1 = 0, DrawTest2 = 0, DrawTest3 = 0, DrawTest4 = 0;

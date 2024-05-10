@@ -303,7 +303,7 @@ AbstractScene* EditScene::Update()
 	{
 		camera_location.y += 10;
 	}
-	if (KeyInput::OnPresed(KEY_INPUT_D))
+	if (KeyInput::OnPresed(KEY_INPUT_F) || KeyInput::OnPresed(KEY_INPUT_D))
 	{
 		camera_location.x += 10;
 	}
