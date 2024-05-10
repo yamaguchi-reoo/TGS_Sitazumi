@@ -48,6 +48,8 @@ public:
 public:
 	void Move(GameMain* _g);
 
+	void ColorCompatibility(GameMain* _g);//色の相性
+
 	void Hit(Object* _object)override;
 	bool SearchColor(Object* ob) {
 		return 0;

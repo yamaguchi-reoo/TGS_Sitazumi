@@ -55,22 +55,22 @@ void EnemyBat::Update(GameMain* _g)
 		location.y += vector.y * 0.1f;
 	}
 	//プレイヤーの一定範囲内に入ったら
-	else if (length < 400 && bat_state != BatState::DEATH) {
+	else if (length < 300 && bat_state != BatState::DEATH) {
 		// 移動方向を決定
 		dx /= length;
 		dy /= length;
 
 		// 移動する
-		location.x += dx * (vector.x + 1);
-		location.y += dy * (vector.y + 1);
+		location.x += dx * (vector.x + 1.5f);
+		location.y += dy * (vector.y + 1.5f);
 	}
 	else
 	{
 		//移動
-		//Move();
+		Move(_g);
 	}
-	//移動
-	Move(_g);
+
+	ColorCompatibility(_g);
 
 	for (int i = 0; i < 4; i++) {
 		stageHitFlg[0][i] = false;
@@ -150,6 +150,9 @@ void EnemyBat::Draw() const
 	}
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 	
+	if (hit_flg[0]) {
+		DrawString(200, 200, "hit", 0xfffff);
+	}
 }
 
 void EnemyBat::Finalize()
@@ -159,32 +162,19 @@ void EnemyBat::Finalize()
 
 void EnemyBat::Move(GameMain* _g)
 {
-	////左移動
-	//if (bat_state == BatState::LEFT) {
-	//	location.x -= vector.x;
-	//	location.y += sin(PI * 2.f / 40.f * up) * 5.f;
-
-	//}
-	////右移動
-	//if (bat_state == BatState::RIGHT) {
-	//	location.x += vector.x;
-	//	location.y -= sin(PI * 2.f / 40.f * up) * 5.f;
-	//}
-
-	//コウモリの状態
-	switch (bat_state)
-	{
-	case BatState::IDLE:
-		break;
-	case BatState::LEFT:
+	//左移動
+	if (bat_state == BatState::LEFT) {
 		location.x -= vector.x;
 		location.y += sin(PI * 2.f / 40.f * up) * 5.f;
-		break;
-	case BatState::RIGHT:
+
+	}
+	//右移動
+	if (bat_state == BatState::RIGHT) {
 		location.x += vector.x;
 		location.y -= sin(PI * 2.f / 40.f * up) * 5.f;
-		break;
-	case BatState::DEATH:
+	}
+
+	if (bat_state == BatState::DEATH) {
 		//自分の色が青のとき吸われてく
 		if (this->color == BLUE)
 		{
@@ -194,15 +184,26 @@ void EnemyBat::Move(GameMain* _g)
 		else {
 			_g->DeleteObject(object_pos);
 		}
-		break;
+	}
+}
+void EnemyBat::ColorCompatibility(GameMain* _g)
+{
+	if (hit_flg[0] && delete_object->GetObjectType() == WOOD) {
+		_g->CreateObject(new Stage(6), delete_object->GetLocation(), delete_object->GetErea(), RED);
+		_g->DeleteObject(delete_object->GetObjectPos());
+	}
+
+	if (hit_flg[1] && delete_object->GetObjectType() == FIRE) {
+		_g->CreateObject(new Stage(8), delete_object->GetLocation(), delete_object->GetErea(), BLUE);
+		_g->DeleteObject(delete_object->GetObjectPos());
 	}
 }
 
 void EnemyBat::Hit(Object* _object)
 {
+	delete_object = _object;
 	//ブロックと当たった時の処理
-	if (_object->GetObjectType() == BLOCK || _object->GetObjectType() == ENEMY)
-	{
+	if (_object->GetObjectType() == BLOCK || _object->GetObjectType() == ENEMY || _object->GetObjectType() == WOOD){
 		Location tmpl = location;
 		Erea tmpe = erea;
 		move[0] = 0;
@@ -332,16 +333,6 @@ void EnemyBat::Hit(Object* _object)
 		erea.width = tmpe.width;
 
 	}
-	//if ((_object->GetObjectType() == FIRE && this->color == GREEN) || (_object->GetObjectType() == WATER && this->color == RED) || (_object->GetObjectType() == WOOD && this->color == BLUE))
-	//{
-	//	//死亡状態へ
-	//	if (bat_state != BatState::DEATH)
-	//	{
-	//		bat_state = BatState::DEATH;
-	//		can_swap = FALSE;
-	//	}
-	//}
-
 
 	if (_object->GetObjectType() == PLAYER) {
 		hit_flg[0] = false;
@@ -365,7 +356,7 @@ void EnemyBat::Hit(Object* _object)
 	//青コウモリ
 	//触れたブロックが赤＆自分の色が青だったら触れた赤ブロックを消す
 	if (_object->GetObjectType() == FIRE && this->color == BLUE) {
-
+		hit_flg[1] = true;
 	}
 	//コウモリの色が吸い取られて死ぬ
 	if (_object->GetObjectType() == WOOD && this->color == BLUE) {
@@ -391,7 +382,6 @@ void EnemyBat::Hit(Object* _object)
 			can_swap = FALSE;
 		}
 	}
-	delete_object = _object;
 }
 
 bool EnemyBat::CheckCollision(Location l, Erea e)
