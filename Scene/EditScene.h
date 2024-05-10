@@ -46,7 +46,7 @@ static int can_select_type[UI_OBJECT_TYPE_NUM][2] =
 static char block_type_string[UI_OBJECT_TYPE_NUM][5][256] =
 {
     {"無"," "," "," "," ",},
-    {"白","灰"," "," "," ",},
+    {"白","灰","",""," ",},
     {"赤","緑","青"," "," ",},
     {"炎","木","水"," "," ",},
     {"プレ"," "," "," "," ",},

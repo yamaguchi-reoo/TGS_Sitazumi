@@ -38,6 +38,7 @@ void Effect::Update(GameMain* _g)
 	{
 		//直進移動
 	case 0:
+	case 2:
 		location.x += 2 * cosf(angle * (float)M_PI * 2);
 		location.y += 2 * sinf(angle * (float)M_PI * 2);
 		//指定された時間で消える
@@ -71,6 +72,11 @@ void Effect::Draw()const
 		break;
 	case 1:
 		ResourceManager::DrawRotaBox(local_location.x, local_location.y, erea.width, erea.height, local_location.x, local_location.y, frame * 10, color, TRUE);
+		break;
+	case 2:
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 - (frame * (effect_time/15)));
+		DrawBox(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, TRUE);
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 		break;
 	default:
 		break;

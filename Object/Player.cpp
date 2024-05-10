@@ -264,7 +264,12 @@ void Player::Hit(Object* _object)
 {
 
 	//ブロックと当たった時の処理
-	if (_object->GetObjectType() == BLOCK)
+	if (
+			(_object->GetObjectType() == BLOCK)||
+			(_object->GetObjectType() == FIRE && _object->GetCanSwap() == TRUE && this->color == RED) ||
+			(_object->GetObjectType() == WOOD && _object->GetCanSwap() == TRUE && this->color == GREEN)||
+			(_object->GetObjectType() == WATER && _object->GetCanSwap() == TRUE && this->color == BLUE)
+		)
 	{
 		Location tmpl = location;
 		Erea tmpe = erea;
