@@ -27,6 +27,10 @@ private:
 	float searchedLen; //交換できるオブジェクトとの距離
 	Object* searchedObj; //一番近い色を交換できるオブジェクト
 	Object* oldSearchedObj; //前回選択していたオブジェクト
+	Object* oldSearchedObjAll[OBJECT_NUM]; //選択していたすべてのオブジェクト
+	int oldObjNum;
+	int direction; //選択方向
+	int oldDirection; //前回の選択方向
 	Object* searchedObjAll[OBJECT_NUM]; //画面内の色交換できるオブジェクト
 	int objNum;//オブジェクトの添え字
 	int objSelectNum[2];//オブジェクトの添え字

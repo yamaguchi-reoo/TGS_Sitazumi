@@ -21,11 +21,11 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Object\BoxCollider.cpp" />
+    <ClCompile Include="Object\Effect.cpp" />
     <ClCompile Include="Object\EnemyBat.cpp" />
     <ClCompile Include="Object\EnemyDeer.cpp" />
     <ClCompile Include="Object\ColorData.cpp" />
     <ClCompile Include="Object\EnemyFrog.cpp" />
-    <ClCompile Include="Object\Object.cpp" />
     <ClCompile Include="Object\Player.cpp" />
     <ClCompile Include="Object\Stage.cpp" />
     <ClCompile Include="Object\Weather.cpp" />
@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Object\BoxCollider.h" />
+    <ClInclude Include="Object\Effect.h" />
     <ClInclude Include="Object\EnemyFrog.h" />
     <ClInclude Include="Object\Object.h" />
     <ClInclude Include="Object\EnemyBat.h" />
