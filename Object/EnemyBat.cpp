@@ -188,22 +188,30 @@ void EnemyBat::Move(GameMain* _g)
 }
 void EnemyBat::ColorCompatibility(GameMain* _g)
 {
-	if (hit_flg[0] && delete_object->GetObjectType() == WOOD) {
-		_g->CreateObject(new Stage(6), delete_object->GetLocation(), delete_object->GetErea(), RED);
+	//触れたブロックが緑＆自分の色が赤だったら触れた緑ブロックを燃やす
+	if (hit_flg[0] && delete_object->GetObjectType() == WOOD && this->color == RED) {
+		_g->CreateObject(new Stage(6), delete_object->GetLocation(), delete_object->GetErea(), FIRE);
 		_g->DeleteObject(delete_object->GetObjectPos());
+
+		for (int i = 0; i < OBJECT_NUM; i++) {
+
+		}
+
+	}
+	//触れたブロックが赤＆自分の色が青だったら触れた赤ブロックを消す
+	if (hit_flg[1]) {
+	}
+	//触れたブロックが青＆自分の色が緑だったら、雨粒を吸い取り　水場などに当たると反射する
+	if (hit_flg[2]) {
 	}
 
-	if (hit_flg[1] && delete_object->GetObjectType() == FIRE) {
-		_g->CreateObject(new Stage(8), delete_object->GetLocation(), delete_object->GetErea(), BLUE);
-		_g->DeleteObject(delete_object->GetObjectPos());
-	}
 }
 
 void EnemyBat::Hit(Object* _object)
 {
 	delete_object = _object;
 	//ブロックと当たった時の処理
-	if (_object->GetObjectType() == BLOCK || _object->GetObjectType() == ENEMY || _object->GetObjectType() == WOOD){
+	if (_object->GetObjectType() == BLOCK || _object->GetObjectType() == ENEMY){
 		Location tmpl = location;
 		Erea tmpe = erea;
 		move[0] = 0;
@@ -337,6 +345,7 @@ void EnemyBat::Hit(Object* _object)
 	if (_object->GetObjectType() == PLAYER) {
 		hit_flg[0] = false;
 	}
+
 	//赤コウモリ
 	//触れたブロックが緑＆自分の色が赤だったら触れた緑ブロックを燃やす
 	if (_object->GetObjectType() == WOOD && this->color == RED) {
@@ -372,7 +381,7 @@ void EnemyBat::Hit(Object* _object)
 	//緑コウモリ
 	//触れたブロックが青＆自分の色が緑だったら、雨粒を吸い取り　水場などに当たると反射する
 	if (_object->GetObjectType() == WATER && this->color == GREEN) {
-
+		hit_flg[2] = true;
 	}
 	//当たったら即死
 	if (_object->GetObjectType() == FIRE && this->color == GREEN) {
