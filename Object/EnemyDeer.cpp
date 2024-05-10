@@ -30,7 +30,7 @@ EnemyDeer::EnemyDeer()
 		}
 	}
 
-	deer_spawn = true;
+	deer_spawn = false;
 }
 
 EnemyDeer::~EnemyDeer()
@@ -80,17 +80,17 @@ void EnemyDeer::Draw()const
 
 		//頭
 		//DrawBoxAA(local_location.x + r_x, local_location.y + r_y, local_location.x + 30.0f + r_x, local_location.y + 20.0f + r_y, 0xffffff, TRUE);
-		ResourceManager::DrawRotaBox(local_location.x + 16.0f, local_location.y + 10.0f, 30.0f, 20.0f, d_rad, color, true);
+		ResourceManager::DrawRotaBox(local_location.x + 16.0f, local_location.y + 10.0f, 30.0f, 20.0f, 0, 0, 0, color, true);
 
 		//首
 		//DrawBoxAA(local_location.x + 13.0f, local_location.y + 25.0f, local_location.x + 30.0f, local_location.y + 35.0f, 0xffffff, TRUE);
 		//DrawBoxAA(local_location.x + 20.0f, local_location.y + 40.0f, local_location.x + 30.0f, local_location.y + 50.0f, 0xffffff, TRUE);
-		ResourceManager::DrawRotaBox(local_location.x + 22.0f, local_location.y + 30.0f, 17.0f, 10.0f, d_rad, color, true);
-		ResourceManager::DrawRotaBox(local_location.x + 26.0f, local_location.y + 45.0f, 10.0f, 10.0f, d_rad, color, true);
+		ResourceManager::DrawRotaBox(local_location.x + 22.0f, local_location.y + 30.0f, 17.0f, 10.0f, 0, 0, d_rad, color, true);
+		ResourceManager::DrawRotaBox(local_location.x + 26.0f, local_location.y + 45.0f, 10.0f, 10.0f, 0, 0, d_rad, color, true);
 
 		//胴体
 		//DrawBoxAA(local_location.x + 20.0f, local_location.y + 55.0f, local_location.x + 85.0f, local_location.y + 70.0f, 0xffffff, TRUE);
-		ResourceManager::DrawRotaBox(local_location.x + 53.0f, local_location.y + 63.0f, 65.0f, 15.0f, d_rad, color, true);
+		ResourceManager::DrawRotaBox(local_location.x + 53.0f, local_location.y + 63.0f, 65.0f, 15.0f, 0, 0, d_rad, color, true);
 
 		//足　左から
 		//DrawQuadrangleAA(local_location.x + 20.0f, local_location.y + 75.0f, local_location.x + 30.0f, local_location.y + 75.0f, local_location.x + 25.0f, local_location.y + 100.0f, local_location.x + 15.0f, local_location.y + 100.0f, 0xffffff, TRUE);
@@ -101,18 +101,20 @@ void EnemyDeer::Draw()const
 
 		//DrawQuadrangleAA(local_location.x + 75.0f, local_location.y + 75.0f, local_location.x + 85.0f, local_location.y + 75.0f, local_location.x + 95.0f, local_location.y + 100.0f, local_location.x + 85.0f, local_location.y + 100.0f, 0xffffff, TRUE);
 
-		ResourceManager::DrawRotaBox(local_location.x + 25.0f, local_location.y + 88.0f, 10.0f, 25.0f, d_rad, color, true);
+		ResourceManager::DrawRotaBox(local_location.x + 25.0f, local_location.y + 88.0f, 10.0f, 25.0f, 0, 0, d_rad, color, true);
 
-		ResourceManager::DrawRotaBox(local_location.x + 41.0f, local_location.y + 88.0f, 10.0f, 25.0f, d_rad, color, true);
+		ResourceManager::DrawRotaBox(local_location.x + 41.0f, local_location.y + 88.0f, 10.0f, 25.0f, 0, 0, d_rad, color, true);
 
-		ResourceManager::DrawRotaBox(local_location.x + 66.0f, local_location.y + 88.0f, 10.0f, 25.0f, d_rad, color, true);
+		ResourceManager::DrawRotaBox(local_location.x + 66.0f, local_location.y + 88.0f, 10.0f, 25.0f, 0, 0, d_rad, color, true);
 
-		ResourceManager::DrawRotaBox(local_location.x + 81.0f, local_location.y + 88.0f, 10.0f, 25.0f, d_rad, color, true);
+		ResourceManager::DrawRotaBox(local_location.x + 81.0f, local_location.y + 88.0f, 10.0f, 25.0f, 0, 0, d_rad, color, true);
 	}
 	else if (deer_state == DeerState::RIGHT)
 	{
 		//角
 		//DrawQuadrangleAA(local_location.x - 5.0f, local_location.y - 20.0f, local_location.x + 2.0f, local_location.y - 25.0f, local_location.x + 15.0f, local_location.y + 2.0f, local_location.x + 7.0f, local_location.y + 5.0f, color, TRUE);
+
+		ResourceManager::DrawRotaBox(local_location.x, local_location.y, 10.0f, 10.0f, local_location.x, local_location.y, d_rad, color, true);
 
 		//頭
 		DrawBoxAA(local_location.x + 70.0f, local_location.y, local_location.x + 100.0f, local_location.y + 20.0f, color, TRUE);
@@ -154,9 +156,7 @@ void EnemyDeer::Draw()const
 	DrawCircleAA(local_location.x, local_location.y + erea.height, 2, 32, 0xff00ff, TRUE);
 	//DrawCircleAA(local_location.x, local_location.y + erea.height, 2, 32, 0x00ff00, TRUE);
 
-	DrawFormatStringF(50, 20, 0x00ff00, "StageHitFlg [0][bottom] %d  [1][bottom] %d", stageHitFlg[0][bottom], stageHitFlg[1][bottom]);
-	DrawFormatStringF(50, 40, 0x00ff00, "下方向に埋まっていたら %0.1f", tn);
-	DrawFormatStringF(50, 60, 0x00ff00, "move[bottom : %0.1f]", move[bottom]);
+	DrawFormatStringF(50, 20, 0x00ff00, "color %0.1f", color);
 }
 
 void EnemyDeer::EnemyDeerMove()
@@ -228,7 +228,7 @@ void EnemyDeer::Hit(Object* _object)
 		//上下判定用に座標とエリアの調整
 		location.x += 10.f;
 		erea.height = 1.f;
-		erea.width = tmpe.width - 15.f;
+		erea.width = tmpe.width - 20.f;
 
 		//プレイヤー上方向の判定
 		if (CheckCollision(_object->GetLocation(), _object->GetErea()) && !stageHitFlg[1][top]) {
@@ -244,6 +244,12 @@ void EnemyDeer::Hit(Object* _object)
 		if (CheckCollision(_object->GetLocation(), _object->GetErea()) && !stageHitFlg[1][bottom]) {
 			stageHitFlg[0][bottom] = true;
 			stageHitFlg[1][bottom] = true;
+
+			if (!deer_spawn)
+			{
+				deer_state = DeerState::LEFT;
+				deer_spawn = true;
+			}
 		}
 		else {
 			stageHitFlg[0][bottom] = false;
@@ -265,17 +271,20 @@ void EnemyDeer::Hit(Object* _object)
 
 		//下方向に埋まらないようにする
 		if (stageHitFlg[0][bottom]) {//下方向に埋まっていたら
-			tn = _object->GetLocation().y - (location.y + erea.height);
-			if (tn != 0) {
-				move[bottom] = tn;
-				deer_state = DeerState::RIGHT;
+			float t = _object->GetLocation().y - (location.y + erea.height);
+			if (t != 0) {
+				move[bottom] = t;
 			}
 		}
 
 
+		location.y += move[top];
+		location.y += move[bottom];
+
+
 		//左右判定用に座標とエリアの調整
-		location.y += 3.f;
-		erea.height = tmpe.height - 10.f;
+		//location.y += 20.f;
+		erea.height = tmpe.height - 20.f;
 		erea.width = 1;
 
 		//プレイヤー左方向の判定
@@ -283,6 +292,7 @@ void EnemyDeer::Hit(Object* _object)
 			stageHitFlg[0][left] = true;
 			stageHitFlg[1][left] = true;
 			int a = CheckCollision(_object->GetLocation(), _object->GetErea());
+			deer_state = DeerState::RIGHT;
 		}
 		else {
 			stageHitFlg[0][left] = false;
@@ -294,15 +304,18 @@ void EnemyDeer::Hit(Object* _object)
 		if (CheckCollision(_object->GetLocation(), _object->GetErea()) && !stageHitFlg[1][right]) {
 			stageHitFlg[0][right] = true;
 			stageHitFlg[1][right] = true;
+			deer_state = DeerState::LEFT;
 		}
 		else {
 			stageHitFlg[0][right] = false;
 		}
 
+
+
 		//最初の値に戻す
 
 		location.x = tmpl.x;
-		location.y += -3.f;
+		//location.y += -20.f;
 		erea.height = tmpe.height;
 		erea.width = tmpe.width;
 
@@ -312,8 +325,7 @@ void EnemyDeer::Hit(Object* _object)
 		if (stageHitFlg[0][left]) {//左方向に埋まっていたら
 			float t = (_object->GetLocation().x + _object->GetErea().width) - location.x;
 			if (t != 0) {
-				move[left] = t;
-				//deer_state = DeerState::RIGHT;
+				move[left] = t;	
 			}
 		}
 
@@ -322,34 +334,29 @@ void EnemyDeer::Hit(Object* _object)
 			float t = _object->GetLocation().x - (location.x + erea.width);
 			if (t != 0) {
 				move[right] = t;
-				//deer_state = DeerState::LEFT;
 			}
 		}
 
 
 		//上下左右の移動量から移動後も埋まってるか調べる
-		if (location.y < _object->GetLocation().y + _object->GetErea().height && location.y + erea.height > _object->GetLocation().y) {//左右
-			if (stageHitFlg[1][top] || stageHitFlg[1][bottom]) {
-				move[left] = 0.f;
-				move[right] = 0.f;
-			}
-		}
-
+		//左右移動させてみてまだ埋まってたら戻す
 		location.x += move[left];
 		location.x += move[right];
-		location.y += move[top];
-		location.y += move[bottom];
+		if (location.x + erea.width < _object->GetLocation().x || location.x > _object->GetLocation().x + _object->GetErea().width) {
+			if (stageHitFlg[1][top] || stageHitFlg[1][bottom]) {
+				location.x -= move[left];
+				location.x -= move[right];
+			}
+		}
 
 		erea.height = tmpe.height;
 		erea.width = tmpe.width;
 
-	}
-
-	//死ぬ表示
-	if ((_object->GetObjectType() == FIRE && this->color == GREEN) || (_object->GetObjectType() == WATER && this->color == RED) || (_object->GetObjectType() == WOOD && this->color == BLUE))
-	{
-		deer_state = DeerState::DEATH;
-	}
+		if ((_object->GetObjectType() == FIRE && this->color == GREEN) || (_object->GetObjectType() == WATER && this->color == RED) || (_object->GetObjectType() == WOOD && this->color == BLUE))
+		{
+			deer_state = DeerState::DEATH;
+		}
+	}	
 }
 
 bool EnemyDeer::CheckCollision(Location l, Erea e)
