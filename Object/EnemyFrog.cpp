@@ -3,7 +3,7 @@
 #include"../Scene/GameMain.h"
 #include"../Utility/ResourceManager.h"
 
-EnemyFrog::EnemyFrog():frame(0), frog_state(FrogState::LEFT_JUMP), vector{ 0,0 }, death_timer(0), face_rad(0.0f)
+EnemyFrog::EnemyFrog():frame(0),timer(0), frog_state(FrogState::LEFT_JUMP), vector{0,0}, death_timer(0), face_angle(0.0f)
 {
 	type = ENEMY;
 	can_swap = TRUE;
@@ -26,7 +26,10 @@ void EnemyFrog::Initialize(Location _location, Erea _erea, int _color_data, int 
 
 void EnemyFrog::Update(GameMain* _g)
 {
-	frame++;
+	if (++frame > 360)
+	{
+		frame = 0;
+	}
 	if (stageHitFlg[1][bottom] != true/* && !searchFlg*/) { //重力
 		vector.y += 1.f;
 		if (vector.y > 16.f) {
@@ -40,16 +43,12 @@ void EnemyFrog::Update(GameMain* _g)
 	//カエルの状態に応じて更新
 	switch (frog_state)
 	{
-	case FrogState::IDLE_LEFT:
-		break;
-	case FrogState::IDLE_RIGHT:
-		break;
 	case FrogState::LEFT_JUMP:
 		if (_g->GetSearchFlg())
 		{
 			if (frame % 600 == 0)
 			{
-				vector.x = -1.f;
+				vector.x = -5.f;
 				vector.y = -20.f;
 			}
 		}
@@ -57,9 +56,14 @@ void EnemyFrog::Update(GameMain* _g)
 		{
 			if (frame % 60 == 0)
 			{
-				vector.x = -1.f;
+				vector.x = -5.f;
 				vector.y = -20.f;
 			}
+		}
+		//空中で僅かに加速(ブロックに引っかかる対策)
+		if (vector.x == 0 && stageHitFlg[1][bottom] == false)
+		{
+			vector.x = -0.3f;
 		}
 		break;
 	case FrogState::RIGHT_JUMP:
@@ -67,7 +71,7 @@ void EnemyFrog::Update(GameMain* _g)
 		{
 			if (frame % 600 == 0)
 			{
-				vector.x = 1.f;
+				vector.x = 5.f;
 				vector.y = -20.f;
 			}
 		}
@@ -75,9 +79,14 @@ void EnemyFrog::Update(GameMain* _g)
 		{
 			if (frame % 60 == 0)
 			{
-				vector.x = 1.f;
+				vector.x = 5.f;
 				vector.y = -20.f;
 			}
+		}
+		//空中で僅かに加速(ブロックに引っかかる対策)
+		if (vector.x == 0 && stageHitFlg[1][bottom] == false)
+		{
+			vector.x = 0.3f;
 		}
 		break;
 	case FrogState::DEATH:
@@ -102,8 +111,44 @@ void EnemyFrog::Draw()const
 {
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 - (death_timer * 4));
 	DrawBox(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, FALSE);
-	ResourceManager::DrawRotaBox(local_location.x+(erea.width/2)+10, local_location.y+(erea.height) + 10, erea.width-20, erea.height-20, face_rad, color, TRUE);
+	ResourceManager::DrawRotaBox(local_location.x+(erea.width/2), local_location.y + (erea.height / 2), erea.width, erea.height/2, local_location.x + (erea.width / 2), local_location.y + (erea.height / 2), face_angle, color, TRUE);
+
+	//右着地
+	if (face_angle == 0 && vector.x == 0 && vector.y == 0)
+	{
+		ResourceManager::DrawRotaBox(local_location.x, local_location.y + erea.height - 20, 10, 10, local_location.x + (erea.width / 2), local_location.y + (erea.height / 2), face_angle, 0xffffff, TRUE);
+		ResourceManager::DrawRotaBox(local_location.x + erea.width-10, local_location.y + 20, 30, 10, local_location.x + (erea.width / 2), local_location.y + (erea.height / 2), face_angle, color, TRUE);
+		ResourceManager::DrawRotaBox(local_location.x + erea.width-10, local_location.y + 10, 40, 10, local_location.x + (erea.width / 2), local_location.y + (erea.height / 2), face_angle, color, TRUE);
+		ResourceManager::DrawRotaBox(local_location.x+20, local_location.y+20, 20, 30, local_location.x + (erea.width / 2), local_location.y + (erea.height / 2), face_angle, color, TRUE);
+	}
+	//左着地
+	else if (face_angle == 180 && vector.x == 0 && vector.y == 0)
+	{
+		ResourceManager::DrawRotaBox(local_location.x, local_location.y + 20, 10, 10, local_location.x + (erea.width / 2), local_location.y + (erea.height / 2), face_angle, 0xffffff, TRUE);
+		ResourceManager::DrawRotaBox(local_location.x + erea.width-10, local_location.y + erea.height - 20, 30, 10, local_location.x + (erea.width / 2), local_location.y + (erea.height / 2), face_angle, color, TRUE);
+		ResourceManager::DrawRotaBox(local_location.x + erea.width-10, local_location.y + erea.height - 10, 40, 10, local_location.x + (erea.width / 2), local_location.y + (erea.height / 2), face_angle, color, TRUE);
+		ResourceManager::DrawRotaBox(local_location.x+20, local_location.y + erea.height-20, 20, 30, local_location.x + (erea.width / 2), local_location.y + (erea.height / 2), face_angle, color, TRUE);
+
+	}
+	//左向き
+	else if (face_angle >90 && face_angle <270)
+	{
+		ResourceManager::DrawRotaBox(local_location.x, local_location.y + 20, 10, 10, local_location.x + (erea.width / 2), local_location.y + (erea.height / 2), face_angle, 0xffffff, TRUE);
+		ResourceManager::DrawRotaBox(local_location.x + erea.width, local_location.y + erea.height - 20, 30, 10, local_location.x + (erea.width / 2), local_location.y + (erea.height / 2), face_angle, color, TRUE);
+		ResourceManager::DrawRotaBox(local_location.x + erea.width + 30, local_location.y + erea.height - 10, 40, 10, local_location.x + (erea.width / 2), local_location.y + (erea.height / 2), face_angle, color, TRUE);
+		ResourceManager::DrawRotaBox(local_location.x, local_location.y + erea.height-20, 20, 30, local_location.x + (erea.width / 2), local_location.y + (erea.height / 2), face_angle, color, TRUE);
+
+	}
+	//右向き
+	else
+	{
+		ResourceManager::DrawRotaBox(local_location.x, local_location.y + erea.height - 20, 10, 10, local_location.x + (erea.width / 2), local_location.y + (erea.height / 2), face_angle, 0xffffff, TRUE);
+		ResourceManager::DrawRotaBox(local_location.x + erea.width, local_location.y + 20, 30, 10, local_location.x + (erea.width / 2), local_location.y + (erea.height / 2), face_angle, color, TRUE);
+		ResourceManager::DrawRotaBox(local_location.x + erea.width+30, local_location.y + 10, 40, 10, local_location.x + (erea.width / 2), local_location.y + (erea.height / 2), face_angle, color, TRUE);
+		ResourceManager::DrawRotaBox(local_location.x, local_location.y + 20, 20, 30, local_location.x + (erea.width / 2), local_location.y + (erea.height / 2), face_angle, color, TRUE);
+	}
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
+	DrawFormatStringF(local_location.x, local_location.y, 0x00ff00, "%f", face_angle);
 
 }
 
@@ -258,7 +303,30 @@ void EnemyFrog::Hit(Object* _object)
 
 void EnemyFrog::Move(GameMain* _g)
 {
-	
+	//顔の向き更新
+	if (vector.x == 0 && vector.y == 0)
+	{
+		if (frog_state == FrogState::LEFT_JUMP)
+		{
+			face_angle = 180;
+		}
+		if (frog_state == FrogState::RIGHT_JUMP)
+		{
+			face_angle = 0;
+		}
+	}
+	else
+	{
+		if (frog_state == FrogState::LEFT_JUMP)
+		{
+			face_angle = atanf(vector.y / vector.x) * 60 +180;
+		}
+		if (frog_state == FrogState::RIGHT_JUMP)
+		{
+			face_angle = atanf(vector.y / vector.x) * 60;
+		}
+	}
+	//移動
 	if (_g->GetSearchFlg()) {
 		location.x += vector.x * 0.1f;
 		location.y += vector.y * 0.1f;

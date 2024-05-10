@@ -46,24 +46,41 @@ AbstractScene* GameMain::Update()
 	UpdateCamera();
 
 	//各オブジェクトの更新
-	for (int i = 0; object[i] != nullptr; i++)
+	if (object[player_object]->GetSearchFlg() == FALSE || (object[player_object]->GetSearchFlg() == TRUE && frame % 10 == 0))
 	{
-		object[i]->SetScreenPosition(camera_location);
-		object[i]->Update(this);
-		for (int j = i+1; object[j] != nullptr; j++)
+		for (int i = 0; object[i] != nullptr; i++)
 		{
-			//各オブジェクトとの当たり判定
-			if (object[i]->GetCanHit() == TRUE && object[j]->GetCanHit() == TRUE && object[i]->HitBox(object[j]))
+			//プレイヤー以外のオブジェクトの更新
+			if (object[i] != object[player_object])
 			{
-				object[i]->Hit(object[j]);
-				object[j]->Hit(object[i]);
-			}
-			//各オブジェクトの色交換
-			if (object[i]->GetObjectType() == PLAYER) {
-				if (object[j]->GetCanSwap() == TRUE) {
-					object[i]->SearchColor(object[j]);
+				object[i]->SetScreenPosition(camera_location);
+				object[i]->Update(this);
+				for (int j = i + 1; object[j] != nullptr; j++)
+				{
+					//各オブジェクトとの当たり判定
+					if (object[i]->GetCanHit() == TRUE && object[j]->GetCanHit() == TRUE && object[i]->HitBox(object[j])&& object[j] != object[player_object])
+					{
+						object[i]->Hit(object[j]);
+						object[j]->Hit(object[i]);
+					}
 				}
 			}
+		}
+	}
+
+	//プレイヤーの更新＆色探知用
+	object[player_object]->SetScreenPosition(camera_location);
+	object[player_object]->Update(this);
+	for (int i = 0; object[i] != nullptr; i++)
+	{
+		if (object[i]->GetCanSwap() == TRUE && object[i]->GetObjectType() != PLAYER) {
+			object[player_object]->SearchColor(object[i]);
+		}
+		//各オブジェクトとの当たり判定
+		if (object[i]->GetCanHit() == TRUE && object[player_object]->GetCanHit() == TRUE && object[i]->HitBox(object[player_object]))
+		{
+			object[i]->Hit(object[player_object]);
+			object[player_object]->Hit(object[i]);
 		}
 	}
 	//色交換エフェクトの更新
@@ -89,13 +106,13 @@ AbstractScene* GameMain::Update()
 	}
 
 	//天気の更新
-	if (frame % 100 == 0)
-	{
-		if (++now_weather > 3)
-		{
-			now_weather = 0;
-		}
-	}
+	//if (frame % 100 == 0)
+	//{
+	//	if (++now_weather > 3)
+	//	{
+	//		now_weather = 0;
+	//	}
+	//}
 	weather->Update(this);
 
 #ifdef _DEBUG
@@ -118,7 +135,11 @@ void GameMain::Draw() const
 			pn = i;
 			continue;
 		}
-		object[i]->Draw();
+		//エフェクト以外を先に描画
+		if (object[i]->GetObjectType() != EFFECT)
+		{
+			object[i]->Draw();
+		}
 	}
 	//プレイヤーを最後に描画
 	object[pn]->Draw();
@@ -134,6 +155,14 @@ void GameMain::Draw() const
 			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200 - (swap_anim_timer*20));
 			DrawBox(swap_anim[i].start.x - camera_location.x - (swap_anim_timer*5), swap_anim[i].start.y - camera_location.y - (swap_anim_timer * 5), swap_anim[i].start.x + swap_anim[i].erea.width - camera_location.x + (swap_anim_timer * 5), swap_anim[i].start.y + swap_anim[i].erea.height - camera_location.y + (swap_anim_timer * 5), swap_anim[i].color, true);
 			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255); 
+		}
+	}
+	//各エフェクトの描画
+	for (int i = 0; object[i] != nullptr; i++)
+	{
+		if (object[i]->GetObjectType() == EFFECT)
+		{
+			object[i]->Draw();
 		}
 	}
 #ifdef _DEBUG
@@ -170,6 +199,10 @@ void GameMain::DeleteObject(int i)
 		if (object[j] != nullptr)
 		{
 			object[j]->SetObjectPos(j);
+			if (object[j]->GetObjectType() == PLAYER)
+			{
+				player_object--;
+			}
 		}
 	}
 	object_num--;
@@ -252,22 +285,16 @@ void GameMain::UpdateCamera()
 
 void GameMain::LoadStageData(int _stage)
 {
-	const char* a = "../Resource/Dat/1stStageData.txt";
+	const char* a = "../Resource/Dat/TestStageData.txt";
 	switch (_stage)
 	{
 	case 0:
-		a = "Resource/Dat/1stStageData.txt";
+		a = "Resource/Dat/TestStageData.txt";
 		break;
 	case 1:
-		a = "Resource/Dat/2ndStageData.txt";
+		a = "Resource/Dat/1stStageData.txt";
 		break;
 	case 2:
-		a = "Resource/Dat/3rdStageData.txt";
-		break;
-	case 3:
-		a = "Resource/Dat/4thStageData.txt";
-		break;
-	case 4:
 		a = "Resource/Dat/BossStageData.txt";
 		break;
 	}
@@ -323,7 +350,11 @@ void GameMain::SetStage(int _stage)
 				break;
 			case 9:
 				//プレイヤーの生成
-				CreateObject(new Player, { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { 150,75 }, RED);
+				CreateObject(new Player, { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { PLAYER_HEIGHT,PLAYER_WIDTH }, RED);
+				CreateObject(new Effect(1,0.125, 60), {(float)j * BOX_WIDTH + (PLAYER_WIDTH / 2) ,(float)i * BOX_HEIGHT + (PLAYER_HEIGHT / 2) }, {20,20}, RED);
+				CreateObject(new Effect(1,0.375, 60), {(float)j * BOX_WIDTH + (PLAYER_WIDTH / 2) ,(float)i * BOX_HEIGHT + (PLAYER_HEIGHT / 2) }, {20,20}, RED);
+				CreateObject(new Effect(1,0.625, 60), {(float)j * BOX_WIDTH + (PLAYER_WIDTH / 2) ,(float)i * BOX_HEIGHT + (PLAYER_HEIGHT / 2) }, {20,20}, RED);
+				CreateObject(new Effect(1,0.875, 60), {(float)j * BOX_WIDTH + (PLAYER_WIDTH / 2) ,(float)i * BOX_HEIGHT + (PLAYER_HEIGHT / 2) }, {20,20}, RED);
 				player_flg = true;
 				break;
 			case 10:

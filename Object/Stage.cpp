@@ -25,14 +25,6 @@ Stage::Stage(int _type) : frame(0), old_color(0),inv_flg(false), debug_flg(false
 		type = BLOCK;
 	}
 	block_type = _type;
-	//if (block_type > 5)
-	//{
-	//	can_hit = FALSE;
-	//}
-	//else
-	//{
-	//	can_hit = TRUE;
-	//}
 	can_hit = TRUE;
 }
 
@@ -62,7 +54,6 @@ void Stage::Initialize(Location _location, Erea _erea, int _color_data,int _obje
 	for (int i = 0; i < ANIM_BLOCK_NUM; i++)
 	{
 		fire_anim[i].time = GetRand(20);
-		/*int rand = GetRand(10);*/
 		wood_anim[i].shift = GetRand(10);
 		wood_anim[i].shift1.x = (erea.width / 10) * i;
 		wood_anim[i].shift2.x = (erea.width / 10) * i;
@@ -433,17 +424,6 @@ void Stage::Hit(Object* _object)
 	//{
 	//	hit_timer = 0;
 	//}
-}
-
-bool Stage::GetStageCollisionType()
-{
-	bool col_type = false;
-	//１～５は当たり判定有り
-	if (block_type >= 1 && block_type <= 5)
-	{
-		col_type = true;
-	}
-	return col_type;
 }
 
 void Stage::SetStageType(int _type)

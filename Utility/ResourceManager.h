@@ -42,6 +42,6 @@ public:
 	//音源再生終了
 	static void StopSound(int _num);
 
-	//回転四角形描画 _x,_y=描画座標 _w,_h=図形サイズ _rad=回転角度 _color=色 _fill=塗りつぶすかどうか _x,_yで指定した座標を中心として_rad度回転した四角形を描画する
-	static void DrawRotaBox(float _x, float _y, float _w, float _h, float _rad,int _color,bool _fill);
+	//回転四角形描画 _x,_y=描画座標 _w,_h=図形サイズ _cx,_cy=回転の中心 _rad=回転角度 _color=色 _fill=塗りつぶすかどうか _x,_yで指定した座標を中心として_rad度回転した四角形を描画する
+	static void DrawRotaBox(float _x, float _y, float _w, float _h, float _cx, float _cy,float _rad,int _color,bool _fill);
 };
