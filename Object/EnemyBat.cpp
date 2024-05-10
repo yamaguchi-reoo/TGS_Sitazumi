@@ -40,7 +40,7 @@ void EnemyBat::Update(GameMain* _g)
 {
 	up += 1;
 	// 羽の角度を変化させる
-	wing_angle = sin(PI * 2.f / 120.f * up) * 30.f; // 30度の振れ幅で周期的に変化させる
+	wing_angle = sin(PI * 2.f / 40.f * up) * 20.f; // 30度の振れ幅で周期的に変化させる
 
 	Location player_pos = _g->GetPlayerLocation();
 	// プレイヤーとの距離を計算
@@ -67,47 +67,25 @@ void EnemyBat::Update(GameMain* _g)
 	else
 	{
 		//移動
-		Move();
+		//Move();
 	}
+	//移動
+	Move(_g);
 
 	for (int i = 0; i < 4; i++) {
 		stageHitFlg[0][i] = false;
 		stageHitFlg[1][i] = false;
 	}
-	//コウモリの状態
-	switch (bat_state)
-	{
-	case BatState::IDLE:
-		break;
-	case BatState::LEFT:
-		break;
-	case BatState::RIGHT:
-		break;
-	case BatState::TRACKING:
-		break;
-	case BatState::DEATH:
-		//自分の色が青のとき吸われてく
-		if (this->color == BLUE)
-		{
-			if(++death_timer > 60)
-			_g->DeleteObject(object_pos);
-		}
-		else {
-			_g->DeleteObject(object_pos);
-		}
-		break;
-	}
 
-	if (hit_flg[0] == true && delete_object->GetObjectType() == WOOD) {
+	/*if (delete_object->GetObjectType() == WOOD) {
 		_g->CreateObject(new Stage(6), delete_object->GetLocation(), delete_object->GetErea(), RED);
 		_g->DeleteObject(delete_object->GetObjectPos());
-		hit_flg[0] = false;
-	}
+	}*/
 }
 
 void EnemyBat::Draw() const
 {
-	DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, GetColor(255, 255, 255), FALSE);
+	//DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, GetColor(255, 255, 255), FALSE);
 
 	//各頂点をlocal_locationに置き換えた
 	//const std::vector<Location> vertices = {
@@ -156,12 +134,12 @@ void EnemyBat::Draw() const
 		//右羽
 		else if (i > 5 && i < 14) {
 			// 羽の動き
-			DrawTriangleAA(vertices[i].x, vertices[i].y, vertices[i + 1].x, vertices[i + 1].y + wing_angle, vertices[i + 2].x , vertices[i + 2].y + wing_angle, color, TRUE);
+			DrawTriangleAA(vertices[i].x, vertices[i].y, vertices[i + 1].x, vertices[i + 1].y + wing_angle, vertices[i + 2].x + wing_angle, vertices[i + 2].y , color, TRUE);
 		}
 		//左羽
 		else if (i > 14 && i < 23) {
 			// 羽の動き
-			DrawTriangleAA(vertices[i].x, vertices[i].y , vertices[i + 1].x, vertices[i + 1].y + wing_angle, vertices[i + 2].x , vertices[i + 2].y + wing_angle, color, TRUE);
+			DrawTriangleAA(vertices[i].x, vertices[i].y, vertices[i + 1].x, vertices[i + 1].y + wing_angle, vertices[i + 2].x - wing_angle, vertices[i + 2].y, color, TRUE);
 		}
 		//ひし形の描画
 		else
@@ -179,26 +157,51 @@ void EnemyBat::Finalize()
 
 }
 
-void EnemyBat::Move()
+void EnemyBat::Move(GameMain* _g)
 {
-	
-	//左移動
-	if (bat_state == BatState::LEFT) {
+	////左移動
+	//if (bat_state == BatState::LEFT) {
+	//	location.x -= vector.x;
+	//	location.y += sin(PI * 2.f / 40.f * up) * 5.f;
+
+	//}
+	////右移動
+	//if (bat_state == BatState::RIGHT) {
+	//	location.x += vector.x;
+	//	location.y -= sin(PI * 2.f / 40.f * up) * 5.f;
+	//}
+
+	//コウモリの状態
+	switch (bat_state)
+	{
+	case BatState::IDLE:
+		break;
+	case BatState::LEFT:
 		location.x -= vector.x;
 		location.y += sin(PI * 2.f / 40.f * up) * 5.f;
-
-	}
-	//右移動
-	if (bat_state == BatState::RIGHT) {
+		break;
+	case BatState::RIGHT:
 		location.x += vector.x;
 		location.y -= sin(PI * 2.f / 40.f * up) * 5.f;
+		break;
+	case BatState::DEATH:
+		//自分の色が青のとき吸われてく
+		if (this->color == BLUE)
+		{
+			if (++death_timer > 60)
+				_g->DeleteObject(object_pos);
+		}
+		else {
+			_g->DeleteObject(object_pos);
+		}
+		break;
 	}
 }
 
 void EnemyBat::Hit(Object* _object)
 {
 	//ブロックと当たった時の処理
-	if (_object->GetObjectType() == BLOCK || _object->GetObjectType() == ENEMY || _object->GetObjectType() == WOOD)
+	if (_object->GetObjectType() == BLOCK || _object->GetObjectType() == ENEMY)
 	{
 		Location tmpl = location;
 		Erea tmpe = erea;
@@ -239,30 +242,18 @@ void EnemyBat::Hit(Object* _object)
 
 		//上方向に埋まらないようにする
 		if (stageHitFlg[0][top]) {//上方向に埋まっていたら
-			if (_object->GetObjectType() == WOOD && this->color == RED)
-			{
-				hit_flg[0] = true;
-			}
-			else{
-				float t = (_object->GetLocation().y + _object->GetErea().height) - location.y;
-				if (t != 0) {
-					vector.y = 0.f;
-					move[top] = t;
-				}
+			float t = (_object->GetLocation().y + _object->GetErea().height) - location.y;
+			if (t != 0) {
+				vector.y = 0.f;
+				move[top] = t;
 			}
 		}
 
 		//下方向に埋まらないようにする
 		if (stageHitFlg[0][bottom]) {//下方向に埋まっていたら
-			if (_object->GetObjectType() == WOOD && this->color == RED)
-			{
-				hit_flg[0] = true;
-			}
-			else{
-				float t = _object->GetLocation().y - (location.y + erea.height);
-				if (t != 0) {
-					move[bottom] = t;
-				}
+			float t = _object->GetLocation().y - (location.y + erea.height);
+			if (t != 0) {
+				move[bottom] = t;
 			}
 		}
 
@@ -304,34 +295,22 @@ void EnemyBat::Hit(Object* _object)
 
 		//左方向に埋まらないようにする
 		if (stageHitFlg[0][left]) {//左方向に埋まっていたら
-			if (_object->GetObjectType() == WOOD && this->color == RED)
-			{
-				hit_flg[0] = true;
-			}
-			else {
-				float t = (_object->GetLocation().x + _object->GetErea().width) - location.x;
-				if (t != 0) {
-					vector.x = 0.f;
-					move[left] = t;
+			float t = (_object->GetLocation().x + _object->GetErea().width) - location.x;
+			if (t != 0) {
+				vector.x = 0.f;
+				move[left] = t;
 
-					bat_state = BatState::RIGHT;
-				}
+				bat_state = BatState::RIGHT;
 			}
 		}
 
 		//右方向に埋まらないようにする
 		if (stageHitFlg[0][right]) {//右方向に埋まっていたら
-			if (_object->GetObjectType() == WOOD && this->color == RED)
-			{
-				hit_flg[0] = true;
-			}
-			else {
-				float t = _object->GetLocation().x - (location.x + erea.width);
-				if (t != 0) {
-					vector.x = 0.f;
-					move[right] = t;
-					bat_state = BatState::LEFT;
-				}
+			float t = _object->GetLocation().x - (location.x + erea.width);
+			if (t != 0) {
+				vector.x = 0.f;
+				move[right] = t;
+				bat_state = BatState::LEFT;
 			}
 		}
 
@@ -363,22 +342,15 @@ void EnemyBat::Hit(Object* _object)
 	//	}
 	//}
 
-	delete_object = _object;
-
 
 	if (_object->GetObjectType() == PLAYER) {
 		hit_flg[0] = false;
-
 	}
 	//赤コウモリ
 	//触れたブロックが緑＆自分の色が赤だったら触れた緑ブロックを燃やす
-	//if (delete_object->GetObjectType() == WOOD && this->color == RED && stageHitFlg[0][right] ||
-	//	delete_object->GetObjectType() == WOOD && this->color == RED && stageHitFlg[0][left]  ||
-	//	delete_object->GetObjectType() == WOOD && this->color == RED && stageHitFlg[0][top]   ||
-	//	delete_object->GetObjectType() == WOOD && this->color == RED && stageHitFlg[0][bottom]) {
-	//	hit_flg[0] = true;
-	//	//bat_state = BatState::LEFT;
-	//}
+	if (_object->GetObjectType() == WOOD && this->color == RED) {
+		hit_flg[0] = true;
+	}
 
 	//水の中に突っ込むと即死　雨粒は即死だが死ぬ際の動きに変化あり
 	if (_object->GetObjectType() == WATER && this->color == RED) {
@@ -419,6 +391,7 @@ void EnemyBat::Hit(Object* _object)
 			can_swap = FALSE;
 		}
 	}
+	delete_object = _object;
 }
 
 bool EnemyBat::CheckCollision(Location l, Erea e)

@@ -10,7 +10,6 @@ enum class BatState {
 	IDLE = 0,
 	LEFT,
 	RIGHT,
-	TRACKING,
 	DEATH
 };
 
@@ -47,7 +46,7 @@ public:
 	void Finalize()override;
 
 public:
-	void Move();
+	void Move(GameMain* _g);
 
 	void Hit(Object* _object)override;
 	bool SearchColor(Object* ob) {
