@@ -39,7 +39,7 @@
     <ClCompile Include="Scene\sceneManager.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Object\Player.cpp">
+    <ClCompile Include="Object\Bone.cpp">
       <Filter>Object</Filter>
     </ClCompile>
   </ItemGroup>
@@ -62,7 +62,7 @@
     <ClInclude Include="Utility\Vector2D.h">
       <Filter>Utility</Filter>
     </ClInclude>
-    <ClInclude Include="Object\Player.h">
+    <ClInclude Include="Object\Bone.h">
       <Filter>Object</Filter>
     </ClInclude>
     <ClInclude Include="Utility\inputCtrl.h">

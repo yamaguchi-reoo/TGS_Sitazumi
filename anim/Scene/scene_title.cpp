@@ -13,6 +13,7 @@ Title::Title()
 	{
 		location[i] = { 0,0 };
 		string[i] = 0;
+		rela[i] = { -1,-1 };
 	}
 	
 	inputChar = 0;
@@ -26,14 +27,76 @@ Title::~Title()
 //�X�V
 Scene* Title::update()
 {
+	//再生停止
+	if (InputCtrl::GetKeyState(KEY_INPUT_SPACE) == PRESS) {
+		if (flg) {
+			flg = false;
+		}
+		else {
+			flg = true;
+		}
+	}
+
+	//指定したボーンから追加でボーンを生成
+	if (InputCtrl::GetMouseState(R) == PRESS){
+		int type = -1;
+		int n = -1;
+		for (int i = 0; i < 32; i++)
+		{
+			Vector2D mousePos = { (float)InputCtrl::GetMouseCursor().x,(float)InputCtrl::GetMouseCursor().y };
+			if (GetVectorLength(bone[i].GetLocation(0) - mousePos) < 10) {
+				type = 0;
+				n = i;
+				break;
+			}
+			if (GetVectorLength(bone[i].GetLocation(1) - mousePos) < 10) {
+				type = 1;
+				n = i;
+				break;
+			}
+			
+		}
+
+		if (type != -1) {
+			location[0] = bone[n].GetLocation(type);
+			num = 1;
+			rela[boneNum] = { n,type };
+		}
+
+	}
+
+
+
 	if (InputCtrl::GetMouseState(L) == PRESS) {
 		location[num] = {(float)InputCtrl::GetMouseCursor().x,(float)InputCtrl::GetMouseCursor().y };
 		num++;
 	}
 
-	if (num > 1) {
-		location[1] = GetRotaLocation(location[1], location[0], angle);
-		angle = 0.1f;
+	if (num == 2) {
+		/*location[1] = GetRotaLocation(location[1], location[0], angle);
+		angle = 0.1f;*/
+		bone[boneNum].Initialize(location[0], location[1]);
+	}
+	if (num == 3) {
+		float cross = CrossProduct(location[1] - location[0], location[2] - location[0]); //外積　左回りの時は外積がマイナス　右回りの時はプラス
+		float a = AngleOf2Vector(location[1] - location[0], location[2] - location[0]);
+		if (cross < 0) {
+			a = M_PI * 2 - a;
+		}
+		bone[boneNum].SetMoved(a, 30, 0);
+		num = 0;
+		boneNum++;
+	}
+
+	if (flg) {
+		for (int i = 0; i < 32; i++)
+		{
+			if (rela[i].n != -1) {
+				bone[i].SetCenterLocation(bone[rela[i].n].GetLocation(rela[i].type));
+			}
+			bone[i].Update();
+		}
+	
 	}
 
 	//strcpy_s(string, 32, "a");
@@ -59,13 +122,19 @@ void Title::draw() const
 	{
 		if (location[i].x != 0 && location[i].y != 0) 
 		{
-			DrawLine(location[i].x, location[i].y, location[i + 1].x, location[i + 1].y, 0xffffff, 1);
+			//DrawLine(location[i].x, location[i].y, location[i + 1].x, location[i + 1].y, 0xffffff, 1);
 		}
 	}
 
 	//if (string != nullptr) {
 		DrawFormatString(0, 40, 0xffffff, "%s", string);
 	//}
+
+	for (int i = 0; i < 32; i++)
+	{
+		bone[i].Draw();
+	}
+		
 
 }
 

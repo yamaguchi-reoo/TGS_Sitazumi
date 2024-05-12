@@ -152,7 +152,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Object\Player.cpp" />
+    <ClCompile Include="Object\Bone.cpp" />
     <ClCompile Include="Scene\sceneManager.cpp" />
     <ClCompile Include="Scene\scene_title.cpp" />
     <ClCompile Include="Utility\fpsCtrl.cpp" />
@@ -160,7 +160,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h" />
-    <ClInclude Include="Object\Player.h" />
+    <ClInclude Include="Object\Bone.h" />
     <ClInclude Include="Scene\scene.h" />
     <ClInclude Include="Scene\sceneManager.h" />
     <ClInclude Include="Scene\scene_title.h" />
