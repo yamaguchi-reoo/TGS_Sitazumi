@@ -123,24 +123,24 @@ void Bone::SelectUpdate()
 					break;
 
 				case 2:
-					movedAng[0] += M_PI;
+					movedAng[num] += M_PI;
 					if (side) {//右回り
-						oneFrameAng[0] = movedAng[0] / time[0];
+						oneFrameAng[num] = movedAng[num] / time[num];
 					}
 					else {//左回り
-						oneFrameAng[0] = (M_PI * 2 - movedAng[0]) / time[0];
+						oneFrameAng[num] = (M_PI * 2 - movedAng[num]) / time[num];
 					}
 					cursor++;
 
 					break;
 
 				case 3:
-					time[0] = 180;
+					time[num] = 180;
 					if (side) {//右回り
-						oneFrameAng[0] = movedAng[0] / time[0];
+						oneFrameAng[num] = movedAng[num] / time[num];
 					}
 					else {//左回り
-						oneFrameAng[0] = (M_PI * 2 - movedAng[0]) / time[0];
+						oneFrameAng[num] = (M_PI * 2 - movedAng[num]) / time[num];
 					}
 					cursor++;
 
