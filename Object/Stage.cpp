@@ -38,7 +38,7 @@ void Stage::Initialize(Location _location, Erea _erea, int _color_data,int _obje
 	location = _location;
 	erea = _erea;
 	//色を交換出来るブロックの設定
-	if (_color_data == 1 || _color_data == 3 || _color_data == 4 || _color_data == 5)
+	if (_color_data == 3 || _color_data == 4 || _color_data == 5)
 	{
 		can_swap = TRUE;
 		SetColorData(color_data[_color_data]);
@@ -47,7 +47,7 @@ void Stage::Initialize(Location _location, Erea _erea, int _color_data,int _obje
 	else
 	{
 		can_swap = FALSE;
-		color = -1;
+		color = WHITE;
 	}
 	old_color = color;
 	//エフェクトのアニメーション用初期定義
@@ -328,7 +328,7 @@ void Stage::Draw()const
 					effect_anim[i].shift.y + effect_anim[i].erea.height + local_location.y, 0xffffff, true);
 			}
 			break;
-			//地面(白)
+			//地面（白）
 		case WHITE_BLOCK:
 			DrawBox(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, true);
 			break;
@@ -429,7 +429,7 @@ void Stage::Hit(Object* _object)
 void Stage::SetStageType(int _type)
 {
 	block_type = _type;
-	if (block_type == 1 || block_type == 3 || block_type == 4 || block_type == 5)
+	if (block_type == 1 || block_type == 2 || block_type == 3 || block_type == 4)
 	{
 		SetColorData(color_data[block_type]);
 	}

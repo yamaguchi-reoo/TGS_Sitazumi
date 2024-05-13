@@ -44,21 +44,10 @@ void EnemyFrog::Update(GameMain* _g)
 	switch (frog_state)
 	{
 	case FrogState::LEFT_JUMP:
-		if (_g->GetSearchFlg())
+		if (frame % 60 == 0 && stageHitFlg[1][bottom] == true)
 		{
-			if (frame % 600 == 0)
-			{
-				vector.x = -5.f;
-				vector.y = -20.f;
-			}
-		}
-		else
-		{
-			if (frame % 60 == 0)
-			{
-				vector.x = -5.f;
-				vector.y = -20.f;
-			}
+			vector.x = -5.f;
+			vector.y = -20.f;
 		}
 		//空中で僅かに加速(ブロックに引っかかる対策)
 		if (vector.x == 0 && stageHitFlg[1][bottom] == false)
@@ -67,21 +56,10 @@ void EnemyFrog::Update(GameMain* _g)
 		}
 		break;
 	case FrogState::RIGHT_JUMP:
-		if (_g->GetSearchFlg())
+		if (frame % 60 == 0 && stageHitFlg[1][bottom] == true)
 		{
-			if (frame % 600 == 0)
-			{
-				vector.x = 5.f;
-				vector.y = -20.f;
-			}
-		}
-		else
-		{
-			if (frame % 60 == 0)
-			{
-				vector.x = 5.f;
-				vector.y = -20.f;
-			}
+			vector.x = 5.f;
+			vector.y = -20.f;
 		}
 		//空中で僅かに加速(ブロックに引っかかる対策)
 		if (vector.x == 0 && stageHitFlg[1][bottom] == false)
@@ -148,7 +126,7 @@ void EnemyFrog::Draw()const
 		ResourceManager::DrawRotaBox(local_location.x, local_location.y + 20, 20, 30, local_location.x + (erea.width / 2), local_location.y + (erea.height / 2), face_angle, color, TRUE);
 	}
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
-	DrawFormatStringF(local_location.x, local_location.y, 0x00ff00, "%f", face_angle);
+	DrawFormatStringF(local_location.x, local_location.y, 0x00ff00, "%f %f", vector.x, vector.y);
 
 }
 
@@ -327,14 +305,8 @@ void EnemyFrog::Move(GameMain* _g)
 		}
 	}
 	//移動
-	if (_g->GetSearchFlg()) {
-		location.x += vector.x * 0.1f;
-		location.y += vector.y * 0.1f;
-	}
-	else {
-		location.x += vector.x;
-		location.y += vector.y;
-	}
+	location.x += vector.x;
+	location.y += vector.y;
 }
 
 void EnemyFrog::UpdataState(GameMain* _g)
