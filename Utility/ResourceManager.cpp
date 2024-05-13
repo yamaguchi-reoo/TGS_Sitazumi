@@ -1,5 +1,4 @@
 #include "ResourceManager.h"
-
 #define _USE_MATH_DEFINES
 #include <math.h>
 
@@ -36,15 +35,40 @@ void ResourceManager::DeleteResource()
 	}
 }
 
+void ResourceManager::StageAnimInitialize()
+{
+	anim = 0;
+	////エフェクトのアニメーション用初期定義
+	for (int i = 0; i < ANIM_BLOCK_NUM; i++)
+	{
+		fire_anim[i].time = GetRand(20);
+		wood_anim[i].shift = GetRand(10);
+		wood_anim[i].shift1.x = (BOX_WIDTH / 10) * i;
+		wood_anim[i].shift2.x = (BOX_WIDTH / 10) * i;
+		wood_anim[i].shift1.y = BOX_HEIGHT;
+		wood_anim[i].shift2.y = GetRand(19);
+		water_anim[i].shift = (float)GetRand(9)/10;
+		water_anim[i].shift1.x = GetRand(8)* (BOX_WIDTH / 10);
+		water_anim[i].shift1.y = GetRand(8)* (BOX_HEIGHT / 10)-15;
+		water_anim[i].erea.width = BOX_WIDTH /3;
+		water_anim[i].erea.height = BOX_HEIGHT /3;
+	}
+}
+
 void ResourceManager::StageAnimUpdate()
 {
+	//アニメーション用変数
+	if (++anim > 60)
+	{
+		anim = 0;
+	}
 	//炎エフェクト用
 	for (int i = 0; i < ANIM_BLOCK_NUM; i++)
 	{
 		if (fire_anim[i].time < 0)
 		{
 			fire_anim[i].shift.x = 0;
-			fire_anim[i].shift.y = 0;
+			fire_anim[i].shift.y = BOX_HEIGHT;
 			fire_anim[i].erea.width = 4;
 			fire_anim[i].erea.height = 4;
 			fire_anim[i].shift.x += 4 * GetRand(10);
@@ -85,6 +109,52 @@ void ResourceManager::StageAnimUpdate()
 		{
 			water_anim[i].shift1.y -= water_anim[i].shift;
 		}
+	}
+}
+
+void ResourceManager::StageAnimDraw(Location _location, int _type)
+{
+	switch (_type)
+	{
+		//炎
+		case FIRE:
+			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 40);
+			DrawBoxAA(_location.x, _location.y, _location.x + BOX_WIDTH, _location.y + BOX_HEIGHT, 0xff0000, true);
+			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
+			for (int i = 0; i < ANIM_BLOCK_NUM; i++)
+			{
+				DrawBoxAA(fire_anim[i].shift.x + _location.x,
+					fire_anim[i].shift.y + _location.y,
+					fire_anim[i].shift.x + fire_anim[i].erea.width + _location.x,
+					fire_anim[i].shift.y + fire_anim[i].erea.height + _location.y, 0xff0000, true);
+			}
+			break;
+			//木
+		case WOOD:
+			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 40);
+			DrawBoxAA(_location.x, _location.y, _location.x + BOX_WIDTH, _location.y + BOX_HEIGHT, 0x00ff00, true);
+			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
+			for (int i = 0; i < ANIM_BLOCK_NUM; i++)
+			{
+				DrawLineAA(wood_anim[i].shift1.x + _location.x,
+					wood_anim[i].shift1.y + _location.y,
+					wood_anim[i].shift2.x + _location.x,
+					wood_anim[i].shift2.y + _location.y, 0x00ff00, true);
+			}
+			break;
+			//水
+		case WATER:
+			DrawBox(_location.x, _location.y, _location.x + BOX_WIDTH, _location.y + BOX_HEIGHT, 0x0000ff, true);
+			for (int i = 0; i < ANIM_BLOCK_NUM; i++)
+			{
+				DrawBoxAA(water_anim[i].shift1.x + _location.x,
+					water_anim[i].shift1.y + _location.y,
+					water_anim[i].shift1.x + water_anim[i].erea.width + _location.x,
+					water_anim[i].shift1.y + water_anim[i].erea.height + _location.y, 0x0000ee, true);
+			}
+			break;
+	default:
+		break;
 	}
 }
 

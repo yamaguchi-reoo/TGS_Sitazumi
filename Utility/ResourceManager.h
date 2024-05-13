@@ -1,6 +1,6 @@
 #pragma once
 #include"DxLib.h"
-#include"../Object/BoxCollider.h"
+#include"../Object/Object.h"
 
 #define IMAGE_NUM 100	//画像の最大数
 #define DIV_IMAGE_NUM 100	//分割画像の最大数
@@ -54,11 +54,15 @@ public:
 	//各データ削除（mainで一回呼ぶ）
 	static void DeleteResource();
 
+
 	//ステージアニメーション初期化処理
-	
+	static void StageAnimInitialize();
 	
 	//ステージアニメーション更新（mainで呼び続ける）
 	static void StageAnimUpdate();
+
+	//ステージアニメーション描画
+	static void StageAnimDraw(Location _location,int _type);
 	
 	//画像格納
 	static int SetGraph(const char* p);
