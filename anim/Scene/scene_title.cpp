@@ -39,7 +39,7 @@ Scene* Title::update()
 
 	//指定したボーンから追加でボーンを生成
 	if (InputCtrl::GetMouseState(R) == PRESS){
-		int type = -1;
+		/*int type = -1;
 		int n = -1;
 		for (int i = 0; i < 32; i++)
 		{
@@ -61,15 +61,41 @@ Scene* Title::update()
 			location[0] = bone[n].GetLocation(type);
 			num = 1;
 			rela[boneNum] = { n,type };
-		}
+		}*/
 
 	}
 
 
 
 	if (InputCtrl::GetMouseState(L) == PRESS) {
-		location[num] = {(float)InputCtrl::GetMouseCursor().x,(float)InputCtrl::GetMouseCursor().y };
-		num++;
+		//継承
+		int type = -1;
+		int n = -1;
+		for (int i = 0; i < 32; i++)
+		{
+			Vector2D mousePos = { (float)InputCtrl::GetMouseCursor().x,(float)InputCtrl::GetMouseCursor().y };
+			if (GetVectorLength(bone[i].GetLocation(0) - mousePos) < 10) {
+				type = 0;
+				n = i;
+				break;
+			}
+			if (GetVectorLength(bone[i].GetLocation(1) - mousePos) < 10) {
+				type = 1;
+				n = i;
+				break;
+			}
+
+		}
+
+		if (type != -1) {
+			location[0] = bone[n].GetLocation(type);
+			num = 1;
+			rela[boneNum] = { n,type };
+		}
+		else {
+			location[num] = { (float)InputCtrl::GetMouseCursor().x,(float)InputCtrl::GetMouseCursor().y };
+			num++;
+		}
 	}
 
 	if (num == 2) {
@@ -83,20 +109,32 @@ Scene* Title::update()
 		if (cross < 0) {
 			a = M_PI * 2 - a;
 		}
-		bone[boneNum].SetMoved(a, 30, 0);
+		bone[boneNum].SetMoved(a, 30, 0, false);
+		num = 0;
+		boneNum++;
+	}
+	else if (InputCtrl::GetKeyState(KEY_INPUT_F) == PRESS && num == 2) {
+		bone[boneNum].SetMoved(0, 0, 0, true);
 		num = 0;
 		boneNum++;
 	}
 
+	//update
 	if (flg) {
 		for (int i = 0; i < 32; i++)
 		{
 			if (rela[i].n != -1) {
+				//中心点決め
 				bone[i].SetCenterLocation(bone[rela[i].n].GetLocation(rela[i].type));
 			}
 			bone[i].Update();
 		}
 	
+	}
+
+	for (int i = 0; i < 32; i++)
+	{
+		bone[i].SelectUpdate();
 	}
 
 	//strcpy_s(string, 32, "a");
@@ -133,8 +171,9 @@ void Title::draw() const
 	for (int i = 0; i < 32; i++)
 	{
 		bone[i].Draw();
+		if (bone[i].GetSelectedFlg()) {
+			bone[i].DrawUI();
+		}
 	}
-		
-
 }
 

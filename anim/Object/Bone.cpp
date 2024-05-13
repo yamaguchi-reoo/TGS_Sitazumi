@@ -21,6 +21,12 @@ Bone::Bone()
 	}
 
 	centerLoc = { -1,-1 };
+
+	side = true;
+
+	selected = false;
+
+	cursor = 0;
 }
 
 Bone::~Bone()
@@ -40,13 +46,26 @@ void Bone::Initialize(Vector2D sl, Vector2D gl)
 void Bone::Update()
 {
 	if (flg) {
-		angle += oneFrameAng[num];
-		BoneLoc[1] = GetRotaLocation(BoneLocBase[1], BoneLocBase[0], angle);
-		if (angle >= movedAng[num]) {
-			flg = false;
-			num++;
+		if (side) {//右回り
+			angle += oneFrameAng[num];
+			BoneLoc[1] = GetRotaLocation(BoneLocBase[1], BoneLocBase[0], angle);
+			if (angle >= movedAng[num]) {
+				flg = false;
+				num++;
+			}
+		}
+		else {//左回り
+			angle -= oneFrameAng[num];
+			BoneLoc[1] = GetRotaLocation(BoneLocBase[1], BoneLocBase[0], angle);
+			float tmpAng = angle + M_PI * 2;
+			if (tmpAng <= movedAng[num]) {
+				flg = false;
+				num++;
+			}
 		}
 	}
+
+	
 }
 
 void Bone::Draw() const
@@ -66,8 +85,103 @@ void Bone::Draw() const
 		Vector2D tmp = GetRotaLocation(BoneLocBase[1], BoneLocBase[0], movedAng[num]);
 		DrawCircle(tmp.x + centerLoc.x, tmp.y + centerLoc.y, 5, 0xff0000, TRUE);
 	}
+
+	if (selected) {
+		//ここでUI描画
+	}
 }
 
+void Bone::SelectUpdate()
+{
+	Vector2D mousePos = { (float)InputCtrl::GetMouseCursor().x,(float)InputCtrl::GetMouseCursor().y };
+	if (GetLineCollision(BoneLoc[0] + centerLoc, BoneLoc[1] + centerLoc, mousePos, 5) && !selected) {
+		selected = true;
+		cursor = 0;
+	}
 
+	if (selected) {
+		Vector2D tmp = GetRotaLocation(BoneLocBase[1], BoneLocBase[0], movedAng[num]) + centerLoc;
+		if (GetVectorLength(tmp - mousePos) < 5) {//移動先の地点をクリックしたら
+			if (InputCtrl::GetKeyState(KEY_INPUT_UP) == PRESS) {
+				cursor--;
+			}
+			if (InputCtrl::GetKeyState(KEY_INPUT_DOWN) == PRESS) {
+				cursor++;
+			}
 
+			if (flg) {
+				switch (cursor)
+				{
+				case 0:
+					num;
+					cursor++;
+					break;
 
+				case 1:
+					side = true;
+					cursor++;
+					break;
+
+				case 2:
+					movedAng[0] += M_PI;
+					if (side) {//右回り
+						oneFrameAng[0] = movedAng[0] / time[0];
+					}
+					else {//左回り
+						oneFrameAng[0] = (M_PI * 2 - movedAng[0]) / time[0];
+					}
+					cursor++;
+
+					break;
+
+				case 3:
+					time[0] = 180;
+					if (side) {//右回り
+						oneFrameAng[0] = movedAng[0] / time[0];
+					}
+					else {//左回り
+						oneFrameAng[0] = (M_PI * 2 - movedAng[0]) / time[0];
+					}
+					cursor++;
+
+					break;
+
+				
+
+				case 4:
+					break;
+
+				default:
+					break;
+				}
+			}
+		}
+	}
+}
+
+void Bone::DrawUI() const
+{
+	DrawFormatString(900, 100, 0xffffff, "num : %d", num);
+	DrawFormatString(900, 150, 0xffffff, "side : %d", side);
+	DrawFormatString(900, 200, 0xffffff, "movedAng : %f", R_D(movedAng[num]));
+	DrawFormatString(900, 250, 0xffffff, "time : %d", time[num]);
+	//DrawFormatString(900, 300, 0xffffff, "num : %d", num);
+}
+
+void Bone::SetMoved(float ang, int t, int n, bool f)
+{
+	movedAng[n] = ang;
+	time[n] = t;
+	if (f) {//右回り
+		oneFrameAng[n] = ang / t;
+	}
+	else {//左回り
+		oneFrameAng[n] = (M_PI * 2 - ang) / t;
+	}
+	if (ang == 0) {
+		oneFrameAng[n] = 0;
+	}
+	side = f;
+	num = n;
+	flg = true;
+}

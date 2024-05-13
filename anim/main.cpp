@@ -3,6 +3,7 @@
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int
 	nCmdShow)
 {
+	SetUseCharCodeFormat(DX_CHARCODEFORMAT_UTF8);
 	SetMainWindowText(APP_NAME);                   // �E�B���h�E�^�C�g����ݒ�
 	//SetMainWindowClassName(APP_NAME);              // ���� DxLib �Ƌ������Ȃ��悤�ɃE�B���h�E�N���X��ݒ�
 	ChangeWindowMode(TRUE);                        // �E�C���h�E���[�h�ŋN��

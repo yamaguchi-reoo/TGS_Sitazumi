@@ -72,3 +72,21 @@ static double AngleOf2Vector(Vector2D A, Vector2D B)
 
 	return sita;
 }
+
+//当たり判定線上か
+static bool GetLineCollision(Vector2D l1, Vector2D l2, Vector2D l, int r) {
+	Vector2D unit;
+	unit = GetUnitVector(l2 - l1);
+
+	Vector2D tmp = l1;
+
+	for (int i = 0; i < GetVectorLength(l2 - l1); i += r)
+	{
+		if (GetVectorLength(tmp - l) < r) {
+			return true;
+		}
+		tmp += unit * r;
+	}
+
+	return false;
+}

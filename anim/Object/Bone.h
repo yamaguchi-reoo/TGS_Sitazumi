@@ -20,6 +20,10 @@ private:
 	bool flg;		//移動するかどうか
 
 	int order; //何番目のボーンか
+	bool side; //左右どちらに動くか
+
+	bool selected;
+	int cursor;
 public:
 	Bone();
 	~Bone();
@@ -29,6 +33,9 @@ public:
 	void Update();
 	void Draw() const;
 
+	void SelectUpdate();
+	void DrawUI() const;
+
 	Vector2D GetCenterLocation() {
 		return centerLoc;
 	}
@@ -37,13 +44,12 @@ public:
 		return BoneLoc[n] + centerLoc;
 	}
 
-	//移動にかかる時間と角度
-	void SetMoved(float ang, int t, int n) {
-		movedAng[n] = ang;
-		time[n] = t;
-		oneFrameAng[n] = ang / t;
-		flg = true;
+	bool GetSelectedFlg() const {
+		return selected;
 	}
+
+	//移動にかかる時間と角度
+	void SetMoved(float ang, int t, int n, bool f);
 
 	void SetCenterLocation(Vector2D center) {
 		centerLoc = center;
