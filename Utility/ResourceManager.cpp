@@ -10,6 +10,10 @@ int ResourceManager::image_data[IMAGE_NUM];
 int ResourceManager::div_image_data[DIV_IMAGE_NUM][DIV_IMAGE_MAX];
 int ResourceManager::sound_data[SOUND_NUM];
 
+int ResourceManager::anim;			
+FireAnim ResourceManager::fire_anim[ANIM_BLOCK_NUM];
+WoodAnim ResourceManager::wood_anim[ANIM_BLOCK_NUM];
+WaterAnim ResourceManager::water_anim[ANIM_BLOCK_NUM];
 
 void ResourceManager::DeleteResource()
 {
@@ -29,6 +33,58 @@ void ResourceManager::DeleteResource()
 	for (int i = 0; sound_data[i] != NULL; i++)
 	{
 		DeleteSoundMem(sound_data[i]);
+	}
+}
+
+void ResourceManager::StageAnimUpdate()
+{
+	//炎エフェクト用
+	for (int i = 0; i < ANIM_BLOCK_NUM; i++)
+	{
+		if (fire_anim[i].time < 0)
+		{
+			fire_anim[i].shift.x = 0;
+			fire_anim[i].shift.y = 0;
+			fire_anim[i].erea.width = 4;
+			fire_anim[i].erea.height = 4;
+			fire_anim[i].shift.x += 4 * GetRand(10);
+			fire_anim[i].time = 30 + GetRand(30);
+			fire_anim[i].angle = GetRand(3);
+		}
+		else
+		{
+			fire_anim[i].shift.x += 0.05 + (fire_anim[i].angle - 1) / 2;
+			fire_anim[i].shift.y -= 1;
+			fire_anim[i].time--;
+			fire_anim[i].erea.width -= 0.05;
+			fire_anim[i].erea.height -= 0.05;
+		}
+	}
+
+	//木エフェクト用
+	for (int i = 0; i < ANIM_BLOCK_NUM; i++)
+	{
+		if (anim < 30)
+		{
+			wood_anim[i].shift2.x += (wood_anim[i].shift / 50);
+		}
+		else
+		{
+			wood_anim[i].shift2.x -= (wood_anim[i].shift / 50);
+		}
+	}
+
+	//水エフェクト更新
+	for (int i = 0; i < ANIM_BLOCK_NUM; i++)
+	{
+		if (anim <= 30)
+		{
+			water_anim[i].shift1.y += water_anim[i].shift;
+		}
+		else
+		{
+			water_anim[i].shift1.y -= water_anim[i].shift;
+		}
 	}
 }
 

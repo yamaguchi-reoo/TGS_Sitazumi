@@ -39,6 +39,7 @@ int WINAPI WinMain(_In_ HINSTANCE  hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
         PadInput::UpdateKey();  //パッドの入力処理
         KeyInput::UpdateKey();  //キーボードの入力処理
+        ResourceManager::StageAnimUpdate();     //ステージアニメーションの更新
 
         // シーンマネジャーでシーンの描画開始
         sceneMng->Draw();
