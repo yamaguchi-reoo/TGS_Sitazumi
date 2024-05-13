@@ -192,11 +192,6 @@ void EnemyBat::ColorCompatibility(GameMain* _g)
 	if (hit_flg[0] && delete_object->GetObjectType() == WOOD && this->color == RED) {
 		_g->CreateObject(new Stage(6), delete_object->GetLocation(), delete_object->GetErea(), FIRE);
 		_g->DeleteObject(delete_object->GetObjectPos());
-
-		for (int i = 0; i < OBJECT_NUM; i++) {
-
-		}
-
 	}
 	//触れたブロックが赤＆自分の色が青だったら触れた赤ブロックを消す
 	if (hit_flg[1]) {
