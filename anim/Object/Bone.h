@@ -8,10 +8,8 @@ class Bone
 private:
 	Vector2D BoneLoc[2];		//スタート地点　中心地点を0、0としたローカル座標 ここを中心とする
 	Vector2D BoneLocBase[2];		//boneの始めの座標
-	//Vector2D goalLoc;		//ゴール地点
 	Vector2D centerLoc;		//回転の中心地点　ここを中心とする 中心を変える必要が出てきそうならこれで作る
 	
-	//Vector2D movedLoc[2];
 	float movedAng[32];	//移動後の角度
 	float angle;		//今の角度
 	float oneFrameAng[32];	//一フレームどれだけ移動するか
@@ -24,6 +22,8 @@ private:
 
 	bool selected;
 	int cursor;
+
+	int handover[2]; //何番目ボーンを引き継いでいるか(メインで生成された順)0、何番目　１、始点と終点どちらか
 public:
 	Bone();
 	~Bone();
@@ -53,6 +53,11 @@ public:
 
 	void SetCenterLocation(Vector2D center) {
 		centerLoc = center;
+	}
+
+	void SetHandover(int n,int t) {
+		handover[0] = n;
+		handover[1] = t;
 	}
 };
 

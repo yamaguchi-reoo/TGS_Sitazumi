@@ -27,6 +27,9 @@ Bone::Bone()
 	selected = false;
 
 	cursor = 0;
+
+	handover[0] = -1;
+	handover[1] = -1;
 }
 
 Bone::~Bone()

@@ -89,6 +89,7 @@ Scene* Title::update()
 
 		if (type != -1) {
 			location[0] = bone[n].GetLocation(type);
+			bone[boneNum].SetHandover(n, type);
 			num = 1;
 			rela[boneNum] = { n,type };
 		}
