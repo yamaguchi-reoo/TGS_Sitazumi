@@ -29,7 +29,9 @@ void EffectSpawner::Update(GameMain* _g)
 	case 1:		
 		for (float i = 0.0f; i < 1; i += 0.125f)
 		{
-			_g->CreateObject(new Effect(2, i, 30), spawn_location, spawn_erea, RED);
+			_g->CreateObject(new Effect(2, i, 20, 2), spawn_location, spawn_erea, RED);
+			_g->CreateObject(new Effect(2, i, 20, 2.5), spawn_location, spawn_erea, RED);
+			_g->CreateObject(new Effect(2, i, 20, 3), spawn_location, spawn_erea, RED);
 		}
 		break;
 	case 2:	

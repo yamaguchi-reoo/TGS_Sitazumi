@@ -1,8 +1,10 @@
 #include "Stage.h"
+#include"../Utility/ResourceManager.h"
+
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-Stage::Stage(int _type) : frame(0), old_color(0),inv_flg(false), debug_flg(false), anim(0), fire_anim{ 0 }, wood_anim{ 0 }, hit_flg(false), hit_timer(-1)
+Stage::Stage(int _type) : frame(0), old_color(0),inv_flg(false), debug_flg(false), anim(0), hit_flg(false), hit_timer(-1)
 {
 	//炎
 	if (_type == 3 || _type == 6)
@@ -50,21 +52,6 @@ void Stage::Initialize(Location _location, Erea _erea, int _color_data,int _obje
 		color = WHITE;
 	}
 	old_color = color;
-	//エフェクトのアニメーション用初期定義
-	for (int i = 0; i < ANIM_BLOCK_NUM; i++)
-	{
-		fire_anim[i].time = GetRand(20);
-		wood_anim[i].shift = GetRand(10);
-		wood_anim[i].shift1.x = (erea.width / 10) * i;
-		wood_anim[i].shift2.x = (erea.width / 10) * i;
-		wood_anim[i].shift1.y = erea.height;
-		wood_anim[i].shift2.y = GetRand(19);
-		water_anim[i].shift = (float)GetRand(9)/10;
-		water_anim[i].shift1.x = GetRand(8)* (erea.width / 10);
-		water_anim[i].shift1.y = GetRand(8)* (erea.height / 10)-20;
-		water_anim[i].erea.width = erea.width/3;
-		water_anim[i].erea.height = erea.height/3;
-	}
 
 	object_pos = _object_pos;
 }
@@ -110,7 +97,7 @@ void Stage::Update(GameMain* _g)
 		}
 	}
 	//色ブロック
-	if (block_type == RED_BLOCK || block_type == GREEN_BLOCK || block_type == BLUE_BLOCK)
+	/*if (block_type == RED_BLOCK || block_type == GREEN_BLOCK || block_type == BLUE_BLOCK)
 	{
 		for (int i = 0; i < ANIM_BLOCK_NUM; i++)
 		{
@@ -129,62 +116,7 @@ void Stage::Update(GameMain* _g)
 				effect_anim[i].erea.height -= 0.05;
 			}
 		}
-	}
-	//炎エフェクト用
-	if (block_type == FIRE_BLOCK)
-	{
-		for (int i = 0; i < ANIM_BLOCK_NUM; i++)
-		{
-			if (fire_anim[i].time < 0)
-			{
-				fire_anim[i].shift.x = 0;
-				fire_anim[i].shift.y = erea.height;
-				fire_anim[i].erea.width = erea.width / 10;
-				fire_anim[i].erea.height = erea.height / 10;
-				fire_anim[i].shift.x += (erea.width / 10) * GetRand(10);
-				fire_anim[i].time = 30 + GetRand(30);
-				fire_anim[i].angle = GetRand(3);
-			}
-			else
-			{
-				fire_anim[i].shift.x += 0.05 + (fire_anim[i].angle - 1) / 2;
-				fire_anim[i].shift.y -= 1;
-				fire_anim[i].time--;
-				fire_anim[i].erea.width -= 0.05;
-				fire_anim[i].erea.height -= 0.05;
-			}
-		}
-	}
-	//木エフェクト用
-	if (block_type == WOOD_BLOCK)
-	{
-		for (int i = 0; i < ANIM_BLOCK_NUM; i++)
-		{
-			if (anim < 30)
-			{
-				wood_anim[i].shift2.x += (wood_anim[i].shift / 50);
-			}
-			else
-			{
-				wood_anim[i].shift2.x -= (wood_anim[i].shift / 50);
-			}
-		}
-	}
-	//水エフェクト用
-	if (block_type == WATER_BLOCK)
-	{
-		for (int i = 0; i < ANIM_BLOCK_NUM; i++)
-		{
-			if (anim <= 30)
-			{
-				water_anim[i].shift1.y += water_anim[i].shift;
-			}
-			else
-			{
-				water_anim[i].shift1.y -= water_anim[i].shift;
-			}
-		}
-	}
+	}*/
 }
 
 void Stage::Update()
@@ -213,11 +145,6 @@ void Stage::Update()
 	//リセット
 	hit_flg = false;
 	frame++;
-	//アニメーション用変数
-	if (++anim > 60)
-	{
-		anim = 0;
-	}
 	//hit_timerに0が入ったらアニメーション開始
 	if (hit_timer >= 0)
 	{
@@ -227,82 +154,27 @@ void Stage::Update()
 			hit_timer = -1;
 		}
 	}
-	//色ブロック
-	if (block_type == RED_BLOCK || block_type == GREEN_BLOCK || block_type == BLUE_BLOCK)
-	{
-		for (int i = 0; i < ANIM_BLOCK_NUM; i++)
-		{
-			if (effect_anim[i].time < 0)
-			{
-				effect_anim[i].shift.x = GetRand(38);
-				effect_anim[i].shift.y = GetRand(38);
-				effect_anim[i].erea.width = erea.width / 10;
-				effect_anim[i].erea.height = erea.height / 10;
-				effect_anim[i].time = 30 + GetRand(30);
-			}
-			else
-			{
-				effect_anim[i].time--;
-				effect_anim[i].erea.width -= 0.05;
-				effect_anim[i].erea.height -= 0.05;
-			}
-		}
-	}
-	//炎エフェクト用
-	if (block_type == FIRE_BLOCK)
-	{
-		for (int i = 0; i < ANIM_BLOCK_NUM; i++)
-		{
-			if (fire_anim[i].time < 0)
-			{
-				fire_anim[i].shift.x = 0;
-				fire_anim[i].shift.y = erea.height;
-				fire_anim[i].erea.width = erea.width / 10;
-				fire_anim[i].erea.height = erea.height / 10;
-				fire_anim[i].shift.x += (erea.width / 10) * GetRand(10);
-				fire_anim[i].time = 30 + GetRand(30);
-				fire_anim[i].angle = GetRand(3);
-			}
-			else
-			{
-				fire_anim[i].shift.x += 0.05 + (fire_anim[i].angle - 1) / 2;
-				fire_anim[i].shift.y -= 1;
-				fire_anim[i].time--;
-				fire_anim[i].erea.width -= 0.05;
-				fire_anim[i].erea.height -= 0.05;
-			}
-		}
-	}
-	//木エフェクト用
-	if (block_type == WOOD_BLOCK)
-	{
-		for (int i = 0; i < ANIM_BLOCK_NUM; i++)
-		{
-			if (anim < 30)
-			{
-				wood_anim[i].shift2.x += (wood_anim[i].shift / 50);
-			}
-			else
-			{
-				wood_anim[i].shift2.x -= (wood_anim[i].shift / 50);
-			}
-		}
-	}
-	//水エフェクト用
-	if (block_type == WATER_BLOCK)
-	{
-		for (int i = 0; i < ANIM_BLOCK_NUM; i++)
-		{
-			if (anim <= 30)
-			{
-				water_anim[i].shift1.y += water_anim[i].shift;
-			}
-			else
-			{
-				water_anim[i].shift1.y -= water_anim[i].shift;
-			}
-		}
-	}
+	////色ブロック
+	//if (block_type == RED_BLOCK || block_type == GREEN_BLOCK || block_type == BLUE_BLOCK)
+	//{
+	//	for (int i = 0; i < ANIM_BLOCK_NUM; i++)
+	//	{
+	//		if (effect_anim[i].time < 0)
+	//		{
+	//			effect_anim[i].shift.x = GetRand(38);
+	//			effect_anim[i].shift.y = GetRand(38);
+	//			effect_anim[i].erea.width = erea.width / 10;
+	//			effect_anim[i].erea.height = erea.height / 10;
+	//			effect_anim[i].time = 30 + GetRand(30);
+	//		}
+	//		else
+	//		{
+	//			effect_anim[i].time--;
+	//			effect_anim[i].erea.width -= 0.05;
+	//			effect_anim[i].erea.height -= 0.05;
+	//		}
+	//	}
+	//}
 }
 
 void Stage::Draw()const
@@ -320,14 +192,14 @@ void Stage::Draw()const
 		case BLUE_BLOCK:
 			DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, true);
 			//色付きブロックだけエフェクトを出す
-			for (int i = 0; i < ANIM_BLOCK_NUM; i++)
+		/*	for (int i = 0; i < ANIM_BLOCK_NUM; i++)
 			{
 				DrawBoxAA(effect_anim[i].shift.x + local_location.x,
 					effect_anim[i].shift.y + local_location.y,
 					effect_anim[i].shift.x + effect_anim[i].erea.width + local_location.x,
 					effect_anim[i].shift.y + effect_anim[i].erea.height + local_location.y, 0xffffff, true);
 			}
-			break;
+		*/	break;
 			//地面（白）
 		case WHITE_BLOCK:
 			DrawBox(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, true);
@@ -336,43 +208,11 @@ void Stage::Draw()const
 		case GRAY_BLOCK:
 			DrawBox(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, 0xaaaaaa, true);
 			break;
-			//炎
+		//ダメージゾーンの描画
 		case FIRE_BLOCK:
-			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 40);
-			DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, 0xff0000, true);
-			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
-			for (int i = 0; i < ANIM_BLOCK_NUM; i++)
-			{
-				DrawBoxAA(fire_anim[i].shift.x + local_location.x,
-					fire_anim[i].shift.y + local_location.y,
-					fire_anim[i].shift.x + fire_anim[i].erea.width + local_location.x,
-					fire_anim[i].shift.y + fire_anim[i].erea.height + local_location.y, 0xff0000, true);
-			}
-			break;
-			//木
 		case WOOD_BLOCK:
-			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 40);
-			DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, 0x00ff00, true);
-			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
-			for (int i = 0; i < ANIM_BLOCK_NUM; i++)
-			{
-				DrawLineAA(wood_anim[i].shift1.x + local_location.x,
-					wood_anim[i].shift1.y + local_location.y,
-					wood_anim[i].shift2.x + local_location.x,
-					wood_anim[i].shift2.y + local_location.y, 0x00ff00, true);
-			}
-			break;
-			//水
 		case WATER_BLOCK:
-			DrawBox(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, 0x0000ff, true);
-			for (int i = 0; i < ANIM_BLOCK_NUM; i++)
-			{
-				DrawBoxAA(water_anim[i].shift1.x + local_location.x,
-					water_anim[i].shift1.y + local_location.y,
-					water_anim[i].shift1.x + water_anim[i].erea.width + local_location.x,
-					water_anim[i].shift1.y + water_anim[i].erea.height + local_location.y, 0x0000ee, true);
-			}
-			break;
+			ResourceManager::StageAnimDraw(local_location, type);
 			//その他（無）
 		default:
 			break;

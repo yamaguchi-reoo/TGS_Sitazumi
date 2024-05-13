@@ -1,11 +1,38 @@
 #pragma once
 #include"DxLib.h"
+#include"../Object/Object.h"
 
 #define IMAGE_NUM 100	//画像の最大数
 #define DIV_IMAGE_NUM 100	//分割画像の最大数
 #define SOUND_NUM 100	//効果音の最大数
 
 #define DIV_IMAGE_MAX 13	//分割画像の最大分割数
+#define ANIM_BLOCK_NUM 10 //エフェクト表示に使うブロックの数
+
+//炎エフェクト用
+struct FireAnim
+{
+	Location shift;		//表示位置
+	Erea erea;			//大きさ
+	int time;			//表示していられる時間
+	float angle;		//移動の向き
+};
+
+//木エフェクト用
+struct WoodAnim
+{
+	Location shift1;	//表示位置一点目
+	Location shift2;	//表示位置二点目
+	float shift;		//表示位置ずれ用
+};
+
+//水エフェクト用
+struct WaterAnim
+{
+	Location shift1;	//表示位置
+	Erea erea;			//大きさ
+	float shift;		//表示位置ずれ用
+};
 
 class ResourceManager
 {
@@ -17,10 +44,26 @@ private:
 	static int image_data[IMAGE_NUM];							//画像格納用
 	static int div_image_data[DIV_IMAGE_NUM][DIV_IMAGE_MAX];	//分割画像格納用
 	static int sound_data[SOUND_NUM];							//音源格納用
+
+	//ステージアニメーション用
+	static int anim;							//アニメーション測定
+	static FireAnim fire_anim[ANIM_BLOCK_NUM];	//炎アニメーション用ブロック情報格納
+	static WoodAnim wood_anim[ANIM_BLOCK_NUM];	//木アニメーション用ブロック情報格納
+	static WaterAnim water_anim[ANIM_BLOCK_NUM];//水アニメーション用ブロック情報格納
 public:
 	//各データ削除（mainで一回呼ぶ）
 	static void DeleteResource();
 
+
+	//ステージアニメーション初期化処理
+	static void StageAnimInitialize();
+	
+	//ステージアニメーション更新（mainで呼び続ける）
+	static void StageAnimUpdate();
+
+	//ステージアニメーション描画
+	static void StageAnimDraw(Location _location,int _type);
+	
 	//画像格納
 	static int SetGraph(const char* p);
 
