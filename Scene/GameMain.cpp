@@ -16,17 +16,19 @@ static Location screen_origin = { (SCREEN_WIDTH / 2),(SCREEN_HEIGHT / 2) };
 
 GameMain::GameMain(int _stage) :frame(0),stage_data{0},now_stage(0), object_num(0),stage_width_num(0), stage_height_num(0), stage_width(0), stage_height(0), camera_x_lock_flg(true), camera_y_lock_flg(true), x_pos_set_once(false), y_pos_set_once(false),player_object(0),weather(0), weather_timer(0)
 {
+
 	swap_anim[0].move_flg = false;
 	swap_anim[1].move_flg = false;
-	SetStage(_stage);
-	lock_pos = camera_location;
-	swap_anim_timer = 0;
 
 	weather = new WeatherManager();
 	weather->Initialize();
 
 	effect_spawner = new EffectSpawner();
 	effect_spawner->Initialize();
+
+	SetStage(_stage);
+	lock_pos = camera_location;
+	swap_anim_timer = 0;
 }
 
 GameMain::~GameMain()
@@ -117,7 +119,10 @@ AbstractScene* GameMain::Update()
 	//		now_weather = 0;
 	//	}
 	//}
+
+	//各管理クラスの更新
 	weather->Update(this);
+	effect_spawner->Update(this);
 
 #ifdef _DEBUG
 	//ステージをいじるシーンへ遷移
@@ -354,10 +359,9 @@ void GameMain::SetStage(int _stage)
 			case PLAYER_BLOCK:
 				//プレイヤーの生成
 				CreateObject(new Player, { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { PLAYER_HEIGHT,PLAYER_WIDTH }, RED);
-				CreateObject(new Effect(2,0.125, 30), {(float)j * BOX_WIDTH + (PLAYER_WIDTH / 2) ,(float)i * BOX_HEIGHT + (PLAYER_HEIGHT / 2) }, {20,20}, RED);
-				CreateObject(new Effect(2,0.375, 60), {(float)j * BOX_WIDTH + (PLAYER_WIDTH / 2) ,(float)i * BOX_HEIGHT + (PLAYER_HEIGHT / 2) }, {20,20}, RED);
-				CreateObject(new Effect(2,0.625, 90), {(float)j * BOX_WIDTH + (PLAYER_WIDTH / 2) ,(float)i * BOX_HEIGHT + (PLAYER_HEIGHT / 2) }, {20,20}, RED);
-				CreateObject(new Effect(2,0.875, 120), {(float)j * BOX_WIDTH + (PLAYER_WIDTH / 2) ,(float)i * BOX_HEIGHT + (PLAYER_HEIGHT / 2) }, {20,20}, RED);
+				//エフェクトの生成
+				effect_spawner->SpawnEffect({ (float)j * BOX_WIDTH + PLAYER_WIDTH / 2 ,(float)i * BOX_HEIGHT + PLAYER_HEIGHT / 2 }, { 20,20}, 1);
+
 				player_flg = true;
 				break;
 			case ENEMY_DEER_RED:
@@ -376,7 +380,7 @@ void GameMain::SetStage(int _stage)
 			case ENEMY_FROG_GREEN:
 			case ENEMY_FROG_BLUE:
 				//カエルの生成
-				CreateObject(new EnemyFrog, {(float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT}, {100,100}, ColorList[stage_data[i][j] - 16]);
+				CreateObject(new EnemyFrog, {(float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT}, {50,50}, ColorList[stage_data[i][j] - 16]);
 				break;
 			default:
 				break;
