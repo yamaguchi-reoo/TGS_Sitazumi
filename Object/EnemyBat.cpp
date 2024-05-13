@@ -77,6 +77,9 @@ void EnemyBat::Update(GameMain* _g)
 		stageHitFlg[1][i] = false;
 	}
 
+	for (int i = 0; i < 3; i++) {
+		hit_flg[i] = 0;
+	}
 	/*if (delete_object->GetObjectType() == WOOD) {
 		_g->CreateObject(new Stage(6), delete_object->GetLocation(), delete_object->GetErea(), RED);
 		_g->DeleteObject(delete_object->GetObjectPos());
@@ -171,7 +174,7 @@ void EnemyBat::Move(GameMain* _g)
 	//右移動
 	if (bat_state == BatState::RIGHT) {
 		location.x += vector.x;
-		location.y -= sin(PI * 2.f / 40.f * up) * 5.f;
+		location.y += sin(PI * 2.f / 40.f * up) * 5.f;
 	}
 
 	if (bat_state == BatState::DEATH) {
@@ -190,8 +193,8 @@ void EnemyBat::ColorCompatibility(GameMain* _g)
 {
 	//触れたブロックが緑＆自分の色が赤だったら触れた緑ブロックを燃やす
 	if (hit_flg[0] && delete_object->GetObjectType() == WOOD && this->color == RED) {
-		_g->CreateObject(new Stage(6), delete_object->GetLocation(), delete_object->GetErea(), FIRE);
-		_g->DeleteObject(delete_object->GetObjectPos());
+		/*_g->CreateObject(new Stage(6), delete_object->GetLocation(), delete_object->GetErea(), FIRE);
+		_g->DeleteObject(delete_object->GetObjectPos());*/
 	}
 	//触れたブロックが赤＆自分の色が青だったら触れた赤ブロックを消す
 	if (hit_flg[1]) {
