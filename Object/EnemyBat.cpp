@@ -40,7 +40,11 @@ void EnemyBat::Update(GameMain* _g)
 {
 	up += 1;
 	// 羽の角度を変化させる
-	wing_angle = sin(PI * 2.f / 40.f * up) * 20.f; // 30度の振れ幅で周期的に変化させる
+	if (bat_state != BatState::DEATH)
+	{
+		wing_angle = sin(PI * 2.f / 40.f * up) * 20.f; // 30度の振れ幅で周期的に変化させる
+	}
+
 
 	Location player_pos = _g->GetPlayerLocation();
 	// プレイヤーとの距離を計算
@@ -152,10 +156,10 @@ void EnemyBat::Draw() const
 		}
 	}
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
-	
+	/*
 	if (hit_flg[0]) {
 		DrawString(200, 200, "hit", 0xfffff);
-	}
+	}*/
 }
 
 void EnemyBat::Finalize()
@@ -192,9 +196,7 @@ void EnemyBat::Move(GameMain* _g)
 void EnemyBat::ColorCompatibility(GameMain* _g)
 {
 	//触れたブロックが緑＆自分の色が赤だったら触れた緑ブロックを燃やす
-	if (hit_flg[0] && delete_object->GetObjectType() == WOOD && this->color == RED) {
-		/*_g->CreateObject(new Stage(6), delete_object->GetLocation(), delete_object->GetErea(), FIRE);
-		_g->DeleteObject(delete_object->GetObjectPos());*/
+	if (hit_flg[0]/* && delete_object->GetObjectType() == WOOD && this->color == RED*/) {
 	}
 	//触れたブロックが赤＆自分の色が青だったら触れた赤ブロックを消す
 	if (hit_flg[1]) {
@@ -367,7 +369,7 @@ void EnemyBat::Hit(Object* _object)
 	}
 	//コウモリの色が吸い取られて死ぬ
 	if (_object->GetObjectType() == WOOD && this->color == BLUE) {
-		wing_angle = sin(PI * 2.f / 12.f * up) * 20.f; // 藻掻いているように見える風に
+		//wing_angle = sin(PI * 2.f / 12.f * up) * 20.f; // 藻掻いているように見える風に
 		//死亡状態へ
 		if (bat_state != BatState::DEATH)
 		{
