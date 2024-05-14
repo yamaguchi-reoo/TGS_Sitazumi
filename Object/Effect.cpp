@@ -56,7 +56,7 @@ void Effect::Update(GameMain* _g)
 		}
 		else
 		{
-			shine_timer-=2;
+			shine_timer -= 2;
 		}
 		effect_shift[0].x = (shine_timer * cosf(frame * M_PI / 180)) - (shine_timer * sinf(frame * M_PI / 180));
 		effect_shift[0].y = (shine_timer * sinf(frame * M_PI / 180)) + (shine_timer * cosf(frame * M_PI / 180));

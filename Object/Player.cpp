@@ -79,7 +79,7 @@ void Player::Initialize(Location _location, Erea _erea, int _color_data, int _ob
 void Player::Update(GameMain* _g)
 {
 	fps = 0;
-
+	_g->SpawnEffect(location, erea, 2);
 	if (stageHitFlg[1][bottom] != true/* && !searchFlg*/) { //重力
 		switch (state)
 		{

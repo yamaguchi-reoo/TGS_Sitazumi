@@ -7,7 +7,7 @@
 #define PLAYER_WIDTH 75
 #define PLAYER_HEIGHT 150
 
-#define OBJECT_NUM	2000		//１ステージに存在できるプレイヤー、ブロック、敵の合計数
+#define OBJECT_NUM	4000		//１ステージに存在できるプレイヤー、ブロック、敵の合計数
 #define MAX_STAGE_HEIGHT 500	//ステージのブロックの縦の最大個数
 #define MAX_STAGE_WIDTH  750	//ステージのブロックの横の最大個数
 #define BOX_HEIGHT	40			//ステージのブロック一つ当たりの高さ

@@ -378,7 +378,7 @@ void GameMain::SetStage(int _stage)
 				break;
 			case PLAYER_BLOCK:
 				//プレイヤーの生成
-				CreateObject(new Player, { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { PLAYER_HEIGHT,PLAYER_WIDTH }, RED);
+				CreateObject(new Player, { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { PLAYER_HEIGHT,PLAYER_WIDTH }, GREEN);
 				//エフェクトの生成
 				effect_spawner->SpawnEffect({ (float)j * BOX_WIDTH + PLAYER_WIDTH / 2 ,(float)i * BOX_HEIGHT + PLAYER_HEIGHT / 2 }, { 20,20}, 1);
 
@@ -401,6 +401,10 @@ void GameMain::SetStage(int _stage)
 			case ENEMY_FROG_BLUE:
 				//カエルの生成
 				CreateObject(new EnemyFrog, {(float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT}, {50,50}, ColorList[stage_data[i][j] - 16]);
+				break;
+			case ENEMY_BOSS:
+				//ボスの生成
+				CreateObject(new Boss, { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { 200,200 }, ColorList[stage_data[i][j] - 19]);
 				break;
 			default:
 				break;
@@ -472,4 +476,9 @@ Location GameMain::GetPlayerLocation()
 Location GameMain::GetCameraLocation()
 {
 	return camera_location;
+}
+
+void GameMain::SpawnEffect(Location _location, Erea _erea, int _type)
+{
+	effect_spawner->SpawnEffect(_location, _erea, _type);
 }

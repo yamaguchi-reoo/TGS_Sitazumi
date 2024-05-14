@@ -123,10 +123,20 @@ void ResourceManager::StageAnimDraw(Location _location, int _type)
 			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 			for (int i = 0; i < ANIM_BLOCK_NUM; i++)
 			{
-				DrawBoxAA(fire_anim[i].shift.x + _location.x,
-					fire_anim[i].shift.y + _location.y,
-					fire_anim[i].shift.x + fire_anim[i].erea.width + _location.x,
-					fire_anim[i].shift.y + fire_anim[i].erea.height + _location.y, 0xff0000, true);
+				if (i % 3 == 0)
+				{
+					DrawBoxAA(fire_anim[i].shift.x + _location.x,
+						fire_anim[i].shift.y + _location.y,
+						fire_anim[i].shift.x + fire_anim[i].erea.width + _location.x,
+						fire_anim[i].shift.y + fire_anim[i].erea.height + _location.y, 0xff9900, true);
+				}
+				else
+				{
+					DrawBoxAA(fire_anim[i].shift.x + _location.x,
+						fire_anim[i].shift.y + _location.y,
+						fire_anim[i].shift.x + fire_anim[i].erea.width + _location.x,
+						fire_anim[i].shift.y + fire_anim[i].erea.height + _location.y, 0xff0000, true);
+				}
 			}
 			break;
 			//木

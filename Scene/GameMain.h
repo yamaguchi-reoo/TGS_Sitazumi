@@ -11,6 +11,7 @@
 #include "../Object/WeatherManager.h"
 #include "../Object/EffectSpawner.h"
 #include "../Object/Effect.h"
+#include "../Object/Boss.h"
 
 class Player;
 
@@ -116,6 +117,6 @@ public:
     int GetNowWeather() { return now_weather; }
 
     //エフェクトの生成
-
+    void SpawnEffect(Location _location, Erea _erea, int _type);
 };
 
