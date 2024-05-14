@@ -209,7 +209,7 @@ void EnemyBat::ColorCompatibility(GameMain* _g)
 
 void EnemyBat::Hit(Object* _object)
 {
-	delete_object = _object;
+	/*delete_object = _object;*/
 	//ブロックと当たった時の処理
 	if (_object->GetObjectType() == BLOCK || _object->GetObjectType() == ENEMY){
 		Location tmpl = location;

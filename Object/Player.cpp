@@ -79,7 +79,7 @@ void Player::Initialize(Location _location, Erea _erea, int _color_data, int _ob
 void Player::Update(GameMain* _g)
 {
 	fps = 0;
-
+	_g->SpawnEffect(location, erea, 2);
 	if (stageHitFlg[1][bottom] != true/* && !searchFlg*/) { //重力
 		switch (state)
 		{
@@ -221,7 +221,7 @@ void Player::Draw()const
 	//DrawBox(location.x, location.y, location.x + erea.width, location.y + erea.height,color, FALSE);
 
 	//DrawCircle(aimLoc.x, aimLoc.y, 10, color, TRUE);
-	DrawFormatString(local_location.x, local_location.y, 0xffff00, "hp : %d", state);
+	DrawFormatString(local_location.x, local_location.y, 0xffff00, "hp : %d", hp);
 
 
 	for (int i = 0; i < OBJECT_NUM; i++)
@@ -453,7 +453,9 @@ void Player::Hit(Object* _object)
 		}
 	}
 
-	if (_object->GetObjectType() == WATER && _object->GetCanSwap() == FALSE && this->color == BLUE && color == BLUE && !stateFlg) {
+	if ((_object->GetObjectType() == WATER && _object->GetCanSwap() == FALSE && this->color == BLUE && color == BLUE && !stateFlg) ||
+		(_object->GetObjectType() == FIRE && _object->GetCanSwap() == FALSE && this->color == RED && color == RED && !stateFlg) ||
+		(_object->GetObjectType() == WOOD && _object->GetCanSwap() == FALSE && this->color == GREEN && color == GREEN && !stateFlg)){
 		state = 1;
 		stateFlg = true;
 	}
