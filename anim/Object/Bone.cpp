@@ -274,11 +274,11 @@ void Bone::DrawUI() const
 	DrawCircle(880, 100 + cursor * 50, 5, 0xffffff, true);
 
 	DrawFormatString(900, 50, 0xffffff, "fps : %d", fps);
-	for (int i = 0; i < 32; i++)
+	/*for (int i = 0; i < 32; i++)
 	{
 		DrawFormatString(800, 50 + i * 30, 0xffffff, "side : %d", side[i]);
 
-	}
+	}*/
 
 }
 
