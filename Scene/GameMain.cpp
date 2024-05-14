@@ -378,7 +378,7 @@ void GameMain::SetStage(int _stage)
 				break;
 			case PLAYER_BLOCK:
 				//プレイヤーの生成
-				CreateObject(new Player, { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { PLAYER_HEIGHT,PLAYER_WIDTH }, RED);
+				CreateObject(new Player, { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { PLAYER_HEIGHT,PLAYER_WIDTH }, GREEN);
 				//エフェクトの生成
 				effect_spawner->SpawnEffect({ (float)j * BOX_WIDTH + PLAYER_WIDTH / 2 ,(float)i * BOX_HEIGHT + PLAYER_HEIGHT / 2 }, { 20,20}, 1);
 
