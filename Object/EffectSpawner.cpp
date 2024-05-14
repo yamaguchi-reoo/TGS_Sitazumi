@@ -34,7 +34,9 @@ void EffectSpawner::Update(GameMain* _g)
 			_g->CreateObject(new Effect(2, i, 20, 3), spawn_location, spawn_erea, RED);
 		}
 		break;
+		//輝き
 	case 2:	
+		_g->CreateObject(new Effect(3, 0, 20, 2), spawn_location, spawn_erea, WHITE);
 		break;
 	case 3:	
 		break;

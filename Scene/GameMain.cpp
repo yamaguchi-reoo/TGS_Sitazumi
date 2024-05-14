@@ -473,3 +473,8 @@ Location GameMain::GetCameraLocation()
 {
 	return camera_location;
 }
+
+void GameMain::SpawnEffect(Location _location, Erea _erea, int _type)
+{
+	effect_spawner->SpawnEffect(_location, _erea, _type);
+}
