@@ -6,7 +6,7 @@
 #include "../Utility/KeyInput.h"
 
 #define OBJECT_TYPE_NUM 19       //配置できるオブジェクトの種類数
-#define UI_OBJECT_TYPE_NUM 8    //配置できるオブジェクトの種類数
+#define UI_OBJECT_TYPE_NUM 8     //配置できるオブジェクトの種類数
 #define WIDTH_BUTTON_POS_X 100   //横幅調節ボタンのX位置
 #define WIDTH_BUTTON_POS_Y 40    //横幅調節ボタンのY位置
 #define HEIGHT_BUTTON_POS_X 180  //縦幅調節ボタンのX位置
