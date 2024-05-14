@@ -126,7 +126,7 @@ void EnemyFrog::Draw()const
 		ResourceManager::DrawRotaBox(local_location.x, local_location.y + 20, 20, 30, local_location.x + (erea.width / 2), local_location.y + (erea.height / 2), face_angle, color, TRUE);
 	}
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
-	DrawFormatStringF(local_location.x, local_location.y, 0x00ff00, "%f %f", vector.x, vector.y);
+	//DrawFormatStringF(local_location.x, local_location.y, 0x00ff00, "%f %f", vector.x, vector.y);
 
 }
 

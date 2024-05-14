@@ -7,11 +7,12 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-Effect::Effect(int _effect_type, float _angle, int _time) :frame(0),effect_type(0),touch_ground(false), angle(0)
+Effect::Effect(int _effect_type, float _angle, int _time, float _speed) :frame(0),effect_type(0),touch_ground(false), angle(0), speed(0)
 {
 	effect_type = _effect_type;
 	angle = _angle;
 	effect_time = _time;
+	speed = _speed;
 }
 
 Effect::~Effect()
@@ -40,8 +41,8 @@ void Effect::Update(GameMain* _g)
 	case 0:
 	case 1:
 	case 2:
-		location.x += 2 * cosf(angle * (float)M_PI * 2);
-		location.y += 2 * sinf(angle * (float)M_PI * 2);
+		location.x += speed * cosf(angle * (float)M_PI * 2);
+		location.y += speed * sinf(angle * (float)M_PI * 2);
 		//指定された時間で消える
 		if (frame > effect_time)
 		{

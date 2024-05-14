@@ -1,5 +1,6 @@
 #include "../Utility/KeyInput.h"
 #include "../Utility/ResourceManager.h"
+#include "../Scene/GameMain.h"
 #include "EnemyDeer.h"
 #include<math.h>
 
@@ -68,6 +69,11 @@ void EnemyDeer::Update(GameMain* _g)
 	*/
 
 	EnemyDeerMove();
+
+	if (deer_state == DeerState::DEATH)
+	{
+		_g->DeleteObject(object_pos);
+	}
 }
 
 void EnemyDeer::Draw()const
@@ -80,17 +86,17 @@ void EnemyDeer::Draw()const
 
 		//頭
 		//DrawBoxAA(local_location.x + r_x, local_location.y + r_y, local_location.x + 30.0f + r_x, local_location.y + 20.0f + r_y, 0xffffff, TRUE);
-		ResourceManager::DrawRotaBox(local_location.x + 16.0f, local_location.y + 10.0f, 30.0f, 20.0f, 0, 0, 0, color, true);
+		ResourceManager::DrawRotaBox(local_location.x + 16.0f, local_location.y + 10.0f, 30.0f, 20.0f, local_location.x + 16.0f, local_location.y + 10.0f, d_rad, color, true);
 
 		//首
 		//DrawBoxAA(local_location.x + 13.0f, local_location.y + 25.0f, local_location.x + 30.0f, local_location.y + 35.0f, 0xffffff, TRUE);
 		//DrawBoxAA(local_location.x + 20.0f, local_location.y + 40.0f, local_location.x + 30.0f, local_location.y + 50.0f, 0xffffff, TRUE);
-		ResourceManager::DrawRotaBox(local_location.x + 22.0f, local_location.y + 30.0f, 17.0f, 10.0f, 0, 0, d_rad, color, true);
-		ResourceManager::DrawRotaBox(local_location.x + 26.0f, local_location.y + 45.0f, 10.0f, 10.0f, 0, 0, d_rad, color, true);
+		ResourceManager::DrawRotaBox(local_location.x + 22.0f, local_location.y + 30.0f, 17.0f, 10.0f, local_location.x + 22.0f, local_location.y + 30.0f, d_rad, color, true);
+		ResourceManager::DrawRotaBox(local_location.x + 26.0f, local_location.y + 45.0f, 10.0f, 10.0f, local_location.x + 26.0f, local_location.y + 45.0f, d_rad, color, true);
 
 		//胴体
 		//DrawBoxAA(local_location.x + 20.0f, local_location.y + 55.0f, local_location.x + 85.0f, local_location.y + 70.0f, 0xffffff, TRUE);
-		ResourceManager::DrawRotaBox(local_location.x + 53.0f, local_location.y + 63.0f, 65.0f, 15.0f, 0, 0, d_rad, color, true);
+		ResourceManager::DrawRotaBox(local_location.x + 53.0f, local_location.y + 63.0f, 65.0f, 15.0f, local_location.x + 53.0f, local_location.y + 63.0f, d_rad, color, true);
 
 		//足　左から
 		//DrawQuadrangleAA(local_location.x + 20.0f, local_location.y + 75.0f, local_location.x + 30.0f, local_location.y + 75.0f, local_location.x + 25.0f, local_location.y + 100.0f, local_location.x + 15.0f, local_location.y + 100.0f, 0xffffff, TRUE);
@@ -101,13 +107,13 @@ void EnemyDeer::Draw()const
 
 		//DrawQuadrangleAA(local_location.x + 75.0f, local_location.y + 75.0f, local_location.x + 85.0f, local_location.y + 75.0f, local_location.x + 95.0f, local_location.y + 100.0f, local_location.x + 85.0f, local_location.y + 100.0f, 0xffffff, TRUE);
 
-		ResourceManager::DrawRotaBox(local_location.x + 25.0f, local_location.y + 88.0f, 10.0f, 25.0f, 0, 0, d_rad, color, true);
+		ResourceManager::DrawRotaBox(local_location.x + 25.0f, local_location.y + 88.0f, 10.0f, 25.0f, local_location.x + 25.0f, local_location.y + 88.0f, d_rad, color, true);
 
-		ResourceManager::DrawRotaBox(local_location.x + 41.0f, local_location.y + 88.0f, 10.0f, 25.0f, 0, 0, d_rad, color, true);
+		ResourceManager::DrawRotaBox(local_location.x + 41.0f, local_location.y + 88.0f, 10.0f, 25.0f, local_location.x + 41.0f, local_location.y + 88.0f, d_rad, color, true);
 
-		ResourceManager::DrawRotaBox(local_location.x + 66.0f, local_location.y + 88.0f, 10.0f, 25.0f, 0, 0, d_rad, color, true);
+		ResourceManager::DrawRotaBox(local_location.x + 66.0f, local_location.y + 88.0f, 10.0f, 25.0f, local_location.x + 66.0f, local_location.y + 88.0f, d_rad, color, true);
 
-		ResourceManager::DrawRotaBox(local_location.x + 81.0f, local_location.y + 88.0f, 10.0f, 25.0f, 0, 0, d_rad, color, true);
+		ResourceManager::DrawRotaBox(local_location.x + 81.0f, local_location.y + 88.0f, 10.0f, 25.0f, local_location.x + 81.0f, local_location.y + 88.0f, d_rad, color, true);
 	}
 	else if (deer_state == DeerState::RIGHT)
 	{
@@ -137,7 +143,7 @@ void EnemyDeer::Draw()const
 	//DrawFormatString(0, 60, GetColor(255, 0, 0), "MouseX : %d MouseY : %d", KeyInput::GetMouseCursor().x, KeyInput::GetMouseCursor().y);
 
 	//当たり判定のBox
-	DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, GetColor(255, 255, 255), FALSE);
+	//DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, GetColor(255, 255, 255), FALSE);
 
 	/*DrawFormatString(50, 60, 0xff0000, "スクリーン(location) X：%0.1f + %0.1f Y：%0.1f + %0.1f", location.x, erea.width, location.y, erea.height);
 	DrawFormatString(50, 80, 0xff0000, "ワールド(local) X     ：%0.1f Y：%0.1f", local_location.x, local_location.y);
@@ -150,13 +156,10 @@ void EnemyDeer::Draw()const
 
 	DrawFormatString(50, 20, 0xff0000, "DeerState ; %d", deer_state);*/
 
-	//DrawFormatString(50, 40, 0xff0000, "rx %0.1f ry %0.1f", r_x, r_y);
-
-	DrawCircleAA(local_location.x, local_location.y, 2, 32, 0x00ff00, TRUE);
-	DrawCircleAA(local_location.x, local_location.y + erea.height, 2, 32, 0xff00ff, TRUE);
+	//DrawCircleAA(local_location.x, local_location.y, 2, 32, 0x00ff00, TRUE);
+	//DrawCircleAA(local_location.x, local_location.y + erea.height, 2, 32, 0xff00ff, TRUE);
 	//DrawCircleAA(local_location.x, local_location.y + erea.height, 2, 32, 0x00ff00, TRUE);
 
-	DrawFormatStringF(50, 20, 0x00ff00, "color %0.1f", color);
 }
 
 void EnemyDeer::EnemyDeerMove()
@@ -192,6 +195,7 @@ void EnemyDeer::EnemyDeerMove()
 		break;
 
 	case DeerState::DEATH:
+
 		break;
 	}
 }
@@ -351,12 +355,12 @@ void EnemyDeer::Hit(Object* _object)
 
 		erea.height = tmpe.height;
 		erea.width = tmpe.width;
+	}
 
-		if ((_object->GetObjectType() == FIRE && this->color == GREEN) || (_object->GetObjectType() == WATER && this->color == RED) || (_object->GetObjectType() == WOOD && this->color == BLUE))
-		{
-			deer_state = DeerState::DEATH;
-		}
-	}	
+	if ((this->color == RED && _object->GetObjectType() == WATER) || (this->color == BLUE && _object->GetObjectType() == WOOD) || (this->color == GREEN && _object->GetObjectType() == FIRE))
+	{
+		deer_state = DeerState::DEATH;
+	}
 }
 
 bool EnemyDeer::CheckCollision(Location l, Erea e)
