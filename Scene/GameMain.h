@@ -11,6 +11,7 @@
 #include "../Object/WeatherManager.h"
 #include "../Object/EffectSpawner.h"
 #include "../Object/Effect.h"
+#include "../Object/Boss.h"
 
 class Player;
 

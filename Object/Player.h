@@ -52,6 +52,9 @@ private:
 	int damageEffectTime = 60;
 	bool damageEffectFlg = false;
 
+	int state; //水中とか火の中とかの状態を管理
+	bool stateFlg; //一フレーム内かを判定
+
 	int fps = 0;
 	int fps1 = 0;
 	float move[4] = { 0,0,0,0 };

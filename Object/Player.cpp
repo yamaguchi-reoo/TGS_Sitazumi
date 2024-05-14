@@ -54,6 +54,8 @@ Player::Player()
 	damageFlg = false;
 	damageOldFlg = false;
 	hp = 5;
+	state = 0;
+	stateFlg = false;
 
 	direction = -1;
 	oldDirection = -1;
@@ -79,10 +81,27 @@ void Player::Update(GameMain* _g)
 	fps = 0;
 	_g->SpawnEffect(location, erea, 2);
 	if (stageHitFlg[1][bottom] != true/* && !searchFlg*/) { //重力
-		vector.y += 1.f;
-		if (vector.y > 16.f) {
-			vector.y = 16.f;
+		switch (state)
+		{
+		case 0:
+			vector.y += 1.f;
+			if (vector.y > 16.f) {
+				vector.y = 16.f;
+			}
+			break;
+
+		case 1:
+			vector.y += 0.5f;
+			if (vector.y > 8.f) {
+				vector.y = 8.f;
+			}
+			break;
+
+		default:
+			break;
 		}
+		
+		
 	}
 	else {
 		vector.y = 0.f;
@@ -185,6 +204,8 @@ void Player::Update(GameMain* _g)
 
 	damageOldFlg = damageFlg;
 	damageFlg = false;
+
+	stateFlg = false;
 }
 
 void Player::Draw()const
@@ -432,13 +453,41 @@ void Player::Hit(Object* _object)
 		}
 	}
 
+	if ((_object->GetObjectType() == WATER && _object->GetCanSwap() == FALSE && this->color == BLUE && color == BLUE && !stateFlg) ||
+		(_object->GetObjectType() == FIRE && _object->GetCanSwap() == FALSE && this->color == RED && color == RED && !stateFlg) ||
+		(_object->GetObjectType() == WOOD && _object->GetCanSwap() == FALSE && this->color == GREEN && color == GREEN && !stateFlg)){
+		state = 1;
+		stateFlg = true;
+	}
+	else {
+		if (!stateFlg) {
+			state = 0;
+		}
+	}
+
 }
 
 void Player::MoveActor()
 {
 	//ジャンプ
-	if ((PadInput::OnButton(XINPUT_BUTTON_A)/*|| PadInput::OnPressed(XINPUT_BUTTON_A)*/) && stageHitFlg[1][bottom]) {
-		vector.y = -23.f;
+	if ((PadInput::OnButton(XINPUT_BUTTON_A)/*|| PadInput::OnPressed(XINPUT_BUTTON_A)*/)) {
+		switch (state)
+		{
+		case 0:
+			if (stageHitFlg[1][bottom]) {
+				vector.y = -23.f;
+			}
+			break;
+
+		case 1:
+			vector.y = -15.f;
+
+			break;
+
+		default:
+			break;
+		}
+		
 	}
 
 	//左右移動

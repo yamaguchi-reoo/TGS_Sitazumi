@@ -18,60 +18,11 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="Object\Boss.cpp" />
-    <ClCompile Include="Object\BoxCollider.cpp" />
-    <ClCompile Include="Object\Effect.cpp" />
-    <ClCompile Include="Object\EffectSpawner.cpp" />
-    <ClCompile Include="Object\EnemyBat.cpp" />
-    <ClCompile Include="Object\EnemyDeer.cpp" />
-    <ClCompile Include="Object\ColorData.cpp" />
-    <ClCompile Include="Object\EnemyFrog.cpp" />
-    <ClCompile Include="Object\Player.cpp" />
-    <ClCompile Include="Object\Stage.cpp" />
-    <ClCompile Include="Object\Weather.cpp" />
-    <ClCompile Include="Object\WeatherManager.cpp" />
-    <ClCompile Include="Scene\EditScene.cpp" />
-    <ClCompile Include="Scene\GameMain.cpp" />
-    <ClCompile Include="Scene\SceneManager.cpp" />
-    <ClCompile Include="Scene\Title.cpp" />
-    <ClCompile Include="Utility\FpsController.cpp" />
-    <ClCompile Include="Utility\KeyInput.cpp" />
-    <ClCompile Include="Utility\PadInput.cpp" />
-    <ClCompile Include="Utility\ResourceManager.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Object\Boss.h" />
-    <ClInclude Include="Object\BoxCollider.h" />
-    <ClInclude Include="Object\Effect.h" />
-    <ClInclude Include="Object\EffectSpawner.h" />
-    <ClInclude Include="Object\EnemyFrog.h" />
-    <ClInclude Include="Object\Object.h" />
-    <ClInclude Include="Object\EnemyBat.h" />
-    <ClInclude Include="Object\EnemyDeer.h" />
-    <ClInclude Include="Object\ColorData.h" />
-    <ClInclude Include="Object\Player.h" />
-    <ClInclude Include="Object\Stage.h" />
-    <ClInclude Include="Object\Weather.h" />
-    <ClInclude Include="Object\WeatherManager.h" />
-    <ClInclude Include="Scene\AbstractScene.h" />
-    <ClInclude Include="Scene\EditScene.h" />
-    <ClInclude Include="Scene\GameMain.h" />
-    <ClInclude Include="Scene\SceneManager.h" />
-    <ClInclude Include="Scene\Title.h" />
-    <ClInclude Include="Utility\common.h" />
-    <ClInclude Include="Utility\fps.h" />
-    <ClInclude Include="Utility\FpsController.h" />
-    <ClInclude Include="Utility\KeyInput.h" />
-    <ClInclude Include="Utility\PadInput.h" />
-    <ClInclude Include="Utility\ResourceManager.h" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{1cd97259-2f0c-4dbb-9b46-ea2345ddce2d}</ProjectGuid>
-    <RootNamespace>TGS_Sitazumi</RootNamespace>
+    <ProjectGuid>{ddf20af6-fae9-4c1b-8e17-40da9dbf560a}</ProjectGuid>
+    <RootNamespace>kojin</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -199,6 +150,25 @@
       <AdditionalLibraryDirectories>C:\DxLib_VC\プロジェクトに追加すべきファイル_VC用;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Object\Bone.cpp" />
+    <ClCompile Include="Scene\sceneManager.cpp" />
+    <ClCompile Include="Scene\scene_title.cpp" />
+    <ClCompile Include="Utility\fpsCtrl.cpp" />
+    <ClCompile Include="Utility\inputCtrl.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="main.h" />
+    <ClInclude Include="Object\Bone.h" />
+    <ClInclude Include="Scene\scene.h" />
+    <ClInclude Include="Scene\sceneManager.h" />
+    <ClInclude Include="Scene\scene_title.h" />
+    <ClInclude Include="Utility\calculation.h" />
+    <ClInclude Include="Utility\fpsCtrl.h" />
+    <ClInclude Include="Utility\inputCtrl.h" />
+    <ClInclude Include="Utility\Vector2D.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
