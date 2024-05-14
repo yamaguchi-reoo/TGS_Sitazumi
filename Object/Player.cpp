@@ -153,6 +153,7 @@ void Player::Update(GameMain* _g)
 		{
 			searchFlg = false;
 			swapTimer = -1;
+			searchedObj = nullptr;
 		}
 	}
 
@@ -938,7 +939,17 @@ void Player::SelectObject()
 		
 	}
 	else if (searchedObjFlg) {//最初
-		searchedObj = searchedObjAll[0];
+		float len = 1000;
+		int n = 0;
+		for (int i = 0; i < objNum; i++)
+		{
+			if (GetLength(local_location, searchedObjAll[i]->GetLocalLocation()) < len) {
+				len = GetLength(local_location, searchedObjAll[i]->GetLocalLocation());
+				n = i;
+			}
+		}
+		objSelectNumTmp = n;
+		searchedObj = searchedObjAll[objSelectNumTmp];
 		oldSearchedObj = searchedObj;
 		oldSearchedObjAll[0] = oldSearchedObj;
 		direction = -1;

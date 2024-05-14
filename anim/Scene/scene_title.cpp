@@ -132,10 +132,11 @@ Scene* Title::update()
 		}
 	
 	}
-
-	for (int i = 0; i < 32; i++)
-	{
-		bone[i].SelectUpdate();
+	else {
+		for (int i = 0; i < 32; i++)
+		{
+			bone[i].SelectUpdate();
+		}
 	}
 
 	//strcpy_s(string, 32, "a");

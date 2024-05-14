@@ -18,7 +18,7 @@ private:
 	bool flg;		//移動するかどうか
 
 	int order; //何番目のボーンか
-	bool side; //左右どちらに動くか
+	bool side[32]; //左右どちらに動くか
 
 	bool selected;
 	int cursor;
@@ -40,6 +40,8 @@ public:
 
 	void SelectUpdate();
 	void DrawUI() const;
+
+	float SetMovedPosition();
 
 	Vector2D GetCenterLocation() {
 		return centerLoc;
