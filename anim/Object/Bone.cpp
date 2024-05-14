@@ -55,6 +55,19 @@ void Bone::Initialize(Vector2D sl, Vector2D gl)
 void Bone::Init()
 {
 	//flg = false;
+	//Vector2D worldLoc[2];
+	//worldLoc[0] = BoneLoc[0] + centerLoc;
+	//worldLoc[1] = BoneLoc[1] + centerLoc;
+
+	//Vector2D tmp = GetRotaLocation(BoneLocBase[0] + centerLoc, BoneLocBase[1] + centerLoc, movedAng[num + 1]);
+
+	//float cross = CrossProduct(worldLoc[1] - worldLoc[0], tmp - worldLoc[0]); //外積　左回りの時は外積がマイナス　右回りの時はプラス
+	//float a = AngleOf2Vector(worldLoc[1] - worldLoc[0], tmp - worldLoc[0]);
+	//if (cross < 0) {
+	//	a = M_PI * 2 - a;
+	//}
+	//a -= M_PI;
+	//SetMoved(a, time[num], num + 1, side);
 	num++;
 	/*BoneLoc[0] = BoneLocBase[0];
 	BoneLoc[1] = BoneLocBase[1];*/
