@@ -14,7 +14,7 @@
 static Location camera_location = { 0,0};	//カメラの座標
 static Location screen_origin = { (SCREEN_WIDTH / 2),(SCREEN_HEIGHT / 2) };
 
-GameMain::GameMain(int _stage) :frame(0),stage_data{0},now_stage(0), object_num(0),stage_width_num(0), stage_height_num(0), stage_width(0), stage_height(0), camera_x_lock_flg(true), camera_y_lock_flg(true), x_pos_set_once(false), y_pos_set_once(false),player_object(0),weather(0), weather_timer(0)
+GameMain::GameMain(int _stage) :frame(0),stage_data{0},now_stage(0), object_num(0),stage_width_num(0), stage_height_num(0), stage_width(0), stage_height(0), camera_x_lock_flg(true), camera_y_lock_flg(true), x_pos_set_once(false), y_pos_set_once(false),player_object(0),weather(0), weather_timer(0), move_object_num(0)
 {
 
 	swap_anim[0].move_flg = false;
@@ -37,14 +37,23 @@ GameMain::~GameMain()
 	{
 		//生成済みのオブジェクトを削除
 		object[i]->Finalize();
-		delete object[i];
+		if (object[i] != nullptr)
+		{
+			delete object[i];
+		}
 	}
 	weather->Finalize();
 	delete weather;
+
+	effect_spawner->Finalize();
+
+	delete effect_spawner;
 }
 
 AbstractScene* GameMain::Update()
 {
+	//リセット
+	move_object_num = 0;
 	//フレーム測定
 	frame++;
 
@@ -60,14 +69,23 @@ AbstractScene* GameMain::Update()
 			if (object[i] != object[player_object])
 			{
 				object[i]->SetScreenPosition(camera_location);
-				object[i]->Update(this);
-				for (int j = i + 1; object[j] != nullptr; j++)
+				//画面内のオブジェクトしかUpdateしない
+				if (object[i]->GetLocation().x > camera_location.x - 100 &&
+					object[i]->GetLocation().x < camera_location.x + SCREEN_WIDTH + 100 &&
+					object[i]->GetLocation().y > camera_location.y - 100 &&
+					object[i]->GetLocation().y < camera_location.y + SCREEN_WIDTH + 100
+					)
 				{
-					//各オブジェクトとの当たり判定
-					if (object[i]->GetCanHit() == TRUE && object[j]->GetCanHit() == TRUE && object[i]->HitBox(object[j])&& object[j] != object[player_object])
+					object[i]->Update(this);
+					move_object_num++;
+					for (int j = i + 1; object[j] != nullptr; j++)
 					{
-						object[i]->Hit(object[j]);
-						object[j]->Hit(object[i]);
+						//各オブジェクトとの当たり判定
+						if (object[i]->GetCanHit() == TRUE && object[j]->GetCanHit() == TRUE && object[i]->HitBox(object[j]) && object[j] != object[player_object])
+						{
+							object[i]->Hit(object[j]);
+							object[j]->Hit(object[i]);
+						}
 					}
 				}
 			}
@@ -77,6 +95,7 @@ AbstractScene* GameMain::Update()
 	//プレイヤーの更新＆色探知用
 	object[player_object]->SetScreenPosition(camera_location);
 	object[player_object]->Update(this);
+	move_object_num++;
 	for (int i = 0; object[i] != nullptr; i++)
 	{
 		if (object[i]->GetCanSwap() == TRUE && object[i]->GetObjectType() != PLAYER) {
@@ -176,6 +195,7 @@ void GameMain::Draw() const
 	}
 #ifdef _DEBUG
 	DrawFormatString(100, 100, 0xffffff, "Object数:%d", object_num);
+	DrawFormatString(100, 120, 0xffffff, "Updeteが呼ばれているObject数:%d", move_object_num);
 #endif
 }
 

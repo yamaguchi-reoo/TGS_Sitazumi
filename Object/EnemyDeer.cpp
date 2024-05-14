@@ -32,6 +32,7 @@ EnemyDeer::EnemyDeer()
 	}
 
 	deer_spawn = false;
+	deer_draw = d_draw::vr_one;
 }
 
 EnemyDeer::~EnemyDeer()
@@ -80,91 +81,84 @@ void EnemyDeer::Draw()const
 {
 	if (deer_state == DeerState::LEFT || deer_state == DeerState::GRAVITY || deer_state == DeerState::IDLE)
 	{
-		//角
-		//DrawQuadrangleAA(local_location.x - 5.0f, local_location.y - 20.0f, local_location.x + 2.0f, local_location.y - 25.0f, local_location.x + 15.0f, local_location.y + 2.0f, local_location.x + 7.0f, local_location.y + 5.0f, color, TRUE);
-		//DrawQuadrangleAA()
-
 		//頭
-		//DrawBoxAA(local_location.x + r_x, local_location.y + r_y, local_location.x + 30.0f + r_x, local_location.y + 20.0f + r_y, 0xffffff, TRUE);
 		ResourceManager::DrawRotaBox(local_location.x + 16.0f, local_location.y + 10.0f, 30.0f, 20.0f, local_location.x + 16.0f, local_location.y + 10.0f, d_rad, color, true);
+		//目
+		ResourceManager::DrawRotaBox(local_location.x + 8.0f, local_location.y + 10.0f, 8.0f, 9.0f, local_location.x + 8.0f, local_location.y + 10.0f, d_rad, 0x000000, true);
 
-		//首
-		//DrawBoxAA(local_location.x + 13.0f, local_location.y + 25.0f, local_location.x + 30.0f, local_location.y + 35.0f, 0xffffff, TRUE);
-		//DrawBoxAA(local_location.x + 20.0f, local_location.y + 40.0f, local_location.x + 30.0f, local_location.y + 50.0f, 0xffffff, TRUE);
-		ResourceManager::DrawRotaBox(local_location.x + 22.0f, local_location.y + 30.0f, 17.0f, 10.0f, local_location.x + 22.0f, local_location.y + 30.0f, d_rad, color, true);
-		ResourceManager::DrawRotaBox(local_location.x + 26.0f, local_location.y + 45.0f, 10.0f, 10.0f, local_location.x + 26.0f, local_location.y + 45.0f, d_rad, color, true);
+		switch (deer_draw)
+		{
+		case d_draw::vr_one:
 
-		//胴体
-		//DrawBoxAA(local_location.x + 20.0f, local_location.y + 55.0f, local_location.x + 85.0f, local_location.y + 70.0f, 0xffffff, TRUE);
-		ResourceManager::DrawRotaBox(local_location.x + 53.0f, local_location.y + 63.0f, 65.0f, 15.0f, local_location.x + 53.0f, local_location.y + 63.0f, d_rad, color, true);
+			//首 vr.1
+			ResourceManager::DrawRotaBox(local_location.x + 22.0f, local_location.y + 30.0f, 17.0f, 10.0f, local_location.x + 22.0f, local_location.y + 30.0f, d_rad, color, true);
+			ResourceManager::DrawRotaBox(local_location.x + 26.0f, local_location.y + 45.0f, 10.0f, 10.0f, local_location.x + 26.0f, local_location.y + 45.0f, d_rad, color, true);
+
+			//胴体 vr.1
+			ResourceManager::DrawRotaBox(local_location.x + 53.0f, local_location.y + 63.0f, 65.0f, 15.0f, local_location.x + 53.0f, local_location.y + 63.0f, d_rad, color, true);
+			break;
+
+		case d_draw::vr_two:
+
+			//首 vr.2
+			ResourceManager::DrawRotaBox(local_location.x + 25.0f, local_location.y + 38.0f, 13.0f, 24.0f, local_location.x + 25.0f, local_location.y + 38.0f, d_rad, color, true);
+
+			//胴体 vr.2
+			ResourceManager::DrawRotaBox(local_location.x + 34.0f, local_location.y + 63.0f, 30.0f, 15.0f, local_location.x + 34.0f, local_location.y + 63.0f, d_rad, color, true);
+			ResourceManager::DrawRotaBox(local_location.x + 72.0f, local_location.y + 63.0f, 30.0f, 15.0f, local_location.x + 72.0f, local_location.y + 63.0f, d_rad, color, true);
+			break;
+		}
 
 		//足　左から
-		//DrawQuadrangleAA(local_location.x + 20.0f, local_location.y + 75.0f, local_location.x + 30.0f, local_location.y + 75.0f, local_location.x + 25.0f, local_location.y + 100.0f, local_location.x + 15.0f, local_location.y + 100.0f, 0xffffff, TRUE);
-
-		//DrawBoxAA(local_location.x + 35.0f, local_location.y + 75.0f, local_location.x + 45.0f, local_location.y + 100.0f, 0xffffff, TRUE);
-
-		//DrawBoxAA(local_location.x + 60.0f, local_location.y + 75.0f, local_location.x + 70.0f, local_location.y + 100.0f, 0xffffff, TRUE);
-
-		//DrawQuadrangleAA(local_location.x + 75.0f, local_location.y + 75.0f, local_location.x + 85.0f, local_location.y + 75.0f, local_location.x + 95.0f, local_location.y + 100.0f, local_location.x + 85.0f, local_location.y + 100.0f, 0xffffff, TRUE);
-
 		ResourceManager::DrawRotaBox(local_location.x + 25.0f, local_location.y + 88.0f, 10.0f, 25.0f, local_location.x + 25.0f, local_location.y + 88.0f, d_rad, color, true);
-
 		ResourceManager::DrawRotaBox(local_location.x + 41.0f, local_location.y + 88.0f, 10.0f, 25.0f, local_location.x + 41.0f, local_location.y + 88.0f, d_rad, color, true);
-
 		ResourceManager::DrawRotaBox(local_location.x + 66.0f, local_location.y + 88.0f, 10.0f, 25.0f, local_location.x + 66.0f, local_location.y + 88.0f, d_rad, color, true);
-
 		ResourceManager::DrawRotaBox(local_location.x + 81.0f, local_location.y + 88.0f, 10.0f, 25.0f, local_location.x + 81.0f, local_location.y + 88.0f, d_rad, color, true);
 	}
 	else if (deer_state == DeerState::RIGHT)
 	{
-		//角
-		//DrawQuadrangleAA(local_location.x - 5.0f, local_location.y - 20.0f, local_location.x + 2.0f, local_location.y - 25.0f, local_location.x + 15.0f, local_location.y + 2.0f, local_location.x + 7.0f, local_location.y + 5.0f, color, TRUE);
-
-		ResourceManager::DrawRotaBox(local_location.x, local_location.y, 10.0f, 10.0f, local_location.x, local_location.y, d_rad, color, true);
-
 		//頭
-		DrawBoxAA(local_location.x + 70.0f, local_location.y, local_location.x + 100.0f, local_location.y + 20.0f, color, TRUE);
+		ResourceManager::DrawRotaBox(local_location.x - erea.width + 15.0f, local_location.y - 10.0f, 30.0f, 20.0f, local_location.x, local_location.y, d_rad, color, true);
+		//目
+		ResourceManager::DrawRotaBox(local_location.x - erea.width + 8.0f, local_location.y - 10.0f, 8.0f, 9.0f, local_location.x, local_location.y, d_rad, 0x000000, true);
 
-		//首
-		DrawBoxAA(local_location.x + 70.0f, local_location.y + 25.0f, local_location.x + 87.0f, local_location.y + 35.0f, color, TRUE);
-		DrawBoxAA(local_location.x + 70.0f, local_location.y + 40.0f, local_location.x + 80.0f, local_location.y + 50.0f, color, TRUE);
+		switch (deer_draw)
+		{
+		case d_draw::vr_one:
 
-		//胴体
-		DrawBoxAA(local_location.x + 15.0f, local_location.y + 55.0f, local_location.x + 80.0f, local_location.y + 70.0f, color, TRUE);
+			//首 vr.1
+			ResourceManager::DrawRotaBox(local_location.x - erea.width + 21.0f, local_location.y - 30.0f, 17.0f, 10.0f, local_location.x, local_location.y, d_rad, color, true);
+			ResourceManager::DrawRotaBox(local_location.x - erea.width + 25.0f, local_location.y - 45.0f, 10.0f, 10.0f, local_location.x, local_location.y, d_rad, color, true);
+
+			//胴体 vr.1
+			ResourceManager::DrawRotaBox(local_location.x - erea.width + 52.0f, local_location.y - 63.0f, 65.0f, 15.0f, local_location.x, local_location.y, d_rad, color, true);
+			break;
+
+		case d_draw::vr_two:
+
+			//首 vr.2
+			ResourceManager::DrawRotaBox(local_location.x - erea.width + 23.0f, local_location.y - 38.0f, 13.0f, 24.0f, local_location.x, local_location.y, d_rad, color, true);
+
+			//胴体 vr.2
+			ResourceManager::DrawRotaBox(local_location.x - erea.width + 52.0f, local_location.y - 63.0f, 65.0f, 15.0f, local_location.x, local_location.y, d_rad, color, true);
+			ResourceManager::DrawRotaBox(local_location.x - erea.width + 52.0f, local_location.y - 63.0f, 65.0f, 15.0f, local_location.x, local_location.y, d_rad, color, true);
+			break;
+		}
 
 		//足　左から
-		DrawQuadrangleAA(local_location.x + 70.0f, local_location.y + 75.0f, local_location.x + 80.0f, local_location.y + 75.0f, local_location.x + 85.0f, local_location.y + 100.0f, local_location.x + 75.0f, local_location.y + 100.0f, color, TRUE);
-		DrawBoxAA(local_location.x + 55.0f, local_location.y + 75.0f, local_location.x + 65.0f, local_location.y + 100.0f, color, TRUE);
-		DrawBoxAA(local_location.x + 30.0f, local_location.y + 75.0f, local_location.x + 40.0f, local_location.y + 100.0f, color, TRUE);
-		DrawQuadrangleAA(local_location.x + 15.0f, local_location.y + 75.0f, local_location.x + 25.0f, local_location.y + 75.0f, local_location.x + 20.0f, local_location.y + 100.0f, local_location.x + 10.0f, local_location.y + 100.0f, color, TRUE);
+		ResourceManager::DrawRotaBox(local_location.x - erea.width + 25.0f, local_location.y - 88.0f, 10.0f, 25.0f, local_location.x, local_location.y, d_rad, color, true);
+		ResourceManager::DrawRotaBox(local_location.x - erea.width + 40.0f, local_location.y - 88.0f, 10.0f, 25.0f, local_location.x, local_location.y, d_rad, color, true);
+		ResourceManager::DrawRotaBox(local_location.x - erea.width + 65.0f, local_location.y - 88.0f, 10.0f, 25.0f, local_location.x, local_location.y, d_rad, color, true);
+		ResourceManager::DrawRotaBox(local_location.x - erea.width + 80.0f, local_location.y - 88.0f, 10.0f, 25.0f, local_location.x, local_location.y, d_rad, color, true);
 	}
 	
-	//マウス座標
-	//DrawFormatString(0, 60, GetColor(255, 0, 0), "MouseX : %d MouseY : %d", KeyInput::GetMouseCursor().x, KeyInput::GetMouseCursor().y);
-
 	//当たり判定のBox
 	//DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, GetColor(255, 255, 255), FALSE);
-
-	/*DrawFormatString(50, 60, 0xff0000, "スクリーン(location) X：%0.1f + %0.1f Y：%0.1f + %0.1f", location.x, erea.width, location.y, erea.height);
-	DrawFormatString(50, 80, 0xff0000, "ワールド(local) X     ：%0.1f Y：%0.1f", local_location.x, local_location.y);
-	DrawFormatString(50, 120, 0xff0000, "相手のlocation.x : %0.1f", DrawTest1);
-	DrawFormatString(50, 140, 0xff0000, "相手のlocation.y : %0.1f", DrawTest2);
-	DrawFormatString(50, 160, 0xff0000, "erea.height: %0.1f", DrawTest3);
-	DrawFormatString(50, 180, 0xff0000, "erea.width : %0.1f", DrawTest4);
-	DrawFormatString(50, 200, 0xff0000, "type	       : %d", DrawTest5);
-	DrawFormatString(50, 220, 0xff0000, "color_data : %d", DrawTest6);
-
-	DrawFormatString(50, 20, 0xff0000, "DeerState ; %d", deer_state);*/
-
-	//DrawCircleAA(local_location.x, local_location.y, 2, 32, 0x00ff00, TRUE);
-	//DrawCircleAA(local_location.x, local_location.y + erea.height, 2, 32, 0xff00ff, TRUE);
-	//DrawCircleAA(local_location.x, local_location.y + erea.height, 2, 32, 0x00ff00, TRUE);
-
 }
 
 void EnemyDeer::EnemyDeerMove()
 {
-
+	//重力(かけ続けないといけない)
 	location.y += 10;
 
 	switch (deer_state)

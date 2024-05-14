@@ -15,6 +15,12 @@ enum class DeerState {
 	DEATH
 };
 
+enum class d_draw
+{
+	vr_one,
+	vr_two
+};
+
 class EnemyDeer :
 	public Object
 {
@@ -29,6 +35,8 @@ private:
 	};
 
 	DeerState deer_state;
+	d_draw deer_draw;
+
 	bool deer_spawn;
 
 	float tn = 0.0f;
@@ -40,6 +48,7 @@ private:
 
 	float r_x = 0.0f, r_y = 0.0f;
 	float d_rad = 0.0f;
+
 
 	//デバック用
 	float DrawTest1 = 0, DrawTest2 = 0, DrawTest3 = 0, DrawTest4 = 0;

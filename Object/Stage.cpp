@@ -141,10 +141,12 @@ void Stage::Update()
 			block_type = 5;
 		}
 	}
+
 	old_color = color;
 	//リセット
 	hit_flg = false;
-	frame++;
+
+	frame++;	
 	//hit_timerに0が入ったらアニメーション開始
 	if (hit_timer >= 0)
 	{
