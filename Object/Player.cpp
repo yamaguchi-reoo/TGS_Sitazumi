@@ -453,7 +453,9 @@ void Player::Hit(Object* _object)
 		}
 	}
 
-	if (_object->GetObjectType() == WATER && _object->GetCanSwap() == FALSE && this->color == BLUE && color == BLUE && !stateFlg) {
+	if ((_object->GetObjectType() == WATER && _object->GetCanSwap() == FALSE && this->color == BLUE && color == BLUE && !stateFlg) ||
+		(_object->GetObjectType() == FIRE && _object->GetCanSwap() == FALSE && this->color == RED && color == RED && !stateFlg) ||
+		(_object->GetObjectType() == WOOD && _object->GetCanSwap() == FALSE && this->color == GREEN && color == GREEN && !stateFlg)){
 		state = 1;
 		stateFlg = true;
 	}
