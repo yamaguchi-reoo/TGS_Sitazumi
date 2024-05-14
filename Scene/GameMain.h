@@ -47,6 +47,7 @@ private:
     EffectSpawner* effect_spawner;                  //エフェクト管理オブジェクト
 
     int object_num;         //オブジェクト数
+    int move_object_num;    //Updateされているオブジェクト数
     int now_stage;          //現在のステージ数
     int stage_width_num;    //ステージの横のブロック数
     int stage_height_num;   //ステージの縦のブロック数
@@ -113,5 +114,8 @@ public:
 
     //天気の取得
     int GetNowWeather() { return now_weather; }
+
+    //エフェクトの生成
+
 };
 

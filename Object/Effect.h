@@ -10,6 +10,11 @@ private:
 	float angle;		//移動方向
 	int effect_time;	//消えるまでの時間測定用
 	float speed;		//移動速度
+
+	Location effect_shift[2];	//特定のエフェクトのずれ格納用
+	int shine_timer;		//特定のエフェクトの時間測定用
+	float rad;
+
 public:
 	//_effect_type=エフェクトの種類 _angle=移動する向き _time=消えるまでのフレーム数 _speed=速度
 	Effect(int _effect_type,float _angle,int _time,float _speed);
