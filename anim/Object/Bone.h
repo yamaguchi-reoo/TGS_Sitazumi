@@ -24,11 +24,16 @@ private:
 	int cursor;
 
 	int handover[2]; //何番目ボーンを引き継いでいるか(メインで生成された順)0、何番目　１、始点と終点どちらか
+
+
+	char inputChar;
+	char string[32];
 public:
 	Bone();
 	~Bone();
 
 	void Initialize(Vector2D sl, Vector2D gl);
+	void Init();
 
 	void Update();
 	void Draw() const;
@@ -59,5 +64,8 @@ public:
 		handover[0] = n;
 		handover[1] = t;
 	}
+
+
+	void InputString();
 };
 

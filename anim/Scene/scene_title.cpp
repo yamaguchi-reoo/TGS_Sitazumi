@@ -142,7 +142,7 @@ Scene* Title::update()
 
 	//文字入力
 	inputChar = GetInputChar(TRUE);
-	if (inputChar == 0x08 && strlen(string) > 0) { //bacaspace
+	if (inputChar == 0x08 && strlen(string) > 0) { //backspace
 		string[strlen(string) - 1] = '\0';
 	}
 	else if (inputChar != 0 && strlen(string) < 32 && inputChar != 0x08) {
