@@ -16,13 +16,19 @@ static Location screen_origin = { (SCREEN_WIDTH / 2),(SCREEN_HEIGHT / 2) };
 
 GameMain::GameMain(int _stage) :frame(0),stage_data{0},now_stage(0), object_num(0),stage_width_num(0), stage_height_num(0), stage_width(0), stage_height(0), camera_x_lock_flg(true), camera_y_lock_flg(true), x_pos_set_once(false), y_pos_set_once(false),player_object(0),weather(0), weather_timer(0)
 {
+
 	swap_anim[0].move_flg = false;
 	swap_anim[1].move_flg = false;
+
+	weather = new WeatherManager();
+	weather->Initialize();
+
+	effect_spawner = new EffectSpawner();
+	effect_spawner->Initialize();
+
 	SetStage(_stage);
 	lock_pos = camera_location;
 	swap_anim_timer = 0;
-	weather = new WeatherManager();
-	weather->Initialize();
 }
 
 GameMain::~GameMain()
@@ -113,7 +119,10 @@ AbstractScene* GameMain::Update()
 	//		now_weather = 0;
 	//	}
 	//}
+
+	//各管理クラスの更新
 	weather->Update(this);
+	effect_spawner->Update(this);
 
 #ifdef _DEBUG
 	//ステージをいじるシーンへ遷移
@@ -178,7 +187,7 @@ void GameMain::CreateObject(Object* _object, Location _location, Erea _erea, int
 		if (object[i] == nullptr)
 		{
 			object[i] = _object;
-			object[i]->Initialize(_location, _erea, _color_data,i);
+			object[i]->Initialize(_location, _erea, _color_data, i);
 			//プレイヤーの配列上の位置格納
 			if (object[i]->GetObjectType() == PLAYER)
 			{
@@ -331,49 +340,47 @@ void GameMain::SetStage(int _stage)
 	for (int i = 0; i < stage_height_num; i++)
 	{
 		for (int j = 0; j < stage_width_num; j++)
-		{
-			//絶対もっと簡略化出来る 一旦これで
+		{	
 			switch (stage_data[i][j])
 			{
-			case 0:
+			case NULL_BLOCK:
 				break;
-			case 1:
-			case 2:
-			case 3:
-			case 4:
-			case 5:
-			case 6:
-			case 7:
-			case 8:
+			case WHITE_BLOCK:
+			case GRAY_BLOCK:
+			case RED_BLOCK:
+			case GREEN_BLOCK:
+			case BLUE_BLOCK:
+			case FIRE_BLOCK:
+			case WOOD_BLOCK:
+			case WATER_BLOCK:
 				//ステージ内ブロックを生成
 				CreateObject(new Stage(stage_data[i][j]), { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { BOX_WIDTH ,BOX_HEIGHT }, stage_data[i][j]);
 				break;
-			case 9:
+			case PLAYER_BLOCK:
 				//プレイヤーの生成
 				CreateObject(new Player, { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { PLAYER_HEIGHT,PLAYER_WIDTH }, RED);
-				CreateObject(new Effect(1,0.125, 60), {(float)j * BOX_WIDTH + (PLAYER_WIDTH / 2) ,(float)i * BOX_HEIGHT + (PLAYER_HEIGHT / 2) }, {20,20}, RED);
-				CreateObject(new Effect(1,0.375, 60), {(float)j * BOX_WIDTH + (PLAYER_WIDTH / 2) ,(float)i * BOX_HEIGHT + (PLAYER_HEIGHT / 2) }, {20,20}, RED);
-				CreateObject(new Effect(1,0.625, 60), {(float)j * BOX_WIDTH + (PLAYER_WIDTH / 2) ,(float)i * BOX_HEIGHT + (PLAYER_HEIGHT / 2) }, {20,20}, RED);
-				CreateObject(new Effect(1,0.875, 60), {(float)j * BOX_WIDTH + (PLAYER_WIDTH / 2) ,(float)i * BOX_HEIGHT + (PLAYER_HEIGHT / 2) }, {20,20}, RED);
+				//エフェクトの生成
+				effect_spawner->SpawnEffect({ (float)j * BOX_WIDTH + PLAYER_WIDTH / 2 ,(float)i * BOX_HEIGHT + PLAYER_HEIGHT / 2 }, { 20,20}, 1);
+
 				player_flg = true;
 				break;
-			case 10:
-			case 11:
-			case 12:
+			case ENEMY_DEER_RED:
+			case ENEMY_DEER_GREEN:
+			case ENEMY_DEER_BLUE:
 				//鹿の生成
 				CreateObject(new EnemyDeer, { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { 100,100 }, ColorList[stage_data[i][j] - 10]);
 				break;
-			case 13:
-			case 14:
-			case 15:
+			case ENEMY_BAT_RED:
+			case ENEMY_BAT_GREEN:
+			case ENEMY_BAT_BLUE:
 				//コウモリの生成
 				CreateObject(new EnemyBat, { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { 75,118 }, ColorList[stage_data[i][j] - 13]);
 				break;
-			case 16:
-			case 17:
-			case 18:
+			case ENEMY_FROG_RED:
+			case ENEMY_FROG_GREEN:
+			case ENEMY_FROG_BLUE:
 				//カエルの生成
-				CreateObject(new EnemyFrog, {(float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT}, {100,100}, ColorList[stage_data[i][j] - 16]);
+				CreateObject(new EnemyFrog, {(float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT}, {50,50}, ColorList[stage_data[i][j] - 16]);
 				break;
 			default:
 				break;
