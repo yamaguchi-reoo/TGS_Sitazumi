@@ -244,6 +244,9 @@ void Stage::Draw()const
 		case 18:
 			DrawStringF(local_location.x, local_location.y, "蛙", text_color[block_type]);
 			break;
+		case 19:
+			DrawStringF(local_location.x, local_location.y, "ボス", text_color[block_type]);
+			break;
 		default:
 			//ブロックなら数字を表示
 			DrawFormatStringF(local_location.x, local_location.y, text_color[block_type], "%d", block_type);

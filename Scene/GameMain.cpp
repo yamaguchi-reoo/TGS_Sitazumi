@@ -382,6 +382,10 @@ void GameMain::SetStage(int _stage)
 				//カエルの生成
 				CreateObject(new EnemyFrog, {(float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT}, {50,50}, ColorList[stage_data[i][j] - 16]);
 				break;
+			case ENEMY_BOSS:
+				//ボスの生成
+				CreateObject(new Boss, { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { 200,200 }, ColorList[stage_data[i][j] - 19]);
+				break;
 			default:
 				break;
 			}

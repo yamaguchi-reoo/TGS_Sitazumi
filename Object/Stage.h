@@ -22,6 +22,7 @@
 #define ENEMY_FROG_RED 16	
 #define ENEMY_FROG_GREEN 17	
 #define ENEMY_FROG_BLUE 18	
+#define ENEMY_BOSS 19
 
 //ColorData格納用
 static int color_data[6]
@@ -35,7 +36,7 @@ static int color_data[6]
 };
 
 //Edit表示用文字色データ
-static int text_color[19]
+static int text_color[20]
 {
 	0xffffff,	//無
 	0x000000,	//白ブロック
@@ -59,6 +60,8 @@ static int text_color[19]
 	0xff0000,	//赤蛙
 	0x00ff00,	//緑蛙
 	0x0000ff,	//青蛙
+
+	0xffffff,	//ボス
 };
 
 //ブロックアニメーション用

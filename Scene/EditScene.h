@@ -5,8 +5,8 @@
 #include "../Object/Stage.h"
 #include "../Utility/KeyInput.h"
 
-#define OBJECT_TYPE_NUM 19       //配置できるオブジェクトの種類数
-#define UI_OBJECT_TYPE_NUM 8    //配置できるオブジェクトの種類数
+#define OBJECT_TYPE_NUM 20       //配置できるオブジェクトの種類数
+#define UI_OBJECT_TYPE_NUM 9    //配置できるオブジェクトの種類数
 #define WIDTH_BUTTON_POS_X 100   //横幅調節ボタンのX位置
 #define WIDTH_BUTTON_POS_Y 40    //横幅調節ボタンのY位置
 #define HEIGHT_BUTTON_POS_X 180  //縦幅調節ボタンのX位置
@@ -30,6 +30,7 @@ static char obj_string[UI_OBJECT_TYPE_NUM][256] =
     "鹿",
     "蝙蝠",
     "蛙",
+    "ボス"
 };
 
 static int can_select_type[UI_OBJECT_TYPE_NUM][2] =
@@ -42,6 +43,7 @@ static int can_select_type[UI_OBJECT_TYPE_NUM][2] =
     {1,3},
     {1,3},
     {1,3},
+    {0,1},
 };
 static char block_type_string[UI_OBJECT_TYPE_NUM][5][256] =
 {
@@ -53,6 +55,7 @@ static char block_type_string[UI_OBJECT_TYPE_NUM][5][256] =
     {"赤鹿","緑鹿","青鹿"," "," ",},
     {"赤蝙","緑蝙","青蝙"," "," ",},
     {"赤蛙","緑蛙","青蛙"," "," ",},
+    {"ボス","","","",""},
 };
 
 class EditScene :
