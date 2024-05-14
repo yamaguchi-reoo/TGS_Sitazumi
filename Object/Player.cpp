@@ -221,7 +221,7 @@ void Player::Draw()const
 	//DrawBox(location.x, location.y, location.x + erea.width, location.y + erea.height,color, FALSE);
 
 	//DrawCircle(aimLoc.x, aimLoc.y, 10, color, TRUE);
-	DrawFormatString(local_location.x, local_location.y, 0xffff00, "hp : %d", state);
+	DrawFormatString(local_location.x, local_location.y, 0xffff00, "hp : %d", hp);
 
 
 	for (int i = 0; i < OBJECT_NUM; i++)
