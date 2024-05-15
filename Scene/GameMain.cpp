@@ -60,7 +60,7 @@ void GameMain::Finalize()
 	delete effect_spawner;
 }
 
-AbstractScene* GameMain::Update()c
+AbstractScene* GameMain::Update()
 {
 	//リセット
 	move_object_num = 0;
