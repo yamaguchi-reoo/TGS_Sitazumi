@@ -61,6 +61,7 @@ void EnemyDeer::Update(GameMain* _g)
 	}
 
 	/*
+		2D 長方形の回転
 		r: 角度(ラジアン)
 		x : 元のX座標
 		y : 元のY座標
@@ -351,7 +352,13 @@ void EnemyDeer::Hit(Object* _object)
 		erea.width = tmpe.width;
 	}
 
-	if ((this->color == RED && _object->GetObjectType() == WATER) || (this->color == BLUE && _object->GetObjectType() == WOOD) || (this->color == GREEN && _object->GetObjectType() == FIRE))
+	if (
+
+		(this->color == RED && _object->GetObjectType() == WATER) || 
+		(this->color == BLUE && _object->GetObjectType() == WOOD) || 
+		(this->color == GREEN && _object->GetObjectType() == FIRE)
+
+		)
 	{
 		deer_state = DeerState::DEATH;
 	}
