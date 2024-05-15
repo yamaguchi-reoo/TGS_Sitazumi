@@ -53,13 +53,13 @@ void EnemyBat::Update(GameMain* _g)
 	float dy = player_pos.y - location.y;
 	float length = sqrt(dx * dx + dy * dy);
 
-	//プレイヤーが色変えるときコウモリもスローに
-	if (_g->GetSearchFlg()) {
-		location.x += vector.x * 0.1f;
-		location.y += vector.y * 0.1f;
-	}
+	////プレイヤーが色変えるときコウモリもスローに
+	//if (_g->GetSearchFlg()) {
+	//	location.x += vector.x * 0.1f;
+	//	location.y += vector.y * 0.1f;
+	//}
 	//プレイヤーの一定範囲内に入ったら
-	else if (length < 300 && bat_state != BatState::DEATH) {
+	if (length < 300 && bat_state != BatState::DEATH) {
 		// 移動方向を決定
 		dx /= length;
 		dy /= length;
