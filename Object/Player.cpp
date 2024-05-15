@@ -5,6 +5,9 @@
 #include "../Scene/GameMain.h"
 #include <math.h>
 
+// Playerのhpが変わるのはメモリの破損のせいかな？
+int Player::hp = 5;
+
 Player::Player()
 {
 	type = PLAYER;
