@@ -3,33 +3,39 @@
 #include "Object.h"
 
 //StageとEditで使う識別用
-#define NULL_BLOCK 0
-#define WHITE_BLOCK 1
-#define GRAY_BLOCK 2
-#define RED_BLOCK	3	
-#define GREEN_BLOCK 4	
-#define BLUE_BLOCK 5	
-#define FIRE_BLOCK 6	
-#define WOOD_BLOCK 7	
-#define WATER_BLOCK 8	
-#define PLAYER_BLOCK 9	
-#define ENEMY_DEER_RED 10	
-#define ENEMY_DEER_GREEN 11
-#define ENEMY_DEER_BLUE 12	
-#define ENEMY_BAT_RED 13	
-#define ENEMY_BAT_GREEN 14	
-#define ENEMY_BAT_BLUE 15	
-#define ENEMY_FROG_RED 16	
-#define ENEMY_FROG_GREEN 17	
-#define ENEMY_FROG_BLUE 18	
-#define ENEMY_BOSS 19
+enum BlockList	{
+	NULL_BLOCK = 0,
+	WHITE_BLOCK,
+	GRAY_BLOCK,
+	RED_BLOCK,
+	GREEN_BLOCK,
+	BLUE_BLOCK,
+	FIRE_BLOCK,	
+	WOOD_BLOCK,	
+	WATER_BLOCK	,
+	PLAYER_BLOCK,	
+	ENEMY_DEER_RED,	
+	ENEMY_DEER_GREEN,
+	ENEMY_DEER_BLUE	,
+	ENEMY_BAT_RED,	
+	ENEMY_BAT_GREEN	,
+	ENEMY_BAT_BLUE,	
+	ENEMY_FROG_RED,	
+	ENEMY_FROG_GREEN,	
+	ENEMY_FROG_BLUE	,
+	ENEMY_BOSS,
+
+};
 
 //ColorData格納用
-static int color_data[6]
+static int color_data[9]
 {
 	0,
 	WHITE,
 	0,
+	RED,
+	GREEN,
+	BLUE,
 	RED,
 	GREEN,
 	BLUE
@@ -70,31 +76,6 @@ static int stage_shift[10]
 	3,5,5,4,4,3,3,2,2,1
 };
 
-////炎エフェクト用
-//struct FireAnim
-//{
-//	Location shift;		//表示位置
-//	Erea erea;			//大きさ
-//	int time;			//表示していられる時間
-//	float angle;		//移動の向き
-//};
-//
-////木エフェクト用
-//struct WoodAnim
-//{
-//	Location shift1;	//表示位置一点目
-//	Location shift2;	//表示位置二点目
-//	float shift;		//表示位置ずれ用
-//};
-//
-////水エフェクト用
-//struct WaterAnim
-//{
-//	Location shift1;	//表示位置
-//	Erea erea;			//大きさ
-//	float shift;		//表示位置ずれ用
-//};
-
 class Stage :
 	public Object
 {
@@ -105,13 +86,9 @@ private:
 	bool inv_flg;						//ブロックに触れるか判断
 	bool debug_flg;						//EditScene用表示をするかどうか
 	int anim;							//アニメーション用
-	//FireAnim fire_anim[ANIM_BLOCK_NUM];	//炎アニメーション用ブロック情報格納
-	//WoodAnim wood_anim[ANIM_BLOCK_NUM];	//木アニメーション用ブロック情報格納
-	//WaterAnim water_anim[ANIM_BLOCK_NUM];//水アニメーション用ブロック情報格納
 	bool hit_flg;						//何かが当たった時用
 	int hit_timer;						//何かが当たった時のアニメーション用
 
-	//FireAnim effect_anim[ANIM_BLOCK_NUM];	//色交換可能ブロックの強調表示
 public:
 	Stage(int _type);
 	~Stage();

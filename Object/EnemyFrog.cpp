@@ -278,8 +278,16 @@ void EnemyFrog::Hit(Object* _object)
 		if (frog_state != FrogState::DEATH)
 		{
 			frog_state = FrogState::DEATH;
-			/*can_swap = FALSE;*/
+			can_swap = FALSE;
 		}
+	}
+
+	//ダメージゾーンを上書きする
+	if ((_object->GetObjectType() == WATER&& this->color == GREEN) ||
+		(_object->GetObjectType() == FIRE&& this->color == BLUE) ||
+		(_object->GetObjectType() == WOOD&& this->color == RED)) 
+	{
+		_object->SetColorData(color);
 	}
 }
 
