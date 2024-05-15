@@ -30,7 +30,7 @@ void EnemyFrog::Update(GameMain* _g)
 	{
 		frame = 0;
 	}
-	if (stageHitFlg[1][bottom] != true/* && !searchFlg*/) { //重力
+	if (stageHitFlg[1][bottom] != true) { //重力
 		vector.y += 1.f;
 		if (vector.y > 16.f) {
 			vector.y = 16.f;
@@ -268,7 +268,11 @@ void EnemyFrog::Hit(Object* _object)
 	}
 
 	//弱点色に触れた時の処理
-	if ((_object->GetObjectType() == FIRE && this->color == GREEN)||(_object->GetObjectType() == WATER && this->color == RED)||(_object->GetObjectType() == WOOD && this->color == BLUE))
+	if (
+		(_object->GetObjectType() == FIRE && this->color == GREEN)||
+		(_object->GetObjectType() == WATER && this->color == RED)||
+		(_object->GetObjectType() == WOOD && this->color == BLUE)
+	   )
 	{
 		//死亡状態へ
 		if (frog_state != FrogState::DEATH)

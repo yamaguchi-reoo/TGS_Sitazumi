@@ -23,6 +23,7 @@ struct WoodAnim
 {
 	Location shift1;	//表示位置一点目
 	Location shift2;	//表示位置二点目
+	Location initial_position;	//初期位置保存
 	float shift;		//表示位置ずれ用
 };
 
@@ -30,6 +31,7 @@ struct WoodAnim
 struct WaterAnim
 {
 	Location shift1;	//表示位置
+	Location initial_position;	//初期位置保存
 	Erea erea;			//大きさ
 	float shift;		//表示位置ずれ用
 };

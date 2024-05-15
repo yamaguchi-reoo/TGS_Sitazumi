@@ -9,7 +9,8 @@ private:
 	int frame;		//フレーム測定
 	int spawn_order;	//GameMainからエフェクトのスポーン指示を受け取る
 	Location spawn_location;	//エフェクトの左上座標
-	Erea spawn_erea;			
+	Erea spawn_erea;
+
 public:
 	EffectSpawner();
 	~EffectSpawner();
