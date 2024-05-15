@@ -33,7 +33,10 @@ public:
 
 
 	//何かと当たった時の処理
-	virtual void Hit(Object* _object) = 0;
+	virtual void Hit(Object* _object) 
+	{
+		int a = 0;
+	}
 
 	virtual bool SearchColor(Object* ob) = 0;
 

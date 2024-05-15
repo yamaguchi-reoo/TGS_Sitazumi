@@ -159,6 +159,8 @@ void EnemyFrog::Finalize()
 
 void EnemyFrog::Hit(Object* _object)
 {
+	__super::Hit(_object);
+
 	//ブロックと当たった時の処理
 	if (_object->GetObjectType() == BLOCK)
 	{
