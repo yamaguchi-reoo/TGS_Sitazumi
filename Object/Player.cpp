@@ -216,64 +216,43 @@ void Player::Draw()const
 			DrawBox(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, FALSE);
 		}
 	}
-	else {
+	else {//見た目
 		DrawBox(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, FALSE);
+		float ang = 0.f;
+		//胴
+		ResourceManager::DrawRotaBox(local_location.x + (erea.width / 2), local_location.y + (erea.height / 2) - 10, 40, 50,
+			local_location.x + (erea.width / 2), local_location.y + (erea.height / 2), ang, color, true);
+		//足
+		ResourceManager::DrawRotaBox(local_location.x + (erea.width / 2), local_location.y + (erea.height / 2) - 10, 15, 30,
+			local_location.x + (erea.width / 2), local_location.y + (erea.height / 2) + 25, 0, 0xff0000, true);
+		ResourceManager::DrawRotaBox(local_location.x + (erea.width / 2), local_location.y + (erea.height / 2) - 10, 15, 30,
+			local_location.x + (erea.width / 2), local_location.y + (erea.height / 2) + 25, 0, 0xff0000, true);
+		//腕
+		ResourceManager::DrawRotaBox(local_location.x + (erea.width / 2) - 20, local_location.y + (erea.height / 2) + 10, 40, 10,
+			local_location.x + (erea.width / 2), local_location.y + (erea.height / 2), 0, 0xff0000, true);
+		ResourceManager::DrawRotaBox(local_location.x + (erea.width / 2) - 20, local_location.y + (erea.height / 2) + 10, 40, 10,
+			local_location.x + (erea.width / 2), local_location.y + (erea.height / 2), 0, 0xff0000, true);
+		//首
+		ResourceManager::DrawRotaBox(local_location.x + (erea.width / 2), local_location.y + (erea.height / 2) + 25, 15, 10,
+			local_location.x + (erea.width / 2), local_location.y + (erea.height / 2), 0, 0xff0000, true);
+		//頭
+		ResourceManager::DrawRotaBox(local_location.x + (erea.width / 2), local_location.y + (erea.height / 2) + 50, 40, 30,
+			local_location.x + (erea.width / 2), local_location.y + (erea.height / 2), 0, 0xff0000, true);
+		//帽子
+		DrawTriangle(local_location.x + (erea.width / 2), local_location.y,
+			local_location.x + 25, local_location.y + 30, local_location.x + erea.width - 25, local_location.y + 30,
+			0xff0000, true);
+		
+		//DrawCircle(local_location.x + 30, local_location.y + 20, 5, 0xffffff, true);
 	}
-	//DrawBox(location.x, location.y, location.x + erea.width, location.y + erea.height,color, FALSE);
 
-	//DrawCircle(aimLoc.x, aimLoc.y, 10, color, TRUE);
 	DrawFormatString(local_location.x, local_location.y, 0xffff00, "hp : %d", hp);
-
-
-	for (int i = 0; i < OBJECT_NUM; i++)
-	{
-		if (oldSearchedObjAll[i] != nullptr && searchFlg) {
-			//DrawCircle(oldSearchedObjAll[i]->GetLocalLocation().x + oldSearchedObjAll[i]->GetErea().width / 2, oldSearchedObjAll[i]->GetLocalLocation().y + oldSearchedObjAll[i]->GetErea().height / 2, 40, 0xffffff, FALSE, 5);
-		}
-	}
 
 	if (searchedObj != nullptr && searchFlg) {
 		DrawCircle(searchedObj->GetLocalLocation().x + searchedObj->GetErea().width / 2,
 			searchedObj->GetLocalLocation().y + searchedObj->GetErea().height / 2, 40, 0xffff00, FALSE, 5);
-		/*DrawFormatString(640, 80, 0xffff00, "%f", searchedObj->GetLocalLocation().x);
-		DrawFormatString(640, 100, 0xff0000, "%f", searchedObj->GetLocalLocation().y);*/
 	}
-	if (searchFlg) {
-		/*DrawLine(local_location.x + (erea.width / 2), local_location.y + (erea.height / 2), lineLoc.x, lineLoc.y, color);
-		DrawCircle(lineLoc.x, lineLoc.y, 10, color, TRUE);*/
-	}
-
-	if (damageFlg) {
-		//DrawString(local_location.x, local_location.y, "damage", 0xffffff);
-	}
-
-
-	//DrawFormatString(400, 20, 0xffff00, "l.x%f", location.x);
-	//DrawFormatString(400, 40, 0xff0000, "l.y%f", location.y);
-	//DrawFormatString(400, 60, 0xffff00, "e.w%f", erea.width);
-	//DrawFormatString(400, 80, 0xff0000, "e.h%f", erea.height);
-
-	//if (oldSearchedObj != nullptr && searchedObj != nullptr) {
-		/*DrawFormatString(700, 20, 0xffff00, "v.x%f", oldSearchedObj->GetLocalLocation().x);
-		DrawFormatString(700, 40, 0xff0000, "v.y%f", oldSearchedObj->GetLocalLocation().y);
-		DrawFormatString(700, 60, 0xffff00, "v.x%f", searchedObj->GetLocalLocation().x);
-		DrawFormatString(700, 80, 0xff0000, "v.y%f", searchedObj->GetLocalLocation().y);*/
-	//}
-
-	//DrawFormatString(900, 100, 0xffff00, "v.x%d", stageHitFlg[1][0]);
-	//DrawFormatString(900, 120, 0xff0000, "v.y%d", stageHitFlg[1][1]);
-	//DrawFormatString(900, 140, 0xff0000, "v.y%d", stageHitFlg[1][2]);
-	//DrawFormatString(900, 160, 0xff0000, "v.y%d", stageHitFlg[1][3]);
-	if (searchedObj != nullptr) {
-		/*Location l = { searchedObj->GetLocalLocation().x + searchedObj->GetErea().width / 2,
-			searchedObj->GetLocalLocation().y + searchedObj->GetErea().height / 2 };
-		Location ll = { local_location.x + erea.width / 2,local_location.y + erea.height / 2 };*/
-		//DrawFormatString(400, 00, 0xff0000, "%f", ThreePointAngle(lineLoc, l, ll));
-		//DrawFormatString(600, 00, 0xff0000, "%f %f", lineLoc.x - ll.x, lineLoc.y - ll.y);
-		//DrawFormatString(600, 00, 0xff0000, "%f %f", ll.x, ll.y);
-		//DrawCircle(ll.x, ll.y, 15, color, FALSE);
-		//DrawLine(ll.x, ll.y, l.x, l.y, color);
-	}
+	
 
 }
 

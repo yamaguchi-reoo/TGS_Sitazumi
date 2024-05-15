@@ -59,6 +59,7 @@ private:
 	int fps1 = 0;
 	float move[4] = { 0,0,0,0 };
 	Location aaa;
+
 public:
 	Player();
 	~Player();
