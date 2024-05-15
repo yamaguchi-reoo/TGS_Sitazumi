@@ -10,7 +10,6 @@
 #include "../Object/Object.h"
 #include "../Object/WeatherManager.h"
 #include "../Object/EffectSpawner.h"
-#include "../Object/Effect.h"
 #include "../Object/Boss.h"
 
 class Player;
@@ -68,16 +67,22 @@ private:
     int swap_anim_timer;    //交換エフェクト時間用
 public:
 
-    //�R���X�g���N�^(_stage���ǂݍ��ރX�e�[�W)
+    //コンストラクタ
     GameMain(int _stage);
 
-    //�f�X�g���N�^
+    //デストラクタ
     ~GameMain();
 
-    // �`��ȊO�̍X�V�����
+    //イニシャライズ
+    void Initialize()override;
+
+    //ファイナライズ
+    void Finalize()override;
+
+    //描画以外の更新
     AbstractScene* Update() override;
 
-    //�`��Ɋւ��邱�Ƃ����
+    //描画の更新
     void Draw() const override;
 
     //オブジェクトの生成
@@ -86,17 +91,14 @@ public:
     //オブジェクトの削除
     void DeleteObject(int i);
 
-    //�J�����̍X�V���J������h�炷
+    //カメラの更新
     void UpdateCamera();
 
-    //�X�e�[�W�t�@�C����ǂݍ���
+    //ステージデータの読込
     void LoadStageData(int _stage);
 
-    //���̃X�e�[�W�֑J�ڂ���
+    //ステージの生成
     void SetStage(int _stage);
-
-    //�X�e�[�W�ɑ��̃X�e�[�W��type����n���p
-    int GetStageType(int _i, int _j);
 
     //カメラ座標を初期地点に戻す
     void ResetCamera();
@@ -117,6 +119,6 @@ public:
     int GetNowWeather() { return now_weather; }
 
     //エフェクトの生成
-    void SpawnEffect(Location _location, Erea _erea, int _type);
+    void SpawnEffect(Location _location, Erea _erea, int _type, int _time,int _color);
 };
 
