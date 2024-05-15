@@ -26,8 +26,11 @@ int WINAPI WinMain(_In_ HINSTANCE  hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
     SetDrawScreen(DX_SCREEN_BACK);                 // 描画先画面を裏にする（ダブルバッファリング）
 
-    // タイトル シーンオブジェクト作成
+    //シーンオブジェクト作成
     SceneManager* sceneMng = new SceneManager((AbstractScene*) new GameMain(0));
+
+    //シーンオブジェクト初期化
+    sceneMng->Initialize();
 
     //fps制御
     FpsController* FPSC= new FpsController(FRAMERATE, 800);
@@ -60,6 +63,9 @@ int WINAPI WinMain(_In_ HINSTANCE  hInstance, _In_opt_ HINSTANCE hPrevInstance, 
         ScreenFlip(); // 裏画面の内容を表画面に反映する
 
     };
+
+    //シーンオブジェクト終了処理
+    sceneMng->Finalize();
 
     ResourceManager::DeleteResource(); //音声データの削除
     DxLib_End(); // DXライブラリ使用の終了処理

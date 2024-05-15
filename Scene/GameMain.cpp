@@ -16,7 +16,16 @@ static Location screen_origin = { (SCREEN_WIDTH / 2),(SCREEN_HEIGHT / 2) };
 
 GameMain::GameMain(int _stage) :frame(0),stage_data{0},now_stage(0), object_num(0),stage_width_num(0), stage_height_num(0), stage_width(0), stage_height(0), camera_x_lock_flg(true), camera_y_lock_flg(true), x_pos_set_once(false), y_pos_set_once(false),player_object(0),weather(0), weather_timer(0), move_object_num(0)
 {
+	now_stage = _stage;
+}
 
+GameMain::~GameMain()
+{
+
+}
+
+void GameMain::Initialize()
+{
 	swap_anim[0].move_flg = false;
 	swap_anim[1].move_flg = false;
 
@@ -26,12 +35,13 @@ GameMain::GameMain(int _stage) :frame(0),stage_data{0},now_stage(0), object_num(
 	effect_spawner = new EffectSpawner();
 	effect_spawner->Initialize();
 
-	SetStage(_stage);
+	SetStage(now_stage);
+
 	lock_pos = camera_location;
 	swap_anim_timer = 0;
 }
 
-GameMain::~GameMain()
+void GameMain::Finalize()
 {
 	for (int i = 0; object[i] != nullptr; i++)
 	{
@@ -50,7 +60,7 @@ GameMain::~GameMain()
 	delete effect_spawner;
 }
 
-AbstractScene* GameMain::Update()
+AbstractScene* GameMain::Update()c
 {
 	//リセット
 	move_object_num = 0;
@@ -193,6 +203,13 @@ void GameMain::Draw() const
 			object[i]->Draw();
 		}
 	}
+
+	//エフェクトの描画
+	effect_spawner->Draw();
+
+	//天気管理クラスの描画
+	weather->Draw();
+
 #ifdef _DEBUG
 	DrawFormatString(100, 100, 0xffffff, "Object数:%d", object_num);
 	DrawFormatString(100, 120, 0xffffff, "Updeteが呼ばれているObject数:%d", move_object_num);
@@ -380,7 +397,7 @@ void GameMain::SetStage(int _stage)
 				//プレイヤーの生成
 				CreateObject(new Player, { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { PLAYER_HEIGHT,PLAYER_WIDTH }, GREEN);
 				//エフェクトの生成
-				effect_spawner->SpawnEffect({ (float)j * BOX_WIDTH + PLAYER_WIDTH / 2 ,(float)i * BOX_HEIGHT + PLAYER_HEIGHT / 2 }, { 20,20}, 1);
+				effect_spawner->SpawnEffect({ (float)j * BOX_WIDTH + PLAYER_WIDTH / 2 ,(float)i * BOX_HEIGHT + PLAYER_HEIGHT / 2 }, { 20,20}, 0, 30,object[player_object]->GetColerData());
 
 				player_flg = true;
 				break;
@@ -478,7 +495,7 @@ Location GameMain::GetCameraLocation()
 	return camera_location;
 }
 
-void GameMain::SpawnEffect(Location _location, Erea _erea, int _type)
+void GameMain::SpawnEffect(Location _location, Erea _erea, int _type, int _time, int _color)
 {
-	effect_spawner->SpawnEffect(_location, _erea, _type);
+	effect_spawner->SpawnEffect(_location, _erea, _type, _time, _color);
 }
