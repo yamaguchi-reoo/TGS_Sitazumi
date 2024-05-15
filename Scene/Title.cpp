@@ -12,6 +12,16 @@ Title::~Title()
 {
 }
 
+void Title::Initialize()
+{
+
+}
+
+void Title::Finalize()
+{
+
+}
+
 AbstractScene* Title::Update()
 {
 	return this;

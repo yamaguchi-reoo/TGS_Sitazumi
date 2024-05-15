@@ -16,7 +16,7 @@ class GameMain;
 class Object : public BoxCollider, public ColorData
 {
 protected:
-	int type;		//Objectの種類格納
+	int type;		//Objectの種類格納 0=BLOCK 1=PLAYER 2=ENEMY 3=FIRE 4=WOOD 5=WATER 6=EFFECT
 	bool can_swap ;	//交換できるオブジェクトか
 	bool can_hit;	//当たり判定があるオブジェクトか
 	bool searchFlg;	//スローモーション中か（プレイヤー）
@@ -33,7 +33,10 @@ public:
 
 
 	//何かと当たった時の処理
-	virtual void Hit(Object* _object) = 0;
+	virtual void Hit(Object* _object) 
+	{
+		int a = 0;
+	}
 
 	virtual bool SearchColor(Object* ob) = 0;
 
