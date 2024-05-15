@@ -5,7 +5,7 @@
 
 #define PI 3.141592654f
 
-#define ENEMY_SPEED 2
+#define ENEMY_SPEED 2.f
 
 EnemyBat::EnemyBat() :up(0), bat_state(BatState::LEFT), wing_angle(0.0f), vector{ 0.0f },death_timer(0)
 {
@@ -48,7 +48,7 @@ void EnemyBat::Update(GameMain* _g)
 
 	Location player_pos = _g->GetPlayerLocation();
 	// プレイヤーとの距離を計算
-	vector = { 2.f };
+	vector = { ENEMY_SPEED };
 	float dx = player_pos.x - location.x;
 	float dy = player_pos.y - location.y;
 	float length = sqrt(dx * dx + dy * dy);
@@ -84,10 +84,6 @@ void EnemyBat::Update(GameMain* _g)
 	for (int i = 0; i < 3; i++) {
 		hit_flg[i] = 0;
 	}
-	/*if (delete_object->GetObjectType() == WOOD) {
-		_g->CreateObject(new Stage(6), delete_object->GetLocation(), delete_object->GetErea(), RED);
-		_g->DeleteObject(delete_object->GetObjectPos());
-	}*/
 }
 
 void EnemyBat::Draw() const
@@ -95,23 +91,6 @@ void EnemyBat::Draw() const
 	//DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, GetColor(255, 255, 255), FALSE);
 
 	//各頂点をlocal_locationに置き換えた
-	//const std::vector<Location> vertices = {
-	//	// 耳
-	//	{local_location.x + 60, local_location.y}, {local_location.x + 60, local_location.y + 25}, {local_location.x + 72, local_location.y + 12},
-	//	{local_location.x + 90, local_location.y}, {local_location.x + 90, local_location.y + 25}, {local_location.x + 78, local_location.y + 12},
-	//	//右翼
-	//	{local_location.x + 87, local_location.y + 44}, {local_location.x + 127, local_location.y + 10}, {local_location.x + 153, local_location.y + 85},
-	//	{local_location.x + 87, local_location.y + 44}, {local_location.x + 127, local_location.y + 10}, {local_location.x + 126, local_location.y + 80},
-	//	{local_location.x + 85, local_location.y + 44}, {local_location.x + 127, local_location.y + 10}, {local_location.x + 105, local_location.y + 75},
-	//	//左翼
-	//	{local_location.x + 63, local_location.y + 44}, {local_location.x + 26, local_location.y + 10}, {local_location.x - 3, local_location.y + 85},
-	//	{local_location.x + 63, local_location.y + 44}, {local_location.x + 26, local_location.y + 10}, {local_location.x + 24, local_location.y + 80},
-	//	{local_location.x + 65, local_location.y + 44}, {local_location.x + 26, local_location.y + 10}, {local_location.x + 45, local_location.y + 75},
-	//	// 頭
-	//	{local_location.x + 75, local_location.y + 16}, {local_location.x + 90, local_location.y + 30}, {local_location.x + 75, local_location.y + 40}, {local_location.x + 60, local_location.y + 30},
-	//	// 胴体
-	//	{local_location.x + 75, local_location.y + 45}, {local_location.x + 90, local_location.y + 68}, {local_location.x + 75, local_location.y + 95}, {local_location.x + 60, local_location.y + 68},
-	//};
 
 	const std::vector<Location> vertices = {
 		// 耳
