@@ -3,7 +3,7 @@
 #include<math.h>
 
 
-#define PI 3.141592654f
+#define _PI 3.141592654f
 
 #define ENEMY_SPEED 2.f
 
@@ -42,7 +42,7 @@ void EnemyBat::Update(GameMain* _g)
 	// 羽の角度を変化させる
 	if (bat_state != BatState::DEATH)
 	{
-		wing_angle = sin(PI * 2.f / 40.f * up) * 20.f; // 30度の振れ幅で周期的に変化させる
+		wing_angle = (float)sin(PI * 2.f / 40.f * up) * 20.f; // 30度の振れ幅で周期的に変化させる
 	}
 
 
@@ -51,7 +51,7 @@ void EnemyBat::Update(GameMain* _g)
 	vector = { ENEMY_SPEED };
 	float dx = player_pos.x - location.x;
 	float dy = player_pos.y - location.y;
-	float length = sqrt(dx * dx + dy * dy);
+	float length = (float)sqrt(dx * dx + dy * dy);
 
 	////プレイヤーが色変えるときコウモリもスローに
 	//if (_g->GetSearchFlg()) {
@@ -112,23 +112,23 @@ void EnemyBat::Draw() const
 
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 - (death_timer * 4));
 	//配列の各頂点を利用して三角形を描画する
-	for (int i = 0; i < vertices.size(); i += 3) {
+	for (int i = 0; i + 2 < vertices.size(); i += 3) {
 		//耳
 		if (i < 5) {
 			DrawTriangleAA(vertices[i].x, vertices[i].y,vertices[i + 1].x, vertices[i + 1].y,vertices[i + 2].x, vertices[i + 2].y,color, TRUE);
 		}
 		//右羽
-		else if (i > 5 && i < 14) {
+		else if (i >= 6 && i  < 14) {
 			// 羽の動き
 			DrawTriangleAA(vertices[i].x, vertices[i].y, vertices[i + 1].x, vertices[i + 1].y + wing_angle, vertices[i + 2].x + wing_angle, vertices[i + 2].y , color, TRUE);
 		}
 		//左羽
-		else if (i > 14 && i < 23) {
+		else if (i >= 15 && i < 23) {
 			// 羽の動き
 			DrawTriangleAA(vertices[i].x, vertices[i].y, vertices[i + 1].x, vertices[i + 1].y + wing_angle, vertices[i + 2].x - wing_angle, vertices[i + 2].y, color, TRUE);
 		}
 		//ひし形の描画
-		else
+		else if (i + 3 < vertices.size())
 		{
 			DrawQuadrangleAA(vertices[i].x, vertices[i].y,vertices[i + 1].x, vertices[i + 1].y,vertices[i + 2].x, vertices[i + 2].y,vertices[i + 3].x, vertices[i + 3].y, color, TRUE);
 			i++;
@@ -151,13 +151,13 @@ void EnemyBat::Move(GameMain* _g)
 	//左移動
 	if (bat_state == BatState::LEFT) {
 		location.x -= vector.x;
-		location.y += sin(PI * 2.f / 40.f * up) * 5.f;
+		location.y += (float)sin(PI * 2.f / 40.f * up) * 5.f;
 
 	}
 	//右移動
 	if (bat_state == BatState::RIGHT) {
 		location.x += vector.x;
-		location.y += sin(PI * 2.f / 40.f * up) * 5.f;
+		location.y += (float)sin(PI * 2.f / 40.f * up) * 5.f;
 	}
 
 	if (bat_state == BatState::DEATH) {

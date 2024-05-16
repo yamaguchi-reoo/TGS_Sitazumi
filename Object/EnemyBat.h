@@ -26,7 +26,7 @@ private:
 	};
 	Location vector; //コウモリのベクトル
 	BatState bat_state;	//コウモリの状態
-	Object* delete_object;//消すオブジェクト
+	//Object* delete_object;//消すオブジェクト
 	bool stageHitFlg[2][4]; //コウモリとステージの当たり判定
 	float move[4];//各方向加速度格納用
 
