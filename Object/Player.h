@@ -48,7 +48,7 @@ private:
 
 	bool damageFlg; //ダメージを受けたとき
 	bool damageOldFlg; //ダメージを受けたとき
-	int hp;
+	static int hp;
 	int damageEffectTime = 60;
 	bool damageEffectFlg = false;
 
@@ -59,6 +59,7 @@ private:
 	int fps1 = 0;
 	float move[4] = { 0,0,0,0 };
 	Location aaa;
+
 public:
 	Player();
 	~Player();

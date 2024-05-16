@@ -36,6 +36,8 @@ Bone::Bone()
 	handover[1] = -1;
 
 	inputChar = 0;
+
+	fps = 0;
 }
 
 Bone::~Bone()
@@ -55,7 +57,21 @@ void Bone::Initialize(Vector2D sl, Vector2D gl)
 void Bone::Init()
 {
 	//flg = false;
+	Vector2D worldLoc[2];
+	worldLoc[0] = BoneLoc[0] + centerLoc;
+	worldLoc[1] = BoneLoc[1] + centerLoc;
+
+	Vector2D tmp = GetRotaLocation(BoneLocBase[0] + centerLoc, BoneLocBase[1] + centerLoc, movedAng[num + 1]);
+
+	float cross = CrossProduct(worldLoc[1] - worldLoc[0], tmp - worldLoc[0]); //外積　左回りの時は外積がマイナス　右回りの時はプラス
+	float a = AngleOf2Vector(worldLoc[1] - worldLoc[0], tmp - worldLoc[0]);
+	if (cross < 0) {
+		a = M_PI * 2 - a;
+	}
+	//a -= M_PI;
+	//SetMoved(a, time[num + 1], num + 1, side);
 	num++;
+	fps = 0;
 	/*BoneLoc[0] = BoneLocBase[0];
 	BoneLoc[1] = BoneLocBase[1];*/
 
@@ -67,10 +83,12 @@ void Bone::Init()
 void Bone::Update()
 {
 	if (flg) {
+		fps++;
+
 		if (side[num]) {//右回り
 			angle += oneFrameAng[num];
 			BoneLoc[1] = GetRotaLocation(BoneLocBase[1], BoneLocBase[0], angle);
-			if (angle >= movedAng[num]) {
+			if (/*angle >= movedAng[num]*/fps >= time[num]) {
 				Init();
 			}
 		}
@@ -78,7 +96,7 @@ void Bone::Update()
 			angle -= oneFrameAng[num];
 			BoneLoc[1] = GetRotaLocation(BoneLocBase[1], BoneLocBase[0], angle);
 			float tmpAng = angle + M_PI * 2;
-			if (tmpAng <= movedAng[num]) {
+			if (/*tmpAng <= movedAng[num]*/fps >= time[num]) {
 				Init();
 			}
 		}
@@ -103,7 +121,24 @@ void Bone::Draw() const
 	if (flg) {
 		for (int i = 0; time[i] != 0; i++)
 		{
-			Vector2D tmp = GetRotaLocation(BoneLocBase[1], BoneLocBase[0], movedAng[i]);
+			Vector2D tmp;
+			if (i == 0) { 
+				tmp = GetRotaLocation(BoneLocBase[1], BoneLocBase[0], movedAng[i]);
+			}
+			else {
+				float a = 0;
+				for (int j = 0; j < i + 1; j++)
+				{
+					a += movedAng[j];
+					if (a > M_PI * 2) {
+						//a = M_PI * 2 - a;
+						a = a - M_PI * 2;
+					}
+				}
+				
+				tmp = GetRotaLocation(BoneLocBase[1], BoneLocBase[0], a);
+			}
+			
 			DrawCircle(tmp.x + centerLoc.x, tmp.y + centerLoc.y, 5, 0xff0000, TRUE);
 		}
 		
@@ -113,7 +148,6 @@ void Bone::Draw() const
 		//ここでUI描画
 	}
 
-	DrawFormatString(900, 50, 0xffffff, "num : %d", num);
 
 }
 
@@ -173,7 +207,23 @@ void Bone::SelectUpdate()
 					//cursor++;
 
 					if (SetMovedPosition() != -1) {
-						movedAng[num] = SetMovedPosition();
+					
+						
+						float a = 0;
+						for (int j = 0; j < num; j++)
+						{
+							//a = movedAng[i - 1] + movedAng[i];
+							a += movedAng[j];
+							if (a > M_PI * 2) {
+								a = a - M_PI * 2;
+							}
+						}
+
+						a = SetMovedPosition() - a;
+						if (a < 0) {
+							a = M_PI * 2 + a;
+						}
+						movedAng[num] = a;
 					}
 					
 
@@ -198,7 +248,7 @@ void Bone::SelectUpdate()
 
 				case 4:
 					if (InputCtrl::GetKeyState(KEY_INPUT_RETURN) == PRESS) {
-						SetMoved(movedAng[num], time[num], num, side);
+						SetMoved(movedAng[num], time[num], num, side[num]);
 						num = 0;
 						selected = false;
 					}
@@ -222,6 +272,14 @@ void Bone::DrawUI() const
 	//DrawFormatString(900, 300, 0xffffff, "num : %d", num);
 
 	DrawCircle(880, 100 + cursor * 50, 5, 0xffffff, true);
+
+	DrawFormatString(900, 50, 0xffffff, "fps : %d", fps);
+	/*for (int i = 0; i < 32; i++)
+	{
+		DrawFormatString(800, 50 + i * 30, 0xffffff, "side : %d", side[i]);
+
+	}*/
+
 }
 
 float Bone::SetMovedPosition()

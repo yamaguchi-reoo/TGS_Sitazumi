@@ -96,6 +96,12 @@ public:
     //デストラクタ
     ~EditScene();
 
+    //イニシャライズ
+    void Initialize()override;
+
+    //ファイナライズ
+    void Finalize()override;
+
     // 描画以外の更新を実装
     AbstractScene* Update() override;
 

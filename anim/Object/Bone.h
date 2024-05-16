@@ -16,6 +16,7 @@ private:
 	int time[32];		//移動するまでにかかる時間(フレーム)
 	int num;		//何かい移動するか
 	bool flg;		//移動するかどうか
+	int fps;
 
 	int order; //何番目のボーンか
 	bool side[32]; //左右どちらに動くか

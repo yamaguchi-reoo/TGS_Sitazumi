@@ -45,11 +45,13 @@ void ResourceManager::StageAnimInitialize()
 		wood_anim[i].shift = GetRand(10);
 		wood_anim[i].shift1.x = (BOX_WIDTH / 10) * i;
 		wood_anim[i].shift2.x = (BOX_WIDTH / 10) * i;
+		wood_anim[i].initial_position = wood_anim[i].shift2;
 		wood_anim[i].shift1.y = BOX_HEIGHT;
 		wood_anim[i].shift2.y = GetRand(19);
 		water_anim[i].shift = (float)GetRand(9)/10;
 		water_anim[i].shift1.x = GetRand(8)* (BOX_WIDTH / 10);
 		water_anim[i].shift1.y = GetRand(8)* (BOX_HEIGHT / 10)-15;
+		water_anim[i].initial_position = water_anim[i].shift1;
 		water_anim[i].erea.width = BOX_WIDTH /3;
 		water_anim[i].erea.height = BOX_HEIGHT /3;
 	}
@@ -96,6 +98,10 @@ void ResourceManager::StageAnimUpdate()
 		{
 			wood_anim[i].shift2.x -= (wood_anim[i].shift / 50);
 		}
+		if (anim >= 60)
+		{
+			wood_anim[i].shift2.x = wood_anim[i].initial_position.x;
+		}
 	}
 
 	//水エフェクト更新
@@ -108,6 +114,10 @@ void ResourceManager::StageAnimUpdate()
 		else
 		{
 			water_anim[i].shift1.y -= water_anim[i].shift;
+		}
+		if (anim >= 60)
+		{
+			water_anim[i].shift1.y = water_anim[i].initial_position.y;
 		}
 	}
 }
