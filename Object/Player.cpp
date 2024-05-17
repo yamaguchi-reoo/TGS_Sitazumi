@@ -436,6 +436,14 @@ void Player::Hit(Object* _object)
 		}
 	}
 
+	//ダメージゾーンを上書きする
+	if ((_object->GetObjectType() == WATER && this->color == GREEN) ||
+		(_object->GetObjectType() == FIRE && this->color == BLUE) ||
+		(_object->GetObjectType() == WOOD && this->color == RED))
+	{
+		_object->SetColorData(color);
+	}
+
 	if ((_object->GetObjectType() == WATER && _object->GetCanSwap() == FALSE && this->color == BLUE && color == BLUE && !stateFlg) ||
 		(_object->GetObjectType() == FIRE && _object->GetCanSwap() == FALSE && this->color == RED && color == RED && !stateFlg) ||
 		(_object->GetObjectType() == WOOD && _object->GetCanSwap() == FALSE && this->color == GREEN && color == GREEN && !stateFlg)){
