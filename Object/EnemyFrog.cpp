@@ -3,7 +3,13 @@
 #include"../Scene/GameMain.h"
 #include"../Utility/ResourceManager.h"
 
-EnemyFrog::EnemyFrog():frame(0),timer(0), frog_state(FrogState::LEFT_JUMP), vector{0,0}, death_timer(0), face_angle(0.0f)
+EnemyFrog::EnemyFrog():
+	frame(0),
+	timer(0),
+	frog_state(FrogState::LEFT_JUMP), 
+	vector{0,0}, 
+	death_timer(0), 
+	face_angle(0.0f)
 {
 	type = ENEMY;
 	can_swap = TRUE;
@@ -26,14 +32,15 @@ void EnemyFrog::Initialize(Location _location, Erea _erea, int _color_data, int 
 
 void EnemyFrog::Update(GameMain* _g)
 {
+
 	if (++frame > 360)
 	{
 		frame = 0;
 	}
-	if (vector.x != 0 || vector.y != 0)
-	{
-		_g->SpawnEffect(location, erea, 1, 20, color);
-	}
+	//if (vector.x != 0 || vector.y != 0)
+	//{
+	//	_g->SpawnEffect(location, erea, 1, 20, color);
+	//}
 	if (stageHitFlg[1][bottom] != true) { //重力
 		vector.y += 1.f;
 		if (vector.y > 16.f) {
@@ -72,6 +79,7 @@ void EnemyFrog::Update(GameMain* _g)
 		}
 		break;
 	case FrogState::DEATH:
+		_g->SpawnEffect(location, erea, DeathEffect, 15, color);
 		if (++death_timer > 60)
 		{
 			_g->DeleteObject(object_pos);
@@ -91,64 +99,16 @@ void EnemyFrog::Update(GameMain* _g)
 
 void EnemyFrog::Draw()const
 {
+	//残像描画
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, (255 - (death_timer * 4)) - 500);
+	FrogDraw({ local_location.x - (vector.x * 2),local_location.y - (vector.y * 2) });
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, (255 - (death_timer * 4)) - 100);
+	FrogDraw({ local_location.x - (vector.x * 3),local_location.y - (vector.y * 3) });
+	//カエル描画
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 - (death_timer * 4));
-	DrawBox(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, FALSE);
-	ResourceManager::DrawRotaBox(local_location.x+(erea.width/2), local_location.y + (erea.height / 2), erea.width, erea.height/2, local_location.x + (erea.width / 2), local_location.y + (erea.height / 2), face_angle, color, TRUE);
+	FrogDraw(local_location);
 
-	//右着地
-	if (face_angle == 0 && vector.x == 0 && vector.y == 0)
-	{
-		//付け根側後ろ足
-		ResourceManager::DrawRotaBox(local_location.x + erea.width-10, local_location.y + 20, 30, 10, local_location.x + (erea.width / 2), local_location.y + (erea.height / 2), face_angle, color, TRUE);
-		//後ろ足先端
-		ResourceManager::DrawRotaBox(local_location.x + erea.width-10, local_location.y + 10, 40, 10, local_location.x + (erea.width / 2), local_location.y + (erea.height / 2), face_angle, color, TRUE);
-		//前足
-		ResourceManager::DrawRotaBox(local_location.x+20, local_location.y+20, 20, 30, local_location.x + (erea.width / 2), local_location.y + (erea.height / 2), face_angle, color, TRUE);
-		//目
-		ResourceManager::DrawRotaBox(local_location.x, local_location.y + erea.height - 20, 10, 10, local_location.x + (erea.width / 2), local_location.y + (erea.height / 2), face_angle, 0xffffff, TRUE);
-
-	}
-	//左着地
-	else if (face_angle == 180 && vector.x == 0 && vector.y == 0)
-	{
-		//付け根側後ろ足
-		ResourceManager::DrawRotaBox(local_location.x + erea.width-10, local_location.y + erea.height - 20, 30, 10, local_location.x + (erea.width / 2), local_location.y + (erea.height / 2), face_angle, color, TRUE);
-		//後ろ足先端
-		ResourceManager::DrawRotaBox(local_location.x + erea.width-10, local_location.y + erea.height - 10, 40, 10, local_location.x + (erea.width / 2), local_location.y + (erea.height / 2), face_angle, color, TRUE);
-		//前足
-		ResourceManager::DrawRotaBox(local_location.x+20, local_location.y + erea.height-20, 20, 30, local_location.x + (erea.width / 2), local_location.y + (erea.height / 2), face_angle, color, TRUE);
-		//目
-		ResourceManager::DrawRotaBox(local_location.x, local_location.y + 20, 10, 10, local_location.x + (erea.width / 2), local_location.y + (erea.height / 2), face_angle, 0xffffff, TRUE);
-
-	}
-	//左向き
-	else if (face_angle >90 && face_angle <270)
-	{
-		//付け根側後ろ足
-		ResourceManager::DrawRotaBox(local_location.x + erea.width, local_location.y + erea.height - 20, 30, 10, local_location.x + (erea.width / 2), local_location.y + (erea.height / 2), face_angle, color, TRUE);
-		//後ろ足先端
-		ResourceManager::DrawRotaBox(local_location.x + erea.width + 30, local_location.y + erea.height - 10, 40, 10, local_location.x + (erea.width / 2), local_location.y + (erea.height / 2), face_angle, color, TRUE);
-		//前足
-		ResourceManager::DrawRotaBox(local_location.x, local_location.y + erea.height-20, 20, 30, local_location.x + (erea.width / 2), local_location.y + (erea.height / 2), face_angle, color, TRUE);
-		//目
-		ResourceManager::DrawRotaBox(local_location.x, local_location.y + 20, 10, 10, local_location.x + (erea.width / 2), local_location.y + (erea.height / 2), face_angle, 0xffffff, TRUE);
-
-	}
-	//右向き
-	else
-	{
-		//付け根側後ろ足
-		ResourceManager::DrawRotaBox(local_location.x + erea.width, local_location.y + 20, 30, 10, local_location.x + (erea.width / 2), local_location.y + (erea.height / 2), face_angle, color, TRUE);
-		//後ろ足先端
-		ResourceManager::DrawRotaBox(local_location.x + erea.width+30, local_location.y + 10, 40, 10, local_location.x + (erea.width / 2), local_location.y + (erea.height / 2), face_angle, color, TRUE);
-		//前足
-		ResourceManager::DrawRotaBox(local_location.x, local_location.y + 20, 20, 30, local_location.x + (erea.width / 2), local_location.y + (erea.height / 2), face_angle, color, TRUE);
-		//目
-		ResourceManager::DrawRotaBox(local_location.x, local_location.y + erea.height - 20, 10, 10, local_location.x + (erea.width / 2), local_location.y + (erea.height / 2), face_angle, 0xffffff, TRUE);
-
-	}
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
-	//DrawFormatStringF(local_location.x, local_location.y, 0x00ff00, "%f %f", vector.x, vector.y);
 
 }
 
@@ -312,6 +272,72 @@ void EnemyFrog::Hit(Object* _object)
 		(_object->GetObjectType() == WOOD && this->color == RED)) 
 	{
 		_object->SetColorData(color);
+	}
+}
+
+void EnemyFrog::FrogDraw(Location location)const
+{
+#ifdef _DEBUG
+	//当たり判定
+	DrawBoxAA(location.x, location.y, location.x + erea.width, location.y + erea.height, color, FALSE);
+	//移動方向
+	//DrawFormatStringF(local_location.x, local_location.y, 0x00ff00, "%f %f", vector.x, vector.y);
+#endif
+
+	//胴体
+	ResourceManager::DrawRotaBox(location.x + (erea.width / 2), location.y + (erea.height / 2), erea.width, erea.height / 2, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, color, TRUE);
+
+	//右着地
+	if (face_angle == 0 && vector.x == 0 && vector.y == 0)
+	{
+		//付け根側後ろ足
+		ResourceManager::DrawRotaBox(location.x + erea.width - 10, location.y + 20, 30, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, color, TRUE);
+		//後ろ足先端
+		ResourceManager::DrawRotaBox(location.x + erea.width - 10, location.y + 10, 40, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, color, TRUE);
+		//前足
+		ResourceManager::DrawRotaBox(location.x + 20, location.y + 20, 20, 30, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, color, TRUE);
+		//目
+		ResourceManager::DrawRotaBox(location.x, location.y + erea.height - 20, 10, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, 0xffffff, TRUE);
+
+	}
+	//左着地
+	else if (face_angle == 180 && vector.x == 0 && vector.y == 0)
+	{
+		//付け根側後ろ足
+		ResourceManager::DrawRotaBox(location.x + erea.width - 10, location.y + erea.height - 20, 30, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, color, TRUE);
+		//後ろ足先端
+		ResourceManager::DrawRotaBox(location.x + erea.width - 10, location.y + erea.height - 10, 40, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, color, TRUE);
+		//前足
+		ResourceManager::DrawRotaBox(location.x + 20, location.y + erea.height - 20, 20, 30, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, color, TRUE);
+		//目
+		ResourceManager::DrawRotaBox(location.x, location.y + 20, 10, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, 0xffffff, TRUE);
+
+	}
+	//左向き
+	else if (face_angle > 90 && face_angle < 270)
+	{
+		//付け根側後ろ足
+		ResourceManager::DrawRotaBox(location.x + erea.width, location.y + erea.height - 20, 30, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, color, TRUE);
+		//後ろ足先端
+		ResourceManager::DrawRotaBox(location.x + erea.width + 30, location.y + erea.height - 10, 40, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, color, TRUE);
+		//前足
+		ResourceManager::DrawRotaBox(location.x, location.y + erea.height - 20, 20, 30, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, color, TRUE);
+		//目
+		ResourceManager::DrawRotaBox(location.x, location.y + 20, 10, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, 0xffffff, TRUE);
+
+	}
+	//右向き
+	else
+	{
+		//付け根側後ろ足
+		ResourceManager::DrawRotaBox(location.x + erea.width, location.y + 20, 30, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, color, TRUE);
+		//後ろ足先端
+		ResourceManager::DrawRotaBox(location.x + erea.width + 30, location.y + 10, 40, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, color, TRUE);
+		//前足
+		ResourceManager::DrawRotaBox(location.x, location.y + 20, 20, 30,location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, color, TRUE);
+		//目
+		ResourceManager::DrawRotaBox(location.x, location.y + erea.height - 20, 10, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, 0xffffff, TRUE);
+
 	}
 }
 

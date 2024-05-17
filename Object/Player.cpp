@@ -84,7 +84,7 @@ void Player::Update(GameMain* _g)
 	fps = 0;
 	if (vector.x != 0 || vector.y != 0)
 	{
-		_g->SpawnEffect(location, erea, 1, 20, color);
+		_g->SpawnEffect(location, erea, ShineEffect, 20, color);
 	}
 	if (stageHitFlg[1][bottom] != true/* && !searchFlg*/) { //重力
 		switch (state)
