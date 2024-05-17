@@ -1,5 +1,6 @@
 #pragma once
 #include "Object.h"
+#include <vector>
 
 enum class BossState {
 	IDLE = 0,
@@ -25,6 +26,8 @@ private:
 
 	BossState boss_state;
 
+
+	//std::vector<Location>vertices;
 	bool hit;
 
 public:

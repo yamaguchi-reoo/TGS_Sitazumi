@@ -1,7 +1,8 @@
 #include "Boss.h"
 #include<math.h>
+#include"../Utility/KeyInput.h"
 
-Boss::Boss():vector { 0.0f },hit(false),boss_state(BossState::LEFT)
+Boss::Boss():vector { 0.0f },hit(false),boss_state(BossState::IDLE)
 {
 	type = ENEMY;
 	can_swap = TRUE;
@@ -25,6 +26,7 @@ void Boss::Initialize(Location _location, Erea _erea, int _color_data, int _obje
 	color = _color_data;
 
 	object_pos = _object_pos;
+	
 }
 
 void Boss::Update(GameMain* _g)
@@ -39,8 +41,35 @@ void Boss::Update(GameMain* _g)
 
 void Boss::Draw() const
 {
-	//DrawCircle(local_location.x, local_location.y, 110, color, TRUE);
-	DrawBox(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, FALSE);
+	//ボスの描画用配列
+	const std::vector<Location>vertices = {
+		//本体
+		{local_location.x + 175, local_location.y + 175},
+		//バリア
+		{local_location.x + 175, local_location.y + 175},
+		//右翼
+		{local_location.x, local_location.y},{local_location.x, local_location.y},{local_location.x, local_location.y},{local_location.x, local_location.y},
+	};
+	//DrawCircle(local_location.x + 175, local_location.y + 175, 70, color, TRUE);
+	//DrawBox(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, FALSE);
+
+	for (int i = 0; i < vertices.size(); i++) 
+	{
+		//本体描画
+		if (i < 1) {
+			DrawCircle(vertices[i].x, vertices[i].y, 50, color, TRUE);
+		}
+		//バリア
+		if (i < 2) {
+			DrawCircle(vertices[i].x, vertices[i].y, 175, color, FALSE);
+		}
+		//右翼
+		if (i < 3) {
+			DrawQuadrangle(vertices[i].x, vertices[i].y, vertices[i + 1].x, vertices[i + 1].y, vertices[i + 2].x, vertices[i + 2].y, vertices[i + 3].x, vertices[i + 3].y, color, TRUE);
+		}
+	}
+
+	//DrawFormatString(1100, 0, color, "x:%d  y:%d", KeyInput::GetMouseCursor().x, KeyInput::GetMouseCursor().y);
 }
 
 void Boss::Finalize()
