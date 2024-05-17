@@ -136,14 +136,13 @@ AbstractScene* GameMain::Update()
 		}
 	}
 
-	//天気の更新
-	//if (frame % 200 == 0)
-	//{
-	//	if (++now_weather > 3)
-	//	{
-	//		now_weather = 0;
-	//	}
-	//}
+	if (object[player_object]->GetLocation().x > stage_width - 2000 && frame % 200 == 0)
+	{
+		if (++now_weather > 3)
+		{
+			now_weather = 1;
+		}
+	}
 
 	//各管理クラスの更新
 	weather->Update(this);
