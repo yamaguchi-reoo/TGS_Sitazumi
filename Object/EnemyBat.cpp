@@ -3,9 +3,9 @@
 #include<math.h>
 
 
-#define PI 3.141592654f
+#define _PI 3.141592654f
 
-#define ENEMY_SPEED 2
+#define ENEMY_SPEED 2.f
 
 EnemyBat::EnemyBat() :up(0), bat_state(BatState::LEFT), wing_angle(0.0f), vector{ 0.0f },death_timer(0)
 {
@@ -17,9 +17,6 @@ EnemyBat::EnemyBat() :up(0), bat_state(BatState::LEFT), wing_angle(0.0f), vector
 	}
 	for (int i = 0; i < 4; i++) {
 		stageHitFlg[1][i] = false;
-	}
-	for (int i = 0; i < 3; i++) {
-		hit_flg[i] = false;
 	}
 }
 
@@ -42,24 +39,24 @@ void EnemyBat::Update(GameMain* _g)
 	// 羽の角度を変化させる
 	if (bat_state != BatState::DEATH)
 	{
-		wing_angle = sin(PI * 2.f / 40.f * up) * 20.f; // 30度の振れ幅で周期的に変化させる
+		wing_angle = (float)sin(PI * 2.f / 40.f * up) * 20.f; // 30度の振れ幅で周期的に変化させる
 	}
 
 
 	Location player_pos = _g->GetPlayerLocation();
 	// プレイヤーとの距離を計算
-	vector = { 2.f };
+	vector = { ENEMY_SPEED };
 	float dx = player_pos.x - location.x;
 	float dy = player_pos.y - location.y;
-	float length = sqrt(dx * dx + dy * dy);
+	float length = (float)sqrt(dx * dx + dy * dy);
 
-	//プレイヤーが色変えるときコウモリもスローに
-	if (_g->GetSearchFlg()) {
-		location.x += vector.x * 0.1f;
-		location.y += vector.y * 0.1f;
-	}
+	////プレイヤーが色変えるときコウモリもスローに
+	//if (_g->GetSearchFlg()) {
+	//	location.x += vector.x * 0.1f;
+	//	location.y += vector.y * 0.1f;
+	//}
 	//プレイヤーの一定範囲内に入ったら
-	else if (length < 300 && bat_state != BatState::DEATH) {
+	if (length < 300 && bat_state != BatState::DEATH) {
 		// 移動方向を決定
 		dx /= length;
 		dy /= length;
@@ -74,20 +71,10 @@ void EnemyBat::Update(GameMain* _g)
 		Move(_g);
 	}
 
-	ColorCompatibility(_g);
-
 	for (int i = 0; i < 4; i++) {
 		stageHitFlg[0][i] = false;
 		stageHitFlg[1][i] = false;
 	}
-
-	for (int i = 0; i < 3; i++) {
-		hit_flg[i] = 0;
-	}
-	/*if (delete_object->GetObjectType() == WOOD) {
-		_g->CreateObject(new Stage(6), delete_object->GetLocation(), delete_object->GetErea(), RED);
-		_g->DeleteObject(delete_object->GetObjectPos());
-	}*/
 }
 
 void EnemyBat::Draw() const
@@ -95,23 +82,6 @@ void EnemyBat::Draw() const
 	//DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, GetColor(255, 255, 255), FALSE);
 
 	//各頂点をlocal_locationに置き換えた
-	//const std::vector<Location> vertices = {
-	//	// 耳
-	//	{local_location.x + 60, local_location.y}, {local_location.x + 60, local_location.y + 25}, {local_location.x + 72, local_location.y + 12},
-	//	{local_location.x + 90, local_location.y}, {local_location.x + 90, local_location.y + 25}, {local_location.x + 78, local_location.y + 12},
-	//	//右翼
-	//	{local_location.x + 87, local_location.y + 44}, {local_location.x + 127, local_location.y + 10}, {local_location.x + 153, local_location.y + 85},
-	//	{local_location.x + 87, local_location.y + 44}, {local_location.x + 127, local_location.y + 10}, {local_location.x + 126, local_location.y + 80},
-	//	{local_location.x + 85, local_location.y + 44}, {local_location.x + 127, local_location.y + 10}, {local_location.x + 105, local_location.y + 75},
-	//	//左翼
-	//	{local_location.x + 63, local_location.y + 44}, {local_location.x + 26, local_location.y + 10}, {local_location.x - 3, local_location.y + 85},
-	//	{local_location.x + 63, local_location.y + 44}, {local_location.x + 26, local_location.y + 10}, {local_location.x + 24, local_location.y + 80},
-	//	{local_location.x + 65, local_location.y + 44}, {local_location.x + 26, local_location.y + 10}, {local_location.x + 45, local_location.y + 75},
-	//	// 頭
-	//	{local_location.x + 75, local_location.y + 16}, {local_location.x + 90, local_location.y + 30}, {local_location.x + 75, local_location.y + 40}, {local_location.x + 60, local_location.y + 30},
-	//	// 胴体
-	//	{local_location.x + 75, local_location.y + 45}, {local_location.x + 90, local_location.y + 68}, {local_location.x + 75, local_location.y + 95}, {local_location.x + 60, local_location.y + 68},
-	//};
 
 	const std::vector<Location> vertices = {
 		// 耳
@@ -133,23 +103,23 @@ void EnemyBat::Draw() const
 
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 - (death_timer * 4));
 	//配列の各頂点を利用して三角形を描画する
-	for (int i = 0; i < vertices.size(); i += 3) {
+	for (int i = 0; i + 2 < vertices.size(); i += 3) {
 		//耳
 		if (i < 5) {
 			DrawTriangleAA(vertices[i].x, vertices[i].y,vertices[i + 1].x, vertices[i + 1].y,vertices[i + 2].x, vertices[i + 2].y,color, TRUE);
 		}
 		//右羽
-		else if (i > 5 && i < 14) {
+		else if (i >= 6 && i  < 14) {
 			// 羽の動き
 			DrawTriangleAA(vertices[i].x, vertices[i].y, vertices[i + 1].x, vertices[i + 1].y + wing_angle, vertices[i + 2].x + wing_angle, vertices[i + 2].y , color, TRUE);
 		}
 		//左羽
-		else if (i > 14 && i < 23) {
+		else if (i >= 15 && i < 23) {
 			// 羽の動き
 			DrawTriangleAA(vertices[i].x, vertices[i].y, vertices[i + 1].x, vertices[i + 1].y + wing_angle, vertices[i + 2].x - wing_angle, vertices[i + 2].y, color, TRUE);
 		}
 		//ひし形の描画
-		else
+		else if (i + 3 < vertices.size())
 		{
 			DrawQuadrangleAA(vertices[i].x, vertices[i].y,vertices[i + 1].x, vertices[i + 1].y,vertices[i + 2].x, vertices[i + 2].y,vertices[i + 3].x, vertices[i + 3].y, color, TRUE);
 			i++;
@@ -172,13 +142,13 @@ void EnemyBat::Move(GameMain* _g)
 	//左移動
 	if (bat_state == BatState::LEFT) {
 		location.x -= vector.x;
-		location.y += sin(PI * 2.f / 40.f * up) * 5.f;
+		location.y += (float)sin(PI * 2.f / 40.f * up) * 5.f;
 
 	}
 	//右移動
 	if (bat_state == BatState::RIGHT) {
 		location.x += vector.x;
-		location.y += sin(PI * 2.f / 40.f * up) * 5.f;
+		location.y += (float)sin(PI * 2.f / 40.f * up) * 5.f;
 	}
 
 	if (bat_state == BatState::DEATH) {
@@ -192,19 +162,6 @@ void EnemyBat::Move(GameMain* _g)
 			_g->DeleteObject(object_pos);
 		}
 	}
-}
-void EnemyBat::ColorCompatibility(GameMain* _g)
-{
-	//触れたブロックが緑＆自分の色が赤だったら触れた緑ブロックを燃やす
-	if (hit_flg[0]/* && delete_object->GetObjectType() == WOOD && this->color == RED*/) {
-	}
-	//触れたブロックが赤＆自分の色が青だったら触れた赤ブロックを消す
-	if (hit_flg[1]) {
-	}
-	//触れたブロックが青＆自分の色が緑だったら、雨粒を吸い取り　水場などに当たると反射する
-	if (hit_flg[2]) {
-	}
-
 }
 
 void EnemyBat::Hit(Object* _object)
@@ -341,17 +298,8 @@ void EnemyBat::Hit(Object* _object)
 		erea.width = tmpe.width;
 
 	}
-
-	if (_object->GetObjectType() == PLAYER) {
-		hit_flg[0] = false;
-	}
-
 	//赤コウモリ
 	//触れたブロックが緑＆自分の色が赤だったら触れた緑ブロックを燃やす
-	if (_object->GetObjectType() == WOOD && this->color == RED) {
-		hit_flg[0] = true;
-	}
-
 	//水の中に突っ込むと即死　雨粒は即死だが死ぬ際の動きに変化あり
 	if (_object->GetObjectType() == WATER && this->color == RED) {
 		//死亡状態へ
@@ -364,9 +312,6 @@ void EnemyBat::Hit(Object* _object)
 
 	//青コウモリ
 	//触れたブロックが赤＆自分の色が青だったら触れた赤ブロックを消す
-	if (_object->GetObjectType() == FIRE && this->color == BLUE) {
-		hit_flg[1] = true;
-	}
 	//コウモリの色が吸い取られて死ぬ
 	if (_object->GetObjectType() == WOOD && this->color == BLUE) {
 		//wing_angle = sin(PI * 2.f / 12.f * up) * 20.f; // 藻掻いているように見える風に
@@ -380,9 +325,6 @@ void EnemyBat::Hit(Object* _object)
 
 	//緑コウモリ
 	//触れたブロックが青＆自分の色が緑だったら、雨粒を吸い取り　水場などに当たると反射する
-	if (_object->GetObjectType() == WATER && this->color == GREEN) {
-		hit_flg[2] = true;
-	}
 	//当たったら即死
 	if (_object->GetObjectType() == FIRE && this->color == GREEN) {
 		if (bat_state != BatState::DEATH)
@@ -390,6 +332,14 @@ void EnemyBat::Hit(Object* _object)
 			bat_state = BatState::DEATH;
 			can_swap = FALSE;
 		}
+	}
+
+	//ダメージゾーンを上書きする
+	if ((_object->GetObjectType() == WATER && this->color == GREEN) ||
+		(_object->GetObjectType() == FIRE && this->color == BLUE) ||
+		(_object->GetObjectType() == WOOD && this->color == RED))
+	{
+		_object->SetColorData(color);
 	}
 }
 

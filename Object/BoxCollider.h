@@ -27,6 +27,9 @@ public:
 	//当たり判定 (0,0 = 当たっていない それ以外 = 相手の中心座標)
 	bool HitBox(BoxCollider* bCollider);
 
+	//当たり判定(引数が違うバージョン)
+	bool CheckCollision(Location l, Erea e); 
+
 	//左上座標の取得
 	Location GetLocation()const;
 

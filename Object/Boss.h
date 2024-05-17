@@ -1,9 +1,31 @@
 #pragma once
-
 #include "Object.h"
 
+enum class BossState {
+	IDLE = 0,
+	LEFT,
+	RIGHT,
+	DEATH
+};
+
 class Boss :
-	public Object {
+	public Object 
+{
+private:
+	enum hitPosition
+	{
+		top,
+		bottom,
+		left,
+		right
+	};
+	Location vector; //ボスのベクトル
+	bool stageHitFlg[2][4]; //コウモリとステージの当たり判定
+	float move[4];//各方向加速度格納用
+
+	BossState boss_state;
+
+	bool hit;
 
 public:
 	Boss();
@@ -14,8 +36,11 @@ public:
 	void Draw()const override;
 	void Finalize()override;
 
+	void Move();
+
 	void Hit(Object* _object)override;
 	bool SearchColor(Object* ob) {
 		return 0;
 	}
+	bool CheckCollision(Location l, Erea e); //ステージとの当たり判定
 };

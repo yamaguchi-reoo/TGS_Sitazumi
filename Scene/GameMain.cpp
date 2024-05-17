@@ -47,16 +47,12 @@ void GameMain::Finalize()
 	{
 		//生成済みのオブジェクトを削除
 		object[i]->Finalize();
-		if (object[i] != nullptr)
-		{
-			delete object[i];
-		}
+		delete object[i];
 	}
 	weather->Finalize();
 	delete weather;
 
 	effect_spawner->Finalize();
-
 	delete effect_spawner;
 }
 
@@ -141,7 +137,7 @@ AbstractScene* GameMain::Update()
 	}
 
 	//天気の更新
-	//if (frame % 100 == 0)
+	//if (frame % 200 == 0)
 	//{
 	//	if (++now_weather > 3)
 	//	{
@@ -173,11 +169,7 @@ void GameMain::Draw() const
 			pn = i;
 			continue;
 		}
-		//エフェクト以外を先に描画
-		if (object[i]->GetObjectType() != EFFECT)
-		{
 			object[i]->Draw();
-		}
 	}
 	//プレイヤーを最後に描画
 	object[pn]->Draw();
@@ -193,14 +185,6 @@ void GameMain::Draw() const
 			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200 - (swap_anim_timer*20));
 			DrawBox(swap_anim[i].start.x - camera_location.x - (swap_anim_timer*5), swap_anim[i].start.y - camera_location.y - (swap_anim_timer * 5), swap_anim[i].start.x + swap_anim[i].erea.width - camera_location.x + (swap_anim_timer * 5), swap_anim[i].start.y + swap_anim[i].erea.height - camera_location.y + (swap_anim_timer * 5), swap_anim[i].color, true);
 			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255); 
-		}
-	}
-	//各エフェクトの描画
-	for (int i = 0; object[i] != nullptr; i++)
-	{
-		if (object[i]->GetObjectType() == EFFECT)
-		{
-			object[i]->Draw();
 		}
 	}
 
@@ -249,6 +233,10 @@ void GameMain::DeleteObject(int i)
 			{
 				player_object--;
 			}
+		}
+		else
+		{
+			break;
 		}
 	}
 	object_num--;
@@ -368,9 +356,6 @@ void GameMain::LoadStageData(int _stage)
 void GameMain::SetStage(int _stage)
 {
 	bool player_flg = false;	//プレイヤーを生成したか
-	//オブジェクト作成用変数
-	Location spawn;
-	Erea size;
 	now_stage = _stage;
 	//ファイルの読込
 	LoadStageData(now_stage);
@@ -397,7 +382,7 @@ void GameMain::SetStage(int _stage)
 				//プレイヤーの生成
 				CreateObject(new Player, { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { PLAYER_HEIGHT,PLAYER_WIDTH }, GREEN);
 				//エフェクトの生成
-				effect_spawner->SpawnEffect({ (float)j * BOX_WIDTH + PLAYER_WIDTH / 2 ,(float)i * BOX_HEIGHT + PLAYER_HEIGHT / 2 }, { 20,20}, 0, 30,object[player_object]->GetColerData());
+				effect_spawner->SpawnEffect({ (float)j * BOX_WIDTH + PLAYER_WIDTH / 2 ,(float)i * BOX_HEIGHT + PLAYER_HEIGHT / 2 }, { 20,20}, PlayerSpawnEffect, 30,object[player_object]->GetColerData());
 
 				player_flg = true;
 				break;

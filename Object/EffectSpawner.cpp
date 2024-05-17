@@ -9,7 +9,24 @@
 
 EffectSpawner::EffectSpawner() :frame(0)
 {
-
+	for (int i = 0; i < EFFECT_NUM; i++)
+	{
+		effect[i].spawn_flg = false;
+		effect[i].timer = 0;						 
+		effect[i].location = { 0,0 };				 
+		effect[i].local_location = { 0.0 };			 
+		effect[i].erea = { 0,0 };					 
+		effect[i].effect_type = 0;					 
+		effect[i].effect_time = 0;					 
+		effect[i].touch_ground = false;				 
+		effect[i].angle = 0.0f;						 
+		effect[i].speed = 0.0f;						 
+		effect[i].color = WHITE;					 
+		effect[i].effect_shift[0] = { 0,0 };		 
+		effect[i].effect_shift[1] = { 0,0 };		 
+		effect[i].shine_timer = 0;					 
+		effect[i].rad = 0.0f;						 
+	}
 }
 
 EffectSpawner::~EffectSpawner()
@@ -49,6 +66,10 @@ void EffectSpawner::Update(GameMain* _g)
 					effect[i].spawn_flg = false;
 				}
 				break;
+			//輝きエフェクト(移動あり)
+			case 4:
+				effect[i].location.x += effect[i].speed * cosf(effect[i].angle * (float)M_PI * 2);
+				effect[i].location.y += effect[i].speed * sinf(effect[i].angle * (float)M_PI * 2);
 			//輝きエフェクト
 			case 3:
 				if (effect[i].timer < effect[i].effect_time / 2)
@@ -60,12 +81,12 @@ void EffectSpawner::Update(GameMain* _g)
 					effect[i].shine_timer -= 2;
 				}
 
-				effect[i].rad = effect[i].timer * M_PI / 180;
+				effect[i].rad = (float)(effect[i].timer * M_PI / 180);
 
 				effect[i].effect_shift[0].x = (effect[i].shine_timer * cosf(effect[i].rad)) - (effect[i].shine_timer * sinf(effect[i].rad));
 				effect[i].effect_shift[0].y = (effect[i].shine_timer * sinf(effect[i].rad)) + (effect[i].shine_timer * cosf(effect[i].rad));
 
-				effect[i].rad = (effect[i].timer+90) * M_PI / 180;
+				effect[i].rad = (float)((effect[i].timer+90) * M_PI / 180);
 
 				effect[i].effect_shift[1].x = (effect[i].shine_timer * cosf(effect[i].rad)) - (effect[i].shine_timer * sinf(effect[i].rad));
 				effect[i].effect_shift[1].y = (effect[i].shine_timer * sinf(effect[i].rad)) + (effect[i].shine_timer * cosf(effect[i].rad));
@@ -75,6 +96,7 @@ void EffectSpawner::Update(GameMain* _g)
 				{
 					effect[i].spawn_flg = false;
 				}
+				break;
 			default:
 				break;
 			}
@@ -105,12 +127,14 @@ void EffectSpawner::Draw()const
 				DrawBox(effect[i].local_location.x, effect[i].local_location.y, effect[i].local_location.x + effect[i].erea.width, effect[i].local_location.y + effect[i].erea.height, effect[i].color, TRUE);
 				SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 				break;
+				//輝き
 			case 3:
-				DrawLine(effect[i].local_location.x - (effect[i].effect_shift[0].x / 2),
+			case 4:
+				DrawLineAA(effect[i].local_location.x - (effect[i].effect_shift[0].x / 2),
 					effect[i].local_location.y - (effect[i].effect_shift[0].y / 2),
 					effect[i].local_location.x + (effect[i].effect_shift[0].x / 2),
 					effect[i].local_location.y + (effect[i].effect_shift[0].y / 2), effect[i].color, true);
-				DrawLine(effect[i].local_location.x - (effect[i].effect_shift[1].x / 2),
+				DrawLineAA(effect[i].local_location.x - (effect[i].effect_shift[1].x / 2),
 					effect[i].local_location.y - (effect[i].effect_shift[1].y / 2),
 					effect[i].local_location.x + (effect[i].effect_shift[1].x / 2),
 					effect[i].local_location.y + (effect[i].effect_shift[1].y / 2), effect[i].color, true);
@@ -170,7 +194,24 @@ void EffectSpawner::SpawnEffect(Location _location, Erea _erea,int _effect_type,
 			}
 		}
 		break;
+		//塵になって消える
 	case 2:
+		for (int i = 0; i < EFFECT_NUM; i++)
+		{
+			if (effect[i].spawn_flg == false)
+			{
+				ResetEffect(i);
+				effect[i].spawn_flg = true;
+				effect[i].location = { _location.x + GetRand(_erea.width),_location.y + GetRand(_erea.height) };
+				effect[i].erea = _erea;
+				effect[i].effect_type = 4;
+				effect[i].effect_time = _time;
+				effect[i].speed = 1;
+				effect[i].angle = (float)(GetRand(100)/100.0f);
+				effect[i].color = _color;
+				break;
+			}
+		}
 		break;
 	default:
 		break;

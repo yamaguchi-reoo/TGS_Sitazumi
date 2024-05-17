@@ -33,7 +33,7 @@ private:
 	float wing_angle;	//羽の動かす用
 	int up;		//sin波で移動する用
 
-	bool hit_flg[3];
+	//bool hit_flg[3];
 
 	int death_timer;	//死亡演出
 
@@ -47,8 +47,6 @@ public:
 
 public:
 	void Move(GameMain* _g);
-
-	void ColorCompatibility(GameMain* _g);//色の相性
 
 	void Hit(Object* _object)override;
 	bool SearchColor(Object* ob) {

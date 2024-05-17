@@ -42,15 +42,15 @@ void ResourceManager::StageAnimInitialize()
 	for (int i = 0; i < ANIM_BLOCK_NUM; i++)
 	{
 		fire_anim[i].time = GetRand(20);
-		wood_anim[i].shift = GetRand(10);
-		wood_anim[i].shift1.x = (BOX_WIDTH / 10) * i;
-		wood_anim[i].shift2.x = (BOX_WIDTH / 10) * i;
+		wood_anim[i].shift = (float)GetRand(100) / 10;
+		wood_anim[i].shift1.x = (float)((BOX_WIDTH / 10) * i);
+		wood_anim[i].shift2.x = (float)((BOX_WIDTH / 10) * i);
 		wood_anim[i].initial_position = wood_anim[i].shift2;
 		wood_anim[i].shift1.y = BOX_HEIGHT;
-		wood_anim[i].shift2.y = GetRand(19);
+		wood_anim[i].shift2.y = (float)(GetRand(190) / 10);
 		water_anim[i].shift = (float)GetRand(9)/10;
-		water_anim[i].shift1.x = GetRand(8)* (BOX_WIDTH / 10);
-		water_anim[i].shift1.y = GetRand(8)* (BOX_HEIGHT / 10)-15;
+		water_anim[i].shift1.x = (float)(GetRand(8) * (BOX_WIDTH / 10));
+		water_anim[i].shift1.y = (float)(GetRand(8) * (BOX_HEIGHT / 10) - 15);
 		water_anim[i].initial_position = water_anim[i].shift1;
 		water_anim[i].erea.width = BOX_WIDTH /3;
 		water_anim[i].erea.height = BOX_HEIGHT /3;
@@ -75,15 +75,15 @@ void ResourceManager::StageAnimUpdate()
 			fire_anim[i].erea.height = 4;
 			fire_anim[i].shift.x += 4 * GetRand(10);
 			fire_anim[i].time = 30 + GetRand(30);
-			fire_anim[i].angle = GetRand(3);
+			fire_anim[i].angle = (float)(GetRand(30) / 10);
 		}
 		else
 		{
-			fire_anim[i].shift.x += 0.05 + (fire_anim[i].angle - 1) / 2;
+			fire_anim[i].shift.x += 0.05f + (fire_anim[i].angle - 1) / 2;
 			fire_anim[i].shift.y -= 1;
 			fire_anim[i].time--;
-			fire_anim[i].erea.width -= 0.05;
-			fire_anim[i].erea.height -= 0.05;
+			fire_anim[i].erea.width -= 0.05f;
+			fire_anim[i].erea.height -= 0.05f;
 		}
 	}
 
@@ -164,7 +164,7 @@ void ResourceManager::StageAnimDraw(Location _location, int _type)
 			break;
 			//水
 		case WATER:
-			DrawBox(_location.x, _location.y, _location.x + BOX_WIDTH, _location.y + BOX_HEIGHT, 0x0000ff, true);
+			DrawBoxAA(_location.x, _location.y, _location.x + BOX_WIDTH, _location.y + BOX_HEIGHT, 0x0000ff, true);
 			for (int i = 0; i < ANIM_BLOCK_NUM; i++)
 			{
 				DrawBoxAA(water_anim[i].shift1.x + _location.x,
@@ -195,6 +195,7 @@ int ResourceManager::SetGraph(const char* p)
 			return i;
 		}
 	}
+	return -1;	//画像をどこにも格納できなかった場合
 }
 
 int ResourceManager::SetDivGraph(const char* p, int AllNum, int XNum, int YNum, int  XSize, int YSize)
@@ -214,6 +215,7 @@ int ResourceManager::SetDivGraph(const char* p, int AllNum, int XNum, int YNum, 
 			return i;
 		}
 	}
+	return -1;	//画像をどこにも格納できなかった場合
 }
 
 int ResourceManager::SetSound(const char* p)
@@ -233,6 +235,7 @@ int ResourceManager::SetSound(const char* p)
 			return i;
 		}
 	}
+	return -1;	//音源をどこにも格納できなかった場合
 }
 
 int ResourceManager::GetGraph(int _num)
@@ -271,7 +274,7 @@ void ResourceManager::DrawRotaBox(float _x, float _y, float _w, float _h, float 
 	loc[3][0] = -(_w / 2) + _cx - _x;
 	loc[3][1] =(_h / 2)   + _cy - _y;
 
-	rad = _rad * M_PI / 180;
+	rad = (float)(_rad * M_PI / 180);
 
 	for (int i = 0; i < 4; i++)
 	{
@@ -279,5 +282,5 @@ void ResourceManager::DrawRotaBox(float _x, float _y, float _w, float _h, float 
 		newloc[i][1] = (loc[i][0] * sinf(rad)) + (loc[i][1] * cosf(rad)) + _cy;
 	}
 
-	DrawQuadrangle(newloc[0][0], newloc[0][1], newloc[1][0], newloc[1][1], newloc[2][0], newloc[2][1], newloc[3][0], newloc[3][1], _color, _fill);
+	DrawQuadrangleAA(newloc[0][0], newloc[0][1], newloc[1][0], newloc[1][1], newloc[2][0], newloc[2][1], newloc[3][0], newloc[3][1], _color, _fill);
 }
