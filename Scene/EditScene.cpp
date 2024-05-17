@@ -141,7 +141,7 @@ AbstractScene* EditScene::Update()
 			{
 				if (KeyInput::OnMouse(MOUSE_INPUT_LEFT))
 				{
-					if (can_select_type[i][0] == true)
+					if (can_select_type[i][0] == TRUE)
 					{
 						ui_current_type = i;
 						current_type_select = i;
