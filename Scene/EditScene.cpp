@@ -12,6 +12,14 @@ Location camera_location = { 0,0 };
 EditScene::EditScene(int _stage) : current_type(0), ui_current_type(0), tool_pickup_flg(false), current_leftbutton_flg(false), current_rightbutton_flg(false), current_upbutton_flg(false), current_downbutton_flg(false), button_interval(0), now_select_erea(0), current_type_select(-1), now_current_type(0), current_type_location{ 0 }, current_type_erea{ 0 }, disp_num(0)
 {
 	now_stage = _stage;
+}
+
+EditScene::~EditScene()
+{
+}
+
+void EditScene::Initialize()
+{
 	tool_location.x = 100;
 	tool_location.y = 0;
 	tool_size.width = (UI_OBJECT_TYPE_NUM * 50) + 210;
@@ -44,7 +52,7 @@ EditScene::EditScene(int _stage) : current_type(0), ui_current_type(0), tool_pic
 	current_type_erea.height = 50;
 }
 
-EditScene::~EditScene()
+void EditScene::Finalize()
 {
 	for (int i = 0; i < stage_height_num; i++)
 	{

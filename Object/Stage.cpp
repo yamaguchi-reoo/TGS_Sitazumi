@@ -39,17 +39,16 @@ void Stage::Initialize(Location _location, Erea _erea, int _color_data,int _obje
 {
 	location = _location;
 	erea = _erea;
+	SetColorData(color_data[_color_data]);
 	//色を交換出来るブロックの設定
 	if (_color_data == 3 || _color_data == 4 || _color_data == 5)
 	{
 		can_swap = TRUE;
-		SetColorData(color_data[_color_data]);
 	}
 	//色を交換出来ないブロックの設定
 	else
 	{
 		can_swap = FALSE;
-		color = WHITE;
 	}
 	old_color = color;
 
@@ -58,91 +57,61 @@ void Stage::Initialize(Location _location, Erea _erea, int _color_data,int _obje
 
 void Stage::Update(GameMain* _g)
 {
-	//色が変わったらブロックタイプも変える
-	if (old_color != color)
-	{
-		if (color == WHITE)
-		{
-			block_type = 1;
-		}
-		if (color == RED)
-		{
-			block_type = 3;
-		}
-		if (color == GREEN)
-		{
-			block_type = 4;
-		}
-		if (color == BLUE)
-		{
-			block_type = 5;
-		}
-	}
-	old_color = color;
-	//リセット
-	hit_flg = false;
-	frame++;
-	//アニメーション用変数
-	if (++anim > 60)
-	{
-		anim = 0;
-	}
-	//hit_timerに0が入ったらアニメーション開始
-	if (hit_timer >= 0)
-	{
-		if (++hit_timer > 10)
-		{
-			//アニメーション終了
-			hit_timer = -1;
-		}
-	}
-	//色ブロック
-	/*if (block_type == RED_BLOCK || block_type == GREEN_BLOCK || block_type == BLUE_BLOCK)
-	{
-		for (int i = 0; i < ANIM_BLOCK_NUM; i++)
-		{
-			if (effect_anim[i].time < 0)
-			{
-				effect_anim[i].shift.x = GetRand(38);
-				effect_anim[i].shift.y = GetRand(38);
-				effect_anim[i].erea.width = erea.width / 10;
-				effect_anim[i].erea.height = erea.height / 10;
-				effect_anim[i].time = 30 + GetRand(30);
-			}
-			else
-			{
-				effect_anim[i].time--;
-				effect_anim[i].erea.width -= 0.05;
-				effect_anim[i].erea.height -= 0.05;
-			}
-		}
-	}*/
+	//EditもUpdateを呼べるようにこの書き方
+	Update();
 }
 
 void Stage::Update()
 {
-	//色が変わったらブロックタイプも変える
+	//色が変わったらブロックタイプを対応した種類に変える処理
 	if (old_color != color)
 	{
-		if (color == WHITE)
-		{
-			block_type = 1;
-		}
 		if (color == RED)
 		{
-			block_type = 3;
+			//交換可能なら
+			if (can_swap == TRUE)
+			{
+				//その色の交換可能ブロックに変える
+				block_type = RED_BLOCK;
+			}
+			else
+			{
+				block_type = FIRE_BLOCK;
+			}
+			type = FIRE;
 		}
-		if (color == GREEN)
+		else if (color == GREEN)
 		{
-			block_type = 4;
+			//交換可能なら
+			if (can_swap == TRUE)
+			{
+				//その色の交換可能ブロックに変える
+				block_type = GREEN_BLOCK;
+			}
+			else
+			{
+				block_type = WOOD_BLOCK;
+			}
+			type = WOOD;
 		}
-		if (color == BLUE)
+		else if (color == BLUE)
 		{
-			block_type = 5;
+			//交換可能なら
+			if (can_swap == TRUE)
+			{
+				//その色の交換可能ブロックに変える
+				block_type = BLUE_BLOCK;
+			}
+			else
+			{
+				block_type = WATER_BLOCK;
+			}
+			type = WATER;
 		}
+		//更新
+		old_color = color;
 	}
 
-	old_color = color;
 	//リセット
 	hit_flg = false;
 
@@ -186,7 +155,7 @@ void Stage::Draw()const
 		switch (block_type)
 		{
 			//無
-		case 0:
+		case NULL_BLOCK:
 			break;
 			//地面(赤、緑、青)
 		case RED_BLOCK:
@@ -226,27 +195,27 @@ void Stage::Draw()const
 		//敵文字表示用
 		switch (block_type)
 		{
-		case 9:
+		case PLAYER_BLOCK:
 			//初期スポーン地点を分かりやすく
 			DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, 0xffff00, true);
 			DrawStringF(local_location.x, local_location.y, "プレイヤー", text_color[block_type]);
 			break;
-		case 10:
-		case 11:
-		case 12:
+		case ENEMY_DEER_RED:
+		case ENEMY_DEER_GREEN:
+		case ENEMY_DEER_BLUE:
 			DrawStringF(local_location.x, local_location.y,"鹿",text_color[block_type]);
 			break;
-		case 13:
-		case 14:
-		case 15:
+		case ENEMY_BAT_RED:
+		case ENEMY_BAT_GREEN:
+		case ENEMY_BAT_BLUE:
 			DrawStringF(local_location.x, local_location.y, "蝙蝠", text_color[block_type]);
 			break;
-		case 16:
-		case 17:
-		case 18:
+		case ENEMY_FROG_RED:
+		case ENEMY_FROG_GREEN:
+		case ENEMY_FROG_BLUE:
 			DrawStringF(local_location.x, local_location.y, "蛙", text_color[block_type]);
 			break;
-		case 19:
+		case ENEMY_BOSS:
 			DrawStringF(local_location.x, local_location.y, "ボス", text_color[block_type]);
 			break;
 		default:
@@ -274,7 +243,7 @@ void Stage::Hit(Object* _object)
 void Stage::SetStageType(int _type)
 {
 	block_type = _type;
-	if (block_type == 1 || block_type == 2 || block_type == 3 || block_type == 4)
+	if (block_type < 9)
 	{
 		SetColorData(color_data[block_type]);
 	}

@@ -1,5 +1,7 @@
 #pragma once
+
 #include "Object.h"
+
 class Weather :
     public Object
 {

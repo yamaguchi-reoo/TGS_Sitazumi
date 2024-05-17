@@ -44,7 +44,7 @@ private:
 
 	bool damageFlg; //ダメージを受けたとき
 	bool damageOldFlg; //ダメージを受けたとき
-	int hp;
+	static int hp;
 	int damageEffectTime = 60;
 	bool damageEffectFlg = false;
 
