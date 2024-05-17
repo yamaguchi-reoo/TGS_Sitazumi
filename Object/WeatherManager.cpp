@@ -63,7 +63,6 @@ void WeatherManager::Draw()const
 		DrawBoxAA(draw_location.x - 10, draw_location.y - 30, draw_location.x + 10, draw_location.y + 10, !weather_color[now_weather], TRUE);
 		DrawBoxAA(draw_location.x - 10, draw_location.y + 20, draw_location.x + 10, draw_location.y + 40, !weather_color[now_weather], TRUE);
 	}
-	DrawFormatString(100, 160, 0xffffff, "%d", delay);
 }
 
 void WeatherManager::Finalize()
