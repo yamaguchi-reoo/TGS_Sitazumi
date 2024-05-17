@@ -20,10 +20,6 @@ Player::Player()
 		stageHitFlg[1][i] = false;
 	}
 
-	aimLoc = { 40,200 };
-	aimVec = { 0,0 };
-	lineLoc = { 0,0 };
-
 	searchedLen = 1000.f;
 	searchedObj = nullptr;
 	oldSearchedObj = nullptr;
@@ -440,6 +436,14 @@ void Player::Hit(Object* _object)
 		}
 	}
 
+	//ダメージゾーンを上書きする
+	if ((_object->GetObjectType() == WATER && this->color == GREEN) ||
+		(_object->GetObjectType() == FIRE && this->color == BLUE) ||
+		(_object->GetObjectType() == WOOD && this->color == RED))
+	{
+		_object->SetColorData(color);
+	}
+
 	if ((_object->GetObjectType() == WATER && _object->GetCanSwap() == FALSE && this->color == BLUE && color == BLUE && !stateFlg) ||
 		(_object->GetObjectType() == FIRE && _object->GetCanSwap() == FALSE && this->color == RED && color == RED && !stateFlg) ||
 		(_object->GetObjectType() == WOOD && _object->GetCanSwap() == FALSE && this->color == GREEN && color == GREEN && !stateFlg)){
@@ -526,30 +530,7 @@ void Player::MoveActor()
 
 void Player::MoveAim()
 {
-	//照準の座標
-	aimLoc.x = (local_location.x + (erea.width / 2)) + PadInput::TipLeftLStick(STICKL_X) * 100.f;
-	aimLoc.y = (local_location.y + (erea.height / 2)) + PadInput::TipLeftLStick(STICKL_Y) * -100.f;
-
-	//単位ベクトル獲得
-	Location tmpv;
-	float len;
-	tmpv.x = aimLoc.x - (local_location.x + (erea.width / 2));
-	tmpv.y = aimLoc.y - (local_location.y + (erea.height / 2));
-	len = sqrtf(powf(tmpv.x, 2) + powf(tmpv.y, 2));
-
-	//単位ベクトル獲得
-	aimVec.x = tmpv.x / len;
-	aimVec.y = tmpv.y / len;
-
-	if (PadInput::TipLeftLStick(STICKL_X) < 0.1f && PadInput::TipLeftLStick(STICKL_X) > -0.1f &&
-		PadInput::TipLeftLStick(STICKL_Y) < 0.1f && PadInput::TipLeftLStick(STICKL_Y) > -0.1f) {
-		lineLoc.x = local_location.x + (erea.width / 2);
-		lineLoc.y = local_location.y + (erea.height / 2);
-	}
-	else {
-		lineLoc.x = local_location.x + (erea.width / 2) + aimVec.x * 1280.f;
-		lineLoc.y = local_location.y + (erea.height / 2) + aimVec.y * 1280.f;
-	}
+	
 }
 
 bool Player::SearchColor(Object* ob)
@@ -946,42 +927,42 @@ void Player::SelectObject()
 	}
 }
 
-bool Player::CheckCollision(Location l, Erea e)
-{
-	bool ret = false;
-
-	//自分の左上座標
-	float my_x = location.x;
-	float my_y = location.y;
-	//自分の中央座標
-	float my_cx = my_x + (erea.width / 2);
-	float my_cy = my_y + (erea.height / 2);
-	//自分の幅と高さの半分
-	float my_harf_width = erea.width / 2;
-	float my_harf_height = erea.height / 2;
-
-	//相手の左上座標
-	float sub_x = l.x;
-	float sub_y = l.y;
-	//相手の中央座標
-	float sub_cx = sub_x + (e.width / 2);
-	float sub_cy = sub_y + (e.height / 2);
-	//相手の幅と高さの半分
-	float sub_harf_width = e.width / 2;
-	float sub_harf_height = e.height / 2;
-
-	//自分と相手の中心座標の差
-	float diff_x = my_cx - sub_cx;
-	float diff_y = my_cy - sub_cy;
-
-	//当たり判定の演算
-	if (fabsf(diff_x) < my_harf_width + sub_harf_width &&
-		fabsf(diff_y) < my_harf_height + sub_harf_height)
-	{
-		ret = true;
-	}
-	return ret;
-}
+//bool Player::CheckCollision(Location l, Erea e)
+//{
+//	bool ret = false;
+//
+//	//自分の左上座標
+//	float my_x = location.x;
+//	float my_y = location.y;
+//	//自分の中央座標
+//	float my_cx = my_x + (erea.width / 2);
+//	float my_cy = my_y + (erea.height / 2);
+//	//自分の幅と高さの半分
+//	float my_harf_width = erea.width / 2;
+//	float my_harf_height = erea.height / 2;
+//
+//	//相手の左上座標
+//	float sub_x = l.x;
+//	float sub_y = l.y;
+//	//相手の中央座標
+//	float sub_cx = sub_x + (e.width / 2);
+//	float sub_cy = sub_y + (e.height / 2);
+//	//相手の幅と高さの半分
+//	float sub_harf_width = e.width / 2;
+//	float sub_harf_height = e.height / 2;
+//
+//	//自分と相手の中心座標の差
+//	float diff_x = my_cx - sub_cx;
+//	float diff_y = my_cy - sub_cy;
+//
+//	//当たり判定の演算
+//	if (fabsf(diff_x) < my_harf_width + sub_harf_width &&
+//		fabsf(diff_y) < my_harf_height + sub_harf_height)
+//	{
+//		ret = true;
+//	}
+//	return ret;
+//}
 
 float Player::ThreePointAngle(Location l1, Location l2, Location referenceP)const
 {
