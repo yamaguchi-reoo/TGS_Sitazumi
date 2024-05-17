@@ -173,11 +173,7 @@ void GameMain::Draw() const
 			pn = i;
 			continue;
 		}
-		//エフェクト以外を先に描画
-		if (object[i]->GetObjectType() != EFFECT)
-		{
 			object[i]->Draw();
-		}
 	}
 	//プレイヤーを最後に描画
 	object[pn]->Draw();
@@ -195,14 +191,6 @@ void GameMain::Draw() const
 			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255); 
 		}
 	}
-	//各エフェクトの描画
-	for (int i = 0; object[i] != nullptr; i++)
-	{
-		if (object[i]->GetObjectType() == EFFECT)
-		{
-			object[i]->Draw();
-		}
-	}
 
 	//エフェクトの描画
 	effect_spawner->Draw();
@@ -213,6 +201,7 @@ void GameMain::Draw() const
 #ifdef _DEBUG
 	DrawFormatString(100, 100, 0xffffff, "Object数:%d", object_num);
 	DrawFormatString(100, 120, 0xffffff, "Updeteが呼ばれているObject数:%d", move_object_num);
+	DrawFormatString(100, 140, 0xffffff, "%f", GetMouseWheelRotVolF());
 #endif
 }
 
@@ -249,6 +238,10 @@ void GameMain::DeleteObject(int i)
 			{
 				player_object--;
 			}
+		}
+		else
+		{
+			break;
 		}
 	}
 	object_num--;
@@ -368,9 +361,6 @@ void GameMain::LoadStageData(int _stage)
 void GameMain::SetStage(int _stage)
 {
 	bool player_flg = false;	//プレイヤーを生成したか
-	//オブジェクト作成用変数
-	Location spawn;
-	Erea size;
 	now_stage = _stage;
 	//ファイルの読込
 	LoadStageData(now_stage);

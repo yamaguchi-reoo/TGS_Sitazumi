@@ -60,12 +60,12 @@ void EffectSpawner::Update(GameMain* _g)
 					effect[i].shine_timer -= 2;
 				}
 
-				effect[i].rad = effect[i].timer * M_PI / 180;
+				effect[i].rad = (float)(effect[i].timer * M_PI / 180);
 
 				effect[i].effect_shift[0].x = (effect[i].shine_timer * cosf(effect[i].rad)) - (effect[i].shine_timer * sinf(effect[i].rad));
 				effect[i].effect_shift[0].y = (effect[i].shine_timer * sinf(effect[i].rad)) + (effect[i].shine_timer * cosf(effect[i].rad));
 
-				effect[i].rad = (effect[i].timer+90) * M_PI / 180;
+				effect[i].rad = (float)((effect[i].timer+90) * M_PI / 180);
 
 				effect[i].effect_shift[1].x = (effect[i].shine_timer * cosf(effect[i].rad)) - (effect[i].shine_timer * sinf(effect[i].rad));
 				effect[i].effect_shift[1].y = (effect[i].shine_timer * sinf(effect[i].rad)) + (effect[i].shine_timer * cosf(effect[i].rad));
