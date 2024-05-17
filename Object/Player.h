@@ -20,10 +20,6 @@ private:
 	//0の行はステージのブロック一つ一つに対しての判定
 	//1の行は1フレームでステージ全体との判定
 
-	Location aimLoc; //照準座標
-	Location aimVec; //照準ベクトル
-	Location lineLoc; //線の座標
-
 	float searchedLen; //交換できるオブジェクトとの距離
 	Object* searchedObj; //一番近い色を交換できるオブジェクト
 	Object* oldSearchedObj; //前回選択していたオブジェクト
@@ -77,7 +73,7 @@ public:
 	bool ChangePlayerColor();
 	void SelectObject();
 
-	bool CheckCollision(Location l, Erea e); //ステージとの当たり判定
+	//bool CheckCollision(Location l, Erea e); //ステージとの当たり判定
 	float ThreePointAngle(Location l1, Location l2, Location referenceP) const;
 
 	float GetLength(Location l1, Location l2);

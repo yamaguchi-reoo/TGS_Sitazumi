@@ -35,6 +35,44 @@ bool BoxCollider::HitBox(BoxCollider* bCollider)
 	{
 		ret = true;
 	}
+
+	return ret;
+}
+
+bool BoxCollider::CheckCollision(Location l, Erea e)
+{
+	bool ret = false;
+
+	//自分の左上座標
+	float my_x = location.x;
+	float my_y = location.y;
+	//自分の中央座標
+	float my_cx = my_x + (erea.width / 2);
+	float my_cy = my_y + (erea.height / 2);
+	//自分の幅と高さの半分
+	float my_harf_width = erea.width / 2;
+	float my_harf_height = erea.height / 2;
+
+	//相手の左上座標
+	float sub_x = l.x;
+	float sub_y = l.y;
+	//相手の中央座標
+	float sub_cx = sub_x + (e.width / 2);
+	float sub_cy = sub_y + (e.height / 2);
+	//相手の幅と高さの半分
+	float sub_harf_width = e.width / 2;
+	float sub_harf_height = e.height / 2;
+
+	//自分と相手の中心座標の差
+	float diff_x = my_cx - sub_cx;
+	float diff_y = my_cy - sub_cy;
+
+	//当たり判定の演算
+	if (fabsf(diff_x) < my_harf_width + sub_harf_width &&
+		fabsf(diff_y) < my_harf_height + sub_harf_height)
+	{
+		ret = true;
+	}
 	return ret;
 }
 
