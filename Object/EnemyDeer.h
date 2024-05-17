@@ -38,6 +38,7 @@ private:
 	d_draw deer_draw;
 
 	bool deer_spawn;
+	int deer_death_timer = 0;
 
 	float tn = 0.0f;
 
@@ -48,11 +49,6 @@ private:
 
 	float r_x = 0.0f, r_y = 0.0f;
 	float d_rad = 0.0f;
-
-
-	//デバック用
-	float DrawTest1 = 0, DrawTest2 = 0, DrawTest3 = 0, DrawTest4 = 0;
-	int	DrawTest5 = 0, DrawTest6 = 0;
 
 public:
 
@@ -68,7 +64,8 @@ public:
 		return false;
 	}
 
-	void EnemyDeerMove(void);
+	void EnemyDeerMove(void);	 //移動
+	//void EnemyDeerRotation(void);//回転
 	bool CheckCollision(Location l, Erea e); //ステージとの当たり判定
 };
 
