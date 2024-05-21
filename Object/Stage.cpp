@@ -178,6 +178,9 @@ void Stage::Draw()const
 			//地面（灰）
 		case GRAY_BLOCK:
 			DrawBox(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, 0xaaaaaa, true);
+			DrawBox(local_location.x+10, local_location.y+20, local_location.x + 15, local_location.y + 25, 0x999999, true);
+			DrawBox(local_location.x+30, local_location.y+15, local_location.x + 35, local_location.y + 20, 0x999999, true);
+			DrawBox(local_location.x+25, local_location.y+35, local_location.x + 30, local_location.y + 40, 0x999999, true);
 			break;
 		//ダメージゾーンの描画
 		case FIRE_BLOCK:

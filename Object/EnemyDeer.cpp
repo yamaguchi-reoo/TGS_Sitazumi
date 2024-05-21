@@ -74,14 +74,19 @@ void EnemyDeer::Update(GameMain* _g)
 
 	if (deer_state == DeerState::DEATH)
 	{
-		_g->DeleteObject(object_pos);
+		if (++deer_death_timer > 60)
+		{
+			_g->DeleteObject(object_pos);
+		}
 	}
 }
 
 void EnemyDeer::Draw()const
 {
-	if (deer_state == DeerState::LEFT || deer_state == DeerState::GRAVITY || deer_state == DeerState::IDLE)
+	if (deer_state == DeerState::LEFT || deer_state == DeerState::GRAVITY || deer_state == DeerState::IDLE || (deer_state == DeerState::DEATH))
 	{
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 - (deer_death_timer * 4));
+
 		//頭
 		ResourceManager::DrawRotaBox(local_location.x + 16.0f, local_location.y + 10.0f, 30.0f, 20.0f, local_location.x + 16.0f, local_location.y + 10.0f, d_rad, color, true);
 		//目
@@ -115,9 +120,13 @@ void EnemyDeer::Draw()const
 		ResourceManager::DrawRotaBox(local_location.x + 41.0f, local_location.y + 88.0f, 10.0f, 25.0f, local_location.x + 41.0f, local_location.y + 88.0f, d_rad, color, true);
 		ResourceManager::DrawRotaBox(local_location.x + 66.0f, local_location.y + 88.0f, 10.0f, 25.0f, local_location.x + 66.0f, local_location.y + 88.0f, d_rad, color, true);
 		ResourceManager::DrawRotaBox(local_location.x + 81.0f, local_location.y + 88.0f, 10.0f, 25.0f, local_location.x + 81.0f, local_location.y + 88.0f, d_rad, color, true);
+
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 	}
-	else if (deer_state == DeerState::RIGHT)
+	else if (deer_state == DeerState::RIGHT || (deer_state == DeerState::DEATH))
 	{
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 - (deer_death_timer * 4));
+
 		//頭
 		ResourceManager::DrawRotaBox(local_location.x - erea.width + 15.0f, local_location.y - 10.0f, 30.0f, 20.0f, local_location.x, local_location.y, d_rad, color, true);
 		//目
@@ -151,6 +160,8 @@ void EnemyDeer::Draw()const
 		ResourceManager::DrawRotaBox(local_location.x - erea.width + 40.0f, local_location.y - 88.0f, 10.0f, 25.0f, local_location.x, local_location.y, d_rad, color, true);
 		ResourceManager::DrawRotaBox(local_location.x - erea.width + 65.0f, local_location.y - 88.0f, 10.0f, 25.0f, local_location.x, local_location.y, d_rad, color, true);
 		ResourceManager::DrawRotaBox(local_location.x - erea.width + 80.0f, local_location.y - 88.0f, 10.0f, 25.0f, local_location.x, local_location.y, d_rad, color, true);
+
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 	}
 	
 	//当たり判定のBox
@@ -207,12 +218,12 @@ void EnemyDeer::Finalize()
 //自分の当たり判定を取っている部分は 一番下の辺
 void EnemyDeer::Hit(Object* _object)
 {
-	DrawTest1 = _object->GetLocation().x;
+	/*DrawTest1 = _object->GetLocation().x;
 	DrawTest2 = _object->GetLocation().y;
 	DrawTest3 = _object->GetErea().height;
 	DrawTest4 = _object->GetErea().width;
 	DrawTest5 = _object->GetObjectType();
-	DrawTest6 = _object->GetColerData();
+	DrawTest6 = _object->GetColerData();*/
 
 	//ブロックと当たった時の処理
 	if (_object->GetObjectType() == BLOCK)
@@ -324,7 +335,7 @@ void EnemyDeer::Hit(Object* _object)
 		if (stageHitFlg[0][left]) {//左方向に埋まっていたら
 			float t = (_object->GetLocation().x + _object->GetErea().width) - location.x;
 			if (t != 0) {
-				move[left] = t;	
+				move[left] = t;
 			}
 		}
 
@@ -352,15 +363,26 @@ void EnemyDeer::Hit(Object* _object)
 		erea.width = tmpe.width;
 	}
 
+	// 死亡判定
 	if (
 
-		(this->color == RED && _object->GetObjectType() == WATER) || 
-		(this->color == BLUE && _object->GetObjectType() == WOOD) || 
+		(this->color == RED && _object->GetObjectType() == WATER) ||
+		(this->color == BLUE && _object->GetObjectType() == WOOD) ||
 		(this->color == GREEN && _object->GetObjectType() == FIRE)
 
 		)
 	{
 		deer_state = DeerState::DEATH;
+		can_swap = false;
+	}
+
+	if (
+		(this->color == RED && _object->GetObjectType() == WOOD) ||
+		(this->color == BLUE && _object->GetObjectType() == FIRE) ||
+		(this->color == GREEN && _object->GetObjectType() == WATER)
+		)
+	{
+		_object->SetColorData(color);
 	}
 }
 

@@ -47,16 +47,12 @@ void GameMain::Finalize()
 	{
 		//生成済みのオブジェクトを削除
 		object[i]->Finalize();
-		if (object[i] != nullptr)
-		{
-			delete object[i];
-		}
+		delete object[i];
 	}
 	weather->Finalize();
 	delete weather;
 
 	effect_spawner->Finalize();
-
 	delete effect_spawner;
 }
 
@@ -140,14 +136,13 @@ AbstractScene* GameMain::Update()
 		}
 	}
 
-	//天気の更新
-	//if (frame % 100 == 0)
-	//{
-	//	if (++now_weather > 3)
-	//	{
-	//		now_weather = 0;
-	//	}
-	//}
+	if (object[player_object]->GetLocation().x > stage_width - 2000 && frame % 200 == 0)
+	{
+		if (++now_weather > 3)
+		{
+			now_weather = 1;
+		}
+	}
 
 	//各管理クラスの更新
 	weather->Update(this);
@@ -201,7 +196,6 @@ void GameMain::Draw() const
 #ifdef _DEBUG
 	DrawFormatString(100, 100, 0xffffff, "Object数:%d", object_num);
 	DrawFormatString(100, 120, 0xffffff, "Updeteが呼ばれているObject数:%d", move_object_num);
-	DrawFormatString(100, 140, 0xffffff, "%f", GetMouseWheelRotVolF());
 #endif
 }
 
@@ -387,7 +381,7 @@ void GameMain::SetStage(int _stage)
 				//プレイヤーの生成
 				CreateObject(new Player, { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { PLAYER_HEIGHT,PLAYER_WIDTH }, GREEN);
 				//エフェクトの生成
-				effect_spawner->SpawnEffect({ (float)j * BOX_WIDTH + PLAYER_WIDTH / 2 ,(float)i * BOX_HEIGHT + PLAYER_HEIGHT / 2 }, { 20,20}, 0, 30,object[player_object]->GetColerData());
+				effect_spawner->SpawnEffect({ (float)j * BOX_WIDTH + PLAYER_WIDTH / 2 ,(float)i * BOX_HEIGHT + PLAYER_HEIGHT / 2 }, { 20,20}, PlayerSpawnEffect, 30,object[player_object]->GetColerData());
 
 				player_flg = true;
 				break;
@@ -411,7 +405,7 @@ void GameMain::SetStage(int _stage)
 				break;
 			case ENEMY_BOSS:
 				//ボスの生成
-				CreateObject(new Boss, { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { 200,200 }, ColorList[stage_data[i][j] - 19]);
+				CreateObject(new Boss, { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { 350,350 }, ColorList[stage_data[i][j] - 19]);
 				break;
 			default:
 				break;

@@ -43,6 +43,7 @@ public:
 		return false;
 	}
 
+	void FrogDraw(Location location)const;		//カエルの描画
 	void Move(GameMain* _g);		//移動系処理
 	void UpdataState(GameMain* _g);	//カエルの状態更新
 	bool CheckCollision(Location l, Erea e); //ステージとの当たり判定

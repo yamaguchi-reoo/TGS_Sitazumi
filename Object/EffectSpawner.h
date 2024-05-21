@@ -2,6 +2,12 @@
 #include "BoxCollider.h"
 #define EFFECT_NUM	100		//エフェクトの最大数
 
+enum EffectList {
+	PlayerSpawnEffect = 0,
+	ShineEffect,
+	DeathEffect,
+};
+
 class GameMain;
 
 struct EffectAnim{
