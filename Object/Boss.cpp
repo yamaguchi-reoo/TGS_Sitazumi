@@ -7,7 +7,7 @@
 
 Boss::Boss():vector { 0.0f },hit(false),boss_state(BossState::IDLE)
 {
-	type = ENEMY;
+	type = BOSS;
 	can_swap = TRUE;
 	can_hit = TRUE;
 	for (int i = 0; i < 4; i++) {
