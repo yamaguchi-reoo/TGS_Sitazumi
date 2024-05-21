@@ -11,6 +11,8 @@
 #include "../Object/WeatherManager.h"
 #include "../Object/EffectSpawner.h"
 #include "../Object/Boss.h"
+#include "../Object/BossAttackWood.h"
+#include "../Object/BossAttackFire.h"
 
 class Player;
 
@@ -66,6 +68,8 @@ private:
 
     SwapAnim swap_anim[2];  //交換エフェクト用
     int swap_anim_timer;    //交換エフェクト時間用
+
+    BossAttackFire* test;
 public:
 
     //コンストラクタ

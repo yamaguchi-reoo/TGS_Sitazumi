@@ -1,17 +1,14 @@
 #pragma once
 #include "Object.h"
-class BossAttackWood : public Object
+class BossAttackWater : public Object
 {
 private:
 	Location velocity;
-	float bambooHeight;  //高さ
-
-	int count;	//生え始めるまでのカウント
-	int type;	//もとから生えてるのか地面から生えてくるのか
-	int knot;   //竹の節の数
+	bool flg;
+	int count;
 public:
-	BossAttackWood();
-	~BossAttackWood();
+	BossAttackWater();
+	~BossAttackWater();
 
 	void Initialize(Location _location, Erea _erea, int _color_data, int _object_pos)override;
 	void Finalize()override;
@@ -22,5 +19,4 @@ public:
 	void Hit(Object* _object)override;
 	bool SearchColor(Object* ob) override;
 
-	void MoveBamboo();
 };

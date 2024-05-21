@@ -39,6 +39,9 @@ void GameMain::Initialize()
 
 	lock_pos = camera_location;
 	swap_anim_timer = 0;
+
+	test = new BossAttackFire();
+	test->Initialize({ 1000,2000 }, { 40,40 }, RED, 1000);
 }
 
 void GameMain::Finalize()
@@ -155,6 +158,9 @@ AbstractScene* GameMain::Update()
 	{
 		return new EditScene(now_stage);
 	}
+
+	test->Update(this);
+	test->SetScreenPosition(camera_location);
 #endif
 
 	return this;
@@ -197,6 +203,8 @@ void GameMain::Draw() const
 #ifdef _DEBUG
 	DrawFormatString(100, 100, 0xffffff, "Object数:%d", object_num);
 	DrawFormatString(100, 120, 0xffffff, "Updeteが呼ばれているObject数:%d", move_object_num);
+
+	test->Draw();
 #endif
 }
 
