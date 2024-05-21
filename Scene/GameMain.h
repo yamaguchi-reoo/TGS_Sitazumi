@@ -113,6 +113,8 @@ public:
     //プレイヤーのワールド座標を取得
     Location GetPlayerLocation();
 
+    Erea GetPlayerErea();
+
     //カメラ座標の取得
     Location GetCameraLocation();
 

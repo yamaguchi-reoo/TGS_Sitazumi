@@ -47,4 +47,6 @@ public:
 		return 0;
 	}
 	bool CheckCollision(Location l, Erea e); //ステージとの当たり判定
+
+	void DistanceCalc(GameMain* _g);//プレイヤーとボスの距離計算
 };

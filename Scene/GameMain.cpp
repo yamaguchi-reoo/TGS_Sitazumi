@@ -479,6 +479,11 @@ Location GameMain::GetPlayerLocation()
 	return object[player_object]->GetLocation();
 }
 
+Erea GameMain::GetPlayerErea()
+{
+	return object[player_object]->GetErea();
+}
+
 Location GameMain::GetCameraLocation()
 {
 	return camera_location;
