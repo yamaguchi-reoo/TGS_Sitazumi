@@ -39,7 +39,6 @@ void GameMain::Initialize()
 	back_ground->Initialize(stage_width);
 
 	lock_pos = camera_location;
-	swap_anim_timer = 0;
 
 	test = new BossAttackFire();
 	test->Initialize({ 1000,2000 }, { 40,40 }, RED, 1000);
