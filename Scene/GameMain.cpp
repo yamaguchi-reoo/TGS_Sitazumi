@@ -26,8 +26,6 @@ GameMain::~GameMain()
 
 void GameMain::Initialize()
 {
-	swap_anim[0].move_flg = false;
-	swap_anim[1].move_flg = false;
 
 	weather = new WeatherManager();
 	weather->Initialize();
@@ -37,8 +35,10 @@ void GameMain::Initialize()
 
 	SetStage(now_stage);
 
+	back_ground = new BackGround();
+	back_ground->Initialize(stage_width);
+
 	lock_pos = camera_location;
-	swap_anim_timer = 0;
 }
 
 void GameMain::Finalize()
@@ -54,6 +54,9 @@ void GameMain::Finalize()
 
 	effect_spawner->Finalize();
 	delete effect_spawner;
+
+	back_ground->Finalize();
+	delete back_ground;
 }
 
 AbstractScene* GameMain::Update()
@@ -96,6 +99,16 @@ AbstractScene* GameMain::Update()
 				}
 			}
 		}
+		if (object[player_object]->GetLocation().x > stage_width - 2000 && ++weather_timer > 200)
+		{
+			if (++now_weather > 3)
+			{
+				now_weather = 1;
+			}
+			weather_timer = 0;
+		}
+		//管理クラスの更新
+		weather->Update(this);
 	}
 
 	//プレイヤーの更新＆色探知用
@@ -114,38 +127,8 @@ AbstractScene* GameMain::Update()
 			object[player_object]->Hit(object[i]);
 		}
 	}
-	//色交換エフェクトの更新
-	for (int i = 0; i < 2; i++)
-	{
-		if (swap_anim[i].move_flg == true)
-		{
-			swap_anim[i].location.x += swap_anim[0].speed * cosf(swap_anim[i].move_rad);
-			swap_anim[i].location.y += swap_anim[1].speed * sinf(swap_anim[i].move_rad);
-		}
-		if (--swap_anim[i].timer < SWAP_EFFECT_STOP_TIME)
-		{
-			swap_anim[i].move_flg = false;
-		}
-		if (swap_anim[i].timer < SWAP_EFFECT_STOP_TIME && swap_anim[i].timer > 0)
-		{
-			swap_anim_timer++;
-		}
-		else
-		{
-			swap_anim_timer = 0;
-		}
-	}
 
-	if (object[player_object]->GetLocation().x > stage_width - 2000 && frame % 200 == 0)
-	{
-		if (++now_weather > 3)
-		{
-			now_weather = 1;
-		}
-	}
-
-	//各管理クラスの更新
-	weather->Update(this);
+	//管理クラスの更新
 	effect_spawner->Update(this);
 
 #ifdef _DEBUG
@@ -161,6 +144,7 @@ AbstractScene* GameMain::Update()
 
 void GameMain::Draw() const
 {
+	back_ground->Draw(camera_location);
 	int pn = 0;
 	for (int i = 0; object[i] != nullptr; i++)
 	{
@@ -172,20 +156,6 @@ void GameMain::Draw() const
 	}
 	//プレイヤーを最後に描画
 	object[pn]->Draw();
-	//色交換エフェクトの描画
-	for (int i = 0; i < 2; i++)
-	{
-		if (swap_anim[i].move_flg == true)
-		{
-			DrawBox(swap_anim[i].location.x - camera_location.x, swap_anim[i].location.y - camera_location.y, swap_anim[i].location.x + 40 - camera_location.x, swap_anim[i].location.y + 40 - camera_location.y, swap_anim[i].color, true);
-		}
-		if (swap_anim_timer > 0)
-		{
-			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200 - (swap_anim_timer*20));
-			DrawBox(swap_anim[i].start.x - camera_location.x - (swap_anim_timer*5), swap_anim[i].start.y - camera_location.y - (swap_anim_timer * 5), swap_anim[i].start.x + swap_anim[i].erea.width - camera_location.x + (swap_anim_timer * 5), swap_anim[i].start.y + swap_anim[i].erea.height - camera_location.y + (swap_anim_timer * 5), swap_anim[i].color, true);
-			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255); 
-		}
-	}
 
 	//エフェクトの描画
 	effect_spawner->Draw();
@@ -358,7 +328,7 @@ void GameMain::SetStage(int _stage)
 	now_stage = _stage;
 	//ファイルの読込
 	LoadStageData(now_stage);
-	for (int i = 0; i < stage_height_num; i++)
+	for (int i = stage_height_num-1; i > 0; i--)
 	{
 		for (int j = 0; j < stage_width_num; j++)
 		{	
@@ -374,8 +344,11 @@ void GameMain::SetStage(int _stage)
 			case FIRE_BLOCK:
 			case WOOD_BLOCK:
 			case WATER_BLOCK:
+			case WEATHER_RAIN:
+			case WEATHER_FIRE:
+			case WEATHER_SEED:
 				//ステージ内ブロックを生成
-				CreateObject(new Stage(stage_data[i][j]), { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { BOX_WIDTH ,BOX_HEIGHT }, stage_data[i][j]);
+				CreateObject(new Stage(stage_data[i][j],stage_height), { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { BOX_WIDTH ,BOX_HEIGHT }, stage_data[i][j]);
 				break;
 			case PLAYER_BLOCK:
 				//プレイヤーの生成
@@ -433,37 +406,6 @@ void GameMain::ResetCamera()
 	camera_location.y = screen_origin.y;
 }
 
-int GameMain::Swap(Object* _object1, Object* _object2)
-{
-	swap_anim[0].location = _object1->GetLocation();
-	swap_anim[1].location = _object2->GetLocation();
-	swap_anim[0].start = _object1->GetLocation();
-	swap_anim[1].start = _object2->GetLocation();
-	swap_anim[0].erea = _object1->GetErea();
-	swap_anim[1].erea = _object2->GetErea();
-	swap_anim[0].move_flg = true;
-	swap_anim[1].move_flg = true;
-	swap_anim[0].move_rad = atan2f(_object2->GetLocation().y - _object1->GetLocation().y, _object2->GetLocation().x - _object1->GetLocation().x);
-	swap_anim[1].move_rad = atan2f(_object1->GetLocation().y - _object2->GetLocation().y, _object1->GetLocation().x - _object2->GetLocation().x);
-	swap_anim[0].color = _object1->GetColerData();
-	swap_anim[1].color = _object2->GetColerData();
-
-	//移動にかかる時間測定
-	Location move;
-	float g;
-	move.x = fabsf(_object1->GetCenterLocation().x - _object2->GetCenterLocation().x);
-	move.y = fabsf(_object1->GetCenterLocation().y - _object2->GetCenterLocation().y);
-	g = powf(move.x, 2) + powf(move.y, 2);
-
-	swap_anim[0].speed = (int)(sqrtf(g) / SWAP_EFFECT_SPEED);
-	swap_anim[1].speed = (int)(sqrtf(g) / SWAP_EFFECT_SPEED);
-
-	swap_anim[0].timer = (int)((sqrtf(g) / swap_anim[0].speed) * 0.9f) + SWAP_EFFECT_STOP_TIME;
-	swap_anim[1].timer = (int)((sqrtf(g) / swap_anim[1].speed) * 0.9f) + SWAP_EFFECT_STOP_TIME;
-
-	return swap_anim[0].timer;
-}
-
 bool GameMain::GetSearchFlg()
 {
 	return object[player_object]->GetSearchFlg();
@@ -482,4 +424,9 @@ Location GameMain::GetCameraLocation()
 void GameMain::SpawnEffect(Location _location, Erea _erea, int _type, int _time, int _color)
 {
 	effect_spawner->SpawnEffect(_location, _erea, _type, _time, _color);
+}
+
+int GameMain::Swap(Object* _object1, Object* _object2)
+{
+	return effect_spawner->Swap(_object1, _object2);
 }

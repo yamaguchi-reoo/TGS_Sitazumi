@@ -24,6 +24,9 @@ enum BlockList	{
 	ENEMY_FROG_GREEN,	
 	ENEMY_FROG_BLUE	,
 	ENEMY_BOSS,
+	WEATHER_RAIN,
+	WEATHER_FIRE,
+	WEATHER_SEED,
 
 };
 
@@ -42,7 +45,7 @@ static int color_data[9]
 };
 
 //Edit表示用文字色データ
-static int text_color[20]
+static int text_color[23]
 {
 	0xffffff,	//無
 	0x000000,	//白ブロック
@@ -66,14 +69,12 @@ static int text_color[20]
 	0xff0000,	//赤蛙
 	0x00ff00,	//緑蛙
 	0x0000ff,	//青蛙
-
 	0xffffff,	//ボス
-};
 
-//ブロックアニメーション用
-static int stage_shift[10]
-{
-	3,5,5,4,4,3,3,2,2,1
+	0x0000ff,	//雨
+	0xff0000,	//火球
+	0x00ff00,	//種
+
 };
 
 class Stage :
@@ -88,9 +89,10 @@ private:
 	int anim;							//アニメーション用
 	bool hit_flg;						//何かが当たった時用
 	int hit_timer;						//何かが当たった時のアニメーション用
+	int stage_height;					//ステージ全体の高さ
 
 public:
-	Stage(int _type);
+	Stage(int _type, int _stage_height = 0);
 	~Stage();
 	void Initialize(Location _location, Erea _erea, int _color_data, int _object_pos)override;
 	void Update(GameMain* _g)override;
@@ -108,5 +110,8 @@ public:
 	int GetStageType() { return type; }
 	//Edit表示設定
 	void SetDebugFlg() { debug_flg = true; }
+
+	//立体感用描画
+	void DrawSolidBody(int color)const;
 };
 

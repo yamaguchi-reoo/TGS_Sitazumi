@@ -1,5 +1,5 @@
 #pragma once
-#include "BoxCollider.h"
+#include "Object.h"
 #define EFFECT_NUM	100		//エフェクトの最大数
 
 enum EffectList {
@@ -27,9 +27,24 @@ struct EffectAnim{
 	float rad;					//輝きエフェクトの回転方向
 };
 
+struct SwapAnim
+{
+	bool move_flg;          //移動するか判断
+	Location start;          //オブジェクトの座標（アニメーション開始地点）
+	Erea erea;               //オブジェクトのサイズ
+	Location location;      //交換エフェクト用変数
+	Location local_location;	//ローカル座標
+	float move_rad;        //交換エフェクト移動用
+	int color;             //色情報
+	int timer;              //エフェクト時間
+	int speed;              //エフェクト速度
+};
+
 class EffectSpawner
 {
 private:
+	SwapAnim swap_anim[2];  //交換エフェクト用
+	int swap_anim_timer;    //交換エフェクト時間用
 	EffectAnim effect[EFFECT_NUM];
 	int frame;		//フレーム測定
 
@@ -49,5 +64,9 @@ public:
 
 	//エフェクト構造体のリセット
 	void ResetEffect(int _num);
+
+	//交換アニメーション
+	int Swap(Object* _object1, Object* _object2);
+
 };
 

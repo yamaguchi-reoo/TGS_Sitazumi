@@ -40,6 +40,9 @@ void EffectSpawner::Initialize()
 	{
 		ResetEffect(i);
 	}
+	swap_anim[0].move_flg = false;
+	swap_anim[1].move_flg = false;	
+	swap_anim_timer = 0;
 }
 
 void EffectSpawner::Update(GameMain* _g)
@@ -102,6 +105,33 @@ void EffectSpawner::Update(GameMain* _g)
 			}
 		}
 	}
+
+	//色交換エフェクトの更新
+	for (int i = 0; i < 2; i++)
+	{
+		//ローカル座標の更新
+		swap_anim[i].local_location.x = swap_anim[i].location.x - _g->GetCameraLocation().x - (SWAP_EFFECT_SIZE / 2);
+		swap_anim[i].local_location.y = swap_anim[i].location.y - _g->GetCameraLocation().y - (SWAP_EFFECT_SIZE / 2);
+		//エフェクトの移動
+		if (swap_anim[i].move_flg == true)
+		{
+			swap_anim[i].location.x += swap_anim[0].speed * cosf(swap_anim[i].move_rad);
+			swap_anim[i].location.y += swap_anim[1].speed * sinf(swap_anim[i].move_rad);
+			SpawnEffect(swap_anim[i].location, swap_anim[i].erea, 1, 5, swap_anim[i].color);
+		}
+		if (--swap_anim[i].timer < SWAP_EFFECT_STOP_TIME)
+		{
+			swap_anim[i].move_flg = false;
+		}
+		if (swap_anim[i].timer < SWAP_EFFECT_STOP_TIME && swap_anim[i].timer > 0)
+		{
+			swap_anim_timer++;
+		}
+		else
+		{
+			swap_anim_timer = 0;
+		}
+	}
 }
 
 void EffectSpawner::Draw()const
@@ -144,6 +174,21 @@ void EffectSpawner::Draw()const
 			}
 		}
 	}
+
+	//色交換エフェクトの描画
+	for (int i = 0; i < 2; i++)
+	{
+		if (swap_anim[i].move_flg == true)
+		{
+			DrawBox(swap_anim[i].local_location.x, swap_anim[i].local_location.y, swap_anim[i].local_location.x + 40, swap_anim[i].local_location.y + 40, swap_anim[i].color, true);
+		}
+		if (swap_anim_timer > 0)
+		{
+			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200 - (swap_anim_timer * 20));
+			DrawBox(swap_anim[i].local_location.x - (swap_anim_timer * 10), swap_anim[i].local_location.y - (swap_anim_timer * 10), swap_anim[i].local_location.x + swap_anim[i].erea.width + (swap_anim_timer * 5), swap_anim[i].local_location.y + swap_anim[i].erea.height + (swap_anim_timer * 5), swap_anim[i].color, true);
+			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
+		}
+	}
 }
 
 void EffectSpawner::Finalize()
@@ -156,7 +201,7 @@ void EffectSpawner::SpawnEffect(Location _location, Erea _erea,int _effect_type,
 	switch (_effect_type)
 	{
 	//プレイヤースポーンエフェクト
-	case 0:
+	case PlayerSpawnEffect:
 		for (float j = 0.0f; j < 1; j += 0.125f)
 		{
 			for (int i = 0; i < EFFECT_NUM; i++)
@@ -178,7 +223,7 @@ void EffectSpawner::SpawnEffect(Location _location, Erea _erea,int _effect_type,
 		}
 		break;
 	//輝き
-	case 1:
+	case ShineEffect:
 		for (int i = 0; i < EFFECT_NUM; i++)
 		{
 			if (effect[i].spawn_flg == false)
@@ -195,7 +240,7 @@ void EffectSpawner::SpawnEffect(Location _location, Erea _erea,int _effect_type,
 		}
 		break;
 		//塵になって消える
-	case 2:
+	case DeathEffect:
 		for (int i = 0; i < EFFECT_NUM; i++)
 		{
 			if (effect[i].spawn_flg == false)
@@ -241,6 +286,39 @@ void EffectSpawner::ResetEffect(int _num)
 	effect[_num].effect_shift[1] = { 0,0 };
 	effect[_num].shine_timer = 0;
 	effect[_num].rad = 0.0f;
+}
+
+int EffectSpawner::Swap(Object* _object1, Object* _object2)
+{
+	swap_anim[0].location = _object1->GetCenterLocation();
+	swap_anim[1].location = _object2->GetCenterLocation();
+	swap_anim[0].start = _object1->GetCenterLocation();
+	swap_anim[1].start = _object2->GetCenterLocation();
+	swap_anim[0].erea = { SWAP_EFFECT_SIZE ,SWAP_EFFECT_SIZE };
+	swap_anim[1].erea = { SWAP_EFFECT_SIZE ,SWAP_EFFECT_SIZE };
+	swap_anim[0].move_flg = true;
+	swap_anim[1].move_flg = true;
+	swap_anim[0].move_rad = atan2f(_object2->GetCenterLocation().y - _object1->GetCenterLocation().y,
+								   _object2->GetCenterLocation().x - _object1->GetCenterLocation().x);
+	swap_anim[1].move_rad = atan2f(_object1->GetCenterLocation().y - _object2->GetCenterLocation().y,
+								   _object1->GetCenterLocation().x - _object2->GetCenterLocation().x);
+	swap_anim[0].color = _object1->GetColerData();
+	swap_anim[1].color = _object2->GetColerData();
+
+	//移動にかかる時間測定
+	Location move;
+	float g;
+	move.x = fabsf(_object1->GetCenterLocation().x - _object2->GetCenterLocation().x);
+	move.y = fabsf(_object1->GetCenterLocation().y - _object2->GetCenterLocation().y);
+	g = powf(move.x, 2) + powf(move.y, 2);
+
+	swap_anim[0].speed = (int)(sqrtf(g) / SWAP_EFFECT_SPEED);
+	swap_anim[1].speed = (int)(sqrtf(g) / SWAP_EFFECT_SPEED);
+
+	swap_anim[0].timer = (int)((sqrtf(g) / swap_anim[0].speed) * 0.9f) + SWAP_EFFECT_STOP_TIME;
+	swap_anim[1].timer = (int)((sqrtf(g) / swap_anim[1].speed) * 0.9f) + SWAP_EFFECT_STOP_TIME;
+
+	return swap_anim[0].timer;
 }
 
 

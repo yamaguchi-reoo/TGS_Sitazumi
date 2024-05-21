@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Object\BackGround.cpp" />
     <ClCompile Include="Object\Boss.cpp" />
     <ClCompile Include="Object\BoxCollider.cpp" />
     <ClCompile Include="Object\EffectSpawner.cpp" />
@@ -41,6 +42,7 @@
     <ClCompile Include="Utility\ResourceManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Object\BackGround.h" />
     <ClInclude Include="Object\Boss.h" />
     <ClInclude Include="Object\BoxCollider.h" />
     <ClInclude Include="Object\EffectSpawner.h" />
