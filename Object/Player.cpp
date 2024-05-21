@@ -257,7 +257,7 @@ void Player::Draw()const
 		}
 	}
 	else {//見た目
-		DrawBox(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, FALSE);
+		//DrawBox(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, FALSE);
 		float ang = 0.f;
 
 		//頭
