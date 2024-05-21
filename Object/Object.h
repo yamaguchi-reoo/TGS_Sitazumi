@@ -8,6 +8,7 @@
 #define FIRE 3			//Objectの種類用
 #define WOOD 4			//Objectの種類用
 #define WATER 5			//Objectの種類用
+#define BOSS 6			//Objectの種類用
 
 //仮想クラス
 class GameMain;

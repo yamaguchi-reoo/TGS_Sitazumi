@@ -41,6 +41,7 @@ private:
     int frame;                                           //フレーム測定
     int stage_data[MAX_STAGE_HEIGHT][MAX_STAGE_WIDTH];   //ステージデータ格納
     int player_object;             //プレイヤーが配列の何番目に格納されているか
+    int boss_object;               
 
     Object* object[OBJECT_NUM] = { nullptr };    //オブジェクト格納
     WeatherManager* weather;                        //天気管理オブジェクト

@@ -1,6 +1,9 @@
 #include "Boss.h"
 #include<math.h>
 #include"../Utility/KeyInput.h"
+#include"../Scene/GameMain.h"
+
+#define BOSS_SIZE 315
 
 Boss::Boss():vector { 0.0f },hit(false),boss_state(BossState::IDLE)
 {
@@ -35,8 +38,21 @@ void Boss::Update(GameMain* _g)
 		stageHitFlg[0][i] = false;
 		stageHitFlg[1][i] = false;
 	}
-	vector = { 5.f };
-	Move();
+
+
+	vector = { 1.f };
+
+	// プレイヤーとの距離を計算
+	Location player_pos = _g->GetPlayerLocation();
+	float dx = player_pos.x - location.x;
+	float dy = player_pos.y - location.y;
+	float length = (float)sqrt(dx * dx + dy * dy);
+
+	dx /= length;
+	dy /= length;
+
+
+	Move(dx, dy);
 }
 
 void Boss::Draw() const
@@ -44,11 +60,12 @@ void Boss::Draw() const
 	//ボスの描画用配列
 	const std::vector<Location>vertices = {
 		//本体
-		{local_location.x + 175, local_location.y + 175},
+		{local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2},
 		//バリア
-		{local_location.x + 175, local_location.y + 175},
+		{local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2},
 		//右翼
-		{local_location.x, local_location.y},{local_location.x, local_location.y},{local_location.x, local_location.y},{local_location.x, local_location.y},
+		{local_location.x + 225, local_location.y + 140}, {local_location.x + 250, local_location.y + 120 },{local_location.x + 255, local_location.y + 140 },{local_location.x + 230, local_location.y + 160 },
+		{local_location.x + 275, local_location.y + 140}, {local_location.x + 300, local_location.y + 120 },{local_location.x + 305, local_location.y + 140 },{local_location.x + 280, local_location.y + 160 },
 	};
 	//DrawCircle(local_location.x + 175, local_location.y + 175, 70, color, TRUE);
 	//DrawBox(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, FALSE);
@@ -57,18 +74,19 @@ void Boss::Draw() const
 	{
 		//本体描画
 		if (i < 1) {
-			DrawCircle(vertices[i].x, vertices[i].y, 50, color, TRUE);
+			DrawCircle(vertices[i].x, vertices[i].y, 50, GetColor(255,255,255), TRUE);
 		}
 		//バリア
-		if (i < 2) {
+		else if (i < 2) {
 			DrawCircle(vertices[i].x, vertices[i].y, 175, color, FALSE);
+			DrawCircle(vertices[i].x, vertices[i].y, 170, GetColor(0, 255, 0), FALSE);
+			DrawCircle(vertices[i].x, vertices[i].y, 165, GetColor(0, 0, 255), FALSE);
 		}
 		//右翼
-		if (i < 3) {
-			DrawQuadrangle(vertices[i].x, vertices[i].y, vertices[i + 1].x, vertices[i + 1].y, vertices[i + 2].x, vertices[i + 2].y, vertices[i + 3].x, vertices[i + 3].y, color, TRUE);
+		else if (i < 7) {
+			//DrawQuadrangleAA(vertices[i].x, vertices[i].y, vertices[i + 1].x, vertices[i + 1].y, vertices[i + 2].x, vertices[i + 2].y, vertices[i + 3].x, vertices[i + 3].y, color, FALSE);
 		}
 	}
-
 	//DrawFormatString(1100, 0, color, "x:%d  y:%d", KeyInput::GetMouseCursor().x, KeyInput::GetMouseCursor().y);
 }
 
@@ -76,15 +94,34 @@ void Boss::Finalize()
 {
 }
 
-void Boss::Move()
+void Boss::Move(float dx, float dy)
 {
-	//左移動
-	if (boss_state == BossState::LEFT) {
-		location.x -= vector.x;
-	}
-	//右移動
-	if (boss_state == BossState::RIGHT) {
-		location.x += vector.x;
+	////左移動
+	//if (boss_state == BossState::LEFT) {
+	//	location.x -= vector.x;
+	//}
+	////右移動
+	//if (boss_state == BossState::RIGHT) {
+	//	location.x += vector.x;
+	//}
+	switch (boss_state)
+	{
+	case BossState::IDLE:
+		//location.y += (float)sin(PI * 2.f / 40.f) * 5.f;
+		// 移動する
+		location.x += dx * (vector.x + 1.5f);
+		//location.y += dy * (vector.y + 1.5f);
+		break;
+	case BossState::LEFT:
+		//location.x -= vector.x;
+		break;
+	case BossState::RIGHT:
+		//location.x += vector.x;
+		break;
+	case BossState::DEATH:
+		break;
+	default:
+		break;
 	}
 }
 
@@ -139,7 +176,7 @@ void Boss::Hit(Object* _object)
 
 		//下方向に埋まらないようにする
 		if (stageHitFlg[0][bottom]) {//下方向に埋まっていたら
-			float t = _object->GetLocation().y - (location.y + erea.height);
+			float t = _object->GetLocation().y - (location.y + erea.height + .1f);
 			if (t != 0) {
 				move[bottom] = t;
 			}
@@ -188,7 +225,7 @@ void Boss::Hit(Object* _object)
 				vector.x = 0.f;
 				move[left] = t;
 
-				boss_state = BossState::RIGHT;
+				//boss_state = BossState::RIGHT;
 			}
 		}
 
@@ -198,7 +235,7 @@ void Boss::Hit(Object* _object)
 			if (t != 0) {
 				vector.x = 0.f;
 				move[right] = t;
-				boss_state = BossState::LEFT;
+				//boss_state = BossState::LEFT;
 			}
 		}
 

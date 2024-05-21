@@ -1,6 +1,7 @@
 #pragma once
 #include "Object.h"
 #include <vector>
+#include "EnemyBat.h"
 
 enum class BossState {
 	IDLE = 0,
@@ -39,7 +40,7 @@ public:
 	void Draw()const override;
 	void Finalize()override;
 
-	void Move();
+	void Move(float dx, float dy);
 
 	void Hit(Object* _object)override;
 	bool SearchColor(Object* ob) {
