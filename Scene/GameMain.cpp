@@ -14,7 +14,7 @@
 static Location camera_location = { 0,0};	//カメラの座標
 static Location screen_origin = { (SCREEN_WIDTH / 2),(SCREEN_HEIGHT / 2) };
 
-GameMain::GameMain(int _stage) :frame(0),stage_data{0},now_stage(0), object_num(0),stage_width_num(0), stage_height_num(0), stage_width(0), stage_height(0), camera_x_lock_flg(true), camera_y_lock_flg(true), x_pos_set_once(false), y_pos_set_once(false),player_object(0),weather(0), weather_timer(0), move_object_num(0)
+GameMain::GameMain(int _stage) :frame(0),stage_data{0},now_stage(0), object_num(0),stage_width_num(0), stage_height_num(0), stage_width(0), stage_height(0), camera_x_lock_flg(true), camera_y_lock_flg(true), x_pos_set_once(false), y_pos_set_once(false),player_object(0), boss_object(0),weather(0), weather_timer(0), move_object_num(0)
 {
 	now_stage = _stage;
 }
@@ -39,6 +39,10 @@ void GameMain::Initialize()
 	back_ground->Initialize(stage_width);
 
 	lock_pos = camera_location;
+	swap_anim_timer = 0;
+
+	test = new BossAttackFire();
+	test->Initialize({ 1000,2000 }, { 40,40 }, RED, 1000);
 }
 
 void GameMain::Finalize()
@@ -114,6 +118,7 @@ AbstractScene* GameMain::Update()
 	//プレイヤーの更新＆色探知用
 	object[player_object]->SetScreenPosition(camera_location);
 	object[player_object]->Update(this);
+	object[boss_object]->Update(this);
 	move_object_num++;
 	for (int i = 0; object[i] != nullptr; i++)
 	{
@@ -137,6 +142,9 @@ AbstractScene* GameMain::Update()
 	{
 		return new EditScene(now_stage);
 	}
+
+	test->Update(this);
+	test->SetScreenPosition(camera_location);
 #endif
 
 	return this;
@@ -166,6 +174,8 @@ void GameMain::Draw() const
 #ifdef _DEBUG
 	DrawFormatString(100, 100, 0xffffff, "Object数:%d", object_num);
 	DrawFormatString(100, 120, 0xffffff, "Updeteが呼ばれているObject数:%d", move_object_num);
+
+	test->Draw();
 #endif
 }
 
@@ -182,6 +192,10 @@ void GameMain::CreateObject(Object* _object, Location _location, Erea _erea, int
 			if (object[i]->GetObjectType() == PLAYER)
 			{
 				player_object = i;
+			}
+			if (object[i]->GetObjectType() == BOSS)
+			{
+				boss_object = i;
 			}
 			object_num++;
 			break;
@@ -379,7 +393,7 @@ void GameMain::SetStage(int _stage)
 				break;
 			case ENEMY_BOSS:
 				//ボスの生成
-				CreateObject(new Boss, { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { 350,350 }, ColorList[stage_data[i][j] - 19]);
+				CreateObject(new Boss, { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { 315,315 }, ColorList[stage_data[i][j] - 19]);
 				break;
 			default:
 				break;
@@ -415,6 +429,11 @@ bool GameMain::GetSearchFlg()
 Location GameMain::GetPlayerLocation()
 {
 	return object[player_object]->GetLocation();
+}
+
+Erea GameMain::GetPlayerErea()
+{
+	return object[player_object]->GetErea();
 }
 
 Location GameMain::GetCameraLocation()

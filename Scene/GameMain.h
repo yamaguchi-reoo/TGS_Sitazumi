@@ -12,6 +12,8 @@
 #include "../Object/EffectSpawner.h"
 #include "../Object/Boss.h"
 #include "../Object/BackGround.h"
+#include "../Object/BossAttackWood.h"
+#include "../Object/BossAttackFire.h"
 
 class Player;
 
@@ -30,6 +32,7 @@ private:
     int frame;                                           //フレーム測定
     int stage_data[MAX_STAGE_HEIGHT][MAX_STAGE_WIDTH];   //ステージデータ格納
     int player_object;             //プレイヤーが配列の何番目に格納されているか
+    int boss_object;               
 
     Object* object[OBJECT_NUM] = { nullptr };    //オブジェクト格納
     WeatherManager* weather;                        //天気管理オブジェクト
@@ -95,6 +98,8 @@ public:
 
     //プレイヤーのワールド座標を取得
     Location GetPlayerLocation();
+
+    Erea GetPlayerErea();
 
     //カメラ座標の取得
     Location GetCameraLocation();

@@ -1,6 +1,7 @@
 #pragma once
 #include "Object.h"
 #include <vector>
+#include "EnemyBat.h"
 
 enum class BossState {
 	IDLE = 0,
@@ -39,11 +40,13 @@ public:
 	void Draw()const override;
 	void Finalize()override;
 
-	void Move();
+	void Move(float dx, float dy);
 
 	void Hit(Object* _object)override;
 	bool SearchColor(Object* ob) {
 		return 0;
 	}
 	bool CheckCollision(Location l, Erea e); //ステージとの当たり判定
+
+	void DistanceCalc(GameMain* _g);//プレイヤーとボスの距離計算
 };

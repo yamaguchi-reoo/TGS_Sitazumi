@@ -22,6 +22,9 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Object\BackGround.cpp" />
     <ClCompile Include="Object\Boss.cpp" />
+    <ClCompile Include="Object\BossAttackFire.cpp" />
+    <ClCompile Include="Object\BossAttackWater.cpp" />
+    <ClCompile Include="Object\BossAttackWood.cpp" />
     <ClCompile Include="Object\BoxCollider.cpp" />
     <ClCompile Include="Object\EffectSpawner.cpp" />
     <ClCompile Include="Object\EnemyBat.cpp" />
@@ -44,6 +47,9 @@
   <ItemGroup>
     <ClInclude Include="Object\BackGround.h" />
     <ClInclude Include="Object\Boss.h" />
+    <ClInclude Include="Object\BossAttackFire.h" />
+    <ClInclude Include="Object\BossAttackWater.h" />
+    <ClInclude Include="Object\BossAttackWood.h" />
     <ClInclude Include="Object\BoxCollider.h" />
     <ClInclude Include="Object\EffectSpawner.h" />
     <ClInclude Include="Object\EnemyFrog.h" />
