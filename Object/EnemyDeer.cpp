@@ -226,7 +226,7 @@ void EnemyDeer::Hit(Object* _object)
 	DrawTest6 = _object->GetColerData();*/
 
 	//ブロックと当たった時の処理
-	if (_object->GetObjectType() == BLOCK)
+	if (_object->GetObjectType() == BLOCK && _object->GetCanHit() == TRUE)
 	{
 		Location tmpl = location;
 		Erea tmpe = erea;

@@ -90,7 +90,7 @@ AbstractScene* GameMain::Update()
 					for (int j = i + 1; object[j] != nullptr; j++)
 					{
 						//各オブジェクトとの当たり判定
-						if (object[i]->GetCanHit() == TRUE && object[j]->GetCanHit() == TRUE && object[i]->HitBox(object[j]) && object[j] != object[player_object])
+						if (object[i]->HitBox(object[j]) && object[j] != object[player_object])
 						{
 							object[i]->Hit(object[j]);
 							object[j]->Hit(object[i]);
@@ -99,14 +99,14 @@ AbstractScene* GameMain::Update()
 				}
 			}
 		}
-		if (object[player_object]->GetLocation().x > stage_width - 2000 && ++weather_timer > 200)
-		{
-			if (++now_weather > 3)
-			{
-				now_weather = 1;
-			}
-			weather_timer = 0;
-		}
+		//if (object[player_object]->GetLocation().x > stage_width - 2000 && ++weather_timer > 200)
+		//{
+		//	if (++now_weather > 3)
+		//	{
+		//		now_weather = 1;
+		//	}
+		//	weather_timer = 0;
+		//}
 		//管理クラスの更新
 		weather->Update(this);
 	}
@@ -121,7 +121,7 @@ AbstractScene* GameMain::Update()
 			object[player_object]->SearchColor(object[i]);
 		}
 		//各オブジェクトとの当たり判定
-		if (object[i]->GetCanHit() == TRUE && object[player_object]->GetCanHit() == TRUE && object[i]->HitBox(object[player_object]))
+		if (object[i]->HitBox(object[player_object]))
 		{
 			object[i]->Hit(object[player_object]);
 			object[player_object]->Hit(object[i]);
@@ -344,6 +344,7 @@ void GameMain::SetStage(int _stage)
 			case FIRE_BLOCK:
 			case WOOD_BLOCK:
 			case WATER_BLOCK:
+			case WEATHER_NORMAL:
 			case WEATHER_RAIN:
 			case WEATHER_FIRE:
 			case WEATHER_SEED:

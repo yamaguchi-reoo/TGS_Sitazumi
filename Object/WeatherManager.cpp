@@ -70,9 +70,3 @@ void WeatherManager::Finalize()
 
 }
 
-void WeatherManager::SetWeather(int _type)
-{ 
-	//now_weather = _type; 
-	//delay = 0;
-}
-

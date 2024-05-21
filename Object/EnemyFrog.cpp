@@ -122,7 +122,7 @@ void EnemyFrog::Hit(Object* _object)
 	__super::Hit(_object);
 
 	//ブロックと当たった時の処理
-	if (_object->GetObjectType() == BLOCK)
+	if (_object->GetObjectType() == BLOCK && _object->GetCanHit() == TRUE)
 	{
 		Location tmpl = location;
 		Erea tmpe = erea;

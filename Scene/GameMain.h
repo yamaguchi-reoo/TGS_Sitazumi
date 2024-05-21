@@ -102,6 +102,9 @@ public:
     //天気の取得
     int GetNowWeather() { return now_weather; }
 
+    //天気の設定
+    void SetNowWeather(int _wearher) { now_weather = _wearher; }
+
     //エフェクトの生成
     void SpawnEffect(Location _location, Erea _erea, int _type, int _time,int _color);
 

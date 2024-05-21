@@ -5,7 +5,7 @@
 #include "../Object/Stage.h"
 #include "../Utility/KeyInput.h"
 
-#define OBJECT_TYPE_NUM 23       //配置できるオブジェクトの種類数
+#define OBJECT_TYPE_NUM 24       //配置できるオブジェクトの種類数
 #define UI_OBJECT_TYPE_NUM 10     //配置できるオブジェクトの種類数
 #define WIDTH_BUTTON_POS_X 100   //横幅調節ボタンのX位置
 #define WIDTH_BUTTON_POS_Y 40    //横幅調節ボタンのY位置
@@ -45,7 +45,7 @@ static int can_select_type[UI_OBJECT_TYPE_NUM][2] =
     {1,3},
     {1,3},
     {0,1},
-    {1,3},
+    {1,4},
 };
 static char block_type_string[UI_OBJECT_TYPE_NUM][5][256] =
 {
@@ -58,7 +58,7 @@ static char block_type_string[UI_OBJECT_TYPE_NUM][5][256] =
     {"赤蝙","緑蝙","青蝙"," "," ",},
     {"赤蛙","緑蛙","青蛙"," "," ",},
     {"ボス"," "," "," "," "},
-    {"雨","火山","種"," "," "},
+    {"通常","雨","火山","種"," "},
 };
 
 class EditScene :
