@@ -3,7 +3,7 @@
 
 BackGround::BackGround()
 {
-	bg_erea.width = 3000;
+	bg_erea.width = 6000;
 	bg_erea.height = 2000;
 }
 

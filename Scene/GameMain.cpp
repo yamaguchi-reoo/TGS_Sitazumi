@@ -201,7 +201,11 @@ void GameMain::DeleteObject(int i)
 			object[j]->SetObjectPos(j);
 			if (object[j]->GetObjectType() == PLAYER)
 			{
-				player_object--;
+				player_object = j;
+			}
+			if (object[j]->GetObjectType() == BOSS)
+			{
+				boss_object = j;
 			}
 		}
 		else
@@ -392,7 +396,7 @@ void GameMain::SetStage(int _stage)
 	if (player_flg == false)
 	{
 		//プレイヤーの生成
-		CreateObject(new Player, { (float)100,(float)100 }, { 150,75 }, RED);
+		CreateObject(new Player, { (float)100,(float)100 }, { PLAYER_HEIGHT,PLAYER_WIDTH }, RED);
 	}
 	//カメラのリセット
 	ResetCamera();
