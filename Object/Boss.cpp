@@ -43,9 +43,10 @@ void Boss::Update(GameMain* _g)
 	//プレイヤーとボスの距離を計算
 	DistanceCalc(_g);
 
+	barrier();
 	if (damage_flg) {
 		damage_effect_time--;
-		damage_efect_flg = !damage_efect_flg;
+		damage_effect_flg = !damage_effect_flg;
 		if (damage_effect_time <= 0) {
 			damage_flg = false;
 		}
@@ -54,47 +55,55 @@ void Boss::Update(GameMain* _g)
 
 void Boss::Draw() const
 {
-	//ボスの描画用配列
-	const std::vector<Location>vertices = {
-		//本体
-		{local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2},
-		//バリア
-		{local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2},
-		//右翼
-		{local_location.x + 225, local_location.y + 140}, {local_location.x + 250, local_location.y + 120 },{local_location.x + 255, local_location.y + 140 },{local_location.x + 230, local_location.y + 160 },
-		{local_location.x + 275, local_location.y + 140}, {local_location.x + 300, local_location.y + 120 },{local_location.x + 305, local_location.y + 140 },{local_location.x + 280, local_location.y + 160 },
-	};
-	//DrawCircle(local_location.x + 175, local_location.y + 175, 70, color, TRUE);
 	DrawBox(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, FALSE);
 
-	for (int i = 0; i < vertices.size(); i++)
-	{
-		//本体描画
-		if (i < 1) {
-			DrawCircleAA(vertices[i].x, vertices[i].y, 50, 50, GetColor(255, 255, 255), TRUE);
-		}
-		//バリア
-		else if (i < 2) {
-			if (barrier_num >= 3)
-			{
-				DrawCircleAA(vertices[i].x, vertices[i].y, 175, 175, color, FALSE);
+	//本体
+	DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2, 50, 50, color, TRUE);
+
+	if (damage_effect_flg) {
+		if (damage_effect_time % 20 < 10) {
+			// バリアの描画
+			int barrier_rad[] = { 175, 170, 165 };
+			for (int i = 0; i < barrier_num; i++) {
+				DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2, barrier_rad[i], 50, color, FALSE);
 			}
-			if (barrier_num >= 2)
+
+			//ボスの羽画用配列
+			const std::vector<Location>vertices = {
+				//右翼
+				{local_location.x + 225, local_location.y + 140}, {local_location.x + 250, local_location.y + 120 },{local_location.x + 255, local_location.y + 140 },{local_location.x + 230, local_location.y + 160 },
+				{local_location.x + 275, local_location.y + 140}, {local_location.x + 300, local_location.y + 120 },{local_location.x + 305, local_location.y + 140 },{local_location.x + 280, local_location.y + 160 },
+			};
+			//羽描画
+			for (int i = 0; i < vertices.size(); i += 4)
 			{
-				DrawCircleAA(vertices[i].x, vertices[i].y, 170, 170, color, FALSE);
+				//DrawQuadrangleAA(vertices[i].x, vertices[i].y, vertices[i + 1].x, vertices[i + 1].y, vertices[i + 2].x, vertices[i + 2].y, vertices[i + 3].x, vertices[i + 3].y, color, TRUE);
 			}
-			if (barrier_num >= 1)
-			{
-				DrawCircleAA(vertices[i].x, vertices[i].y, 165, 165, color, FALSE);
-			}
-		}
-		//右翼
-		else if (i < 7) {
-			//DrawQuadrangleAA(vertices[i].x, vertices[i].y, vertices[i + 1].x, vertices[i + 1].y, vertices[i + 2].x, vertices[i + 2].y, vertices[i + 3].x, vertices[i + 3].y, color, FALSE);
 		}
 	}
+	else
+	{
+		// バリアの描画
+		int barrier_rad[] = { 175, 170, 165 };
+		for (int i = 0; i < barrier_num; i++) {
+			DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2, barrier_rad[i], 50, color, FALSE);
+		}
 
+		//ボスの羽画用配列
+		const std::vector<Location>vertices = {
+			//右翼
+			{local_location.x + 225, local_location.y + 140}, {local_location.x + 250, local_location.y + 120 },{local_location.x + 255, local_location.y + 140 },{local_location.x + 230, local_location.y + 160 },
+			{local_location.x + 275, local_location.y + 140}, {local_location.x + 300, local_location.y + 120 },{local_location.x + 305, local_location.y + 140 },{local_location.x + 280, local_location.y + 160 },
+		};
+		//羽描画
+		for (int i = 0; i < vertices.size(); i += 4)
+		{
+			//DrawQuadrangleAA(vertices[i].x, vertices[i].y, vertices[i + 1].x, vertices[i + 1].y, vertices[i + 2].x, vertices[i + 2].y, vertices[i + 3].x, vertices[i + 3].y, color, TRUE);
+		}
+	}
+	
 	//DrawFormatString(1100, 0, color, "%d", barrier_num);
+	DrawFormatString(1100, 0, color, "%d", damage_effect_time);
 }
 
 void Boss::Finalize()
@@ -271,7 +280,7 @@ void Boss::Hit(Object* _object)
 			{
 				barrier_num--;
 				damage_flg = true;
-				damage_effect_time = 60;
+				damage_effect_time = 180;
 			}
 		}
 	}
@@ -343,13 +352,18 @@ void Boss::DistanceCalc(GameMain* _g)
 
 void Boss::barrier()
 {
-	if (barrier_num >= 3) {
+	switch (barrier_num)
+	{
+	case 3:
 		color = RED;
-	}
-	if (barrier_num >= 2) {
+		break;
+	case 2:
 		color = BLUE;
-	}
-	if (barrier_num >=1) {
+		break;
+	case 1:
 		color = GREEN;
+		break;
+	default:
+		break;
 	}
 }

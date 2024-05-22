@@ -31,7 +31,7 @@ private:
 
 	bool damage_flg; //ダメージを受けたとき
 	int damage_effect_time = 60;
-	bool damage_efect_flg = false;
+	bool damage_effect_flg = false;
 
 	//std::vector<Location>vertices;
 	bool hit;
