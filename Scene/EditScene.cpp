@@ -71,8 +71,11 @@ AbstractScene* EditScene::Update()
 	{
 		for (int j = 0; j < stage_width_num; j++)
 		{
-			stage[i][j]->Update();
 			stage[i][j]->SetScreenPosition(camera_location);
+			if (CheckInScreen(stage[i][j])==true)
+			{
+				stage[i][j]->Update();
+			}
 		}
 	}
 	switch (ChechSelectErea())
@@ -324,17 +327,17 @@ AbstractScene* EditScene::Update()
 	}
 
 	//全部無に
-	if (KeyInput::OnKey(KEY_INPUT_0))
-	{
-		SaveOldData();
-		for (int i = 0; i < stage_height_num; i++)
-		{
-			for (int j = 0; j < stage_width_num; j++)
-			{
-				stage_data[i][j] = 0;
-			}
-		}
-	}
+	//if (KeyInput::OnKey(KEY_INPUT_0))
+	//{
+	//	SaveOldData();
+	//	for (int i = 0; i < stage_height_num; i++)
+	//	{
+	//		for (int j = 0; j < stage_width_num; j++)
+	//		{
+	//			stage_data[i][j] = 0;
+	//		}
+	//	}
+	//}
 	return this;
 }
 
@@ -367,14 +370,7 @@ void EditScene::Draw()const
 		{
 			DrawBoxAA(tool_location.x + (i * 50), tool_location.y, tool_location.x + (i * 50) + 50, tool_location.y + 50, 0xffffff, true);
 			DrawBoxAA(tool_location.x + (i * 50), tool_location.y, tool_location.x + (i * 50) + 50, tool_location.y + 50, 0x000000, false);
-			//if ()
-			//{
-			//	DrawFormatStringF(tool_location.x + (i * 50), tool_location.y + 15, 0x000000, "%s", block_type_string[disp_num][current_type]);
-			//}
-			//else
-			//{
-			//	DrawFormatStringF(tool_location.x + (i * 50), tool_location.y + 15, 0x000000, "%s", obj_string[i]);
-			//}
+
 			DrawFormatStringF(tool_location.x + (i * 50), tool_location.y + 15, 0x000000, "%s", block_type_string[i][disp_num]);
 		}
 		else
@@ -705,4 +701,18 @@ void EditScene::ResetSelectData()
 			select_data[i][j] = false;
 		}
 	}
+}
+
+bool EditScene::CheckInScreen(Stage* _stage)const
+{
+	//画面内に居るか判断
+	if (_stage->GetLocation().x > camera_location.x - _stage->GetErea().width &&
+		_stage->GetLocation().x < camera_location.x + SCREEN_WIDTH + _stage->GetErea().width &&
+		_stage->GetLocation().y > camera_location.y - _stage->GetErea().height &&
+		_stage->GetLocation().y < camera_location.y + SCREEN_HEIGHT + _stage->GetErea().height
+		)
+	{
+		return true;
+	}
+	return false;
 }
