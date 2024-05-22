@@ -36,7 +36,7 @@ void GameMain::Initialize()
 	SetStage(now_stage);
 
 	back_ground = new BackGround();
-	back_ground->Initialize(stage_width);
+	back_ground->Initialize({ (float)stage_width,(float)stage_height });
 
 	lock_pos = camera_location;
 
