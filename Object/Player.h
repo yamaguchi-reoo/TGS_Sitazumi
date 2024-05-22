@@ -15,6 +15,7 @@ public:
 		right
 	};
 private:
+	int frame;				//フレーム測定用
 	Location vector; //プレイヤーのベクトル
 	bool stageHitFlg[2][4]; //プレイヤーとステージの当たり判定
 	//0の行はステージのブロック一つ一つに対しての判定

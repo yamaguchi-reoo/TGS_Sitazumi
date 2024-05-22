@@ -10,6 +10,7 @@ int Player::hp = 5;
 
 Player::Player()
 {
+	frame = 0;
 	type = PLAYER;
 	can_swap = TRUE;	//プレイヤーのcan_swapは真でも偽でも大丈夫
 	can_hit = TRUE;
@@ -78,7 +79,11 @@ void Player::Initialize(Location _location, Erea _erea, int _color_data, int _ob
 void Player::Update(GameMain* _g)
 {
 	fps = 0;
-
+	//放置で大きくなりすぎるのを防止
+	if (++frame > 6000)
+	{
+		frame = 0;
+	}
 	if (vector.x != 0 || vector.y != 0)
 	{
 		_g->SpawnEffect(location, erea, ShineEffect, 20, color);

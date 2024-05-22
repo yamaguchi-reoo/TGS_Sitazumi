@@ -6,6 +6,7 @@ enum EffectList {
 	PlayerSpawnEffect = 0,
 	ShineEffect,
 	DeathEffect,
+	LandingEffect
 };
 
 class GameMain;
