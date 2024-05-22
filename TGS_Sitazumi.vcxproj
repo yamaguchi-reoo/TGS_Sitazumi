@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Object\BackGround.cpp" />
     <ClCompile Include="Object\Boss.cpp" />
     <ClCompile Include="Object\BossAttackFire.cpp" />
     <ClCompile Include="Object\BossAttackWater.cpp" />
@@ -44,6 +45,7 @@
     <ClCompile Include="Utility\ResourceManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Object\BackGround.h" />
     <ClInclude Include="Object\Boss.h" />
     <ClInclude Include="Object\BossAttackFire.h" />
     <ClInclude Include="Object\BossAttackWater.h" />

@@ -22,7 +22,7 @@ protected:
 	bool searchFlg;	//スローモーション中か（プレイヤー）
 	int object_pos;	//ゲームメインで生成された時、オブジェクト配列のどこに格納されたか
 public:
-	//_location _erea=スポーン座標、大きさ ,_color_data=色情報
+	//_location _erea=スポーン座標、大きさ ,_color_data=色情報, object_pos=Object配列内の自分自身の位置
 	virtual void Initialize(Location _location, Erea _erea, int _color_data, int _object_pos) = 0;
 
 	virtual void Update(GameMain* _g) = 0;

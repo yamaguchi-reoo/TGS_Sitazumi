@@ -35,7 +35,14 @@ void Weather::Update(GameMain* _g)
 			//木に当たったなら木は消え、その場所に火を作る
 			if (delete_object->GetObjectType() == WOOD)
 			{
-				_g->CreateObject(new Stage(6), delete_object->GetLocation(), delete_object->GetErea(), 6);
+				if (delete_object->GetCanSwap() == TRUE)
+				{
+					_g->CreateObject(new Stage(3), delete_object->GetLocation(), delete_object->GetErea(), 3);
+				}
+				else
+				{
+					_g->CreateObject(new Stage(6), delete_object->GetLocation(), delete_object->GetErea(), 6);
+				}
 				_g->DeleteObject(delete_object->GetObjectPos());
 			}
 		}
@@ -48,7 +55,14 @@ void Weather::Update(GameMain* _g)
 			//火に当たったなら火は消え、その場所に水を作る
 			if (delete_object->GetObjectType() == FIRE)
 			{
-				_g->CreateObject(new Stage(8), delete_object->GetLocation(), delete_object->GetErea(), 8);
+				if (delete_object->GetCanSwap() == TRUE)
+				{
+					_g->CreateObject(new Stage(5), delete_object->GetLocation(), delete_object->GetErea(), 5);
+				}
+				else
+				{
+					_g->CreateObject(new Stage(8), delete_object->GetLocation(), delete_object->GetErea(), 8);
+				}
 				_g->DeleteObject(delete_object->GetObjectPos());
 			}
 		}
@@ -61,7 +75,14 @@ void Weather::Update(GameMain* _g)
 			//水に当たったなら水は消え、その場所に草を作る
 			if (delete_object->GetObjectType() == WATER)
 			{
-				_g->CreateObject(new Stage(7), delete_object->GetLocation(), delete_object->GetErea(), 7);
+				if (delete_object->GetCanSwap() == TRUE)
+				{
+					_g->CreateObject(new Stage(4), delete_object->GetLocation(), delete_object->GetErea(), 4);
+				}
+				else
+				{
+					_g->CreateObject(new Stage(7), delete_object->GetLocation(), delete_object->GetErea(), 7);
+				}
 				_g->DeleteObject(delete_object->GetObjectPos());
 			}
 		}

@@ -36,7 +36,7 @@ void EditScene::Initialize()
 	{
 		for (int j = 0; j < stage_width_num; j++)
 		{
-			stage[i][j] = new Stage(stage_data[i][j]);
+			stage[i][j] = new Stage(stage_data[i][j],stage_height_num*BOX_HEIGHT);
 			kari_location.x = (float)(j * BOX_WIDTH);
 			kari_location.y = (float)(i * BOX_HEIGHT);
 			kari_erea.width = BOX_WIDTH;
@@ -570,7 +570,7 @@ void EditScene::UpdateStage(int _width, int _height)
 			if (stage_data[i][j] < 0)
 			{
 				stage_data[i][j] = 0;
-				stage[i][j] = new Stage(stage_data[i][j]);
+				stage[i][j] = new Stage(stage_data[i][j],stage_height_num * BOX_HEIGHT);
 				kari_location.x = (float)(j * BOX_WIDTH);
 				kari_location.y = (float)(i * BOX_HEIGHT);
 				kari_erea.width = BOX_WIDTH;

@@ -11,6 +11,7 @@
 #include "../Object/WeatherManager.h"
 #include "../Object/EffectSpawner.h"
 #include "../Object/Boss.h"
+#include "../Object/BackGround.h"
 #include "../Object/BossAttackWood.h"
 #include "../Object/BossAttackFire.h"
 
@@ -22,18 +23,6 @@ static int ColorList[4]
     0x00ff00,   //緑
     0x0000ff,   //青
     0xffffff   //白
-};
-
-struct SwapAnim
-{
-    bool move_flg;          //移動するか判断
-    Location start;          //オブジェクトの座標（アニメーション開始地点）
-    Erea erea;               //オブジェクトのサイズ
-    Location location;      //交換エフェクト用変数
-    float move_rad;        //交換エフェクト移動用
-    int color;             //色情報
-    int timer;              //エフェクト時間
-    int speed;              //エフェクト速度
 };
 
 class GameMain :
@@ -48,7 +37,8 @@ private:
     Object* object[OBJECT_NUM] = { nullptr };    //オブジェクト格納
     WeatherManager* weather;                        //天気管理オブジェクト
     EffectSpawner* effect_spawner;                  //エフェクト管理オブジェクト
-
+    BackGround* back_ground;                        //背景描画用
+    BossAttackFire* test;
     int object_num;         //オブジェクト数
     int move_object_num;    //Updateされているオブジェクト数
     int now_stage;          //現在のステージ数
@@ -65,11 +55,6 @@ private:
     int fps = 0;
     int now_weather;            //現在の天気(0=通常　1=雨　2=火　3=木)
     int weather_timer;      //天気オブジェクトを生成するスパン
-
-    SwapAnim swap_anim[2];  //交換エフェクト用
-    int swap_anim_timer;    //交換エフェクト時間用
-
-    BossAttackFire* test;
 public:
 
     //コンストラクタ
@@ -108,9 +93,6 @@ public:
     //カメラ座標を初期地点に戻す
     void ResetCamera();
 
-    //交換アニメーション
-    int Swap(Object* _object1, Object* _object2);
-
     //プレイヤーが色交換のスローモーション中か取得
     bool GetSearchFlg();
 
@@ -125,7 +107,16 @@ public:
     //天気の取得
     int GetNowWeather() { return now_weather; }
 
+    //天気の設定
+    void SetNowWeather(int _wearher) { now_weather = _wearher; }
+
     //エフェクトの生成
     void SpawnEffect(Location _location, Erea _erea, int _type, int _time,int _color);
+
+    //交換アニメーション
+    int Swap(Object* _object1, Object* _object2);
+
+    //そのオブジェクトが画面内に居るか判断
+    bool CheckInScreen(Object* _object);
 };
 

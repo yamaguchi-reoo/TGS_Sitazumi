@@ -1,23 +1,24 @@
 #include "Stage.h"
 #include"../Utility/ResourceManager.h"
+#include"../Scene/GameMain.h"
 
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-Stage::Stage(int _type) : frame(0), old_color(0),inv_flg(false), debug_flg(false), anim(0), hit_flg(false), hit_timer(-1)
+Stage::Stage(int _type, int _stage_height) : frame(0), old_color(0),inv_flg(false), debug_flg(false), anim(0), hit_flg(false), hit_timer(-1), weather(0), change_weather_flg(false)
 {
 	//炎
-	if (_type == 3 || _type == 6)
+	if (_type == RED_BLOCK || _type == FIRE_BLOCK)
 	{
 		type = FIRE;
 	}
 	//木
-	else if (_type == 4 || _type == 7)
+	else if (_type == GREEN_BLOCK || _type == WOOD_BLOCK)
 	{
 		type = WOOD;
 	}
 	//水
-	else if (_type == 5 || _type == 8)
+	else if (_type == BLUE_BLOCK || _type == WATER_BLOCK)
 	{
 		type = WATER;
 	}
@@ -27,7 +28,16 @@ Stage::Stage(int _type) : frame(0), old_color(0),inv_flg(false), debug_flg(false
 		type = BLOCK;
 	}
 	block_type = _type;
-	can_hit = TRUE;
+	if (_type == WEATHER_NORMAL || _type == WEATHER_RAIN || _type == WEATHER_FIRE || _type == WEATHER_SEED)
+	{
+		can_hit = FALSE;
+		weather = _type - WEATHER_NORMAL;
+	}
+	else
+	{
+		can_hit = TRUE;
+	}
+	stage_height = _stage_height;
 }
 
 Stage::~Stage()
@@ -53,12 +63,26 @@ void Stage::Initialize(Location _location, Erea _erea, int _color_data,int _obje
 	old_color = color;
 
 	object_pos = _object_pos;
+
+	//天気更新ブロックなら、高さをステージの高さいっぱいに変更
+	//if (block_type == WEATHER_RAIN || block_type == WEATHER_FIRE || block_type == WEATHER_SEED)
+	//{
+	//	location.y = 0;
+	//	erea.height = stage_height;
+	//}
 }
 
 void Stage::Update(GameMain* _g)
 {
 	//EditもUpdateを呼べるようにこの書き方
 	Update();
+
+	//天気の更新があったらする
+	if (change_weather_flg == true && weather != _g->GetNowWeather())
+	{
+		_g->SetNowWeather(weather);
+		change_weather_flg = false;
+	}
 }
 
 void Stage::Update()
@@ -125,27 +149,6 @@ void Stage::Update()
 			hit_timer = -1;
 		}
 	}
-	////色ブロック
-	//if (block_type == RED_BLOCK || block_type == GREEN_BLOCK || block_type == BLUE_BLOCK)
-	//{
-	//	for (int i = 0; i < ANIM_BLOCK_NUM; i++)
-	//	{
-	//		if (effect_anim[i].time < 0)
-	//		{
-	//			effect_anim[i].shift.x = GetRand(38);
-	//			effect_anim[i].shift.y = GetRand(38);
-	//			effect_anim[i].erea.width = erea.width / 10;
-	//			effect_anim[i].erea.height = erea.height / 10;
-	//			effect_anim[i].time = 30 + GetRand(30);
-	//		}
-	//		else
-	//		{
-	//			effect_anim[i].time--;
-	//			effect_anim[i].erea.width -= 0.05;
-	//			effect_anim[i].erea.height -= 0.05;
-	//		}
-	//	}
-	//}
 }
 
 void Stage::Draw()const
@@ -157,36 +160,34 @@ void Stage::Draw()const
 			//無
 		case NULL_BLOCK:
 			break;
-			//地面(赤、緑、青)
+			//地面(白、赤、緑、青)
 		case RED_BLOCK:
 		case GREEN_BLOCK:
 		case BLUE_BLOCK:
-			DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, true);
-			//色付きブロックだけエフェクトを出す
-		/*	for (int i = 0; i < ANIM_BLOCK_NUM; i++)
-			{
-				DrawBoxAA(effect_anim[i].shift.x + local_location.x,
-					effect_anim[i].shift.y + local_location.y,
-					effect_anim[i].shift.x + effect_anim[i].erea.width + local_location.x,
-					effect_anim[i].shift.y + effect_anim[i].erea.height + local_location.y, 0xffffff, true);
-			}
-		*/	break;
-			//地面（白）
 		case WHITE_BLOCK:
-			DrawBox(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, true);
+			DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, true);
 			break;
 			//地面（灰）
 		case GRAY_BLOCK:
-			DrawBox(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, 0xaaaaaa, true);
-			DrawBox(local_location.x+10, local_location.y+20, local_location.x + 15, local_location.y + 25, 0x999999, true);
-			DrawBox(local_location.x+30, local_location.y+15, local_location.x + 35, local_location.y + 20, 0x999999, true);
-			DrawBox(local_location.x+25, local_location.y+35, local_location.x + 30, local_location.y + 40, 0x999999, true);
+			DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, 0xaaaaaa, true);
+			//地面内の小石
+			DrawBoxAA(local_location.x + 10, local_location.y + 20, local_location.x + 15, local_location.y + 25, 0x999999, true);
+			DrawBoxAA(local_location.x + 30, local_location.y + 15, local_location.x + 35, local_location.y + 20, 0x999999, true);
+			DrawBoxAA(local_location.x + 25, local_location.y + 35, local_location.x + 30, local_location.y + 40, 0x999999, true);
 			break;
-		//ダメージゾーンの描画
+			//ダメージゾーンの描画
 		case FIRE_BLOCK:
 		case WOOD_BLOCK:
 		case WATER_BLOCK:
 			ResourceManager::StageAnimDraw(local_location, type);
+			break;
+		case WEATHER_NORMAL:
+		case WEATHER_RAIN:
+		case WEATHER_FIRE:
+		case WEATHER_SEED:
+			DrawStringF(local_location.x, local_location.y, "天気", text_color[block_type]);
+			DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, text_color[block_type], false);
+			break;
 			//その他（無）
 		default:
 			break;
@@ -221,6 +222,12 @@ void Stage::Draw()const
 		case ENEMY_BOSS:
 			DrawStringF(local_location.x, local_location.y, "ボス", text_color[block_type]);
 			break;
+			//天気ゾーン
+		case WEATHER_RAIN:
+		case WEATHER_FIRE:
+		case WEATHER_SEED:
+			DrawStringF(local_location.x, local_location.y, "天気", text_color[block_type]);
+			break;
 		default:
 			//ブロックなら数字を表示
 			DrawFormatStringF(local_location.x, local_location.y, text_color[block_type], "%d", block_type);
@@ -236,11 +243,11 @@ void Stage::Finalize()
 
 void Stage::Hit(Object* _object)
 {
-	//上から何かがぶつかったなら、ブロックを揺らす
-	//if (_type == PLAYER)
-	//{
-	//	hit_timer = 0;
-	//}
+	//プレイヤーに当たった時、自身が天気変更ブロックなら、対応した天気に変更させる
+	if (_object->GetObjectType() == PLAYER && (block_type == WEATHER_NORMAL || block_type == WEATHER_RAIN || block_type == WEATHER_FIRE || block_type == WEATHER_SEED))
+	{
+		change_weather_flg = true;
+	}
 }
 
 void Stage::SetStageType(int _type)
@@ -250,4 +257,45 @@ void Stage::SetStageType(int _type)
 	{
 		SetColorData(color_data[block_type]);
 	}
+}
+
+void Stage::DrawSolidBody(int _color)const
+{
+	//int second_color;
+	//if (_color == RED)
+	//{
+	//	second_color = 0xee0000;
+	//}
+	//if (_color == BLUE)
+	//{
+	//	second_color = 0x0000ee;
+	//}
+	//if (_color == GREEN)
+	//{
+	//	second_color = 0x00ee00;
+	//}
+	//if (_color == WHITE)
+	//{
+	//	second_color = 0xeeeeee;
+	//}
+	//else
+	//{
+	//	second_color = _color - 0x111111;
+	//}
+
+	//DrawBox(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, _color, true);
+	//DrawBox(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, second_color, false);
+	//立体もどき
+	/*DrawQuadrangleAA(local_location.x + 20, local_location.y - 20,
+		local_location.x + erea.width + 20, local_location.y - 20,
+		local_location.x + erea.width, local_location.y,
+		local_location.x, local_location.y,
+		second_color, TRUE);
+	DrawQuadrangleAA(local_location.x + erea.width, local_location.y,
+		local_location.x + erea.width + 20, local_location.y - 20,
+		local_location.x + erea.width + 20, local_location.y + erea.height - 20,
+		local_location.x + erea.width, local_location.y + erea.height,
+		second_color, TRUE);
+	DrawLine(local_location.x + erea.width, local_location.y, local_location.x + erea.width + 20, local_location.y - 20, _color, TRUE);
+	DrawLine(local_location.x + erea.width, local_location.y + erea.height, local_location.x + erea.width + 20, local_location.y - 20 + erea.height, _color, TRUE);*/
 }

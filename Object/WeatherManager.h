@@ -20,6 +20,7 @@ private:
 	int old_weather;	//ひとつ前の天気
 	int delay;			//指定した天候に変化するまでの待ち時間測定用
 	Location draw_location;	//警告表示位置
+
 public:
 	WeatherManager();
 	~WeatherManager();
@@ -27,8 +28,5 @@ public:
 	void Update(GameMain* _g);
 	void Draw()const;
 	void Finalize();
-	
-	//天気の設定(0=通常　1=雨　2=火　3=木)
-	void SetWeather(int _type);
 };
 
