@@ -441,10 +441,10 @@ int GameMain::Swap(Object* _object1, Object* _object2)
 bool GameMain::CheckInScreen(Object* _object)
 {
 	//画面内に居るか判断
-	if (_object->GetLocation().x > camera_location.x - _object->GetErea().width &&
-		_object->GetLocation().x < camera_location.x + SCREEN_WIDTH + _object->GetErea().width &&
-		_object->GetLocation().y > camera_location.y - _object->GetErea().height &&
-		_object->GetLocation().y < camera_location.y + SCREEN_HEIGHT + _object->GetErea().height
+	if (_object->GetLocation().x > camera_location.x - _object->GetErea().width - 100 &&
+		_object->GetLocation().x < camera_location.x + SCREEN_WIDTH + _object->GetErea().width + 100 &&
+		_object->GetLocation().y > camera_location.y - _object->GetErea().height - 100 &&
+		_object->GetLocation().y < camera_location.y + SCREEN_HEIGHT + _object->GetErea().height + 100
 		)
 	{
 		return true;

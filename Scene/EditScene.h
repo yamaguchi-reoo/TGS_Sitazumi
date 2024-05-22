@@ -134,6 +134,9 @@ public:
 
     //どの箱が選択中かの情報をリセットする
     void ResetSelectData();
+
+    //そのオブジェクトが画面内に居るか判断
+    bool CheckInScreen(Stage* _stage)const;
 };
 
 

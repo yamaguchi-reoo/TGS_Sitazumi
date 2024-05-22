@@ -35,7 +35,7 @@ void BackGround::Draw(Location _camera_location)const
 		DrawBox(shift_location.x, shift_location.y + (i * 25),
 			bg_erea.width + shift_location.x, shift_location.y + (i+1) * 25,
 				GetColor((i * 3), (i * 3), 255), true);
-		DrawFormatStringF(shift_location.x + (i * 25), shift_location.y+i* 25, 0x00ff00,"%d", i);
+		//DrawFormatStringF(shift_location.x + (i * 25), shift_location.y+i* 25, 0x00ff00,"%d", i);
 
 	}
 	DrawStringF(shift_location.x, 300.0f, "左端", 0x00ff00);
