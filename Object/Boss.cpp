@@ -5,7 +5,7 @@
 
 #define BOSS_SIZE 315
 
-Boss::Boss():vector { 0.0f },hit(false),boss_state(BossState::IDLE),barrier_num(3)
+Boss::Boss() :vector{ 0.0f }, hit(false), boss_state(BossState::IDLE), barrier_num(3), damage_flg(false)
 {
 	type = BOSS;
 	can_swap = TRUE;
@@ -42,6 +42,14 @@ void Boss::Update(GameMain* _g)
 	vector = { 1.f };
 	//プレイヤーとボスの距離を計算
 	DistanceCalc(_g);
+
+	if (damage_flg) {
+		damage_effect_time--;
+		damage_efect_flg = !damage_efect_flg;
+		if (damage_effect_time <= 0) {
+			damage_flg = false;
+		}
+	}
 }
 
 void Boss::Draw() const
@@ -86,7 +94,7 @@ void Boss::Draw() const
 		}
 	}
 
-	//DrawFormatString(1100, 0, color, "x:%f  y:%f", location);
+	DrawFormatString(1100, 0, color, "%d", barrier_num);
 }
 
 void Boss::Finalize()
@@ -257,9 +265,14 @@ void Boss::Hit(Object* _object)
 		(_object->GetObjectType() == WOOD && this->color == BLUE)
 		)
 	{
-		if (barrier_num > 0) 
-		{
-			barrier_num--;
+		//バリア減るごとにクールタイムを設ける
+		if (!damage_flg) {
+			if (barrier_num > 0)
+			{
+				barrier_num--;
+				damage_flg = true;
+				damage_effect_time = 60;
+			}
 		}
 	}
 }
