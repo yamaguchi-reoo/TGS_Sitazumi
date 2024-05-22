@@ -9,7 +9,7 @@
 
 Location camera_location = { 0,0 };
 
-EditScene::EditScene(int _stage) : current_type(0), ui_current_type(0), tool_pickup_flg(false), current_leftbutton_flg(false), current_rightbutton_flg(false), current_upbutton_flg(false), current_downbutton_flg(false), button_interval(0), now_select_erea(0), current_type_select(-1), now_current_type(0), current_type_location{ 0 }, current_type_erea{ 0 }, disp_num(0)
+EditScene::EditScene(int _stage) : current_type(0), ui_current_type(0), tool_pickup_flg(false), current_leftbutton_flg(false), current_rightbutton_flg(false), current_upbutton_flg(false), current_downbutton_flg(false), button_interval(0), now_select_erea(0), current_type_select(-1), now_current_type(0), current_type_location{ 0 }, current_type_erea{ 0 }, disp_num(0), double_click(20)
 {
 	now_stage = _stage;
 }
@@ -144,6 +144,7 @@ AbstractScene* EditScene::Update()
 			{
 				if (KeyInput::OnMouse(MOUSE_INPUT_LEFT))
 				{
+					int old_current_type = current_type;
 					if (can_select_type[i][0] == TRUE)
 					{
 						ui_current_type = i;
@@ -153,7 +154,7 @@ AbstractScene* EditScene::Update()
 					}
 					else
 					{
-						//接地できるブロックの変数を計算する
+						//設置できるブロックの変数を計算する
 						int n = 0;
 						for (int j = 0; j < i; j++)
 						{
@@ -163,9 +164,24 @@ AbstractScene* EditScene::Update()
 						current_type = n;
 						ui_current_type = i;
 					}
+					//プレイヤーをダブルクリックしたならプレイヤーリスポーンブロックまで移動
+					if (old_current_type == current_type && current_type == PLAYER_BLOCK)
+					{
+						for (int n = 0; n < stage_height_num; n++)
+						{
+							for (int m = 0; m < stage_width_num; m++)
+							{
+								if (stage_data[n][m] == PLAYER_SPAWN_NUM)
+								{
+									camera_location = { stage[n][m]->GetLocation().x-(SCREEN_WIDTH/2),stage[n][m]->GetLocation().y - (SCREEN_HEIGHT / 2) };
+								}
+							}
+						}
+					}
 				}
 			}
 		}
+
 		//幅を減らす
 		if (cursor.x > width_button_location.x && cursor.x < width_button_location.x + 15 && cursor.y>width_button_location.y && cursor.y < width_button_location.y + 25)
 		{
@@ -349,7 +365,10 @@ void EditScene::Draw()const
 	{
 		for (int j = 0; j < stage_width_num; j++)
 		{
-			stage[i][j]->Draw();
+			if (CheckInScreen(stage[i][j]) == true)
+			{
+				stage[i][j]->Draw();
+			}
 			if (select_data[i][j] == true)
 			{
 				DrawBoxAA(stage[i][j]->GetLocalLocation().x, stage[i][j]->GetLocalLocation().y, stage[i][j]->GetLocalLocation().x + BOX_WIDTH, stage[i][j]->GetLocalLocation().y + BOX_HEIGHT, 0xff0000, false);

@@ -179,7 +179,10 @@ void Stage::Draw()const
 		case FIRE_BLOCK:
 		case WOOD_BLOCK:
 		case WATER_BLOCK:
-			ResourceManager::StageAnimDraw(local_location, type);
+			if (debug_flg == false)
+			{
+				ResourceManager::StageAnimDraw(local_location, type);
+			}
 			break;
 		case WEATHER_NORMAL:
 		case WEATHER_RAIN:
@@ -199,6 +202,11 @@ void Stage::Draw()const
 		//敵文字表示用
 		switch (block_type)
 		{
+		case FIRE_BLOCK:
+		case WOOD_BLOCK:
+		case WATER_BLOCK:
+			DrawStringF(local_location.x, local_location.y, "dmg", text_color[block_type]);
+			break;
 		case PLAYER_BLOCK:
 			//初期スポーン地点を分かりやすく
 			DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, 0xffff00, true);

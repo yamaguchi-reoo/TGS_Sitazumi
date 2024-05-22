@@ -147,7 +147,10 @@ void GameMain::Draw() const
 			pn = i;
 			continue;
 		}
+		if (CheckInScreen(object[i]) == true)
+		{
 			object[i]->Draw();
+		}
 	}
 	//プレイヤーを最後に描画
 	object[pn]->Draw();
@@ -442,7 +445,7 @@ int GameMain::Swap(Object* _object1, Object* _object2)
 	return effect_spawner->Swap(_object1, _object2);
 }
 
-bool GameMain::CheckInScreen(Object* _object)
+bool GameMain::CheckInScreen(Object* _object)const
 {
 	//画面内に居るか判断
 	if (_object->GetLocation().x > camera_location.x - _object->GetErea().width - 100 &&

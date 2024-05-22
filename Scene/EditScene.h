@@ -93,6 +93,7 @@ private:
 
     int stage_width_num;                                  //ステージのブロックの横の個数 
     int stage_height_num;                                 //ステージのブロックの縦の個数
+    int double_click;                                     //ダブルクリックの受付時間測定
 public:
     //コンストラクタ
     EditScene(int _stage);
