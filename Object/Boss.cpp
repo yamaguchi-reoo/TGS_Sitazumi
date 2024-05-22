@@ -5,7 +5,7 @@
 
 #define BOSS_SIZE 315
 
-Boss::Boss():vector { 0.0f },hit(false),boss_state(BossState::IDLE)
+Boss::Boss():vector { 0.0f },hit(false),boss_state(BossState::IDLE),barrier_num(3)
 {
 	type = BOSS;
 	can_swap = TRUE;
@@ -59,23 +59,33 @@ void Boss::Draw() const
 	//DrawCircle(local_location.x + 175, local_location.y + 175, 70, color, TRUE);
 	DrawBox(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, FALSE);
 
-	for (int i = 0; i < vertices.size(); i++) 
+	for (int i = 0; i < vertices.size(); i++)
 	{
 		//本体描画
 		if (i < 1) {
-			DrawCircle(vertices[i].x, vertices[i].y, 50, GetColor(255,255,255), TRUE);
+			DrawCircleAA(vertices[i].x, vertices[i].y, 50, 50, GetColor(255, 255, 255), TRUE);
 		}
 		//バリア
 		else if (i < 2) {
-			DrawCircle(vertices[i].x, vertices[i].y, 175, color, FALSE);
-			DrawCircle(vertices[i].x, vertices[i].y, 170, GetColor(0, 255, 0), FALSE);
-			DrawCircle(vertices[i].x, vertices[i].y, 165, GetColor(0, 0, 255), FALSE);
+			if (barrier_num >= 3)
+			{
+				DrawCircleAA(vertices[i].x, vertices[i].y, 175, 175, color, FALSE);
+			}
+			if (barrier_num >= 2)
+			{
+				DrawCircleAA(vertices[i].x, vertices[i].y, 170, 170, color, FALSE);
+			}
+			if (barrier_num >= 1)
+			{
+				DrawCircleAA(vertices[i].x, vertices[i].y, 165, 165, color, FALSE);
+			}
 		}
 		//右翼
 		else if (i < 7) {
 			//DrawQuadrangleAA(vertices[i].x, vertices[i].y, vertices[i + 1].x, vertices[i + 1].y, vertices[i + 2].x, vertices[i + 2].y, vertices[i + 3].x, vertices[i + 3].y, color, FALSE);
 		}
 	}
+
 	//DrawFormatString(1100, 0, color, "x:%f  y:%f", location);
 }
 
@@ -238,6 +248,20 @@ void Boss::Hit(Object* _object)
 	//	erea.width = tmpe.width;
 
 	}
+
+
+	//弱点色に触れた時の処理
+	if (
+		(_object->GetObjectType() == FIRE && this->color == GREEN) ||
+		(_object->GetObjectType() == WATER && this->color == RED) ||
+		(_object->GetObjectType() == WOOD && this->color == BLUE)
+		)
+	{
+		if (barrier_num > 0) 
+		{
+			barrier_num--;
+		}
+	}
 }
 
 bool Boss::CheckCollision(Location l, Erea e)
@@ -294,12 +318,25 @@ void Boss::DistanceCalc(GameMain* _g)
 	// プレイヤーの中心座標との距離を計算
 	float dx = player_center_x - enemy_center_x;
 	float dy = player_center_y - enemy_center_y;
-	float length = sqrt(dx * dx + dy * dy);
+	float length = (float)sqrt(dx * dx + dy * dy);
 
 
-	dx /= length;
-	dy /= length;
+	dx /= (float)length;
+	dy /= (float)length;
 
 	//移動
 	Move(dx, dy);
+}
+
+void Boss::barrier()
+{
+	if (barrier_num >= 3) {
+		color = RED;
+	}
+	if (barrier_num >= 2) {
+		color = BLUE;
+	}
+	if (barrier_num >=1) {
+		color = GREEN;
+	}
 }
