@@ -94,7 +94,7 @@ void Boss::Draw() const
 		}
 	}
 
-	DrawFormatString(1100, 0, color, "%d", barrier_num);
+	//DrawFormatString(1100, 0, color, "%d", barrier_num);
 }
 
 void Boss::Finalize()
