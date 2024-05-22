@@ -49,7 +49,7 @@ Player::Player()
 
 	objSelectNumTmp = 0;
 	searchedObjFlg = false;
-
+	swap_once = false;
 	damageFlg = false;
 	damageOldFlg = false;
 	hp = 5;
@@ -147,9 +147,14 @@ void Player::Update(GameMain* _g)
 	//交換後エフェクト用の硬直
 	if (swapTimer >= 0)
 	{
-		if (swapTimer == SWAP_EFFECT_STOP_TIME)
+		if (swapTimer <= SWAP_EFFECT_STOP_TIME)
 		{
-			ChangePlayerColor();
+			if (swap_once == false)
+			{
+				ChangePlayerColor();
+				swap_once = true;
+			}
+
 		}
 		//硬直が終わったら色を交換
 		if (--swapTimer < 0)
@@ -157,6 +162,7 @@ void Player::Update(GameMain* _g)
 			searchFlg = false;
 			swapTimer = -1;
 			searchedObj = nullptr;
+			swap_once = false;
 		}
 	}
 
