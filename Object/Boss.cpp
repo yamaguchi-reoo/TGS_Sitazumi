@@ -47,15 +47,21 @@ void Boss::Update(GameMain* _g)
 	if (damage_flg) {
 		damage_effect_time--;
 		damage_effect_flg = !damage_effect_flg;
-		if (damage_effect_time <= 0) {
-			damage_flg = false;
+		if (damage_effect_time <= 0) 
+		{
+			//damage_effect_flg = false;
+			if (barrier_num > 0)
+			{
+				barrier_num--;
+				damage_flg = false;
+			}
 		}
 	}
 }
 
 void Boss::Draw() const
 {
-	DrawBox(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, FALSE);
+	//DrawBox(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, FALSE);
 
 	//本体
 	DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2, 50, 50, color, TRUE);
@@ -103,7 +109,7 @@ void Boss::Draw() const
 	}
 	
 	//DrawFormatString(1100, 0, color, "%d", barrier_num);
-	DrawFormatString(1100, 0, color, "%d", damage_effect_time);
+	DrawFormatString(1100, 0, color, "%d", damage_flg);
 }
 
 void Boss::Finalize()
@@ -270,18 +276,14 @@ void Boss::Hit(Object* _object)
 	//弱点色に触れた時の処理
 	if (
 		(_object->GetObjectType() == FIRE && this->color == GREEN) ||
-		(_object->GetObjectType() == WATER && this->color == RED) ||
+		(_object->GetObjectType() == WATER && this->color == RED)  ||
 		(_object->GetObjectType() == WOOD && this->color == BLUE)
 		)
 	{
 		//バリア減るごとにクールタイムを設ける
-		if (!damage_flg) {
-			if (barrier_num > 0)
-			{
-				barrier_num--;
-				damage_flg = true;
-				damage_effect_time = 180;
-			}
+		if (damage_flg == false) {
+			damage_flg = true;
+			damage_effect_time = 180;
 		}
 	}
 }
