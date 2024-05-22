@@ -4,8 +4,10 @@ class BossAttackWater : public Object
 {
 private:
 	Location velocity;
+	Location unitVelocity;
 	bool flg;
 	int count;
+	float len;
 public:
 	BossAttackWater();
 	~BossAttackWater();
