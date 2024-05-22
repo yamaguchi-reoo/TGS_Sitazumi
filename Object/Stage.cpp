@@ -77,10 +77,11 @@ void Stage::Update(GameMain* _g)
 	//EditもUpdateを呼べるようにこの書き方
 	Update();
 
-	if (change_weather_flg == true)
+	//天気の更新があったらする
+	if (change_weather_flg == true && weather != _g->GetNowWeather())
 	{
 		_g->SetNowWeather(weather);
-		change_weather_flg = false;	
+		change_weather_flg = false;
 	}
 }
 
@@ -243,7 +244,7 @@ void Stage::Finalize()
 void Stage::Hit(Object* _object)
 {
 	//プレイヤーに当たった時、自身が天気変更ブロックなら、対応した天気に変更させる
-	if (_object->GetObjectType() == PLAYER && (block_type == WEATHER_RAIN || block_type == WEATHER_FIRE || block_type == WEATHER_SEED))
+	if (_object->GetObjectType() == PLAYER && (block_type == WEATHER_NORMAL || block_type == WEATHER_RAIN || block_type == WEATHER_FIRE || block_type == WEATHER_SEED))
 	{
 		change_weather_flg = true;
 	}

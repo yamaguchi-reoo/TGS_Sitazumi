@@ -313,10 +313,14 @@ int EffectSpawner::Swap(Object* _object1, Object* _object2)
 	g = powf(move.x, 2) + powf(move.y, 2);
 
 	swap_anim[0].speed = (int)(sqrtf(g) / SWAP_EFFECT_SPEED);
-	swap_anim[1].speed = (int)(sqrtf(g) / SWAP_EFFECT_SPEED);
+	swap_anim[1].speed = swap_anim[0].speed;
 
 	swap_anim[0].timer = (int)((sqrtf(g) / swap_anim[0].speed) * 0.9f) + SWAP_EFFECT_STOP_TIME;
-	swap_anim[1].timer = (int)((sqrtf(g) / swap_anim[1].speed) * 0.9f) + SWAP_EFFECT_STOP_TIME;
+	if (swap_anim[0].timer < 0)
+	{
+		swap_anim[0].timer = 0;
+	}
+	swap_anim[1].timer = swap_anim[0].timer;
 
 	return swap_anim[0].timer;
 }

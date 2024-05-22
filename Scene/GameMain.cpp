@@ -14,7 +14,7 @@
 static Location camera_location = { 0,0};	//カメラの座標
 static Location screen_origin = { (SCREEN_WIDTH / 2),(SCREEN_HEIGHT / 2) };
 
-GameMain::GameMain(int _stage) :frame(0),stage_data{0},now_stage(0), object_num(0),stage_width_num(0), stage_height_num(0), stage_width(0), stage_height(0), camera_x_lock_flg(true), camera_y_lock_flg(true), x_pos_set_once(false), y_pos_set_once(false),player_object(0), boss_object(0),weather(0), weather_timer(0), move_object_num(0)
+GameMain::GameMain(int _stage) :frame(0), stage_data{ 0 }, now_stage(0), object_num(0), stage_width_num(0), stage_height_num(0), stage_width(0), stage_height(0), camera_x_lock_flg(true), camera_y_lock_flg(true), x_pos_set_once(false), y_pos_set_once(false), player_object(0), boss_object(0), weather(0), weather_timer(0), move_object_num(0)
 {
 	now_stage = _stage;
 }
@@ -36,7 +36,7 @@ void GameMain::Initialize()
 	SetStage(now_stage);
 
 	back_ground = new BackGround();
-	back_ground->Initialize(stage_width);
+	back_ground->Initialize({ (float)stage_width,(float)stage_height });
 
 	lock_pos = camera_location;
 
@@ -82,18 +82,14 @@ AbstractScene* GameMain::Update()
 			{
 				object[i]->SetScreenPosition(camera_location);
 				//画面内のオブジェクトしかUpdateしない
-				if (object[i]->GetLocation().x > camera_location.x - 100 &&
-					object[i]->GetLocation().x < camera_location.x + SCREEN_WIDTH + 100 &&
-					object[i]->GetLocation().y > camera_location.y - 100 &&
-					object[i]->GetLocation().y < camera_location.y + SCREEN_WIDTH + 100
-					)
+				if (CheckInScreen(object[i]))
 				{
 					object[i]->Update(this);
 					move_object_num++;
 					for (int j = i + 1; object[j] != nullptr; j++)
 					{
 						//各オブジェクトとの当たり判定
-						if (object[i]->HitBox(object[j]) && object[j] != object[player_object])
+						if (CheckInScreen(object[j]) == true && object[i]->HitBox(object[j]) && object[j] != object[player_object])
 						{
 							object[i]->Hit(object[j]);
 							object[j]->Hit(object[i]);
@@ -102,14 +98,6 @@ AbstractScene* GameMain::Update()
 				}
 			}
 		}
-		//if (object[player_object]->GetLocation().x > stage_width - 2000 && ++weather_timer > 200)
-		//{
-		//	if (++now_weather > 3)
-		//	{
-		//		now_weather = 1;
-		//	}
-		//	weather_timer = 0;
-		//}
 		//管理クラスの更新
 		weather->Update(this);
 	}
@@ -448,4 +436,18 @@ void GameMain::SpawnEffect(Location _location, Erea _erea, int _type, int _time,
 int GameMain::Swap(Object* _object1, Object* _object2)
 {
 	return effect_spawner->Swap(_object1, _object2);
+}
+
+bool GameMain::CheckInScreen(Object* _object)
+{
+	//画面内に居るか判断
+	if (_object->GetLocation().x > camera_location.x - _object->GetErea().width - 100 &&
+		_object->GetLocation().x < camera_location.x + SCREEN_WIDTH + _object->GetErea().width + 100 &&
+		_object->GetLocation().y > camera_location.y - _object->GetErea().height - 100 &&
+		_object->GetLocation().y < camera_location.y + SCREEN_HEIGHT + _object->GetErea().height + 100
+		)
+	{
+		return true;
+	}
+	return false;
 }

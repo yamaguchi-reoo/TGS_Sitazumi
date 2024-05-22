@@ -44,11 +44,21 @@ void EnemyBat::Update(GameMain* _g)
 
 
 	Location player_pos = _g->GetPlayerLocation();
+	Erea player_erea = _g->GetPlayerErea();
 	// プレイヤーとの距離を計算
 	vector = { ENEMY_SPEED };
-	float dx = player_pos.x - location.x;
-	float dy = player_pos.y - location.y;
-	float length = (float)sqrt(dx * dx + dy * dy);
+	// プレイヤーの中心座標を計算
+	float player_center_x = player_pos.x + player_erea.width / 2;
+	float player_center_y = player_pos.y + player_erea.height / 2;
+
+	// 自分の中心座標を計算
+	float enemy_center_x = location.x + erea.width / 2;
+	float enemy_center_y = location.y + erea.height / 2;
+	
+	// プレイヤーの中心座標との距離を計算
+	float dx = player_center_x - enemy_center_x + 10;
+	float dy = player_center_y - enemy_center_y + 10;
+	float length = sqrt(dx * dx + dy * dy);
 
 	////プレイヤーが色変えるときコウモリもスローに
 	//if (_g->GetSearchFlg()) {

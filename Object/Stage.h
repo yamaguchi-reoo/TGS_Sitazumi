@@ -28,7 +28,6 @@ enum BlockList	{
 	WEATHER_RAIN,
 	WEATHER_FIRE,
 	WEATHER_SEED,
-
 };
 
 //ColorData格納用

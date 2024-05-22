@@ -3,13 +3,13 @@
 class BackGround
 {
 private:
-	int bg_width;		//背景の幅
-	int stage_width;	//ステージの幅
+	Erea bg_erea;		//背景の幅
+	Erea stage_erea;	//ステージの幅
 public:
 	BackGround();
 	~BackGround();
 
-	void Initialize(int _stage_wigth);
+	void Initialize(Erea _stage_erea);
 	void Finalize();
 	void Update();
 	void Draw(Location _camera_location)const;

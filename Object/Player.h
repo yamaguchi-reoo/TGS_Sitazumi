@@ -32,7 +32,7 @@ private:
 	int objSelectNum[2];//オブジェクトの添え字
 	int objSelectNumTmp;//オブジェクトの添え字
 	bool searchedObjFlg;//画面内に交換できるオブジェクトがあるかどうか
-
+	bool swap_once;		//一回だけ色を交換する
 	int posRelation[720 / 40][1280 / 40];
 	int posRelNum[2];
 	bool oldStick[4];
