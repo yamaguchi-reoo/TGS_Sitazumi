@@ -36,6 +36,8 @@ private:
 	//std::vector<Location>vertices;
 	bool hit;
 
+	//float wing_angle;
+
 public:
 	Boss();
 	~Boss();
