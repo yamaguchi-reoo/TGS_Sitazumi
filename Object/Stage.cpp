@@ -103,6 +103,7 @@ void Stage::Update()
 				block_type = FIRE_BLOCK;
 			}
 			type = FIRE;
+			draw_wood_flg = false;
 		}
 		else if (color == GREEN)
 		{
@@ -117,6 +118,7 @@ void Stage::Update()
 				block_type = WOOD_BLOCK;
 			}
 			type = WOOD;
+			draw_wood_flg = false;
 		}
 		else if (color == BLUE)
 		{
@@ -131,6 +133,7 @@ void Stage::Update()
 				block_type = WATER_BLOCK;
 			}
 			type = WATER;
+			draw_wood_flg = false;
 		}
 		//更新
 		old_color = color;

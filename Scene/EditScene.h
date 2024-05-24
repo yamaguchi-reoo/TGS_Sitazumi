@@ -18,6 +18,7 @@ enum SelectErea
     STAGE_EDIT = 0,
     TOOL_BOX,
     SELECT_TYPE,
+    MINIMAP,
 };
 
 static char obj_string[UI_OBJECT_TYPE_NUM][256] =
@@ -61,6 +62,40 @@ static char block_type_string[UI_OBJECT_TYPE_NUM][5][256] =
     {"通常","雨","火山","種"," "},
 };
 
+//Edit表示用文字色データ
+static int draw_block_color[24]
+{
+    0xffffff,	//無
+    0x000000,	//白ブロック
+    0xaaaaaa,	//灰ブロック
+    0xff0000,	//赤ブロック
+    0x00ff00,	//緑ブロック
+
+    0x0000ff,	//青ブロック
+    0xcc0000,	//赤エリア
+    0x00cc00,	//緑エリア
+    0x0000cc,	//青エリア
+    0xffff00,	//プレイヤー初期位置
+
+    0x880000,	//赤鹿
+    0x008800,	//緑鹿
+    0x000088,	//青鹿
+    0x770000,	//赤蝙蝠
+    0x007700,	//緑蝙蝠
+
+    0x000077,	//青蝙蝠
+    0x660000,	//赤蛙
+    0x006600,	//緑蛙
+    0x000066,	//青蛙
+    0xffffff,	//ボス
+
+    0xffffff,	//通常天気
+    0x0000ff,	//雨
+    0xff0000,	//火球
+    0x00ff00,	//種
+
+};
+
 class EditScene :
     public AbstractScene
 {
@@ -95,6 +130,10 @@ private:
     int stage_height_num;                                 //ステージのブロックの縦の個数
     int double_click;                                     //ダブルクリックの受付時間測定
     Location player_spawn_location;                       //プレイヤースポーンブロックの位置
+
+    Location minimap_location;                            //ミニマップの位置
+    float minimap_size;                                   //ミニマップの大きさ
+    bool minimap_pickup_flg;                              //ミニマップを持っているか判断
 public:
     //コンストラクタ
     EditScene(int _stage);
@@ -133,6 +172,9 @@ public:
 
     //ツールボックスが画面外に出ないように移動する
     void MoveInsideScreen();
+
+    //ミニマップが画面外に出ないように移動する
+    void MiniMapMoveInsideScreen();
 
     //どの箱が選択中かの情報をリセットする
     void ResetSelectData();

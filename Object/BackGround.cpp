@@ -29,7 +29,7 @@ void BackGround::Update()
 
 void BackGround::Draw(Location _camera_location)const
 {
-	Location shift_location = { -_camera_location.x / (stage_erea.width / (bg_erea.width/5)) ,-_camera_location.y / (stage_erea.height / bg_erea.height) };
+	Location shift_location = { -_camera_location.x / (stage_erea.width / (bg_erea.width/10)) ,-_camera_location.y / (stage_erea.height / (bg_erea.height/10)) };
 	for (int i = 0; i < 50; i++)
 	{
 		DrawBox(shift_location.x, shift_location.y + (i * 25),

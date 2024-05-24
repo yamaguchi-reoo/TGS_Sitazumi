@@ -63,7 +63,7 @@ static int text_color[24]
 	0x00ff00,	//緑鹿
 	0x0000ff,	//青鹿
 	0xff0000,	//赤蝙蝠
-	0xff00ff,	//緑蝙蝠
+	0x00ff00,	//緑蝙蝠
 
 	0x0000ff,	//青蝙蝠
 	0xff0000,	//赤蛙
@@ -71,7 +71,7 @@ static int text_color[24]
 	0x0000ff,	//青蛙
 	0xffffff,	//ボス
 
-	0xffffff,	//雨
+	0xffffff,	//通常天気
 	0x0000ff,	//雨
 	0xff0000,	//火球
 	0x00ff00,	//種
