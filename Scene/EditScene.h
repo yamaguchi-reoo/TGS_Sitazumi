@@ -94,6 +94,7 @@ private:
     int stage_width_num;                                  //ステージのブロックの横の個数 
     int stage_height_num;                                 //ステージのブロックの縦の個数
     int double_click;                                     //ダブルクリックの受付時間測定
+    Location player_spawn_location;                       //プレイヤースポーンブロックの位置
 public:
     //コンストラクタ
     EditScene(int _stage);
