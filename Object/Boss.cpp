@@ -1,11 +1,13 @@
 #include "Boss.h"
-#include<math.h>
+#include <math.h>
 #include"../Utility/KeyInput.h"
 #include"../Scene/GameMain.h"
 
 #define BOSS_SIZE 315
+#define STATE_CHANGE_INTERVAL 120
+#define BOSS_MAX_SPEED 2.0f
 
-Boss::Boss() :vector{ 0.0f }, hit(false), boss_state(BossState::IDLE), barrier_num(3), damage_flg(false)
+Boss::Boss() :vector{ 0.0f }, hit(false), /*boss_state(BossState::IDLE),*/ barrier_num(3), damage_flg(false), state_change_time(STATE_CHANGE_INTERVAL), direction{ 0.0f, 0.0f }
 {
 	type = BOSS;
 	can_swap = TRUE;
@@ -16,6 +18,8 @@ Boss::Boss() :vector{ 0.0f }, hit(false), boss_state(BossState::IDLE), barrier_n
 	for (int i = 0; i < 4; i++) {
 		stageHitFlg[1][i] = false;
 	}
+	srand(time(0));
+	boss_state = BossState::DOWN;
 }
 
 Boss::~Boss()
@@ -40,9 +44,12 @@ void Boss::Update(GameMain* _g)
 		stageHitFlg[1][i] = false;
 	}
 
-	vector = { 1.f };
+	vector = { 1.0f ,1.0f};
+
+	Move(boss_state);
+
 	//プレイヤーとボスの距離を計算
-	DistanceCalc(_g);
+	//DistanceCalc(_g);
 
 	barrier();
 	if (damage_flg) {
@@ -58,6 +65,16 @@ void Boss::Update(GameMain* _g)
 			}
 		}
 	}
+	if (barrier_num == 0) {
+	}
+
+	// 状態変更のタイミングをチェック
+	state_change_time--;
+	if (state_change_time <= 0) {
+		//boss_state = GetRandLocation();
+		SetRandMove();
+		state_change_time = STATE_CHANGE_INTERVAL;
+	}
 }
 
 void Boss::Draw() const
@@ -69,26 +86,26 @@ void Boss::Draw() const
 	float boss_center_y = local_location.y + BOSS_SIZE / 2;
 
 	//ボスの羽画用配列
-	//const std::vector<Location>vertices = {
-	//	//右翼No1
-	//	{local_location.x + 190, local_location.y + 105}, {local_location.x + 230, local_location.y + 90 },{local_location.x + 245, local_location.y + 105 },{local_location.x + 205, local_location.y + 120 },
-	//	{local_location.x + 240, local_location.y + 85}, {local_location.x + 257.5f, local_location.y + 77.5f },{local_location.x + 272.5f, local_location.y + 92.5f },{local_location.x + 255, local_location.y + 100 },
-	//	{local_location.x + 270, local_location.y + 72.5f}, {local_location.x + 310, local_location.y + 57.5f },{local_location.x + 325, local_location.y + 72.5f },{local_location.x + 285, local_location.y + 87.5f },
-	//	//右翼No2
-	//	{local_location.x + 210, local_location.y + 135}, {local_location.x + 250, local_location.y + 120 },{local_location.x + 265, local_location.y + 135 },{local_location.x + 225, local_location.y + 150 },
-	//	{local_location.x + 260, local_location.y + 115}, {local_location.x + 277.5f, local_location.y + 107.5f },{local_location.x + 292.5f, local_location.y + 122.5f },{local_location.x + 275, local_location.y + 130 },
-	//	{local_location.x + 290, local_location.y + 102.5f}, {local_location.x + 330, local_location.y + 87.5f },{local_location.x + 345, local_location.y + 102.5f },{local_location.x + 305, local_location.y + 117.5f },
-	//};
 	const std::vector<Location>vertices = {
 		//右翼No1
-		{190.0f,105.0f}, {230.0f,90.0f },{245.0f,105.0f },{205.0f,120.0f },
-		{240.0f,85.0f}, {257.5f, 77.5f },{272.5f, 92.5f },{255.0f, 100.0f },
-		{270.0f,72.5f}, {310.0f, 57.5f },{325.0f, 72.5f },{285.0f, 87.5f },
+		{local_location.x + 190, local_location.y + 105}, {local_location.x + 230, local_location.y + 90 },{local_location.x + 245, local_location.y + 105 },{local_location.x + 205, local_location.y + 120 },
+		{local_location.x + 240, local_location.y + 85}, {local_location.x + 257.5f, local_location.y + 77.5f },{local_location.x + 272.5f, local_location.y + 92.5f },{local_location.x + 255, local_location.y + 100 },
+		{local_location.x + 270, local_location.y + 72.5f}, {local_location.x + 310, local_location.y + 57.5f },{local_location.x + 325, local_location.y + 72.5f },{local_location.x + 285, local_location.y + 87.5f },
 		//右翼No2
 		{local_location.x + 210, local_location.y + 135}, {local_location.x + 250, local_location.y + 120 },{local_location.x + 265, local_location.y + 135 },{local_location.x + 225, local_location.y + 150 },
 		{local_location.x + 260, local_location.y + 115}, {local_location.x + 277.5f, local_location.y + 107.5f },{local_location.x + 292.5f, local_location.y + 122.5f },{local_location.x + 275, local_location.y + 130 },
 		{local_location.x + 290, local_location.y + 102.5f}, {local_location.x + 330, local_location.y + 87.5f },{local_location.x + 345, local_location.y + 102.5f },{local_location.x + 305, local_location.y + 117.5f },
 	};
+	//const std::vector<Location>vertices = {
+	//	//右翼No1
+	//	{190.0f,105.0f}, {230.0f,90.0f },{245.0f,105.0f },{205.0f,120.0f },
+	//	{240.0f,85.0f}, {257.5f, 77.5f },{272.5f, 92.5f },{255.0f, 100.0f },
+	//	{270.0f,72.5f}, {310.0f, 57.5f },{325.0f, 72.5f },{285.0f, 87.5f },
+	//	//右翼No2
+	//	{210.0f, 135.0f}, {250.0f,120.0f }, {265.0f,  135.0f },{225.0f, 150.0f },
+	//	{260.0f, 115.0f}, {277.5f,107.5f }, {292.5f, 122.5f }, {275.0f, 130.0f },
+	//	{290.0f, 102.5f}, {330.0f, 87.5f }, {345.0f,  102.5f }, {305.0f,  117.5f },
+	//};
 
 
 
@@ -103,7 +120,7 @@ void Boss::Draw() const
 
 	// 羽の頂点を反転させて左側の座標を計算
 	std::vector<Location> mirrored_vertices;
-	for (int i= 0;i<vertices.size();++i)
+	for (int i = 0; i < vertices.size(); ++i)
 	{
 		const Location& vertex = vertices[i];
 		float mirrored_x = boss_center_x - (vertex.x - boss_center_x); // X座標を反転
@@ -113,7 +130,7 @@ void Boss::Draw() const
 	// 羽の描画（左側）
 	for (size_t i = 0; i < mirrored_vertices.size(); i += 4)
 	{
-		DrawQuadrangleAA(mirrored_vertices[i].x, mirrored_vertices[i].y, mirrored_vertices[i + 1].x, mirrored_vertices[i + 1].y,mirrored_vertices[i + 2].x, mirrored_vertices[i + 2].y, mirrored_vertices[i + 3].x, mirrored_vertices[i + 3].y, color, TRUE);
+		//DrawQuadrangleAA(mirrored_vertices[i].x, mirrored_vertices[i].y, mirrored_vertices[i + 1].x, mirrored_vertices[i + 1].y,mirrored_vertices[i + 2].x, mirrored_vertices[i + 2].y, mirrored_vertices[i + 3].x, mirrored_vertices[i + 3].y, color, TRUE);
 	}
 
 	if (damage_effect_flg) {
@@ -137,166 +154,199 @@ void Boss::Draw() const
 	//DrawFormatString(1100, 0, color, "%d", barrier_num);
 	//DrawFormatString(1100, 0, color, "%d", damage_flg);
 	//DrawFormatString(1100, 0, color, "%d", damage_effect_time);
+	DrawFormatString(1100, 0, color, "%f", location.x);
+	DrawFormatString(1100, 20, color, "%f", location.y);
+	DrawFormatString(1100, 40, color, "%d", boss_state);
+
 }
 
 void Boss::Finalize()
 {
 }
 
-void Boss::Move(float dx, float dy)
+void Boss::Move(/*float dx, float dy*/ BossState state)
 {
-	switch (boss_state)
+	// ボスの速度を徐々に増加させる（加速）
+	if (vector.x < BOSS_MAX_SPEED && vector.y < BOSS_MAX_SPEED) {
+		vector.x += 0.1f;
+		vector.y += 0.1f;
+	}
+
+	// 現在の方向に移動
+	location.x += direction.x * vector.x;
+	location.y += direction.y * vector.y;
+	/*switch (state)
 	{
-	case BossState::IDLE:
-		//location.y += (float)sin(PI * 2.f / 40.f) * 5.f;
-		// 移動する
-		location.x += dx * (vector.x + 1.5f);
-		location.y += dy * (vector.y + 1.5f);
+	case BossState::UP:
+		location.y -= vector.y;
+		break;
+	case BossState::DOWN:
+		location.y += vector.y;
 		break;
 	case BossState::LEFT:
-		//location.x -= vector.x;
+		location.x -= vector.x;
 		break;
 	case BossState::RIGHT:
-		//location.x += vector.x;
+		location.x += vector.x;
 		break;
-	case BossState::DEATH:
+	case BossState::UP_LEFT:
+		location.x -= vector.x;
+		location.y -= vector.y;
+		break;
+	case BossState::UP_RIGHT:
+		location.x += vector.x;
+		location.y -= vector.y;
+		break;
+	case BossState::DOWN_LEFT:
+		location.x -= vector.x;
+		location.y += vector.y;
+		break;
+	case BossState::DOWN_RIGHT:
+		location.x -= vector.x;
+		location.y += vector.y;
 		break;
 	default:
 		break;
-	}
+	}*/
 }
 
 void Boss::Hit(Object* _object)
 {
-	if (_object->GetObjectType() == BLOCK) {
-		//Location tmpl = location;
-		//Erea tmpe = erea;
-		//move[0] = 0;
-		//move[1] = 0;
-		//move[2] = 0;
-		//move[3] = 0;
+	if (
+		(_object->GetObjectType() == BLOCK && _object->GetCanHit() == TRUE) ||
+		(_object->GetObjectType() == FIRE && _object->GetCanSwap() == TRUE && this->color == RED) ||
+		(_object->GetObjectType() == WOOD && _object->GetCanSwap() == TRUE && this->color == GREEN) ||
+		(_object->GetObjectType() == WATER && _object->GetCanSwap() == TRUE && this->color == BLUE)
+		)
+	{
+		if (barrier_num > 0) {
+			Location tmpl = location;
+			Erea tmpe = erea;
+			move[0] = 0;
+			move[1] = 0;
+			move[2] = 0;
+			move[3] = 0;
 
-		////上下判定用に座標とエリアの調整
-		//location.x += 10.f;
-		//erea.height = 1.f;
-		//erea.width = tmpe.width - 15.f;
+			//上下判定用に座標とエリアの調整
+			location.x += 10.f;
+			erea.height = 1.f;
+			erea.width = tmpe.width - 15.f;
 
-		////プレイヤー上方向の判定
-		//if (CheckCollision(_object->GetLocation(), _object->GetErea()) && !stageHitFlg[1][top]) {
-		//	stageHitFlg[0][top] = true;
-		//	stageHitFlg[1][top] = true;
-		//}
-		//else {
-		//	stageHitFlg[0][top] = false;
-		//}
+			//プレイヤー上方向の判定
+			if (CheckCollision(_object->GetLocation(), _object->GetErea()) && !stageHitFlg[1][top]) {
+				stageHitFlg[0][top] = true;
+				stageHitFlg[1][top] = true;
+			}
+			else {
+				stageHitFlg[0][top] = false;
+			}
 
-		////プレイヤー下方向の判定
-		//location.y += tmpe.height + 2;
-		//if (CheckCollision(_object->GetLocation(), _object->GetErea()) && !stageHitFlg[1][bottom]) {
-		//	stageHitFlg[0][bottom] = true;
-		//	stageHitFlg[1][bottom] = true;
-		//}
-		//else {
-		//	stageHitFlg[0][bottom] = false;
-		//}
+			//プレイヤー下方向の判定
+			location.y += tmpe.height + 2;
+			if (CheckCollision(_object->GetLocation(), _object->GetErea()) && !stageHitFlg[1][bottom]) {
+				stageHitFlg[0][bottom] = true;
+				stageHitFlg[1][bottom] = true;
+			}
+			else {
+				stageHitFlg[0][bottom] = false;
+			}
 
-		////戻す
-		//location.x = tmpl.x;
-		//location.y = tmpl.y;
-		//erea.height = tmpe.height;
-		//erea.width = tmpe.width;
+			//戻す
+			location.x = tmpl.x;
+			location.y = tmpl.y;
+			erea.height = tmpe.height;
+			erea.width = tmpe.width;
 
-		////上方向に埋まらないようにする
-		//if (stageHitFlg[0][top]) {//上方向に埋まっていたら
-		//	float t = (_object->GetLocation().y + _object->GetErea().height) - location.y;
-		//	if (t != 0) {
-		//		vector.y = 0.f;
-		//		move[top] = t;
-		//	}
-		//}
+			//上方向に埋まらないようにする
+			if (stageHitFlg[0][top]) {//上方向に埋まっていたら
+				float t = (_object->GetLocation().y + _object->GetErea().height) - location.y;
+				if (t != 0) {
+					vector.y = 0.f;
+					move[top] = t;
+				}
+			}
 
-		////下方向に埋まらないようにする
-		//if (stageHitFlg[0][bottom]) {//下方向に埋まっていたら
-		//	float t = _object->GetLocation().y - (location.y + erea.height);
-		//	if (t != 0) {
-		//		move[bottom] = t;
-		//	}
-		//}
-
-
-		////左右判定用に座標とエリアの調整
-		//location.y += 3.f;
-		//erea.height = tmpe.height - 3.f;
-		//erea.width = 1;
-
-		////プレイヤー左方向の判定
-		//if (CheckCollision(_object->GetLocation(), _object->GetErea()) && !stageHitFlg[1][left]) {
-		//	stageHitFlg[0][left] = true;
-		//	stageHitFlg[1][left] = true;
-		//	int a = CheckCollision(_object->GetLocation(), _object->GetErea());
-		//}
-		//else {
-		//	stageHitFlg[0][left] = false;
-		//}
+			//下方向に埋まらないようにする
+			if (stageHitFlg[0][bottom]) {//下方向に埋まっていたら
+				float t = _object->GetLocation().y - (location.y + erea.height);
+				if (t != 0) {
+					move[bottom] = t;
+				}
+			}
 
 
-		////プレイヤー右方向の判定
-		//location.x = tmpl.x + tmpe.width + 1;
-		//if (CheckCollision(_object->GetLocation(), _object->GetErea()) && !stageHitFlg[1][right]) {
-		//	stageHitFlg[0][right] = true;
-		//	stageHitFlg[1][right] = true;
-		//}
-		//else {
-		//	stageHitFlg[0][right] = false;
-		//}
+			//左右判定用に座標とエリアの調整
+			location.y += 3.f;
+			erea.height = tmpe.height - 3.f;
+			erea.width = 1;
 
-		////最初の値に戻す
-
-		//location.x = tmpl.x;
-		//location.y += -3.f;
-		//erea.height = tmpe.height;
-		//erea.width = tmpe.width;
+			//プレイヤー左方向の判定
+			if (CheckCollision(_object->GetLocation(), _object->GetErea()) && !stageHitFlg[1][left]) {
+				stageHitFlg[0][left] = true;
+				stageHitFlg[1][left] = true;
+				int a = CheckCollision(_object->GetLocation(), _object->GetErea());
+			}
+			else {
+				stageHitFlg[0][left] = false;
+			}
 
 
+			//プレイヤー右方向の判定
+			location.x = tmpl.x + tmpe.width + 1;
+			if (CheckCollision(_object->GetLocation(), _object->GetErea()) && !stageHitFlg[1][right]) {
+				stageHitFlg[0][right] = true;
+				stageHitFlg[1][right] = true;
+			}
+			else {
+				stageHitFlg[0][right] = false;
+			}
 
-		////左方向に埋まらないようにする
-		//if (stageHitFlg[0][left]) {//左方向に埋まっていたら
-		//	float t = (_object->GetLocation().x + _object->GetErea().width) - location.x;
-		//	if (t != 0) {
-		//		vector.x = 0.f;
-		//		move[left] = t;
+			//最初の値に戻す
 
-		//		//boss_state = BossState::RIGHT;
-		//	}
-		//}
-
-		////右方向に埋まらないようにする
-		//if (stageHitFlg[0][right]) {//右方向に埋まっていたら
-		//	float t = _object->GetLocation().x - (location.x + erea.width);
-		//	if (t != 0) {
-		//		vector.x = 0.f;
-		//		move[right] = t;
-		//		//boss_state = BossState::LEFT;
-		//	}
-		//}
+			location.x = tmpl.x;
+			location.y += -3.f;
+			erea.height = tmpe.height;
+			erea.width = tmpe.width;
 
 
-		////上下左右の移動量から移動後も埋まってるか調べる
-		//if (location.y < _object->GetLocation().y + _object->GetErea().height && location.y + erea.height > _object->GetLocation().y) {//左右
-		//	if (stageHitFlg[1][top] || stageHitFlg[1][bottom]) {
-		//		move[left] = 0.f;
-		//		move[right] = 0.f;
-		//	}
-		//}
 
-		//location.x += move[left];
-		//location.x += move[right];
-		//location.y += move[top];
-		//location.y += move[bottom];
+			//左方向に埋まらないようにする
+			if (stageHitFlg[0][left]) {//左方向に埋まっていたら
+				float t = (_object->GetLocation().x + _object->GetErea().width) - location.x;
+				if (t != 0) {
+					vector.x = 0.f;
+					move[left] = t;
+					//boss_state = BossState::RIGHT;
+				}
+			}
 
-		//erea.height = tmpe.height;
-		//erea.width = tmpe.width;
+			//右方向に埋まらないようにする
+			if (stageHitFlg[0][right]) {//右方向に埋まっていたら
+				float t = _object->GetLocation().x - (location.x + erea.width);
+				if (t != 0) {
+					vector.x = 0.f;
+					move[right] = t;
+					//boss_state = BossState::LEFT;
+				}
+			}
 
+
+			//上下左右の移動量から移動後も埋まってるか調べる
+			if (location.y < _object->GetLocation().y + _object->GetErea().height && location.y + erea.height > _object->GetLocation().y) {//左右
+				if (stageHitFlg[1][top] || stageHitFlg[1][bottom]) {
+					move[left] = 0.f;
+					move[right] = 0.f;
+				}
+			}
+
+			location.x += move[left];
+			location.x += move[right];
+			location.y += move[top];
+			location.y += move[bottom];
+
+			erea.height = tmpe.height;
+			erea.width = tmpe.width;
+		}
 	}
 
 
@@ -376,10 +426,18 @@ void Boss::DistanceCalc(GameMain* _g)
 	dy /= (float)length;
 
 	//移動
-	Move(dx, dy);
+	/*Move(dx, dy);*/
 }
 
 void Boss::barrier()
 {
 
+}
+
+void Boss::SetRandMove()
+{
+	float angle = static_cast<float>(rand()) / RAND_MAX * 2 * PI;
+	direction.x = cos(angle);
+	direction.y = sin(angle);
+	vector = { 0.0f ,0.0f}; // 新しい方向に切り替える際に速度をリセット
 }

@@ -1,13 +1,22 @@
 #pragma once
 #include "Object.h"
 #include <vector>
+#include <ctime>
 #include "EnemyBat.h"
 
 enum class BossState {
-	IDLE = 0,
+	/*IDLE = 0,
 	LEFT,
 	RIGHT,
-	DEATH
+	DEATH*/
+	UP = 0,
+	DOWN,
+	LEFT,
+	RIGHT,
+	UP_LEFT,
+	UP_RIGHT,
+	DOWN_LEFT,
+	DOWN_RIGHT,
 };
 
 class Boss :
@@ -33,10 +42,12 @@ private:
 	int damage_effect_time = 60;
 	bool damage_effect_flg = false;
 
+	Location direction;
+	int state_change_time;
+
 	//std::vector<Location>vertices;
 	bool hit;
 
-	//float wing_angle;
 
 public:
 	Boss();
@@ -47,7 +58,7 @@ public:
 	void Draw()const override;
 	void Finalize()override;
 
-	void Move(float dx, float dy);
+	void Move(/*float dx, float dy*/ BossState state);
 
 	void Hit(Object* _object)override;
 	bool SearchColor(Object* ob) {
@@ -58,4 +69,6 @@ public:
 	void DistanceCalc(GameMain* _g);//プレイヤーとボスの距離計算
 
 	void barrier();//ボスのバリア
+
+	void SetRandMove();;
 };
