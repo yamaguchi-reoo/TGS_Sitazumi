@@ -37,6 +37,9 @@ private:
 
 	int death_timer;	//死亡演出
 
+	int wing_se;		//羽SE
+	bool se_once;		//一回だけ再生	
+
 public:
 	EnemyBat();
 	~EnemyBat();
