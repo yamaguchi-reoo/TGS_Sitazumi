@@ -58,6 +58,7 @@ private:
 	Location aaa;
 
 	int walk_se[4];		//歩行SE格納
+	int jump_se;		//ジャンプSE格納
 	int now_riding;		//今乗っているブロックに応じて再生するSEを変える
 
 public:
