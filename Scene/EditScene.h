@@ -134,6 +134,8 @@ private:
     Location minimap_location;                            //ミニマップの位置
     float minimap_size;                                   //ミニマップの大きさ
     bool minimap_pickup_flg;                              //ミニマップを持っているか判断
+    Location minimap_button;                              //ミニマップを表示するか切り替えるボタンの位置
+    bool minimap_disp_flg;                                //ミニマップを表示するか
 public:
     //コンストラクタ
     EditScene(int _stage);

@@ -9,7 +9,7 @@
 
 Location camera_location = { 0,0 };
 
-EditScene::EditScene(int _stage) : current_type(0), ui_current_type(0), tool_pickup_flg(false), current_leftbutton_flg(false), current_rightbutton_flg(false), current_upbutton_flg(false), current_downbutton_flg(false), button_interval(0), now_select_erea(0), current_type_select(-1), now_current_type(0), current_type_location{ 0 }, current_type_erea{ 0 }, disp_num(0), double_click(20), player_spawn_location{ 0,0 }, minimap_location{ 0,0 }, minimap_size(0), minimap_pickup_flg(false)
+EditScene::EditScene(int _stage) : current_type(0), ui_current_type(0), tool_pickup_flg(false), current_leftbutton_flg(false), current_rightbutton_flg(false), current_upbutton_flg(false), current_downbutton_flg(false), button_interval(0), now_select_erea(0), current_type_select(-1), now_current_type(0), current_type_location{ 0 }, current_type_erea{ 0 }, disp_num(0), double_click(20), player_spawn_location{ 0,0 }, minimap_location{ 0,0 }, minimap_size(0), minimap_pickup_flg(false), minimap_button{ 0,0 }, minimap_disp_flg(false)
 {
 	now_stage = _stage;
 }
@@ -53,6 +53,7 @@ void EditScene::Initialize()
 
 	minimap_size = 1.5f;
 	minimap_location = { (float)SCREEN_WIDTH - (stage_width_num * minimap_size),0 };
+	minimap_button = { minimap_location.x,minimap_location.y + (stage_height_num * minimap_size) };
 }
 
 void EditScene::Finalize()
@@ -288,6 +289,7 @@ AbstractScene* EditScene::Update()
 		{
 			minimap_pickup_flg = true;
 		}
+
 		break;
 	default:
 		break;
