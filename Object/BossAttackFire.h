@@ -5,6 +5,7 @@ class BossAttackFire : public Object
 private:
 	Location velocity;
 	bool flg;
+	bool hitFlg;
 public:
 	BossAttackFire();
 	~BossAttackFire();

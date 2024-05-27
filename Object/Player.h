@@ -57,6 +57,9 @@ private:
 	float move[4] = { 0,0,0,0 };
 	Location aaa;
 
+	float angle[4];//両手両足
+	float mo = 0;
+
 public:
 	Player();
 	~Player();
