@@ -31,23 +31,22 @@ private:
 		right
 	};
 	Location vector; //ボスのベクトル
-	bool stageHitFlg[2][4]; //コウモリとステージの当たり判定
+	bool stageHitFlg[2][4]; //bossとステージの当たり判定
 	float move[4];//各方向加速度格納用
 
-	BossState boss_state;
+	BossState boss_state;// 現在のボスの状態
 
-	int barrier_num;
+	int barrier_num; // バリアの数
 
-	bool damage_flg; //ダメージを受けたとき
-	int damage_effect_time = 60;
-	bool damage_effect_flg = false;
+	bool damage_flg;				//ダメージを受けたとき
+	int damage_effect_time = 60;	//ダメージエフェクトの持続時間
+	bool damage_effect_flg = false; // ダメージエフェクトのフラグ
 
-	Location direction;
-	int state_change_time;
+	Location direction;			// 移動方向
+	Location target_direction;	// 目標方向
+	float speed;				// 移動速度
 
-	//std::vector<Location>vertices;
-	bool hit;
-
+	int state_change_time;		// 状態変更のタイミング
 
 public:
 	Boss();
@@ -58,17 +57,24 @@ public:
 	void Draw()const override;
 	void Finalize()override;
 
-	void Move(/*float dx, float dy*/ BossState state);
+	// ボスの移動処理
+	void Move(GameMain* _g);
 
+	// ヒット時の処理
 	void Hit(Object* _object)override;
+
 	bool SearchColor(Object* ob) {
 		return 0;
 	}
-	bool CheckCollision(Location l, Erea e); //ステージとの当たり判定
+	//ステージとの当たり判定
+	bool CheckCollision(Location l, Erea e); 
 
-	void DistanceCalc(GameMain* _g);//プレイヤーとボスの距離計算
+	//プレイヤーとボスの距離計算
+	float DistanceCalc(Location pos1,Location pos2);
 
-	void barrier();//ボスのバリア
+	//ボスのバリア
+	void barrier();
 
+	// ランダムな方向に移動する設定
 	void SetRandMove();;
 };

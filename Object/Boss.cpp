@@ -6,8 +6,10 @@
 #define BOSS_SIZE 315
 #define STATE_CHANGE_INTERVAL 120
 #define BOSS_MAX_SPEED 2.0f
+#define DIRECTION_CHANGE_SPEED 0.05f // 方向変更の速度（補間係数）
 
-Boss::Boss() :vector{ 0.0f }, hit(false), /*boss_state(BossState::IDLE),*/ barrier_num(3), damage_flg(false), state_change_time(STATE_CHANGE_INTERVAL), direction{ 0.0f, 0.0f }
+
+Boss::Boss() :vector{ 0.0f }, boss_state(BossState::DOWN), barrier_num(3), damage_flg(false), state_change_time(STATE_CHANGE_INTERVAL), direction{ 1.0f, 0.0f }, target_direction{ 1.0f, 0.0f }, speed(0.0f)
 {
 	type = BOSS;
 	can_swap = TRUE;
@@ -19,7 +21,7 @@ Boss::Boss() :vector{ 0.0f }, hit(false), /*boss_state(BossState::IDLE),*/ barri
 		stageHitFlg[1][i] = false;
 	}
 	srand(time(0));
-	boss_state = BossState::DOWN;
+	SetRandMove();
 }
 
 Boss::~Boss()
@@ -46,7 +48,7 @@ void Boss::Update(GameMain* _g)
 
 	vector = { 1.0f ,1.0f};
 
-	Move(boss_state);
+	Move(_g);
 
 	//プレイヤーとボスの距離を計算
 	//DistanceCalc(_g);
@@ -57,7 +59,6 @@ void Boss::Update(GameMain* _g)
 		damage_effect_flg = true;
 		if (damage_effect_time <= 0) 
 		{
-			//damage_effect_flg = false;
 			if (barrier_num > 0)
 			{
 				barrier_num--;
@@ -79,7 +80,7 @@ void Boss::Update(GameMain* _g)
 
 void Boss::Draw() const
 {
-	DrawBox(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, FALSE);
+	DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, FALSE);
 
 	// ボスの中心座標
 	float boss_center_x = local_location.x + BOSS_SIZE / 2;
@@ -136,7 +137,7 @@ void Boss::Draw() const
 	if (damage_effect_flg) {
 		if (damage_effect_time % 20 < 10) {
 			// バリアの描画
-			int barrier_rad[] = { 175, 170, 165 };
+			float barrier_rad[] = { 175, 170, 165 };
 			for (int i = 0; i < barrier_num; i++) {
 				DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2, barrier_rad[i], 50, color, FALSE);
 			}
@@ -156,7 +157,6 @@ void Boss::Draw() const
 	//DrawFormatString(1100, 0, color, "%d", damage_effect_time);
 	DrawFormatString(1100, 0, color, "%f", location.x);
 	DrawFormatString(1100, 20, color, "%f", location.y);
-	DrawFormatString(1100, 40, color, "%d", boss_state);
 
 }
 
@@ -164,50 +164,54 @@ void Boss::Finalize()
 {
 }
 
-void Boss::Move(/*float dx, float dy*/ BossState state)
+void Boss::Move(GameMain* _g)
 {
-	// ボスの速度を徐々に増加させる（加速）
-	if (vector.x < BOSS_MAX_SPEED && vector.y < BOSS_MAX_SPEED) {
-		vector.x += 0.1f;
-		vector.y += 0.1f;
+	Location player_pos = _g->GetPlayerLocation();
+	float distance_to_player = DistanceCalc(location, player_pos);
+
+	// プレイヤーとの距離が一定範囲内の場合にのみ移動する
+	if (distance_to_player <= 1280)
+	{
+		// ボスの速度を徐々に増加させる（加速）
+		if (speed < BOSS_MAX_SPEED) {
+			speed += 0.05f;
+		}
+
+		// プレイヤーの位置に応じてボスの目標方向を設定する
+		if (location.x > player_pos.x)
+		{
+			// プレイヤーよりも右にいる場合は左に向かって移動する
+			target_direction = { -1.0f, 0.0f };
+		}
+		else
+		{
+			// プレイヤーよりも左にいる場合は右に向かって移動する
+			target_direction = { 1.0f, 0.0f };
+		}
+
+		// プレイヤーとの距離が一定距離未満の場合、一定の距離を保つ
+		if (distance_to_player < 600)
+		{
+			// プレイヤーとの距離が一定距離未満なので、目標方向を逆に設定して一定距離を保つ
+			target_direction.x *= -1.0f;
+			target_direction.y *= -1.0f;
+		}
+
+		// 移動方向を滑らかにする
+		direction.x += (target_direction.x - direction.x) * DIRECTION_CHANGE_SPEED;
+		direction.y += (target_direction.y - direction.y) * DIRECTION_CHANGE_SPEED;
+
+		// 移動方向を正規化して移動速度を掛けてボスの位置を更新する
+		float length = (float)sqrt(direction.x * direction.x + direction.y * direction.y);
+		if (length != 0) {
+			direction.x /= length;
+			direction.y /= length;
+		}
+
+		location.x += direction.x * speed;
+		location.y += direction.y * speed;
 	}
 
-	// 現在の方向に移動
-	location.x += direction.x * vector.x;
-	location.y += direction.y * vector.y;
-	/*switch (state)
-	{
-	case BossState::UP:
-		location.y -= vector.y;
-		break;
-	case BossState::DOWN:
-		location.y += vector.y;
-		break;
-	case BossState::LEFT:
-		location.x -= vector.x;
-		break;
-	case BossState::RIGHT:
-		location.x += vector.x;
-		break;
-	case BossState::UP_LEFT:
-		location.x -= vector.x;
-		location.y -= vector.y;
-		break;
-	case BossState::UP_RIGHT:
-		location.x += vector.x;
-		location.y -= vector.y;
-		break;
-	case BossState::DOWN_LEFT:
-		location.x -= vector.x;
-		location.y += vector.y;
-		break;
-	case BossState::DOWN_RIGHT:
-		location.x -= vector.x;
-		location.y += vector.y;
-		break;
-	default:
-		break;
-	}*/
 }
 
 void Boss::Hit(Object* _object)
@@ -216,7 +220,8 @@ void Boss::Hit(Object* _object)
 		(_object->GetObjectType() == BLOCK && _object->GetCanHit() == TRUE) ||
 		(_object->GetObjectType() == FIRE && _object->GetCanSwap() == TRUE && this->color == RED) ||
 		(_object->GetObjectType() == WOOD && _object->GetCanSwap() == TRUE && this->color == GREEN) ||
-		(_object->GetObjectType() == WATER && _object->GetCanSwap() == TRUE && this->color == BLUE)
+		(_object->GetObjectType() == WATER && _object->GetCanSwap() == TRUE && this->color == BLUE ||
+		(_object->GetObjectType() == PLAYER))
 		)
 	{
 		if (barrier_num > 0) {
@@ -402,31 +407,11 @@ bool Boss::CheckCollision(Location l, Erea e)
 	return ret;
 }
 
-void Boss::DistanceCalc(GameMain* _g)
+float Boss::DistanceCalc(Location pos1, Location pos2)
 {
-	// プレイヤーとの距離を計算
-	Location player_pos = _g->GetPlayerLocation();
-	Erea player_erea = _g->GetPlayerErea();
-
-	// プレイヤーの中心座標を計算
-	float player_center_x = player_pos.x + player_erea.width / 2;
-	float player_center_y = player_pos.y + player_erea.height / 2;
-
-	// 自分の中心座標を計算
-	float enemy_center_x = location.x + erea.width / 2;
-	float enemy_center_y = location.y + erea.height / 2;
-
-	// プレイヤーの中心座標との距離を計算
-	float dx = player_center_x - enemy_center_x;
-	float dy = player_center_y - enemy_center_y;
-	float length = (float)sqrt(dx * dx + dy * dy);
-
-
-	dx /= (float)length;
-	dy /= (float)length;
-
-	//移動
-	/*Move(dx, dy);*/
+	float dx = pos2.x - pos1.x;
+	float dy = pos2.y - pos1.y;
+	return sqrt(dx * dx + dy * dy);
 }
 
 void Boss::barrier()
@@ -437,7 +422,7 @@ void Boss::barrier()
 void Boss::SetRandMove()
 {
 	float angle = static_cast<float>(rand()) / RAND_MAX * 2 * PI;
-	direction.x = cos(angle);
-	direction.y = sin(angle);
+	direction.x = (float)cos(angle);
+	direction.y = (float)sin(angle);
 	vector = { 0.0f ,0.0f}; // 新しい方向に切り替える際に速度をリセット
 }
