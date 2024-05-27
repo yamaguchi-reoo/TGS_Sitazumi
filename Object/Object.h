@@ -15,13 +15,14 @@ class GameMain;
 
 class Object : public BoxCollider, public ColorData
 {
-protected:
+public:
+
 	int type;		//Objectの種類格納 0=BLOCK 1=PLAYER 2=ENEMY 3=FIRE 4=WOOD 5=WATER 6=EFFECT
-	bool can_swap ;	//交換できるオブジェクトか
+	bool can_swap;	//交換できるオブジェクトか
 	bool can_hit;	//当たり判定があるオブジェクトか
 	bool searchFlg;	//スローモーション中か（プレイヤー）
 	int object_pos;	//ゲームメインで生成された時、オブジェクト配列のどこに格納されたか
-public:
+
 	//_location _erea=スポーン座標、大きさ ,_color_data=色情報, object_pos=Object配列内の自分自身の位置
 	virtual void Initialize(Location _location, Erea _erea, int _color_data, int _object_pos) = 0;
 

@@ -103,6 +103,7 @@ void Stage::Update()
 				block_type = FIRE_BLOCK;
 			}
 			type = FIRE;
+			draw_wood_flg = false;
 		}
 		else if (color == GREEN)
 		{
@@ -117,6 +118,7 @@ void Stage::Update()
 				block_type = WOOD_BLOCK;
 			}
 			type = WOOD;
+			draw_wood_flg = false;
 		}
 		else if (color == BLUE)
 		{
@@ -131,6 +133,7 @@ void Stage::Update()
 				block_type = WATER_BLOCK;
 			}
 			type = WATER;
+			draw_wood_flg = false;
 		}
 		//更新
 		old_color = color;
@@ -177,11 +180,22 @@ void Stage::Draw()const
 			break;
 			//ダメージゾーンの描画
 		case FIRE_BLOCK:
-		case WOOD_BLOCK:
 		case WATER_BLOCK:
 			if (debug_flg == false)
 			{
 				ResourceManager::StageAnimDraw(local_location, type);
+			}
+		case WOOD_BLOCK:
+			if (debug_flg == false)
+			{
+				if (draw_wood_flg == true)
+				{
+					DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, 0x84331F, true);
+				}
+				else
+				{
+					ResourceManager::StageAnimDraw(local_location, type);
+				}
 			}
 			break;
 		case WEATHER_NORMAL:
@@ -255,6 +269,16 @@ void Stage::Hit(Object* _object)
 	if (_object->GetObjectType() == PLAYER && (block_type == WEATHER_NORMAL || block_type == WEATHER_RAIN || block_type == WEATHER_FIRE || block_type == WEATHER_SEED))
 	{
 		change_weather_flg = true;
+	}
+
+	//草ブロック同士が当たった場合、座標に応じて描画を切り替える
+	if (_object->GetObjectType() == WOOD && this->type == WOOD)
+	{
+		//当たったオブジェクトより上か下に自分が居るなら、木の描画に切り替える
+		if ((_object->GetLocation().y < this->location.y || _object->GetLocation().y > this->location.y + this->erea.height) && _object->GetLocation().x + (_object->GetErea().width / 2) > this->location.x && _object->GetLocation().x + (_object->GetErea().width / 2) < this->location.x + this->erea.width)
+		{
+			draw_wood_flg = true;
+		}
 	}
 }
 
