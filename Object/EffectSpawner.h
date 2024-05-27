@@ -6,6 +6,7 @@ enum EffectList {
 	PlayerSpawnEffect = 0,
 	ShineEffect,
 	DeathEffect,
+	LandingEffect
 };
 
 class GameMain;
@@ -67,6 +68,9 @@ public:
 
 	//交換アニメーション
 	int Swap(Object* _object1, Object* _object2);
+
+	//エフェクトを構成するパーティクルをスポーンさせる _location=座標 _erea=大きさ _effect_type=パーティクルの種類 _time=消えるまでのフレーム数 _speed=速度 _color=エフェクトの色 _angle=進行方向
+	void SpawnParticle(Location _location, Erea _erea, int _effect_type, int _time, float _speed, int _color, float _angle);
 
 };
 

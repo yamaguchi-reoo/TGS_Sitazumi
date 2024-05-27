@@ -5,7 +5,7 @@
 
 #define BOSS_SIZE 315
 
-Boss::Boss():vector { 0.0f },hit(false),boss_state(BossState::IDLE)
+Boss::Boss() :vector{ 0.0f }, hit(false), boss_state(BossState::IDLE), barrier_num(3), damage_flg(false)
 {
 	type = BOSS;
 	can_swap = TRUE;
@@ -42,41 +42,74 @@ void Boss::Update(GameMain* _g)
 	vector = { 1.f };
 	//プレイヤーとボスの距離を計算
 	DistanceCalc(_g);
+
+	barrier();
+	if (damage_flg) {
+		damage_effect_time--;
+		damage_effect_flg = !damage_effect_flg;
+		if (damage_effect_time <= 0) 
+		{
+			//damage_effect_flg = false;
+			if (barrier_num > 0)
+			{
+				barrier_num--;
+				damage_flg = false;
+			}
+		}
+	}
 }
 
 void Boss::Draw() const
 {
-	//ボスの描画用配列
-	const std::vector<Location>vertices = {
-		//本体
-		{local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2},
-		//バリア
-		{local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2},
-		//右翼
-		{local_location.x + 225, local_location.y + 140}, {local_location.x + 250, local_location.y + 120 },{local_location.x + 255, local_location.y + 140 },{local_location.x + 230, local_location.y + 160 },
-		{local_location.x + 275, local_location.y + 140}, {local_location.x + 300, local_location.y + 120 },{local_location.x + 305, local_location.y + 140 },{local_location.x + 280, local_location.y + 160 },
-	};
-	//DrawCircle(local_location.x + 175, local_location.y + 175, 70, color, TRUE);
-	DrawBox(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, FALSE);
+	//DrawBox(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, FALSE);
 
-	for (int i = 0; i < vertices.size(); i++) 
-	{
-		//本体描画
-		if (i < 1) {
-			DrawCircle(vertices[i].x, vertices[i].y, 50, GetColor(255,255,255), TRUE);
-		}
-		//バリア
-		else if (i < 2) {
-			DrawCircle(vertices[i].x, vertices[i].y, 175, color, FALSE);
-			DrawCircle(vertices[i].x, vertices[i].y, 170, GetColor(0, 255, 0), FALSE);
-			DrawCircle(vertices[i].x, vertices[i].y, 165, GetColor(0, 0, 255), FALSE);
-		}
-		//右翼
-		else if (i < 7) {
-			//DrawQuadrangleAA(vertices[i].x, vertices[i].y, vertices[i + 1].x, vertices[i + 1].y, vertices[i + 2].x, vertices[i + 2].y, vertices[i + 3].x, vertices[i + 3].y, color, FALSE);
+	//本体
+	DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2, 50, 50, color, TRUE);
+
+	if (damage_effect_flg) {
+		if (damage_effect_time % 20 < 10) {
+			// バリアの描画
+			int barrier_rad[] = { 175, 170, 165 };
+			for (int i = 0; i < barrier_num; i++) {
+				DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2, barrier_rad[i], 50, color, FALSE);
+			}
+
+			//ボスの羽画用配列
+			const std::vector<Location>vertices = {
+				//右翼
+				{local_location.x + 225, local_location.y + 140}, {local_location.x + 250, local_location.y + 120 },{local_location.x + 255, local_location.y + 140 },{local_location.x + 230, local_location.y + 160 },
+				{local_location.x + 275, local_location.y + 140}, {local_location.x + 300, local_location.y + 120 },{local_location.x + 305, local_location.y + 140 },{local_location.x + 280, local_location.y + 160 },
+			};
+			//羽描画
+			for (int i = 0; i < vertices.size(); i += 4)
+			{
+				//DrawQuadrangleAA(vertices[i].x, vertices[i].y, vertices[i + 1].x, vertices[i + 1].y, vertices[i + 2].x, vertices[i + 2].y, vertices[i + 3].x, vertices[i + 3].y, color, TRUE);
+			}
 		}
 	}
-	//DrawFormatString(1100, 0, color, "x:%f  y:%f", location);
+	else
+	{
+		// バリアの描画
+		int barrier_rad[] = { 175, 170, 165 };
+		for (int i = 0; i < barrier_num; i++) {
+			DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2, barrier_rad[i], 50, color, FALSE);
+		}
+
+		//ボスの羽画用配列
+		const std::vector<Location>vertices = {
+			//右翼
+			{local_location.x + 225, local_location.y + 140}, {local_location.x + 250, local_location.y + 120 },{local_location.x + 255, local_location.y + 140 },{local_location.x + 230, local_location.y + 160 },
+			{local_location.x + 275, local_location.y + 140}, {local_location.x + 300, local_location.y + 120 },{local_location.x + 305, local_location.y + 140 },{local_location.x + 280, local_location.y + 160 },
+		};
+		//羽描画
+		for (int i = 0; i < vertices.size(); i += 4)
+		{
+			//DrawQuadrangleAA(vertices[i].x, vertices[i].y, vertices[i + 1].x, vertices[i + 1].y, vertices[i + 2].x, vertices[i + 2].y, vertices[i + 3].x, vertices[i + 3].y, color, TRUE);
+		}
+	}
+	
+	//DrawFormatString(1100, 0, color, "%d", barrier_num);
+	DrawFormatString(1100, 0, color, "%d", damage_flg);
 }
 
 void Boss::Finalize()
@@ -238,6 +271,21 @@ void Boss::Hit(Object* _object)
 	//	erea.width = tmpe.width;
 
 	}
+
+
+	//弱点色に触れた時の処理
+	if (
+		(_object->GetObjectType() == FIRE && this->color == GREEN) ||
+		(_object->GetObjectType() == WATER && this->color == RED)  ||
+		(_object->GetObjectType() == WOOD && this->color == BLUE)
+		)
+	{
+		//バリア減るごとにクールタイムを設ける
+		if (damage_flg == false) {
+			damage_flg = true;
+			damage_effect_time = 180;
+		}
+	}
 }
 
 bool Boss::CheckCollision(Location l, Erea e)
@@ -294,12 +342,30 @@ void Boss::DistanceCalc(GameMain* _g)
 	// プレイヤーの中心座標との距離を計算
 	float dx = player_center_x - enemy_center_x;
 	float dy = player_center_y - enemy_center_y;
-	float length = sqrt(dx * dx + dy * dy);
+	float length = (float)sqrt(dx * dx + dy * dy);
 
 
-	dx /= length;
-	dy /= length;
+	dx /= (float)length;
+	dy /= (float)length;
 
 	//移動
 	Move(dx, dy);
+}
+
+void Boss::barrier()
+{
+	switch (barrier_num)
+	{
+	case 3:
+		color = RED;
+		break;
+	case 2:
+		color = BLUE;
+		break;
+	case 1:
+		color = GREEN;
+		break;
+	default:
+		break;
+	}
 }

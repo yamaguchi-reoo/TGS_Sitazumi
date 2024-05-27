@@ -118,6 +118,6 @@ public:
     int Swap(Object* _object1, Object* _object2);
 
     //そのオブジェクトが画面内に居るか判断
-    bool CheckInScreen(Object* _object);
+    bool CheckInScreen(Object* _object)const;
 };
 

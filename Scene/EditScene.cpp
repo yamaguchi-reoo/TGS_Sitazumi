@@ -9,7 +9,7 @@
 
 Location camera_location = { 0,0 };
 
-EditScene::EditScene(int _stage) : current_type(0), ui_current_type(0), tool_pickup_flg(false), current_leftbutton_flg(false), current_rightbutton_flg(false), current_upbutton_flg(false), current_downbutton_flg(false), button_interval(0), now_select_erea(0), current_type_select(-1), now_current_type(0), current_type_location{ 0 }, current_type_erea{ 0 }, disp_num(0)
+EditScene::EditScene(int _stage) : current_type(0), ui_current_type(0), tool_pickup_flg(false), current_leftbutton_flg(false), current_rightbutton_flg(false), current_upbutton_flg(false), current_downbutton_flg(false), button_interval(0), now_select_erea(0), current_type_select(-1), now_current_type(0), current_type_location{ 0 }, current_type_erea{ 0 }, disp_num(0), double_click(20), player_spawn_location{ 0,0 }, minimap_location{ 0,0 }, minimap_size(0), minimap_pickup_flg(false)
 {
 	now_stage = _stage;
 }
@@ -50,6 +50,9 @@ void EditScene::Initialize()
 	current_type_location.y = 0;
 	current_type_erea.width = 50;
 	current_type_erea.height = 50;
+
+	minimap_size = 1.5f;
+	minimap_location = { (float)SCREEN_WIDTH - (stage_width_num * minimap_size),0 };
 }
 
 void EditScene::Finalize()
@@ -71,8 +74,15 @@ AbstractScene* EditScene::Update()
 	{
 		for (int j = 0; j < stage_width_num; j++)
 		{
-			stage[i][j]->Update();
 			stage[i][j]->SetScreenPosition(camera_location);
+			if (CheckInScreen(stage[i][j])==true)
+			{
+				stage[i][j]->Update();
+			}
+			if (stage[i][j]->GetStageType() == PLAYER_BLOCK)
+			{	
+				player_spawn_location = { (float)(j * BOX_WIDTH),(float)(i * BOX_HEIGHT) };
+			}
 		}
 	}
 	switch (ChechSelectErea())
@@ -141,8 +151,10 @@ AbstractScene* EditScene::Update()
 			{
 				if (KeyInput::OnMouse(MOUSE_INPUT_LEFT))
 				{
+					int old_current_type = current_type;
 					if (can_select_type[i][0] == TRUE)
 					{
+						current_type = i;
 						ui_current_type = i;
 						current_type_select = i;
 						current_type_location.x = tool_location.x + i * 50;
@@ -150,7 +162,7 @@ AbstractScene* EditScene::Update()
 					}
 					else
 					{
-						//接地できるブロックの変数を計算する
+						//設置できるブロックの変数を計算する
 						int n = 0;
 						for (int j = 0; j < i; j++)
 						{
@@ -160,9 +172,15 @@ AbstractScene* EditScene::Update()
 						current_type = n;
 						ui_current_type = i;
 					}
+					//プレイヤーをダブルクリックしたならプレイヤーリスポーンブロックまで移動
+					if (old_current_type == PLAYER_BLOCK && current_type == PLAYER_BLOCK)
+					{
+						camera_location = { player_spawn_location.x-(SCREEN_WIDTH/2),player_spawn_location.y - (SCREEN_HEIGHT / 2) };
+					}
 				}
 			}
 		}
+
 		//幅を減らす
 		if (cursor.x > width_button_location.x && cursor.x < width_button_location.x + 15 && cursor.y>width_button_location.y && cursor.y < width_button_location.y + 25)
 		{
@@ -264,6 +282,13 @@ AbstractScene* EditScene::Update()
 			}
 		}
 		break;
+	case MINIMAP:
+		//つかんで動かす
+		if (KeyInput::OnPressedMouse(MOUSE_INPUT_RIGHT))
+		{
+			minimap_pickup_flg = true;
+		}
+		break;
 	default:
 		break;
 	}
@@ -272,9 +297,14 @@ AbstractScene* EditScene::Update()
 	{
 		MoveInsideScreen();
 	}
+	if (minimap_pickup_flg == true)
+	{
+		MiniMapMoveInsideScreen();
+	}
 	if (KeyInput::OnReleaseMouse(MOUSE_INPUT_RIGHT))
 	{
 		tool_pickup_flg = false;
+		minimap_pickup_flg = false;
 	}
 
 	//操作取り消し
@@ -324,17 +354,17 @@ AbstractScene* EditScene::Update()
 	}
 
 	//全部無に
-	if (KeyInput::OnKey(KEY_INPUT_0))
-	{
-		SaveOldData();
-		for (int i = 0; i < stage_height_num; i++)
-		{
-			for (int j = 0; j < stage_width_num; j++)
-			{
-				stage_data[i][j] = 0;
-			}
-		}
-	}
+	//if (KeyInput::OnKey(KEY_INPUT_0))
+	//{
+	//	SaveOldData();
+	//	for (int i = 0; i < stage_height_num; i++)
+	//	{
+	//		for (int j = 0; j < stage_width_num; j++)
+	//		{
+	//			stage_data[i][j] = 0;
+	//		}
+	//	}
+	//}
 	return this;
 }
 
@@ -346,7 +376,10 @@ void EditScene::Draw()const
 	{
 		for (int j = 0; j < stage_width_num; j++)
 		{
-			stage[i][j]->Draw();
+			if (CheckInScreen(stage[i][j]) == true)
+			{
+				stage[i][j]->Draw();
+			}
 			if (select_data[i][j] == true)
 			{
 				DrawBoxAA(stage[i][j]->GetLocalLocation().x, stage[i][j]->GetLocalLocation().y, stage[i][j]->GetLocalLocation().x + BOX_WIDTH, stage[i][j]->GetLocalLocation().y + BOX_HEIGHT, 0xff0000, false);
@@ -367,14 +400,7 @@ void EditScene::Draw()const
 		{
 			DrawBoxAA(tool_location.x + (i * 50), tool_location.y, tool_location.x + (i * 50) + 50, tool_location.y + 50, 0xffffff, true);
 			DrawBoxAA(tool_location.x + (i * 50), tool_location.y, tool_location.x + (i * 50) + 50, tool_location.y + 50, 0x000000, false);
-			//if ()
-			//{
-			//	DrawFormatStringF(tool_location.x + (i * 50), tool_location.y + 15, 0x000000, "%s", block_type_string[disp_num][current_type]);
-			//}
-			//else
-			//{
-			//	DrawFormatStringF(tool_location.x + (i * 50), tool_location.y + 15, 0x000000, "%s", obj_string[i]);
-			//}
+
 			DrawFormatStringF(tool_location.x + (i * 50), tool_location.y + 15, 0x000000, "%s", block_type_string[i][disp_num]);
 		}
 		else
@@ -468,6 +494,30 @@ void EditScene::Draw()const
 		}
 	}
 	SetFontSize(old_size);
+
+	//ミニマップ
+	DrawBoxAA(minimap_location.x, minimap_location.y, minimap_location.x + (stage_width_num * minimap_size) , minimap_location.y + (stage_height_num * minimap_size), 0x000000, true);
+	DrawBoxAA(minimap_location.x, minimap_location.y, minimap_location.x + (stage_width_num * minimap_size) , minimap_location.y + (stage_height_num * minimap_size), 0xffffff,false);
+	for (int i = 0; i < stage_height_num; i++)
+	{
+		for (int j = 0; j < stage_width_num; j++)
+		{
+			if (stage[i][j]->GetStageType() != NULL_BLOCK)
+			{
+				DrawBoxAA(minimap_location.x + (j * minimap_size),
+					minimap_location.y + (i * minimap_size),
+					minimap_location.x + (j * minimap_size) + minimap_size,
+					minimap_location.y + (i * minimap_size) + minimap_size,
+					draw_block_color[stage[i][j]->GetStageType()], true);
+			}
+		}
+	}
+	DrawBoxAA((camera_location.x / BOX_WIDTH) * minimap_size + minimap_location.x,
+		(camera_location.y / BOX_HEIGHT) * minimap_size + minimap_location.y,
+		(camera_location.x / BOX_WIDTH + (SCREEN_WIDTH / BOX_WIDTH)) * minimap_size + minimap_location.x,
+		(camera_location.y / BOX_HEIGHT + (SCREEN_HEIGHT / BOX_HEIGHT)) * minimap_size + minimap_location.y,
+		0xff0000, false
+	);
 }
 
 void EditScene::LoadStageData(int _stage)
@@ -646,9 +696,14 @@ int EditScene::ChechSelectErea()
 	{
 		return TOOL_BOX;
 	}
+	//カーソルがミニマップ内かどうか判断
+	else if (cursor.x > minimap_location.x && cursor.x < minimap_location.x + (stage_width_num * minimap_size) && cursor.y > minimap_location.y && cursor.y < minimap_location.y + (stage_height_num * minimap_size))
+	{
+		return MINIMAP;
+	}
 	else
 	{
-		//ツールボックスをつかんでいなければツールボックス外の処理
+		//ツールボックスもミニマップもつかんでいなければツールボックス外の処理
 		for (int i = 0; i < stage_height_num; i++)
 		{
 			for (int j = 0; j < stage_width_num; j++)
@@ -696,6 +751,31 @@ void EditScene::MoveInsideScreen()
 	current_type_location.y = tool_location.y;
 }
 
+void EditScene::MiniMapMoveInsideScreen()
+{
+	//スクリーン内から出ないようにツールボックスのX座標をマウスに沿って移動
+	minimap_location.x = cursor.x - ((stage_width_num * minimap_size) / 2);
+	if (minimap_location.x < 0)
+	{
+		minimap_location.x = 0;
+	}
+	else if (minimap_location.x + (stage_width_num * minimap_size) > SCREEN_WIDTH)
+	{
+		minimap_location.x = SCREEN_WIDTH - (stage_width_num * minimap_size);
+	}
+
+	//スクリーン内から出ないようにツールボックスのY座標をマウスに沿って移動
+	minimap_location.y = cursor.y - ((stage_height_num * minimap_size) / 2);
+	if (minimap_location.y < 0)
+	{
+		minimap_location.y = 0;
+	}
+	else if (minimap_location.y + (stage_height_num * minimap_size) > SCREEN_HEIGHT)
+	{
+		minimap_location.y = SCREEN_HEIGHT - (stage_height_num * minimap_size);
+	}
+}
+
 void EditScene::ResetSelectData()
 {
 	for (int i = 0; i < stage_height_num; i++)
@@ -705,4 +785,18 @@ void EditScene::ResetSelectData()
 			select_data[i][j] = false;
 		}
 	}
+}
+
+bool EditScene::CheckInScreen(Stage* _stage)const
+{
+	//画面内に居るか判断
+	if (_stage->GetLocation().x > camera_location.x - _stage->GetErea().width &&
+		_stage->GetLocation().x < camera_location.x + SCREEN_WIDTH + _stage->GetErea().width &&
+		_stage->GetLocation().y > camera_location.y - _stage->GetErea().height &&
+		_stage->GetLocation().y < camera_location.y + SCREEN_HEIGHT + _stage->GetErea().height
+		)
+	{
+		return true;
+	}
+	return false;
 }

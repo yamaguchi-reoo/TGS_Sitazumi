@@ -27,6 +27,11 @@ private:
 
 	BossState boss_state;
 
+	int barrier_num;
+
+	bool damage_flg; //ダメージを受けたとき
+	int damage_effect_time = 60;
+	bool damage_effect_flg = false;
 
 	//std::vector<Location>vertices;
 	bool hit;
@@ -49,4 +54,6 @@ public:
 	bool CheckCollision(Location l, Erea e); //ステージとの当たり判定
 
 	void DistanceCalc(GameMain* _g);//プレイヤーとボスの距離計算
+
+	void barrier();//ボスのバリア
 };

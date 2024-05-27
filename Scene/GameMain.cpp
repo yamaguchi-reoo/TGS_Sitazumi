@@ -36,7 +36,7 @@ void GameMain::Initialize()
 	SetStage(now_stage);
 
 	back_ground = new BackGround();
-	back_ground->Initialize(stage_width);
+	back_ground->Initialize({ (float)stage_width,(float)stage_height });
 
 	lock_pos = camera_location;
 
@@ -147,7 +147,10 @@ void GameMain::Draw() const
 			pn = i;
 			continue;
 		}
+		if (CheckInScreen(object[i]) == true)
+		{
 			object[i]->Draw();
+		}
 	}
 	//プレイヤーを最後に描画
 	object[pn]->Draw();
@@ -201,7 +204,11 @@ void GameMain::DeleteObject(int i)
 			object[j]->SetObjectPos(j);
 			if (object[j]->GetObjectType() == PLAYER)
 			{
-				player_object--;
+				player_object = j;
+			}
+			if (object[j]->GetObjectType() == BOSS)
+			{
+				boss_object = j;
 			}
 		}
 		else
@@ -392,7 +399,7 @@ void GameMain::SetStage(int _stage)
 	if (player_flg == false)
 	{
 		//プレイヤーの生成
-		CreateObject(new Player, { (float)100,(float)100 }, { 150,75 }, RED);
+		CreateObject(new Player, { (float)100,(float)100 }, { PLAYER_HEIGHT,PLAYER_WIDTH }, RED);
 	}
 	//カメラのリセット
 	ResetCamera();
@@ -438,13 +445,13 @@ int GameMain::Swap(Object* _object1, Object* _object2)
 	return effect_spawner->Swap(_object1, _object2);
 }
 
-bool GameMain::CheckInScreen(Object* _object)
+bool GameMain::CheckInScreen(Object* _object)const
 {
 	//画面内に居るか判断
-	if (_object->GetLocation().x > camera_location.x - _object->GetErea().width &&
-		_object->GetLocation().x < camera_location.x + SCREEN_WIDTH + _object->GetErea().width &&
-		_object->GetLocation().y > camera_location.y - _object->GetErea().height &&
-		_object->GetLocation().y < camera_location.y + SCREEN_HEIGHT + _object->GetErea().height
+	if (_object->GetLocation().x > camera_location.x - _object->GetErea().width - 100 &&
+		_object->GetLocation().x < camera_location.x + SCREEN_WIDTH + _object->GetErea().width + 100 &&
+		_object->GetLocation().y > camera_location.y - _object->GetErea().height - 100 &&
+		_object->GetLocation().y < camera_location.y + SCREEN_HEIGHT + _object->GetErea().height + 100
 		)
 	{
 		return true;

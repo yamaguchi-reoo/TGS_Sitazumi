@@ -100,6 +100,16 @@ void EffectSpawner::Update(GameMain* _g)
 					effect[i].spawn_flg = false;
 				}
 				break;
+			//オブジェクトが着地した時
+			case 5:
+				effect[i].location.x += effect[i].speed * cosf(effect[i].angle * (float)M_PI * 2);
+				effect[i].location.y += effect[i].speed * sinf(effect[i].angle * (float)M_PI * 2);
+				//指定された時間で消える
+				if (effect[i].timer > effect[i].effect_time)
+				{
+					effect[i].spawn_flg = false;
+				}
+				break;
 			default:
 				break;
 			}
@@ -163,11 +173,17 @@ void EffectSpawner::Draw()const
 				DrawLineAA(effect[i].local_location.x - (effect[i].effect_shift[0].x / 2),
 					effect[i].local_location.y - (effect[i].effect_shift[0].y / 2),
 					effect[i].local_location.x + (effect[i].effect_shift[0].x / 2),
-					effect[i].local_location.y + (effect[i].effect_shift[0].y / 2), effect[i].color, true);
+					effect[i].local_location.y + (effect[i].effect_shift[0].y / 2), effect[i].color, TRUE);
 				DrawLineAA(effect[i].local_location.x - (effect[i].effect_shift[1].x / 2),
 					effect[i].local_location.y - (effect[i].effect_shift[1].y / 2),
 					effect[i].local_location.x + (effect[i].effect_shift[1].x / 2),
-					effect[i].local_location.y + (effect[i].effect_shift[1].y / 2), effect[i].color, true);
+					effect[i].local_location.y + (effect[i].effect_shift[1].y / 2), effect[i].color, TRUE);
+				break;
+				//着地した時
+			case 5:
+				SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 - (effect[i].timer * (255 / effect[i].effect_time)));
+				DrawCircleAA(effect[i].local_location.x, effect[i].local_location.y, 10, 10, effect[i].color, TRUE);
+				SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 				break;
 			default:
 				break;
@@ -224,39 +240,39 @@ void EffectSpawner::SpawnEffect(Location _location, Erea _erea,int _effect_type,
 		break;
 	//輝き
 	case ShineEffect:
-		for (int i = 0; i < EFFECT_NUM; i++)
-		{
-			if (effect[i].spawn_flg == false)
-			{
-				ResetEffect(i);
-				effect[i].spawn_flg = true;
-				effect[i].location = { _location.x + GetRand(_erea.width),_location.y + GetRand(_erea.height) };	//指定のエリア内でランダムな座標にスポーン
-				effect[i].erea = _erea;
-				effect[i].effect_type = 3;
-				effect[i].effect_time = _time;
-				effect[i].color = _color;
-				break;
-			}
-		}
+		SpawnParticle(
+			{ _location.x + GetRand(_erea.width),_location.y + GetRand(_erea.height) },
+			_erea,
+			3,
+			_time,
+			1,
+			_color,
+			0
+		);
 		break;
 		//塵になって消える
 	case DeathEffect:
-		for (int i = 0; i < EFFECT_NUM; i++)
-		{
-			if (effect[i].spawn_flg == false)
-			{
-				ResetEffect(i);
-				effect[i].spawn_flg = true;
-				effect[i].location = { _location.x + GetRand(_erea.width),_location.y + GetRand(_erea.height) };
-				effect[i].erea = _erea;
-				effect[i].effect_type = 4;
-				effect[i].effect_time = _time;
-				effect[i].speed = 1;
-				effect[i].angle = (float)(GetRand(100)/100.0f);
-				effect[i].color = _color;
-				break;
-			}
-		}
+		SpawnParticle(
+			{ _location.x + GetRand(_erea.width),_location.y + GetRand(_erea.height) },
+			_erea,
+			4,
+			_time,
+			1,
+			_color,
+			(float)(GetRand(100) / 100.0f)
+		);
+		break;
+		//着地エフェクト
+	case LandingEffect:
+		SpawnParticle(
+			{ _location.x + (_erea.width / 2) + GetRand(10),_location.y + _erea.height },
+			_erea,
+			5,
+			_time,
+			1,
+			_color,
+			(float)((GetRand(25) + 12) / 100.0f)
+		 );
 		break;
 	default:
 		break;
@@ -323,6 +339,26 @@ int EffectSpawner::Swap(Object* _object1, Object* _object2)
 	swap_anim[1].timer = swap_anim[0].timer;
 
 	return swap_anim[0].timer;
+}
+
+void EffectSpawner::SpawnParticle(Location _location, Erea _erea, int _effect_type, int _time, float _speed,int _color, float _angle)
+{
+	for (int i = 0; i < EFFECT_NUM; i++)
+	{
+		if (effect[i].spawn_flg == false)
+		{
+			ResetEffect(i);
+			effect[i].spawn_flg = true;
+			effect[i].location = _location;
+			effect[i].erea = _erea;
+			effect[i].effect_type = _effect_type;
+			effect[i].effect_time = _time;
+			effect[i].speed = 1;
+			effect[i].color = _color;
+			effect[i].angle = _angle;
+			break;
+		}
+	}
 }
 
 

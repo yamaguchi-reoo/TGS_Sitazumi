@@ -63,7 +63,7 @@ static int text_color[24]
 	0x00ff00,	//緑鹿
 	0x0000ff,	//青鹿
 	0xff0000,	//赤蝙蝠
-	0xff00ff,	//緑蝙蝠
+	0x00ff00,	//緑蝙蝠
 
 	0x0000ff,	//青蝙蝠
 	0xff0000,	//赤蛙
@@ -71,7 +71,7 @@ static int text_color[24]
 	0x0000ff,	//青蛙
 	0xffffff,	//ボス
 
-	0xffffff,	//雨
+	0xffffff,	//通常天気
 	0x0000ff,	//雨
 	0xff0000,	//火球
 	0x00ff00,	//種
@@ -93,6 +93,7 @@ private:
 	int stage_height;					//ステージ全体の高さ
 	int weather;						//変更する天気
 	bool change_weather_flg;			//天気を変更するか判断
+	bool draw_wood_flg;					//木を描画するか草を描画するか判断
 public:
 	Stage(int _type, int _stage_height = 0);
 	~Stage();
@@ -109,7 +110,8 @@ public:
 	//ステージのタイプ設定
 	void SetStageType(int _type);
 	//ステージのタイプ取得(0=無 1=�白 2=灰 3=赤 4=緑 5=青 6=炎 7=木 8=水 9=初期リスポーン)
-	int GetStageType() { return type; }
+	int GetStageType() { return block_type; }
+
 	//Edit表示設定
 	void SetDebugFlg() { debug_flg = true; }
 
