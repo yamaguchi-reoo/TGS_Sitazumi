@@ -1,7 +1,8 @@
 #include "Boss.h"
 #include <math.h>
-#include"../Utility/KeyInput.h"
-#include"../Scene/GameMain.h"
+#include "../Utility/KeyInput.h"
+#include "../Scene/GameMain.h"
+#include <algorithm>
 
 #define BOSS_SIZE 315
 #define STATE_CHANGE_INTERVAL 120
@@ -36,87 +37,137 @@ void Boss::Initialize(Location _location, Erea _erea, int _color_data, int _obje
 
 	object_pos = _object_pos;
 	
+	//ボスの羽画用配列
+	vertices = {
+		//右翼No1
+		{ 190.0f, 105.0f }, { 230.0f, 90.0f },{ 245.0f, 105.0f },{ 205.0f, 120.0f },
+		{ 240.0f, 85.0f }, { 257.5f, 77.5f },{ 272.5f, 92.5f },{ 255.0f, 100.0f },
+		{ 270.0f, 72.5f }, { 310.0f, 57.5f },{ 325.0f, 72.5f },{ 285.0f, 87.5f },
+		//右翼No2
+		{ 210.0f, 135.0f }, { 250.0f,120.0f }, { 265.0f, 135.0f }, { 225.0f, 150.0f },
+		{ 260.0f, 115.0f }, { 277.5f,107.5f }, { 292.5f, 122.5f }, { 275.0f, 130.0f },
+		{ 290.0f, 102.5f }, { 330.0f, 87.5f }, { 345.0f, 102.5f }, { 305.0f, 117.5f }
+	};
 }
 
 void Boss::Update(GameMain* _g)
 {
-
+	// ステージとの当たり判定フラグを初期化
 	for (int i = 0; i < 4; i++) {
 		stageHitFlg[0][i] = false;
 		stageHitFlg[1][i] = false;
 	}
 
+	speed = 2.0f;
 	vector = { 1.0f ,1.0f};
 
+	// ボスの移動処理を呼び出し
 	Move(_g);
 
 	//プレイヤーとボスの距離を計算
 	//DistanceCalc(_g);
 
 	barrier();
+	// ダメージを受けている場合の処理
 	if (damage_flg) {
+		// 時間を減少
 		damage_effect_time--;
+		// フラグを設定
 		damage_effect_flg = true;
+		// 時間が0以下になったら
 		if (damage_effect_time <= 0) 
 		{
+			// バリアが残っている場合
 			if (barrier_num > 0)
 			{
+				// バリアを1つ減少
 				barrier_num--;
+				// ダメージフラグを解除
 				damage_flg = false;
 			}
 		}
 	}
+	// バリアがなくなった場合の処理
 	if (barrier_num == 0) {
 	}
 
 	// 状態変更のタイミングをチェック
 	state_change_time--;
+	// 状態変更のタイミングが0以下になったら
 	if (state_change_time <= 0) {
-		//boss_state = GetRandLocation();
+		// ランダムな方向に移動する設定を行う
 		SetRandMove();
+		// 状態変更のインターバルをリセット
 		state_change_time = STATE_CHANGE_INTERVAL;
+	}
+
+	//竹攻撃制作中
+	/*if (GetRand(60) > 58 && !f)
+	{
+		Erea e = { 1200,40 };
+		Location l = _g->GetPlayerLocation();
+		l.y += _g->GetPlayerErea().height + 40;
+		_g->CreateObject(new BossAttackWood, l, e, GREEN);
+		f = true;
+	}*/
+
+	cnt++;
+	if (cnt >= 240) {
+		f = true;
+		if (cnt == 240) {
+			attack = GetRand(1);
+		}
+	}
+
+	if (f) {
+		switch (attack)
+		{
+		case 0:
+			if (cnt % 30 == 0) {
+				Erea e = { 40,40 };
+				_g->CreateObject(new BossAttackFire, GetCenterLocation(), e, RED);
+			}
+			if (cnt > 300) {
+				cnt = 0;
+				f = false;
+			}
+			break;
+
+		case 1:
+			if (cnt % 30 == 0) {
+				Erea e = { 40,40 };
+				_g->CreateObject(new BossAttackWater, GetCenterLocation(), e, BLUE);
+			}
+			if (cnt > 300) {
+				cnt = 0;
+				f = false;
+			}
+			break;
+
+		default:
+			break;
+		}
+		
 	}
 }
 
 void Boss::Draw() const
 {
-	DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, FALSE);
+	//DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, FALSE);
 
 	// ボスの中心座標
 	float boss_center_x = local_location.x + BOSS_SIZE / 2;
 	float boss_center_y = local_location.y + BOSS_SIZE / 2;
 
-	//ボスの羽画用配列
-	const std::vector<Location>vertices = {
-		//右翼No1
-		{local_location.x + 190, local_location.y + 105}, {local_location.x + 230, local_location.y + 90 },{local_location.x + 245, local_location.y + 105 },{local_location.x + 205, local_location.y + 120 },
-		{local_location.x + 240, local_location.y + 85}, {local_location.x + 257.5f, local_location.y + 77.5f },{local_location.x + 272.5f, local_location.y + 92.5f },{local_location.x + 255, local_location.y + 100 },
-		{local_location.x + 270, local_location.y + 72.5f}, {local_location.x + 310, local_location.y + 57.5f },{local_location.x + 325, local_location.y + 72.5f },{local_location.x + 285, local_location.y + 87.5f },
-		//右翼No2
-		{local_location.x + 210, local_location.y + 135}, {local_location.x + 250, local_location.y + 120 },{local_location.x + 265, local_location.y + 135 },{local_location.x + 225, local_location.y + 150 },
-		{local_location.x + 260, local_location.y + 115}, {local_location.x + 277.5f, local_location.y + 107.5f },{local_location.x + 292.5f, local_location.y + 122.5f },{local_location.x + 275, local_location.y + 130 },
-		{local_location.x + 290, local_location.y + 102.5f}, {local_location.x + 330, local_location.y + 87.5f },{local_location.x + 345, local_location.y + 102.5f },{local_location.x + 305, local_location.y + 117.5f },
-	};
-	//const std::vector<Location>vertices = {
-	//	//右翼No1
-	//	{190.0f,105.0f}, {230.0f,90.0f },{245.0f,105.0f },{205.0f,120.0f },
-	//	{240.0f,85.0f}, {257.5f, 77.5f },{272.5f, 92.5f },{255.0f, 100.0f },
-	//	{270.0f,72.5f}, {310.0f, 57.5f },{325.0f, 72.5f },{285.0f, 87.5f },
-	//	//右翼No2
-	//	{210.0f, 135.0f}, {250.0f,120.0f }, {265.0f,  135.0f },{225.0f, 150.0f },
-	//	{260.0f, 115.0f}, {277.5f,107.5f }, {292.5f, 122.5f }, {275.0f, 130.0f },
-	//	{290.0f, 102.5f}, {330.0f, 87.5f }, {345.0f,  102.5f }, {305.0f,  117.5f },
-	//};
-
-
-
+	// バリアの半径の配列を定義
+	float barrier_rad[] = { 175, 170, 165 };
 	//本体
 	DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2, 50, 50, color, TRUE);
 
 	//羽描画
 	for (int i = 0; i < vertices.size(); i += 4)
 	{
-		//DrawQuadrangleAA(vertices[i].x, vertices[i].y, vertices[i + 1].x, vertices[i + 1].y, vertices[i + 2].x, vertices[i + 2].y, vertices[i + 3].x, vertices[i + 3].y, color, TRUE);
+		//DrawQuadrangleAA(local_location.x + vertices[i].x, local_location.y + vertices[i].y, local_location.x + vertices[i + 1].x, local_location.y + vertices[i + 1].y, local_location.x + vertices[i + 2].x, local_location.y + vertices[i + 2].y, local_location.x + vertices[i + 3].x, local_location.y + vertices[i + 3].y, color, TRUE);
 	}
 
 	// 羽の頂点を反転させて左側の座標を計算
@@ -133,12 +184,13 @@ void Boss::Draw() const
 	{
 		//DrawQuadrangleAA(mirrored_vertices[i].x, mirrored_vertices[i].y, mirrored_vertices[i + 1].x, mirrored_vertices[i + 1].y,mirrored_vertices[i + 2].x, mirrored_vertices[i + 2].y, mirrored_vertices[i + 3].x, mirrored_vertices[i + 3].y, color, TRUE);
 	}
-
-	if (damage_effect_flg) {
-		if (damage_effect_time % 20 < 10) {
-			// バリアの描画
-			float barrier_rad[] = { 175, 170, 165 };
+	// フラグがTRUEだったらバリアを点滅させる
+	if (damage_effect_flg) 
+	{
+		if (damage_effect_time % 20 < 10) 
+		{
 			for (int i = 0; i < barrier_num; i++) {
+				// バリアの描画
 				DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2, barrier_rad[i], 50, color, FALSE);
 			}
 		}
@@ -146,7 +198,6 @@ void Boss::Draw() const
 	else
 	{
 		// バリアの描画
-		float barrier_rad[] = { 175.0f, 170.0f, 165.0f };
 		for (int i = 0; i < barrier_num; i++) {
 			DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2, barrier_rad[i], 50, color, FALSE);
 		}
@@ -155,8 +206,8 @@ void Boss::Draw() const
 	//DrawFormatString(1100, 0, color, "%d", barrier_num);
 	//DrawFormatString(1100, 0, color, "%d", damage_flg);
 	//DrawFormatString(1100, 0, color, "%d", damage_effect_time);
-	DrawFormatString(1100, 0, color, "%f", location.x);
-	DrawFormatString(1100, 20, color, "%f", location.y);
+	//DrawFormatString(1100, 0, color, "%f", location.x);
+	//DrawFormatString(1100, 20, color, "%f", local_location.y);
 
 }
 
@@ -172,21 +223,18 @@ void Boss::Move(GameMain* _g)
 	// プレイヤーとの距離が一定範囲内の場合にのみ移動する
 	if (distance_to_player <= 1280)
 	{
-		// ボスの速度を徐々に増加させる（加速）
-		if (speed < BOSS_MAX_SPEED) {
-			speed += 0.05f;
-		}
-
 		// プレイヤーの位置に応じてボスの目標方向を設定する
 		if (location.x > player_pos.x)
 		{
 			// プレイヤーよりも右にいる場合は左に向かって移動する
 			target_direction = { -1.0f, 0.0f };
+			//target_direction.x = -1.0f;
 		}
 		else
 		{
 			// プレイヤーよりも左にいる場合は右に向かって移動する
-			target_direction = { 1.0f, 0.0f };
+			target_direction = {1.0f, 0.0f };
+			//target_direction.x = 1.0f;
 		}
 
 		// プレイヤーとの距離が一定距離未満の場合、一定の距離を保つ
@@ -211,7 +259,6 @@ void Boss::Move(GameMain* _g)
 		location.x += direction.x * speed;
 		location.y += direction.y * speed;
 	}
-
 }
 
 void Boss::Hit(Object* _object)
@@ -267,6 +314,7 @@ void Boss::Hit(Object* _object)
 				float t = (_object->GetLocation().y + _object->GetErea().height) - location.y;
 				if (t != 0) {
 					vector.y = 0.f;
+					speed = 0.0f;
 					move[top] = t;
 				}
 			}
@@ -320,6 +368,7 @@ void Boss::Hit(Object* _object)
 				float t = (_object->GetLocation().x + _object->GetErea().width) - location.x;
 				if (t != 0) {
 					vector.x = 0.f;
+					speed = 0.0f;
 					move[left] = t;
 					//boss_state = BossState::RIGHT;
 				}
@@ -330,6 +379,7 @@ void Boss::Hit(Object* _object)
 				float t = _object->GetLocation().x - (location.x + erea.width);
 				if (t != 0) {
 					vector.x = 0.f;
+					speed = 0.0f;
 					move[right] = t;
 					//boss_state = BossState::LEFT;
 				}
@@ -411,7 +461,7 @@ float Boss::DistanceCalc(Location pos1, Location pos2)
 {
 	float dx = pos2.x - pos1.x;
 	float dy = pos2.y - pos1.y;
-	return sqrtf(dx * dx + dy * dy);
+	return (float)sqrt(dx * dx + dy * dy);
 }
 
 void Boss::barrier()
@@ -421,8 +471,8 @@ void Boss::barrier()
 
 void Boss::SetRandMove()
 {
-	float angle = static_cast<float>(rand()) / RAND_MAX * 2 * PI;
+	float angle = (float)static_cast<float>(rand()) / RAND_MAX * 2 * PI;
 	direction.x = (float)cos(angle);
 	direction.y = (float)sin(angle);
-	vector = { 0.0f ,0.0f}; // 新しい方向に切り替える際に速度をリセット
+	//speed = 0.0f; // 新しい方向に切り替える際に速度をリセット
 }

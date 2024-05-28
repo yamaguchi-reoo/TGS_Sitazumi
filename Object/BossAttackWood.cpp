@@ -19,7 +19,8 @@ BossAttackWood::~BossAttackWood()
 
 void BossAttackWood::Initialize(Location _location, Erea _erea, int _color_data, int _object_pos)
 {
-	location = _location;
+	location.x = _location.x;
+	location.y = _location.y;
 	color = _color_data;
 
 	object_pos = _object_pos;
@@ -44,6 +45,9 @@ void BossAttackWood::Update(GameMain* _g)
 
 	if (count > 180) {
 		MoveBamboo();
+		if (velocity.y == 0.f) {
+			_g->DeleteObject(object_pos);
+		}
 	}
 	else {//プレイヤーを探す
 		if (location.x - _g->GetPlayerLocation().x < 0.f) {//プレイヤーより右
@@ -70,9 +74,9 @@ void BossAttackWood::Draw() const
 
 void BossAttackWood::Hit(Object* _object)
 {
-	if (_object->GetObjectType() == BLOCK && _object->GetObjectType() != FIRE) {
+	/*if (_object->GetObjectType() == BLOCK && _object->GetObjectType() != FIRE) {
 		_object->SetColorData(color);
-	}
+	}*/
 }
 
 bool BossAttackWood::SearchColor(Object* ob)
@@ -87,7 +91,7 @@ void BossAttackWood::MoveBamboo()
 
 	erea.height += velocity.y;
 
-	if (erea.height > bambooHeight) {
+	if (abs(erea.height) > bambooHeight) {
 		velocity = { 0.f,0.f };
 	}
 }

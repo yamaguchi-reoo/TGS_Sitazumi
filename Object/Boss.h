@@ -3,6 +3,9 @@
 #include <vector>
 #include <ctime>
 #include "EnemyBat.h"
+#include "BossAttackFire.h"
+#include "BossAttackWater.h"
+#include "BossAttackWood.h"
 
 enum class BossState {
 	/*IDLE = 0,
@@ -47,6 +50,12 @@ private:
 	float speed;				// 移動速度
 
 	int state_change_time;		// 状態変更のタイミング
+
+	std::vector<Location>vertices;
+
+	bool f = false;
+	int cnt = 0;
+	int attack= 0;
 
 public:
 	Boss();

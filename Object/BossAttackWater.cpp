@@ -3,9 +3,9 @@
 
 BossAttackWater::BossAttackWater()
 {
-	type = BLOCK;
-	can_swap = TRUE;
-	can_hit = TRUE;
+	type = WATER;
+	can_swap = FALSE;
+	can_hit = FALSE;
 
 	flg = false;
 	count = 0;
@@ -62,6 +62,7 @@ void BossAttackWater::Update(GameMain* _g)
 
 	if (hitFlg) {
 		//ここで削除
+		_g->DeleteObject(object_pos);
 	}
 }
 
@@ -76,6 +77,7 @@ void BossAttackWater::Hit(Object* _object)
 {
 	if (_object->GetObjectType() == BLOCK && _object->GetObjectType() != WOOD) {
 		_object->SetColorData(color);
+		_object->SetCanSwap(TRUE);
 		hitFlg = true;
 	}
 }
