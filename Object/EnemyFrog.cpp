@@ -9,7 +9,8 @@ EnemyFrog::EnemyFrog():
 	frog_state(FrogState::LEFT_JUMP), 
 	vector{0,0}, 
 	death_timer(0), 
-	face_angle(0.0f)
+	face_angle(0.0f),
+	jump_se(0)
 {
 	type = ENEMY;
 	can_swap = TRUE;
@@ -28,6 +29,8 @@ void EnemyFrog::Initialize(Location _location, Erea _erea, int _color_data, int 
 	color = _color_data;
 
 	object_pos = _object_pos;
+
+	jump_se = ResourceManager::SetSound("Resource/Sounds/frog_jump.wav");
 }
 
 void EnemyFrog::Update(GameMain* _g)
@@ -59,11 +62,12 @@ void EnemyFrog::Update(GameMain* _g)
 		{
 			vector.x = -5.f;
 			vector.y = -20.f;
+			ResourceManager::StartSound(jump_se);
 		}
 		//空中で僅かに加速(ブロックに引っかかる対策)
 		if (vector.x == 0 && stageHitFlg[1][bottom] == false)
 		{
-			vector.x = -0.3f;
+			vector.x = -0.5f;
 		}
 		break;
 	case FrogState::RIGHT_JUMP:
@@ -71,11 +75,12 @@ void EnemyFrog::Update(GameMain* _g)
 		{
 			vector.x = 5.f;
 			vector.y = -20.f;
+			ResourceManager::StartSound(jump_se);
 		}
 		//空中で僅かに加速(ブロックに引っかかる対策)
 		if (vector.x == 0 && stageHitFlg[1][bottom] == false)
 		{
-			vector.x = 0.3f;
+			vector.x = 0.5f;
 		}
 		break;
 	case FrogState::DEATH:
