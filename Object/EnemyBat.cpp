@@ -1,5 +1,6 @@
 #include"EnemyBat.h"
 #include"../Utility/KeyInput.h"
+#include "../Utility/ResourceManager.h"
 #include<math.h>
 
 
@@ -7,7 +8,7 @@
 
 #define ENEMY_SPEED 2.f
 
-EnemyBat::EnemyBat() :up(0), bat_state(BatState::LEFT), wing_angle(0.0f), vector{ 0.0f },death_timer(0)
+EnemyBat::EnemyBat() :up(0), bat_state(BatState::LEFT), wing_angle(0.0f), vector{ 0.0f },death_timer(0), se_once(false)
 {
 	type = ENEMY;
 	can_swap = TRUE;
@@ -31,6 +32,8 @@ void EnemyBat::Initialize(Location _location, Erea _erea, int _color_data, int _
 	color = _color_data;
 
 	object_pos = _object_pos;
+
+	wing_se = ResourceManager::SetSound("Resource/Sounds/flapping_wings.wav");
 }
 
 void EnemyBat::Update(GameMain* _g)
@@ -41,7 +44,18 @@ void EnemyBat::Update(GameMain* _g)
 	{
 		wing_angle = (float)sin(PI * 2.f / 40.f * up) * 20.f; // 30度の振れ幅で周期的に変化させる
 	}
-
+	if (wing_angle > 19)
+	{
+		if (se_once == false)
+		{
+			ResourceManager::StartSound(wing_se);
+			se_once = true;
+		}
+	}
+	else
+	{
+		se_once = false;
+	}
 
 	Location player_pos = _g->GetPlayerLocation();
 	Erea player_erea = _g->GetPlayerErea();

@@ -33,6 +33,7 @@ EnemyDeer::EnemyDeer()
 
 	deer_spawn = false;
 	deer_draw = d_draw::vr_one;
+
 }
 
 EnemyDeer::~EnemyDeer()
@@ -51,10 +52,19 @@ void EnemyDeer::Initialize(Location _location, Erea _erea, int _color_data, int 
 	color = _color_data;
 
 	object_pos = _object_pos;
+
+	walk_se = ResourceManager::SetSound("Resource/Sounds/walk_normal.wav");
 }
 
 void EnemyDeer::Update(GameMain* _g)
 {
+
+	frame++;
+	
+	if (frame % 30 == 0)
+	{
+		ResourceManager::StartSound(walk_se);
+	}
 	for (int i = 0; i < 4; i++) {
 		stageHitFlg[0][i] = false;
 		stageHitFlg[1][i] = false;
