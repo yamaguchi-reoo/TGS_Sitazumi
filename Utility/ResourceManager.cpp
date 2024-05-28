@@ -1,4 +1,5 @@
 #include "ResourceManager.h"
+#include "common.h"
 #define _USE_MATH_DEFINES
 #include <math.h>
 
@@ -8,6 +9,7 @@ char* ResourceManager::sound_filepath[SOUND_NUM];
 int ResourceManager::image_data[IMAGE_NUM];
 int ResourceManager::div_image_data[DIV_IMAGE_NUM][DIV_IMAGE_MAX];
 int ResourceManager::sound_data[SOUND_NUM];
+int ResourceManager::sound_freq = 50000;
 
 int ResourceManager::anim;			
 FireAnim ResourceManager::fire_anim[ANIM_BLOCK_NUM];
@@ -33,6 +35,9 @@ void ResourceManager::DeleteResource()
 	{
 		DeleteSoundMem(sound_data[i]);
 	}
+
+	// 音をすべて削除します
+	InitSoundMem();
 }
 
 void ResourceManager::StageAnimInitialize()
@@ -250,6 +255,9 @@ int ResourceManager::GetDivGraph(int _num1, int _num2)
 
 void ResourceManager::StartSound(int _num)
 {
+	// 再生周波数を設定する
+	SetFrequencySoundMem(sound_freq, sound_data[_num]);
+	//再生
 	PlaySoundMem(sound_data[_num], DX_PLAYTYPE_BACK);
 }
 
@@ -258,6 +266,10 @@ void ResourceManager::StopSound(int _num)
 	StopSoundMem(sound_data[_num]);
 }
 
+void ResourceManager::SetSoundFreq(int _num)
+{
+	sound_freq = _num;
+}
 void ResourceManager::DrawRotaBox(float _x, float _y, float _w, float _h, float _cx, float _cy, float _rad, int _color, bool _fill)
 {
 	float loc[4][2];

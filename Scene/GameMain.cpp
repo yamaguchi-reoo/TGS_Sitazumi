@@ -134,6 +134,19 @@ AbstractScene* GameMain::Update()
 		return new EditScene(now_stage);
 	}
 
+	//音源速度変更
+	if (KeyInput::OnPresed(KEY_INPUT_1))
+	{
+		ResourceManager::SetSoundFreq(10000);
+	}
+	if (KeyInput::OnPresed(KEY_INPUT_2))
+	{
+		ResourceManager::SetSoundFreq(50000);
+	}
+	if (KeyInput::OnPresed(KEY_INPUT_3))
+	{
+		ResourceManager::SetSoundFreq(75000);
+	}
 	test->Update(this);
 	test->SetScreenPosition(camera_location);
 #endif

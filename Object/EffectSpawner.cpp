@@ -340,6 +340,7 @@ int EffectSpawner::Swap(Object* _object1, Object* _object2)
 	}
 	swap_anim[1].timer = swap_anim[0].timer;
 
+	ResourceManager::SetSoundFreq(40000);
 	ResourceManager::StartSound(swap_se);
 
 	return swap_anim[0].timer;

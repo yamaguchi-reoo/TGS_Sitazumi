@@ -199,6 +199,15 @@ void Player::Update(GameMain* _g)
 		location.y += vector.y;
 	}
 
+	//音声の周波数設定
+	if (searchFlg == TRUE)
+	{
+		ResourceManager::SetSoundFreq(10000);
+	}
+	else
+	{
+		ResourceManager::SetSoundFreq(40000);
+	}
 
 	PlayerSound();		//音声再生関連処理
 
@@ -1226,15 +1235,19 @@ float Player::GetLength(Location l1, Location l2)
 
 void Player::PlayerSound()
 {
-	//プレイヤー歩行
-	if (stageHitFlg[1][bottom] == true && vector.x != 0 && frame % 15 == 0)
+	//スローモーション中は10フレームに一回だけ音を鳴らす
+	if (searchFlg == FALSE || (searchFlg == TRUE && frame % 10 == 0))
 	{
-		ResourceManager::StartSound(walk_se[now_riding]);
-	}
-	//ジャンプ
-	if (PadInput::OnButton(XINPUT_BUTTON_A) == true && ((state == 0 && stageHitFlg[1][bottom]) || state == 1))
-	{
-		ResourceManager::StartSound(jump_se);
+		//プレイヤー歩行
+		if (stageHitFlg[1][bottom] == true && vector.x != 0 && frame % 15 == 0)
+		{
+			ResourceManager::StartSound(walk_se[now_riding]);
+		}
+		//ジャンプ
+		if (PadInput::OnButton(XINPUT_BUTTON_A) == true && ((state == 0 && stageHitFlg[1][bottom]) || state == 1))
+		{
+			ResourceManager::StartSound(jump_se);
+		}
 	}
 }
 

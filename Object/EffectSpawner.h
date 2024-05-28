@@ -12,7 +12,7 @@ enum EffectList {
 class GameMain;
 
 struct EffectAnim{
-	int timer;					//経過時間
+	int timer = 0;					//経過時間
 	Location location;			//座標
 	Location local_location;	//ローカル座標
 	Erea erea;					//大きさ
