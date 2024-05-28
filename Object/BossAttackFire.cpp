@@ -9,6 +9,7 @@ BossAttackFire::BossAttackFire()
 	can_hit = TRUE;
 
 	flg = false;
+	hitFlg = false;
 }
 
 BossAttackFire::~BossAttackFire()
@@ -33,7 +34,7 @@ void BossAttackFire::Update(GameMain* _g)
 	if (!flg) {
 		//プレイヤーとボスの座標からベクトルを計算
 		Location player = _g->GetPlayerLocation();
-		Location boss = { 1000,2000 };
+		Location boss = { 10000,2000 };
 		Location v;
 		float len = sqrtf(powf(player.x - boss.x, 2) + powf(player.y - boss.y, 2));
 		v.x = (player.x - boss.x) / len;
@@ -47,6 +48,10 @@ void BossAttackFire::Update(GameMain* _g)
 
 	location.x += velocity.x;
 	location.y += velocity.y;
+
+	if (hitFlg) {
+		//ここで削除
+	}
 }
 
 void BossAttackFire::Draw() const
@@ -56,6 +61,10 @@ void BossAttackFire::Draw() const
 
 void BossAttackFire::Hit(Object* _object)
 {
+	if (_object->GetObjectType() == BLOCK && _object->GetObjectType() != WATER) {
+		_object->SetColorData(color);
+		hitFlg = true;
+	}
 }
 
 bool BossAttackFire::SearchColor(Object* ob)

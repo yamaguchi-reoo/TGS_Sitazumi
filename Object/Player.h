@@ -57,8 +57,13 @@ private:
 	float move[4] = { 0,0,0,0 };
 	Location aaa;
 
+
+	float angle[4];//両手両足
+	float mo = 0;
+
 	int walk_se[4];		//歩行SE格納
 	int now_riding;		//今乗っているブロックに応じて再生するSEを変える
+
 
 public:
 	Player();

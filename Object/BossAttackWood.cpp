@@ -70,6 +70,9 @@ void BossAttackWood::Draw() const
 
 void BossAttackWood::Hit(Object* _object)
 {
+	if (_object->GetObjectType() == BLOCK && _object->GetObjectType() != FIRE) {
+		_object->SetColorData(color);
+	}
 }
 
 bool BossAttackWood::SearchColor(Object* ob)

@@ -61,6 +61,12 @@ Player::Player()
 	oldDirection = -1;
 	oldObjNum = 0;
 
+	for (int i = 0; i < 4; i++)
+	{
+		angle[i] = 0.f;
+	}
+
+
 	walk_se[0] = ResourceManager::SetSound("Resource/Sounds/walk_normal.wav");
 	walk_se[1] = ResourceManager::SetSound("Resource/Sounds/walk_fire.wav");
 	walk_se[2] = ResourceManager::SetSound("Resource/Sounds/walk_grass.wav");
@@ -230,6 +236,8 @@ void Player::Update(GameMain* _g)
 	damageFlg = false;
 
 	stateFlg = false;
+
+	mo++;
 	now_riding = 0;
 }
 
@@ -240,6 +248,100 @@ void Player::Draw()const
 			float ang = 0.f;
 			//DrawBox(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, FALSE);
 
+			if (hp > 0) {
+				//頭
+				ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2), local_location.y - (erea.height) + 76, 23, 15, local_location.x, local_location.y, ang, color, true);
+
+				//目
+				ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2) - 6, local_location.y - (erea.height) + 76, 6, 7, local_location.x, local_location.y, ang, 0x000000, true);
+
+				//首
+				ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2), local_location.y - (erea.height) + 62, 10, 5, local_location.x, local_location.y, ang, color, true);
+
+				//胴体
+				ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2), local_location.y - (erea.height) + 37, 21, 37, local_location.x, local_location.y, ang, color, true);
+
+				//バッグ
+				ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2) + 15, local_location.y - (erea.height) + 40, 5, 23, local_location.x, local_location.y, ang, color, true);
+				ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2) + 15, local_location.y - (erea.height) + 40, 3, 15, local_location.x, local_location.y, ang, 0x000000, true);
+			}
+			else {
+				//頭
+				ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2), local_location.y - (erea.height) + 76, 23, 15, local_location.x, local_location.y, ang, 0x000000, true);
+
+				//目
+				ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2) - 6, local_location.y - (erea.height) + 76, 6, 7, local_location.x, local_location.y, ang, 0x000000, true);
+
+				//首
+				ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2), local_location.y - (erea.height) + 62, 10, 5, local_location.x, local_location.y, ang, 0x000000, true);
+
+				//胴体
+				ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2), local_location.y - (erea.height) + 37, 21, 37, local_location.x, local_location.y, ang, 0x000000, true);
+
+				//バッグ
+				ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2) + 15, local_location.y - (erea.height) + 40, 5, 23, local_location.x, local_location.y, ang, 0x000000, true);
+				ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2) + 15, local_location.y - (erea.height) + 40, 3, 15, local_location.x, local_location.y, ang, 0x000000, true);
+			}
+			//腕
+			if (hp > 4) {
+				ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2) - 14, local_location.y - 70, 28, 7, local_location.x + 16, local_location.y + 7, 22, color, true);
+			}
+			else {
+				ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2) - 14, local_location.y - 70, 28, 7, local_location.x + 16, local_location.y + 7, 22, 0x000000, true);
+			}
+			if (hp > 3) {
+				ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2) - 14, local_location.y - 70, 28, 7, local_location.x + 43, local_location.y, 50, color, true);
+			}
+			else {
+				ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2) - 14, local_location.y - 70, 28, 7, local_location.x + 43, local_location.y, 50, 0x000000, true);
+			}
+			//背景が黒で腕が良く見えないので囲む
+			//ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2) - 14, local_location.y - 70, 28, 7, local_location.x + 14, local_location.y - 8, 22, 0x550000, false);
+			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2) - 14, local_location.y - 70, 28, 7, local_location.x + 43, local_location.y, 50, 0x550000, false);
+
+			//足 前から
+			if (hp > 2) {
+				ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2), local_location.y - 120, 7, 27, local_location.x - 20, local_location.y + 16, -20, color, true);
+			}
+			else {
+				ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2), local_location.y - 120, 7, 27, local_location.x - 20, local_location.y + 16, -20, 0x000000, true);
+			}
+			if (hp > 1) {
+				ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2), local_location.y - 120, 7, 27, local_location.x + 21, local_location.y + 3, 20, color, true);
+			}
+			else {
+				ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2), local_location.y - 120, 7, 27, local_location.x + 21, local_location.y + 3, 20, 0x000000, true);
+			}
+
+			if (hp > 1) {
+				//帽子　中央
+				DrawTriangleAA(local_location.x + (erea.width / 2), local_location.y + 40, local_location.x + 30, local_location.y + 67, local_location.x + 46, local_location.y + 67, color, true);
+				DrawTriangleAA(local_location.x + (erea.width / 2), local_location.y + 40, local_location.x + 30, local_location.y + 67, local_location.x + 46, local_location.y + 67, 0xaEE0000, false);
+				//帽子　右側
+				DrawTriangleAA(local_location.x + (erea.width / 2), local_location.y + 40, local_location.x + 46, local_location.y + 67, local_location.x + 52, local_location.y + 60, color, true);
+				DrawTriangleAA(local_location.x + (erea.width / 2), local_location.y + 40, local_location.x + 46, local_location.y + 67, local_location.x + 52, local_location.y + 60, 0xaEE0000, false);
+				//帽子　左側
+				DrawTriangleAA(local_location.x + (erea.width / 2), local_location.y + 40, local_location.x + 22, local_location.y + 60, local_location.x + 30, local_location.y + 67, color, true);
+				DrawTriangleAA(local_location.x + (erea.width / 2), local_location.y + 40, local_location.x + 22, local_location.y + 60, local_location.x + 30, local_location.y + 67, 0xaEE0000, false);
+			}
+			else {
+				//帽子　中央
+				DrawTriangleAA(local_location.x + (erea.width / 2), local_location.y + 40, local_location.x + 30, local_location.y + 67, local_location.x + 46, local_location.y + 67, 0x000000, true);
+				DrawTriangleAA(local_location.x + (erea.width / 2), local_location.y + 40, local_location.x + 30, local_location.y + 67, local_location.x + 46, local_location.y + 67, 0xaEE0000, false);
+				//帽子　右側
+				DrawTriangleAA(local_location.x + (erea.width / 2), local_location.y + 40, local_location.x + 46, local_location.y + 67, local_location.x + 52, local_location.y + 60, 0x000000, true);
+				DrawTriangleAA(local_location.x + (erea.width / 2), local_location.y + 40, local_location.x + 46, local_location.y + 67, local_location.x + 52, local_location.y + 60, 0xaEE0000, false);
+				//帽子　左側
+				DrawTriangleAA(local_location.x + (erea.width / 2), local_location.y + 40, local_location.x + 22, local_location.y + 60, local_location.x + 30, local_location.y + 67, 0x000000, true);
+				DrawTriangleAA(local_location.x + (erea.width / 2), local_location.y + 40, local_location.x + 22, local_location.y + 60, local_location.x + 30, local_location.y + 67, 0xaEE0000, false);
+			}
+		}
+	}
+	else {//見た目
+		//DrawBox(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, FALSE);
+		float ang = 0.f;
+
+		if (hp > 0) {
 			//頭
 			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2), local_location.y - (erea.height) + 76, 23, 15, local_location.x, local_location.y, ang, color, true);
 
@@ -255,18 +357,69 @@ void Player::Draw()const
 			//バッグ
 			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2) + 15, local_location.y - (erea.height) + 40, 5, 23, local_location.x, local_location.y, ang, color, true);
 			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2) + 15, local_location.y - (erea.height) + 40, 3, 15, local_location.x, local_location.y, ang, 0x000000, true);
+		}
+		else {
+			//頭
+			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2), local_location.y - (erea.height) + 76, 23, 15, local_location.x, local_location.y, ang, 0x000000, true);
 
-			//腕
+			//目
+			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2) - 6, local_location.y - (erea.height) + 76, 6, 7, local_location.x, local_location.y, ang, 0x000000, true);
+
+			//首
+			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2), local_location.y - (erea.height) + 62, 10, 5, local_location.x, local_location.y, ang, 0x000000, true);
+
+			//胴体
+			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2), local_location.y - (erea.height) + 37, 21, 37, local_location.x, local_location.y, ang, 0x000000, true);
+
+			//バッグ
+			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2) + 15, local_location.y - (erea.height) + 40, 5, 23, local_location.x, local_location.y, ang, 0x000000, true);
+			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2) + 15, local_location.y - (erea.height) + 40, 3, 15, local_location.x, local_location.y, ang, 0x000000, true);
+		}
+		//腕
+		if (hp > 4) {
+			//ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2) - 14, local_location.y - 70, 28, 7, local_location.x + 16, local_location.y + 7, 0, color, true);
+			//ResourceManager::DrawRotaBox(local_location.x + (erea.width / 2) + 14, local_location.y + 100, 28, 7, local_location.x + (erea.width / 2), local_location.y + 100, ang, color, true);
 			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2) - 14, local_location.y - 70, 28, 7, local_location.x + 16, local_location.y + 7, 22, color, true);
+
+		}
+		else {
+			//ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2) - 14, local_location.y - 70, 28, 7, local_location.x - (erea.width / 2) - 14, local_location.y - 70, 22, color, true);
+			//ResourceManager::DrawRotaBox(local_location.x + (erea.width / 2) + 14, local_location.y + 100, 28, 7, local_location.x + (erea.width / 2), local_location.y + 100, ang, color, true);
+			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2), local_location.y - 120, 7, 27, local_location.x - 20, local_location.y + 16, -20, 0x000000, true);
+
+		}
+		if (hp > 3) {
+			//ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2) - 14, local_location.y - 70, 28, 7, local_location.x + 43, local_location.y, 50, color, true);
+			//ResourceManager::DrawRotaBox(local_location.x + (erea.width / 2) + 3, local_location.y + 100, 7,28, local_location.x + (erea.width / 2) + 3, local_location.y + 110, ang, 0xffffff, true);
 			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2) - 14, local_location.y - 70, 28, 7, local_location.x + 43, local_location.y, 50, color, true);
-			//背景が黒で腕が良く見えないので囲む
-			//ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2) - 14, local_location.y - 70, 28, 7, local_location.x + 14, local_location.y - 8, 22, 0x550000, false);
-			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2) - 14, local_location.y - 70, 28, 7, local_location.x + 43, local_location.y, 50, 0x550000, false);
 
-			//足 前から
+
+		}
+		else {
+			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2) - 14, local_location.y - 70, 28, 7, local_location.x + 43, local_location.y, 50, 0x000000, true);
+		}
+		//背景が黒で腕が良く見えないので囲む
+		//ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2) - 14, local_location.y - 70, 28, 7, local_location.x + 14, local_location.y - 8, 22, 0x550000, false);
+		ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2) - 14, local_location.y - 70, 28, 7, local_location.x + 43, local_location.y, 50, 0x550000, false);
+
+		//足 前から
+		if (hp > 2) {
 			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2), local_location.y - 120, 7, 27, local_location.x - 20, local_location.y + 16, -20, color, true);
-			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2), local_location.y - 120, 7, 27, local_location.x + 21, local_location.y + 3, 20, color, true);
+			//ResourceManager::DrawRotaBox(local_location.x + (erea.width / 2), local_location.y + 125 + 14, 7, 27, local_location.x + (erea.width / 2), local_location.y + 125, 0, color, true);
+		}
+		else {
+			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2), local_location.y - 120, 7, 27, local_location.x - 20, local_location.y + 16, -20, 0x000000, true);
+			//ResourceManager::DrawRotaBox(local_location.x + (erea.width / 2), local_location.y + 125 + 14, 7, 27, local_location.x + (erea.width / 2), local_location.y + 125, 0, 0x000000, true);
 
+		}
+		if (hp > 1) {
+			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2), local_location.y - 120, 7, 27, local_location.x + 21, local_location.y + 3, 20, color, true);
+		}
+		else {
+			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2), local_location.y - 120, 7, 27, local_location.x + 21, local_location.y + 3, 20, 0x000000, true);
+		}
+		
+		if (hp > 1) {
 			//帽子　中央
 			DrawTriangleAA(local_location.x + (erea.width / 2), local_location.y + 40, local_location.x + 30, local_location.y + 67, local_location.x + 46, local_location.y + 67, color, true);
 			DrawTriangleAA(local_location.x + (erea.width / 2), local_location.y + 40, local_location.x + 30, local_location.y + 67, local_location.x + 46, local_location.y + 67, 0xaEE0000, false);
@@ -277,48 +430,17 @@ void Player::Draw()const
 			DrawTriangleAA(local_location.x + (erea.width / 2), local_location.y + 40, local_location.x + 22, local_location.y + 60, local_location.x + 30, local_location.y + 67, color, true);
 			DrawTriangleAA(local_location.x + (erea.width / 2), local_location.y + 40, local_location.x + 22, local_location.y + 60, local_location.x + 30, local_location.y + 67, 0xaEE0000, false);
 		}
-	}
-	else {//見た目
-		//DrawBox(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, FALSE);
-		float ang = 0.f;
-
-		//頭
-		ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2), local_location.y - (erea.height) + 76, 23, 15, local_location.x, local_location.y, ang, color, true);
-
-		//目
-		ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2) - 6 , local_location.y - (erea.height) + 76, 6, 7, local_location.x, local_location.y, ang, 0x000000, true);
-
-		//首
-		ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2), local_location.y - (erea.height) + 62, 10, 5, local_location.x, local_location.y, ang, color, true);
-
-		//胴体
-		ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2), local_location.y - (erea.height) + 37, 21, 37, local_location.x, local_location.y, ang, color, true);
-		
-		//バッグ
-		ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2) + 15, local_location.y - (erea.height) + 40, 5, 23, local_location.x, local_location.y, ang, color, true);
-		ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2) + 15, local_location.y - (erea.height) + 40, 3, 15, local_location.x, local_location.y, ang, 0x000000, true);
-
-		//腕
-		ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2) - 14, local_location.y - 70, 28, 7, local_location.x + 16, local_location.y + 7, 22, color, true);
-		ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2) - 14, local_location.y - 70, 28, 7, local_location.x + 43, local_location.y, 50, color, true);
-		//背景が黒で腕が良く見えないので囲む
-		//ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2) - 14, local_location.y - 70, 28, 7, local_location.x + 14, local_location.y - 8, 22, 0x550000, false);
-		ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2) - 14, local_location.y - 70, 28, 7, local_location.x + 43, local_location.y, 50, 0x550000, false);
-
-		//足 前から
-		ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2), local_location.y - 120, 7, 27, local_location.x - 20, local_location.y + 16, -20, color, true);
-		ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2), local_location.y - 120, 7, 27, local_location.x + 21, local_location.y + 3, 20, color, true);
-		
-		//帽子　中央
-		DrawTriangleAA(local_location.x + (erea.width / 2), local_location.y + 40, local_location.x + 30, local_location.y + 67, local_location.x + 46, local_location.y + 67, color, true);
-		DrawTriangleAA(local_location.x + (erea.width / 2), local_location.y + 40, local_location.x + 30, local_location.y + 67, local_location.x + 46, local_location.y + 67, 0xaEE0000, false);
-		//帽子　右側
-		DrawTriangleAA(local_location.x + (erea.width / 2), local_location.y + 40, local_location.x + 46, local_location.y + 67, local_location.x + 52, local_location.y + 60, color, true);
-		DrawTriangleAA(local_location.x + (erea.width / 2), local_location.y + 40, local_location.x + 46, local_location.y + 67, local_location.x + 52, local_location.y + 60, 0xaEE0000, false);
-		//帽子　左側
-		DrawTriangleAA(local_location.x + (erea.width / 2), local_location.y + 40, local_location.x + 22, local_location.y + 60, local_location.x + 30, local_location.y + 67, color, true);
-		DrawTriangleAA(local_location.x + (erea.width / 2), local_location.y + 40, local_location.x + 22, local_location.y + 60, local_location.x + 30, local_location.y + 67, 0xaEE0000, false);
-
+		else {
+			//帽子　中央
+			DrawTriangleAA(local_location.x + (erea.width / 2), local_location.y + 40, local_location.x + 30, local_location.y + 67, local_location.x + 46, local_location.y + 67, 0x000000, true);
+			DrawTriangleAA(local_location.x + (erea.width / 2), local_location.y + 40, local_location.x + 30, local_location.y + 67, local_location.x + 46, local_location.y + 67, 0xaEE0000, false);
+			//帽子　右側
+			DrawTriangleAA(local_location.x + (erea.width / 2), local_location.y + 40, local_location.x + 46, local_location.y + 67, local_location.x + 52, local_location.y + 60, 0x000000, true);
+			DrawTriangleAA(local_location.x + (erea.width / 2), local_location.y + 40, local_location.x + 46, local_location.y + 67, local_location.x + 52, local_location.y + 60, 0xaEE0000, false);
+			//帽子　左側
+			DrawTriangleAA(local_location.x + (erea.width / 2), local_location.y + 40, local_location.x + 22, local_location.y + 60, local_location.x + 30, local_location.y + 67, 0x000000, true);
+			DrawTriangleAA(local_location.x + (erea.width / 2), local_location.y + 40, local_location.x + 22, local_location.y + 60, local_location.x + 30, local_location.y + 67, 0xaEE0000, false);
+		}
 		//DrawCircle(local_location.x + 30, local_location.y + 20, 5, 0xffffff, true);
 	}
 
@@ -511,13 +633,12 @@ void Player::Hit(Object* _object)
 	}
 
 	//ダメージゾーンを上書きする
-	if (
-		(_object->GetObjectType() == WATER && this->color == GREEN) ||
+	/*if ((_object->GetObjectType() == WATER && this->color == GREEN) ||
 		(_object->GetObjectType() == FIRE && this->color == BLUE) ||
 		(_object->GetObjectType() == WOOD && this->color == RED))
 	{
 		_object->SetColorData(color);
-	}
+	}*/
 
 	if ((_object->GetObjectType() == WATER && _object->GetCanSwap() == FALSE && this->color == BLUE && !stateFlg) ||
 		(_object->GetObjectType() == FIRE && _object->GetCanSwap() == FALSE && this->color == RED && !stateFlg) ||

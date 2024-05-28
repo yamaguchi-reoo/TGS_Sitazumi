@@ -9,6 +9,8 @@ BossAttackWater::BossAttackWater()
 
 	flg = false;
 	count = 0;
+	moveFlg = false;
+	hitFlg = false;
 }
 
 BossAttackWater::~BossAttackWater()
@@ -29,38 +31,53 @@ void BossAttackWater::Finalize()
 
 void BossAttackWater::Update(GameMain* _g)
 {
-	count++;
+	if (flg) {
+		if (moveFlg) {
+			if (velocity.y < -4.f) {
+				moveFlg = false;
+			}
+			velocity.y -= 0.1f;
+		}
+		else {
+			if (velocity.y > 4.f) {
+				moveFlg = true;
+			}
+			velocity.y += 0.1f;
+		}
 
-	if (count < 180) {
-		//プレイヤーとボスの座標からベクトルを計算
-		Location player = _g->GetPlayerLocation();
-		Location boss = { 1000,2000 };
-		Location v;
-		float len = sqrtf(powf(player.x - boss.x, 2) + powf(player.y - boss.y, 2));
-		v.x = (player.x - boss.x) / len;
-		v.y = (player.y - boss.y) / len;
-
-		velocity.x = v.x;
-		velocity.y = v.y;
-
-		flg = true;
-	}
-	else if (count > 180 && count < 240) {
-
-	}
-
-	if (count == 240) {
 		location.x += velocity.x;
 		location.y += velocity.y;
+	}
+	else {
+		Location player = _g->GetPlayerLocation();
+		if (player.x - location.x > 0) {
+			velocity.x = 3.f;
+		}
+		else {
+			velocity.x = -3.f;
+		}
+		velocity.y = (float)(GetRand(6) - 3);
+		flg = true;
+	}
+
+	if (hitFlg) {
+		//ここで削除
 	}
 }
 
 void BossAttackWater::Draw() const
 {
+	if (flg) {
+		DrawCircle(local_location.x, local_location.y, erea.width, color, TRUE);
+	}
 }
 
 void BossAttackWater::Hit(Object* _object)
 {
+	if (_object->GetObjectType() == BLOCK && _object->GetObjectType() != WOOD) {
+		_object->SetColorData(color);
+		hitFlg = true;
+	}
 }
 
 bool BossAttackWater::SearchColor(Object* ob)
