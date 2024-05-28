@@ -71,6 +71,7 @@ Player::Player()
 	walk_se[1] = ResourceManager::SetSound("Resource/Sounds/walk_fire.wav");
 	walk_se[2] = ResourceManager::SetSound("Resource/Sounds/walk_grass.wav");
 	walk_se[3] = ResourceManager::SetSound("Resource/Sounds/walk_water.wav");
+	jump_se = ResourceManager::SetSound("Resource/Sounds/player_jump.mp3");
 	now_riding = 0;
 }
 
@@ -1229,6 +1230,11 @@ void Player::PlayerSound()
 	if (stageHitFlg[1][bottom] == true && vector.x != 0 && frame % 15 == 0)
 	{
 		ResourceManager::StartSound(walk_se[now_riding]);
+	}
+	//ジャンプ
+	if (PadInput::OnButton(XINPUT_BUTTON_A) == true && ((state == 0 && stageHitFlg[1][bottom]) || state == 1))
+	{
+		ResourceManager::StartSound(jump_se);
 	}
 }
 
