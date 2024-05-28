@@ -39,8 +39,7 @@ void BackGround::Draw(Location _camera_location)const
 
 	}
 	DrawMountain(shift_location, 0.5f);
-	DrawMountain({shift_location.x + 100, shift_location.y
-}, 0.7f);
+	DrawMountain({shift_location.x - 300, shift_location.y-50}, 0.7f);
 #ifdef _DEBUG
 	DrawStringF(shift_location.x, 300.0f, "左端", 0x00ff00);
 	DrawStringF((bg_erea.width - 50) + shift_location.x, 300.0f, "右端", 0x00ff00);
@@ -56,9 +55,23 @@ void BackGround::DrawMountain(Location _shift_location, float move_speed)const
 {
 	Location shift_location = { _shift_location.x * move_speed,_shift_location.y * move_speed };
 	DrawCircleAA(SCREEN_WIDTH + shift_location.x, SCREEN_HEIGHT - shift_location.y - 200, 200, 50, 0x00aa00, TRUE);
+	DrawCircleAA(SCREEN_WIDTH + shift_location.x, SCREEN_HEIGHT - shift_location.y - 200, 200, 50, 0x000000, FALSE);
 	DrawBoxAA(SCREEN_WIDTH + shift_location.x - 200,
 		SCREEN_HEIGHT - shift_location.y - 200,
 		SCREEN_WIDTH + shift_location.x + 200,
 		SCREEN_HEIGHT - shift_location.y,
-		0x00aa00, true);
+		0x00aa00, TRUE);
+	DrawLine(SCREEN_WIDTH + shift_location.x - 200,
+		SCREEN_HEIGHT - shift_location.y - 200,
+		SCREEN_WIDTH + shift_location.x - 200,
+		SCREEN_HEIGHT - shift_location.y,
+		0x000000, TRUE);
+	DrawLine(SCREEN_WIDTH + shift_location.x + 200,
+		SCREEN_HEIGHT - shift_location.y - 200,
+		SCREEN_WIDTH + shift_location.x + 200,
+		SCREEN_HEIGHT - shift_location.y,
+		0x000000, TRUE);
+#ifdef _DEBUG
+	DrawStringF(SCREEN_WIDTH + shift_location.x, SCREEN_HEIGHT - shift_location.y - 200, "山", 0x000000);
+#endif
 }

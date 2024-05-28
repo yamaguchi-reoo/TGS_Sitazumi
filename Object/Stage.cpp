@@ -87,6 +87,8 @@ void Stage::Update(GameMain* _g)
 
 void Stage::Update()
 {
+	//リセット
+	draw_wood_flg = false;
 	//色が変わったらブロックタイプを対応した種類に変える処理
 	if (old_color != color)
 	{
@@ -103,7 +105,6 @@ void Stage::Update()
 				block_type = FIRE_BLOCK;
 			}
 			type = FIRE;
-			draw_wood_flg = false;
 		}
 		else if (color == GREEN)
 		{
@@ -118,7 +119,6 @@ void Stage::Update()
 				block_type = WOOD_BLOCK;
 			}
 			type = WOOD;
-			draw_wood_flg = false;
 		}
 		else if (color == BLUE)
 		{
