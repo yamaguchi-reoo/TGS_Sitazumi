@@ -48,6 +48,8 @@ private:
 
 	int state_change_time;		// 状態変更のタイミング
 
+	std::vector<Location>vertices;
+
 public:
 	Boss();
 	~Boss();
