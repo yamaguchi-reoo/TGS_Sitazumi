@@ -100,6 +100,55 @@ void Boss::Update(GameMain* _g)
 		// 状態変更のインターバルをリセット
 		state_change_time = STATE_CHANGE_INTERVAL;
 	}
+
+	//竹攻撃制作中
+	/*if (GetRand(60) > 58 && !f)
+	{
+		Erea e = { 1200,40 };
+		Location l = _g->GetPlayerLocation();
+		l.y += _g->GetPlayerErea().height + 40;
+		_g->CreateObject(new BossAttackWood, l, e, GREEN);
+		f = true;
+	}*/
+
+	cnt++;
+	if (cnt >= 240) {
+		f = true;
+		if (cnt == 240) {
+			attack = GetRand(1);
+		}
+	}
+
+	if (f) {
+		switch (attack)
+		{
+		case 0:
+			if (cnt % 30 == 0) {
+				Erea e = { 40,40 };
+				_g->CreateObject(new BossAttackFire, GetCenterLocation(), e, RED);
+			}
+			if (cnt > 300) {
+				cnt = 0;
+				f = false;
+			}
+			break;
+
+		case 1:
+			if (cnt % 30 == 0) {
+				Erea e = { 40,40 };
+				_g->CreateObject(new BossAttackWater, GetCenterLocation(), e, BLUE);
+			}
+			if (cnt > 300) {
+				cnt = 0;
+				f = false;
+			}
+			break;
+
+		default:
+			break;
+		}
+		
+	}
 }
 
 void Boss::Draw() const
