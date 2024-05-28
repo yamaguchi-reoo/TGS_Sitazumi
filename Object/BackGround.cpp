@@ -1,7 +1,7 @@
 #include "DxLib.h"
 #include "BackGround.h"
 
-BackGround::BackGround()
+BackGround::BackGround():stage_erea{0.0}
 {
 	bg_erea.width = 6000;
 	bg_erea.height = 2000;
@@ -61,12 +61,12 @@ void BackGround::DrawMountain(Location _shift_location, float move_speed)const
 		SCREEN_WIDTH + shift_location.x + 200,
 		SCREEN_HEIGHT - shift_location.y,
 		0x00aa00, TRUE);
-	DrawLine(SCREEN_WIDTH + shift_location.x - 200,
+	DrawLineAA(SCREEN_WIDTH + shift_location.x - 200,
 		SCREEN_HEIGHT - shift_location.y - 200,
 		SCREEN_WIDTH + shift_location.x - 200,
 		SCREEN_HEIGHT - shift_location.y,
 		0x000000, TRUE);
-	DrawLine(SCREEN_WIDTH + shift_location.x + 200,
+	DrawLineAA(SCREEN_WIDTH + shift_location.x + 200,
 		SCREEN_HEIGHT - shift_location.y - 200,
 		SCREEN_WIDTH + shift_location.x + 200,
 		SCREEN_HEIGHT - shift_location.y,

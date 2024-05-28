@@ -7,7 +7,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-EffectSpawner::EffectSpawner() :frame(0), swap_se(0)
+EffectSpawner::EffectSpawner() :frame(0), swap_anim_timer(0),swap_se(0)
 {
 	for (int i = 0; i < EFFECT_NUM; i++)
 	{
@@ -157,16 +157,16 @@ void EffectSpawner::Draw()const
 			{
 				//四角形直進移動
 			case 0:
-				DrawBox(effect[i].local_location.x, effect[i].local_location.y, effect[i].local_location.x + effect[i].erea.width, effect[i].local_location.y + effect[i].erea.height, effect[i].color, TRUE);
+				DrawBoxAA(effect[i].local_location.x, effect[i].local_location.y, effect[i].local_location.x + effect[i].erea.width, effect[i].local_location.y + effect[i].erea.height, effect[i].color, TRUE);
 				break;
 				//回転四角形直進移動
 			case 1:
-				ResourceManager::DrawRotaBox(effect[i].local_location.x, effect[i].local_location.y, effect[i].erea.width, effect[i].erea.height, effect[i].local_location.x, effect[i].local_location.y, effect[i].timer * 10, effect[i].color, TRUE);
+				ResourceManager::DrawRotaBox(effect[i].local_location.x, effect[i].local_location.y, effect[i].erea.width, effect[i].erea.height, effect[i].local_location.x, effect[i].local_location.y, (float)effect[i].timer * 10, effect[i].color, TRUE);
 				break;
 				//四角形直進移動(フェードアウト)
 			case 2:
 				SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 - (effect[i].timer * (255/effect[i].effect_time)));
-				DrawBox(effect[i].local_location.x, effect[i].local_location.y, effect[i].local_location.x + effect[i].erea.width, effect[i].local_location.y + effect[i].erea.height, effect[i].color, TRUE);
+				DrawBoxAA(effect[i].local_location.x, effect[i].local_location.y, effect[i].local_location.x + effect[i].erea.width, effect[i].local_location.y + effect[i].erea.height, effect[i].color, TRUE);
 				SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 				break;
 				//輝き
@@ -198,12 +198,12 @@ void EffectSpawner::Draw()const
 	{
 		if (swap_anim[i].move_flg == true)
 		{
-			DrawBox(swap_anim[i].local_location.x, swap_anim[i].local_location.y, swap_anim[i].local_location.x + 40, swap_anim[i].local_location.y + 40, swap_anim[i].color, true);
+			DrawBoxAA(swap_anim[i].local_location.x, swap_anim[i].local_location.y, swap_anim[i].local_location.x + 40, swap_anim[i].local_location.y + 40, swap_anim[i].color, true);
 		}
 		if (swap_anim_timer > 0)
 		{
 			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200 - (swap_anim_timer * 20));
-			DrawBox(swap_anim[i].local_location.x - (swap_anim_timer * 10), swap_anim[i].local_location.y - (swap_anim_timer * 10), swap_anim[i].local_location.x + swap_anim[i].erea.width + (swap_anim_timer * 5), swap_anim[i].local_location.y + swap_anim[i].erea.height + (swap_anim_timer * 5), swap_anim[i].color, true);
+			DrawBoxAA(swap_anim[i].local_location.x - (swap_anim_timer * 10), swap_anim[i].local_location.y - (swap_anim_timer * 10), swap_anim[i].local_location.x + swap_anim[i].erea.width + (swap_anim_timer * 5), swap_anim[i].local_location.y + swap_anim[i].erea.height + (swap_anim_timer * 5), swap_anim[i].color, true);
 			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 		}
 	}
@@ -243,7 +243,7 @@ void EffectSpawner::SpawnEffect(Location _location, Erea _erea,int _effect_type,
 	//輝き
 	case ShineEffect:
 		SpawnParticle(
-			{ _location.x + GetRand(_erea.width),_location.y + GetRand(_erea.height) },
+			{ _location.x + GetRand((int)(_erea.width)),_location.y + GetRand((int)(_erea.height))},
 			_erea,
 			3,
 			_time,
@@ -255,7 +255,7 @@ void EffectSpawner::SpawnEffect(Location _location, Erea _erea,int _effect_type,
 		//塵になって消える
 	case DeathEffect:
 		SpawnParticle(
-			{ _location.x + GetRand(_erea.width),_location.y + GetRand(_erea.height) },
+			{ _location.x + GetRand((int)(_erea.width)),_location.y + GetRand((int)(_erea.height))},
 			_erea,
 			4,
 			_time,

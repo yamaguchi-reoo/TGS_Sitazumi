@@ -3,7 +3,7 @@
 #include "Stage.h"
 #include "../Utility/common.h"
 
-Weather::Weather(int _type):touch_ground(false)
+Weather::Weather(int _type):touch_ground(false), delete_object(0)
 {
 	type = _type;
 	can_swap = FALSE;
@@ -94,7 +94,7 @@ void Weather::Update(GameMain* _g)
 
 void Weather::Draw()const
 {
-	DrawBox(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, TRUE);
+	DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, TRUE);
 }
 
 void Weather::Finalize()

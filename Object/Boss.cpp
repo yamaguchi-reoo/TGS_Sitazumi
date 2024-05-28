@@ -411,7 +411,7 @@ float Boss::DistanceCalc(Location pos1, Location pos2)
 {
 	float dx = pos2.x - pos1.x;
 	float dy = pos2.y - pos1.y;
-	return sqrt(dx * dx + dy * dy);
+	return sqrtf(dx * dx + dy * dy);
 }
 
 void Boss::barrier()

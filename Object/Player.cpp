@@ -448,7 +448,7 @@ void Player::Draw()const
 	//DrawFormatString(local_location.x, local_location.y, 0xffff00, "hp : %d", hp);
 
 	if (searchedObj != nullptr && searchFlg) {
-		DrawCircle(searchedObj->GetLocalLocation().x + searchedObj->GetErea().width / 2,
+		DrawCircleAA(searchedObj->GetLocalLocation().x + searchedObj->GetErea().width / 2,
 			searchedObj->GetLocalLocation().y + searchedObj->GetErea().height / 2, 40, 0xffff00, FALSE, 5);
 	}
 	
@@ -744,8 +744,8 @@ bool Player::SearchColor(Object* ob)
 				posRelNum[0]++;
 				posRelNum[1] = 0;
 			}
-			int x = ob->GetLocalLocation().x / 40;
-			int y = ob->GetLocalLocation().y / 40;
+			int x = (int)ob->GetLocalLocation().x / 40;
+			int y = (int)ob->GetLocalLocation().y / 40;
 			posRelation[y][x] = objNum;
 			objNum++;
 		}
@@ -1176,13 +1176,13 @@ float Player::ThreePointAngle(Location l1, Location l2, Location referenceP)cons
 	v2.x = l2.x - referenceP.x;
 	v2.y = l2.y - referenceP.y;
 	//DrawLine(referenceP.x, referenceP.y, referenceP.x + v1.x, referenceP.y + v1.y, 0x00ff00);
-	DrawLine(referenceP.x, referenceP.y, referenceP.x + v2.x, referenceP.y + v2.y, 0x00ffff);
+	DrawLineAA(referenceP.x, referenceP.y, referenceP.x + v2.x, referenceP.y + v2.y, 0x00ffff);
 
 	float len1, len2;
 	//len1 = sqrtf(powf(v1.x, 2) + powf(v1.y, 2));
 	//len2 = sqrtf(powf(v2.x, 2) + powf(v2.y, 2));
-	len1 = pow((v1.x * v1.x) + (v1.y + v1.y), 0.5);
-	len2 = pow((v2.x * v2.x) + (v2.y + v2.y), 0.5);
+	len1 = powf((v1.x * v1.x) + (v1.y + v1.y), 0.5);
+	len2 = powf((v2.x * v2.x) + (v2.y + v2.y), 0.5);
 	/*len1 = sqrtf((v1.x * v1.x) + (v1.y * v1.y));
 	len2 = sqrtf((v2.x * v2.x) + (v2.y * v2.y));*/
 

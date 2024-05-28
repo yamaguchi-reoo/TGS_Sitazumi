@@ -140,11 +140,9 @@ AbstractScene* GameMain::Update()
 void GameMain::Draw() const
 {
 	back_ground->Draw(camera_location);
-	int pn = 0;
 	for (int i = 0; object[i] != nullptr; i++)
 	{
-		if (object[i]->GetObjectType() == PLAYER) {
-			pn = i;
+		if (player_object == i) {
 			continue;
 		}
 		if (CheckInScreen(object[i]) == true)
@@ -153,7 +151,7 @@ void GameMain::Draw() const
 		}
 	}
 	//プレイヤーを最後に描画
-	object[pn]->Draw();
+	object[player_object]->Draw();
 
 	//エフェクトの描画
 	effect_spawner->Draw();
