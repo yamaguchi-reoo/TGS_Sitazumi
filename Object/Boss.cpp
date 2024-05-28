@@ -104,7 +104,7 @@ void Boss::Update(GameMain* _g)
 
 void Boss::Draw() const
 {
-	DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, FALSE);
+	//DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, FALSE);
 
 	// ボスの中心座標
 	float boss_center_x = local_location.x + BOSS_SIZE / 2;
@@ -157,8 +157,8 @@ void Boss::Draw() const
 	//DrawFormatString(1100, 0, color, "%d", barrier_num);
 	//DrawFormatString(1100, 0, color, "%d", damage_flg);
 	//DrawFormatString(1100, 0, color, "%d", damage_effect_time);
-	DrawFormatString(1100, 0, color, "%f", location.x);
-	DrawFormatString(1100, 20, color, "%f", local_location.y);
+	//DrawFormatString(1100, 0, color, "%f", location.x);
+	//DrawFormatString(1100, 20, color, "%f", local_location.y);
 
 }
 
