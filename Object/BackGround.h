@@ -13,4 +13,6 @@ public:
 	void Finalize();
 	void Update();
 	void Draw(Location _camera_location)const;
+	void DrawWood(Location _shift_location, float move_speed)const;
+	void DrawMountain(Location _shift_location, float move_speed)const;
 };

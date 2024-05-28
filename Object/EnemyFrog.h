@@ -31,6 +31,8 @@ private:
 
 	float face_angle;		//顔の向き
 	int death_timer;	//死亡演出
+
+	int jump_se;		//ジャンプSE
 public:
 	EnemyFrog();
 	~EnemyFrog();

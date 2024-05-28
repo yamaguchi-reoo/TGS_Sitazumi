@@ -40,8 +40,8 @@ void GameMain::Initialize()
 
 	lock_pos = camera_location;
 
-	test = new BossAttackFire();
-	test->Initialize({ 1000,2000 }, { 40,40 }, RED, 1000);
+	test = new BossAttackWater();
+	test->Initialize({ 10000,1600 }, { 40,40 }, RED, 1000);
 }
 
 void GameMain::Finalize()
