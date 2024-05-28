@@ -7,7 +7,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-EffectSpawner::EffectSpawner() :frame(0)
+EffectSpawner::EffectSpawner() :frame(0), swap_se(0)
 {
 	for (int i = 0; i < EFFECT_NUM; i++)
 	{
@@ -43,6 +43,8 @@ void EffectSpawner::Initialize()
 	swap_anim[0].move_flg = false;
 	swap_anim[1].move_flg = false;	
 	swap_anim_timer = 0;
+
+	swap_se = ResourceManager::SetSound("Resource/Sounds/swap.wav");
 }
 
 void EffectSpawner::Update(GameMain* _g)
@@ -337,6 +339,8 @@ int EffectSpawner::Swap(Object* _object1, Object* _object2)
 		swap_anim[0].timer = 0;
 	}
 	swap_anim[1].timer = swap_anim[0].timer;
+
+	ResourceManager::StartSound(swap_se);
 
 	return swap_anim[0].timer;
 }

@@ -1,11 +1,15 @@
 #include "Boss.h"
-#include<math.h>
+#include <math.h>
 #include"../Utility/KeyInput.h"
 #include"../Scene/GameMain.h"
 
 #define BOSS_SIZE 315
+#define STATE_CHANGE_INTERVAL 120
+#define BOSS_MAX_SPEED 2.0f
+#define DIRECTION_CHANGE_SPEED 0.05f // 方向変更の速度（補間係数）
 
-Boss::Boss() :vector{ 0.0f }, hit(false), boss_state(BossState::IDLE), barrier_num(3), damage_flg(false)
+
+Boss::Boss() :vector{ 0.0f }, boss_state(BossState::DOWN), barrier_num(3), damage_flg(false), state_change_time(STATE_CHANGE_INTERVAL), direction{ 1.0f, 0.0f }, target_direction{ 1.0f, 0.0f }, speed(0.0f)
 {
 	type = BOSS;
 	can_swap = TRUE;
@@ -16,6 +20,8 @@ Boss::Boss() :vector{ 0.0f }, hit(false), boss_state(BossState::IDLE), barrier_n
 	for (int i = 0; i < 4; i++) {
 		stageHitFlg[1][i] = false;
 	}
+	srand(time(0));
+	SetRandMove();
 }
 
 Boss::~Boss()
@@ -34,22 +40,25 @@ void Boss::Initialize(Location _location, Erea _erea, int _color_data, int _obje
 
 void Boss::Update(GameMain* _g)
 {
+
 	for (int i = 0; i < 4; i++) {
 		stageHitFlg[0][i] = false;
 		stageHitFlg[1][i] = false;
 	}
 
-	vector = { 1.f };
+	vector = { 1.0f ,1.0f};
+
+	Move(_g);
+
 	//プレイヤーとボスの距離を計算
-	DistanceCalc(_g);
+	//DistanceCalc(_g);
 
 	barrier();
 	if (damage_flg) {
 		damage_effect_time--;
-		damage_effect_flg = !damage_effect_flg;
+		damage_effect_flg = true;
 		if (damage_effect_time <= 0) 
 		{
-			//damage_effect_flg = false;
 			if (barrier_num > 0)
 			{
 				barrier_num--;
@@ -57,219 +66,292 @@ void Boss::Update(GameMain* _g)
 			}
 		}
 	}
+	if (barrier_num == 0) {
+	}
+
+	// 状態変更のタイミングをチェック
+	state_change_time--;
+	if (state_change_time <= 0) {
+		//boss_state = GetRandLocation();
+		SetRandMove();
+		state_change_time = STATE_CHANGE_INTERVAL;
+	}
 }
 
 void Boss::Draw() const
 {
-	//DrawBox(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, FALSE);
+	DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, FALSE);
+
+	// ボスの中心座標
+	float boss_center_x = local_location.x + BOSS_SIZE / 2;
+	float boss_center_y = local_location.y + BOSS_SIZE / 2;
+
+	//ボスの羽画用配列
+	const std::vector<Location>vertices = {
+		//右翼No1
+		{local_location.x + 190, local_location.y + 105}, {local_location.x + 230, local_location.y + 90 },{local_location.x + 245, local_location.y + 105 },{local_location.x + 205, local_location.y + 120 },
+		{local_location.x + 240, local_location.y + 85}, {local_location.x + 257.5f, local_location.y + 77.5f },{local_location.x + 272.5f, local_location.y + 92.5f },{local_location.x + 255, local_location.y + 100 },
+		{local_location.x + 270, local_location.y + 72.5f}, {local_location.x + 310, local_location.y + 57.5f },{local_location.x + 325, local_location.y + 72.5f },{local_location.x + 285, local_location.y + 87.5f },
+		//右翼No2
+		{local_location.x + 210, local_location.y + 135}, {local_location.x + 250, local_location.y + 120 },{local_location.x + 265, local_location.y + 135 },{local_location.x + 225, local_location.y + 150 },
+		{local_location.x + 260, local_location.y + 115}, {local_location.x + 277.5f, local_location.y + 107.5f },{local_location.x + 292.5f, local_location.y + 122.5f },{local_location.x + 275, local_location.y + 130 },
+		{local_location.x + 290, local_location.y + 102.5f}, {local_location.x + 330, local_location.y + 87.5f },{local_location.x + 345, local_location.y + 102.5f },{local_location.x + 305, local_location.y + 117.5f },
+	};
+	//const std::vector<Location>vertices = {
+	//	//右翼No1
+	//	{190.0f,105.0f}, {230.0f,90.0f },{245.0f,105.0f },{205.0f,120.0f },
+	//	{240.0f,85.0f}, {257.5f, 77.5f },{272.5f, 92.5f },{255.0f, 100.0f },
+	//	{270.0f,72.5f}, {310.0f, 57.5f },{325.0f, 72.5f },{285.0f, 87.5f },
+	//	//右翼No2
+	//	{210.0f, 135.0f}, {250.0f,120.0f }, {265.0f,  135.0f },{225.0f, 150.0f },
+	//	{260.0f, 115.0f}, {277.5f,107.5f }, {292.5f, 122.5f }, {275.0f, 130.0f },
+	//	{290.0f, 102.5f}, {330.0f, 87.5f }, {345.0f,  102.5f }, {305.0f,  117.5f },
+	//};
+
+
 
 	//本体
 	DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2, 50, 50, color, TRUE);
 
+	//羽描画
+	for (int i = 0; i < vertices.size(); i += 4)
+	{
+		//DrawQuadrangleAA(vertices[i].x, vertices[i].y, vertices[i + 1].x, vertices[i + 1].y, vertices[i + 2].x, vertices[i + 2].y, vertices[i + 3].x, vertices[i + 3].y, color, TRUE);
+	}
+
+	// 羽の頂点を反転させて左側の座標を計算
+	std::vector<Location> mirrored_vertices;
+	for (int i = 0; i < vertices.size(); ++i)
+	{
+		const Location& vertex = vertices[i];
+		float mirrored_x = boss_center_x - (vertex.x - boss_center_x); // X座標を反転
+		mirrored_vertices.push_back({ mirrored_x, vertex.y });
+	}
+
+	// 羽の描画（左側）
+	for (size_t i = 0; i < mirrored_vertices.size(); i += 4)
+	{
+		//DrawQuadrangleAA(mirrored_vertices[i].x, mirrored_vertices[i].y, mirrored_vertices[i + 1].x, mirrored_vertices[i + 1].y,mirrored_vertices[i + 2].x, mirrored_vertices[i + 2].y, mirrored_vertices[i + 3].x, mirrored_vertices[i + 3].y, color, TRUE);
+	}
+
 	if (damage_effect_flg) {
 		if (damage_effect_time % 20 < 10) {
 			// バリアの描画
-			int barrier_rad[] = { 175, 170, 165 };
+			float barrier_rad[] = { 175, 170, 165 };
 			for (int i = 0; i < barrier_num; i++) {
 				DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2, barrier_rad[i], 50, color, FALSE);
-			}
-
-			//ボスの羽画用配列
-			const std::vector<Location>vertices = {
-				//右翼
-				{local_location.x + 225, local_location.y + 140}, {local_location.x + 250, local_location.y + 120 },{local_location.x + 255, local_location.y + 140 },{local_location.x + 230, local_location.y + 160 },
-				{local_location.x + 275, local_location.y + 140}, {local_location.x + 300, local_location.y + 120 },{local_location.x + 305, local_location.y + 140 },{local_location.x + 280, local_location.y + 160 },
-			};
-			//羽描画
-			for (int i = 0; i < vertices.size(); i += 4)
-			{
-				//DrawQuadrangleAA(vertices[i].x, vertices[i].y, vertices[i + 1].x, vertices[i + 1].y, vertices[i + 2].x, vertices[i + 2].y, vertices[i + 3].x, vertices[i + 3].y, color, TRUE);
 			}
 		}
 	}
 	else
 	{
 		// バリアの描画
-		int barrier_rad[] = { 175, 170, 165 };
+		float barrier_rad[] = { 175.0f, 170.0f, 165.0f };
 		for (int i = 0; i < barrier_num; i++) {
 			DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2, barrier_rad[i], 50, color, FALSE);
-		}
-
-		//ボスの羽画用配列
-		const std::vector<Location>vertices = {
-			//右翼
-			{local_location.x + 225, local_location.y + 140}, {local_location.x + 250, local_location.y + 120 },{local_location.x + 255, local_location.y + 140 },{local_location.x + 230, local_location.y + 160 },
-			{local_location.x + 275, local_location.y + 140}, {local_location.x + 300, local_location.y + 120 },{local_location.x + 305, local_location.y + 140 },{local_location.x + 280, local_location.y + 160 },
-		};
-		//羽描画
-		for (int i = 0; i < vertices.size(); i += 4)
-		{
-			//DrawQuadrangleAA(vertices[i].x, vertices[i].y, vertices[i + 1].x, vertices[i + 1].y, vertices[i + 2].x, vertices[i + 2].y, vertices[i + 3].x, vertices[i + 3].y, color, TRUE);
 		}
 	}
 	
 	//DrawFormatString(1100, 0, color, "%d", barrier_num);
-	DrawFormatString(1100, 0, color, "%d", damage_flg);
+	//DrawFormatString(1100, 0, color, "%d", damage_flg);
+	//DrawFormatString(1100, 0, color, "%d", damage_effect_time);
+	DrawFormatString(1100, 0, color, "%f", location.x);
+	DrawFormatString(1100, 20, color, "%f", location.y);
+
 }
 
 void Boss::Finalize()
 {
 }
 
-void Boss::Move(float dx, float dy)
+void Boss::Move(GameMain* _g)
 {
-	switch (boss_state)
+	Location player_pos = _g->GetPlayerLocation();
+	float distance_to_player = DistanceCalc(location, player_pos);
+
+	// プレイヤーとの距離が一定範囲内の場合にのみ移動する
+	if (distance_to_player <= 1280)
 	{
-	case BossState::IDLE:
-		//location.y += (float)sin(PI * 2.f / 40.f) * 5.f;
-		// 移動する
-		location.x += dx * (vector.x + 1.5f);
-		location.y += dy * (vector.y + 1.5f);
-		break;
-	case BossState::LEFT:
-		//location.x -= vector.x;
-		break;
-	case BossState::RIGHT:
-		//location.x += vector.x;
-		break;
-	case BossState::DEATH:
-		break;
-	default:
-		break;
+		// ボスの速度を徐々に増加させる（加速）
+		if (speed < BOSS_MAX_SPEED) {
+			speed += 0.05f;
+		}
+
+		// プレイヤーの位置に応じてボスの目標方向を設定する
+		if (location.x > player_pos.x)
+		{
+			// プレイヤーよりも右にいる場合は左に向かって移動する
+			target_direction = { -1.0f, 0.0f };
+		}
+		else
+		{
+			// プレイヤーよりも左にいる場合は右に向かって移動する
+			target_direction = { 1.0f, 0.0f };
+		}
+
+		// プレイヤーとの距離が一定距離未満の場合、一定の距離を保つ
+		if (distance_to_player < 600)
+		{
+			// プレイヤーとの距離が一定距離未満なので、目標方向を逆に設定して一定距離を保つ
+			target_direction.x *= -1.0f;
+			target_direction.y *= -1.0f;
+		}
+
+		// 移動方向を滑らかにする
+		direction.x += (target_direction.x - direction.x) * DIRECTION_CHANGE_SPEED;
+		direction.y += (target_direction.y - direction.y) * DIRECTION_CHANGE_SPEED;
+
+		// 移動方向を正規化して移動速度を掛けてボスの位置を更新する
+		float length = (float)sqrt(direction.x * direction.x + direction.y * direction.y);
+		if (length != 0) {
+			direction.x /= length;
+			direction.y /= length;
+		}
+
+		location.x += direction.x * speed;
+		location.y += direction.y * speed;
 	}
+
 }
 
 void Boss::Hit(Object* _object)
 {
-	if (_object->GetObjectType() == BLOCK) {
-	//	Location tmpl = location;
-	//	Erea tmpe = erea;
-	//	move[0] = 0;
-	//	move[1] = 0;
-	//	move[2] = 0;
-	//	move[3] = 0;
+	if (
+		(_object->GetObjectType() == BLOCK && _object->GetCanHit() == TRUE) ||
+		(_object->GetObjectType() == FIRE && _object->GetCanSwap() == TRUE && this->color == RED) ||
+		(_object->GetObjectType() == WOOD && _object->GetCanSwap() == TRUE && this->color == GREEN) ||
+		(_object->GetObjectType() == WATER && _object->GetCanSwap() == TRUE && this->color == BLUE ||
+		(_object->GetObjectType() == PLAYER))
+		)
+	{
+		if (barrier_num > 0) {
+			Location tmpl = location;
+			Erea tmpe = erea;
+			move[0] = 0;
+			move[1] = 0;
+			move[2] = 0;
+			move[3] = 0;
 
-	//	//上下判定用に座標とエリアの調整
-	//	location.x += 10.f;
-	//	erea.height = 1.f;
-	//	erea.width = tmpe.width - 15.f;
+			//上下判定用に座標とエリアの調整
+			location.x += 10.f;
+			erea.height = 1.f;
+			erea.width = tmpe.width - 15.f;
 
-	//	//プレイヤー上方向の判定
-	//	if (CheckCollision(_object->GetLocation(), _object->GetErea()) && !stageHitFlg[1][top]) {
-	//		stageHitFlg[0][top] = true;
-	//		stageHitFlg[1][top] = true;
-	//	}
-	//	else {
-	//		stageHitFlg[0][top] = false;
-	//	}
+			//プレイヤー上方向の判定
+			if (CheckCollision(_object->GetLocation(), _object->GetErea()) && !stageHitFlg[1][top]) {
+				stageHitFlg[0][top] = true;
+				stageHitFlg[1][top] = true;
+			}
+			else {
+				stageHitFlg[0][top] = false;
+			}
 
-	//	//プレイヤー下方向の判定
-	//	location.y += tmpe.height + 2;
-	//	if (CheckCollision(_object->GetLocation(), _object->GetErea()) && !stageHitFlg[1][bottom]) {
-	//		stageHitFlg[0][bottom] = true;
-	//		stageHitFlg[1][bottom] = true;
-	//	}
-	//	else {
-	//		stageHitFlg[0][bottom] = false;
-	//	}
+			//プレイヤー下方向の判定
+			location.y += tmpe.height + 2;
+			if (CheckCollision(_object->GetLocation(), _object->GetErea()) && !stageHitFlg[1][bottom]) {
+				stageHitFlg[0][bottom] = true;
+				stageHitFlg[1][bottom] = true;
+			}
+			else {
+				stageHitFlg[0][bottom] = false;
+			}
 
-	//	//戻す
-	//	location.x = tmpl.x;
-	//	location.y = tmpl.y;
-	//	erea.height = tmpe.height;
-	//	erea.width = tmpe.width;
+			//戻す
+			location.x = tmpl.x;
+			location.y = tmpl.y;
+			erea.height = tmpe.height;
+			erea.width = tmpe.width;
 
-	//	//上方向に埋まらないようにする
-	//	if (stageHitFlg[0][top]) {//上方向に埋まっていたら
-	//		float t = (_object->GetLocation().y + _object->GetErea().height) - location.y;
-	//		if (t != 0) {
-	//			vector.y = 0.f;
-	//			move[top] = t;
-	//		}
-	//	}
+			//上方向に埋まらないようにする
+			if (stageHitFlg[0][top]) {//上方向に埋まっていたら
+				float t = (_object->GetLocation().y + _object->GetErea().height) - location.y;
+				if (t != 0) {
+					vector.y = 0.f;
+					move[top] = t;
+				}
+			}
 
-	//	//下方向に埋まらないようにする
-	//	if (stageHitFlg[0][bottom]) {//下方向に埋まっていたら
-	//		float t = _object->GetLocation().y - (location.y + erea.height);
-	//		if (t != 0) {
-	//			move[bottom] = t;
-	//		}
-	//	}
-
-
-	//	//左右判定用に座標とエリアの調整
-	//	location.y += 3.f;
-	//	erea.height = tmpe.height - 3.f;
-	//	erea.width = 1;
-
-	//	//プレイヤー左方向の判定
-	//	if (CheckCollision(_object->GetLocation(), _object->GetErea()) && !stageHitFlg[1][left]) {
-	//		stageHitFlg[0][left] = true;
-	//		stageHitFlg[1][left] = true;
-	//		int a = CheckCollision(_object->GetLocation(), _object->GetErea());
-	//	}
-	//	else {
-	//		stageHitFlg[0][left] = false;
-	//	}
+			//下方向に埋まらないようにする
+			if (stageHitFlg[0][bottom]) {//下方向に埋まっていたら
+				float t = _object->GetLocation().y - (location.y + erea.height);
+				if (t != 0) {
+					move[bottom] = t;
+				}
+			}
 
 
-	//	//プレイヤー右方向の判定
-	//	location.x = tmpl.x + tmpe.width + 1;
-	//	if (CheckCollision(_object->GetLocation(), _object->GetErea()) && !stageHitFlg[1][right]) {
-	//		stageHitFlg[0][right] = true;
-	//		stageHitFlg[1][right] = true;
-	//	}
-	//	else {
-	//		stageHitFlg[0][right] = false;
-	//	}
+			//左右判定用に座標とエリアの調整
+			location.y += 3.f;
+			erea.height = tmpe.height - 3.f;
+			erea.width = 1;
 
-	//	//最初の値に戻す
-
-	//	location.x = tmpl.x;
-	//	location.y += -3.f;
-	//	erea.height = tmpe.height;
-	//	erea.width = tmpe.width;
+			//プレイヤー左方向の判定
+			if (CheckCollision(_object->GetLocation(), _object->GetErea()) && !stageHitFlg[1][left]) {
+				stageHitFlg[0][left] = true;
+				stageHitFlg[1][left] = true;
+				int a = CheckCollision(_object->GetLocation(), _object->GetErea());
+			}
+			else {
+				stageHitFlg[0][left] = false;
+			}
 
 
+			//プレイヤー右方向の判定
+			location.x = tmpl.x + tmpe.width + 1;
+			if (CheckCollision(_object->GetLocation(), _object->GetErea()) && !stageHitFlg[1][right]) {
+				stageHitFlg[0][right] = true;
+				stageHitFlg[1][right] = true;
+			}
+			else {
+				stageHitFlg[0][right] = false;
+			}
 
-	//	//左方向に埋まらないようにする
-	//	if (stageHitFlg[0][left]) {//左方向に埋まっていたら
-	//		float t = (_object->GetLocation().x + _object->GetErea().width) - location.x;
-	//		if (t != 0) {
-	//			vector.x = 0.f;
-	//			move[left] = t;
+			//最初の値に戻す
 
-	//			//boss_state = BossState::RIGHT;
-	//		}
-	//	}
-
-	//	//右方向に埋まらないようにする
-	//	if (stageHitFlg[0][right]) {//右方向に埋まっていたら
-	//		float t = _object->GetLocation().x - (location.x + erea.width);
-	//		if (t != 0) {
-	//			vector.x = 0.f;
-	//			move[right] = t;
-	//			//boss_state = BossState::LEFT;
-	//		}
-	//	}
+			location.x = tmpl.x;
+			location.y += -3.f;
+			erea.height = tmpe.height;
+			erea.width = tmpe.width;
 
 
-	//	//上下左右の移動量から移動後も埋まってるか調べる
-	//	if (location.y < _object->GetLocation().y + _object->GetErea().height && location.y + erea.height > _object->GetLocation().y) {//左右
-	//		if (stageHitFlg[1][top] || stageHitFlg[1][bottom]) {
-	//			move[left] = 0.f;
-	//			move[right] = 0.f;
-	//		}
-	//	}
 
-	//	location.x += move[left];
-	//	location.x += move[right];
-	//	location.y += move[top];
-	//	location.y += move[bottom];
+			//左方向に埋まらないようにする
+			if (stageHitFlg[0][left]) {//左方向に埋まっていたら
+				float t = (_object->GetLocation().x + _object->GetErea().width) - location.x;
+				if (t != 0) {
+					vector.x = 0.f;
+					move[left] = t;
+					//boss_state = BossState::RIGHT;
+				}
+			}
 
-	//	erea.height = tmpe.height;
-	//	erea.width = tmpe.width;
+			//右方向に埋まらないようにする
+			if (stageHitFlg[0][right]) {//右方向に埋まっていたら
+				float t = _object->GetLocation().x - (location.x + erea.width);
+				if (t != 0) {
+					vector.x = 0.f;
+					move[right] = t;
+					//boss_state = BossState::LEFT;
+				}
+			}
 
+
+			//上下左右の移動量から移動後も埋まってるか調べる
+			if (location.y < _object->GetLocation().y + _object->GetErea().height && location.y + erea.height > _object->GetLocation().y) {//左右
+				if (stageHitFlg[1][top] || stageHitFlg[1][bottom]) {
+					move[left] = 0.f;
+					move[right] = 0.f;
+				}
+			}
+
+			location.x += move[left];
+			location.x += move[right];
+			location.y += move[top];
+			location.y += move[bottom];
+
+			erea.height = tmpe.height;
+			erea.width = tmpe.width;
+		}
 	}
 
 
@@ -281,9 +363,9 @@ void Boss::Hit(Object* _object)
 		)
 	{
 		//バリア減るごとにクールタイムを設ける
-		if (damage_flg == false) {
+		if (!damage_flg && barrier_num > 0) {
 			damage_flg = true;
-			damage_effect_time = 180;
+			damage_effect_time = 300;
 		}
 	}
 }
@@ -325,47 +407,22 @@ bool Boss::CheckCollision(Location l, Erea e)
 	return ret;
 }
 
-void Boss::DistanceCalc(GameMain* _g)
+float Boss::DistanceCalc(Location pos1, Location pos2)
 {
-	// プレイヤーとの距離を計算
-	Location player_pos = _g->GetPlayerLocation();
-	Erea player_erea = _g->GetPlayerErea();
-
-	// プレイヤーの中心座標を計算
-	float player_center_x = player_pos.x + player_erea.width / 2;
-	float player_center_y = player_pos.y + player_erea.height / 2;
-
-	// 自分の中心座標を計算
-	float enemy_center_x = location.x + erea.width / 2;
-	float enemy_center_y = location.y + erea.height / 2;
-
-	// プレイヤーの中心座標との距離を計算
-	float dx = player_center_x - enemy_center_x;
-	float dy = player_center_y - enemy_center_y;
-	float length = (float)sqrt(dx * dx + dy * dy);
-
-
-	dx /= (float)length;
-	dy /= (float)length;
-
-	//移動
-	Move(dx, dy);
+	float dx = pos2.x - pos1.x;
+	float dy = pos2.y - pos1.y;
+	return sqrt(dx * dx + dy * dy);
 }
 
 void Boss::barrier()
 {
-	switch (barrier_num)
-	{
-	case 3:
-		color = RED;
-		break;
-	case 2:
-		color = BLUE;
-		break;
-	case 1:
-		color = GREEN;
-		break;
-	default:
-		break;
-	}
+
+}
+
+void Boss::SetRandMove()
+{
+	float angle = static_cast<float>(rand()) / RAND_MAX * 2 * PI;
+	direction.x = (float)cos(angle);
+	direction.y = (float)sin(angle);
+	vector = { 0.0f ,0.0f}; // 新しい方向に切り替える際に速度をリセット
 }

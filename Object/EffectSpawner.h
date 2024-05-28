@@ -49,6 +49,8 @@ private:
 	EffectAnim effect[EFFECT_NUM];
 	int frame;		//フレーム測定
 
+	//SE格納
+	int swap_se;
 public:
 	EffectSpawner();
 	~EffectSpawner();

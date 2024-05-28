@@ -65,6 +65,13 @@ Player::Player()
 	{
 		angle[i] = 0.f;
 	}
+
+
+	walk_se[0] = ResourceManager::SetSound("Resource/Sounds/walk_normal.wav");
+	walk_se[1] = ResourceManager::SetSound("Resource/Sounds/walk_fire.wav");
+	walk_se[2] = ResourceManager::SetSound("Resource/Sounds/walk_grass.wav");
+	walk_se[3] = ResourceManager::SetSound("Resource/Sounds/walk_water.wav");
+	now_riding = 0;
 }
 
 Player::~Player()
@@ -191,6 +198,9 @@ void Player::Update(GameMain* _g)
 		location.y += vector.y;
 	}
 
+
+	PlayerSound();		//音声再生関連処理
+
 	//damage
 	if (damageFlg && !damageOldFlg) {
 		hp--;
@@ -228,6 +238,7 @@ void Player::Update(GameMain* _g)
 	stateFlg = false;
 
 	mo++;
+	now_riding = 0;
 }
 
 void Player::Draw()const
@@ -623,9 +634,9 @@ void Player::Hit(Object* _object)
 		_object->SetColorData(color);
 	}*/
 
-	if ((_object->GetObjectType() == WATER && _object->GetCanSwap() == FALSE && this->color == BLUE && color == BLUE && !stateFlg) ||
-		(_object->GetObjectType() == FIRE && _object->GetCanSwap() == FALSE && this->color == RED && color == RED && !stateFlg) ||
-		(_object->GetObjectType() == WOOD && _object->GetCanSwap() == FALSE && this->color == GREEN && color == GREEN && !stateFlg)){
+	if ((_object->GetObjectType() == WATER && _object->GetCanSwap() == FALSE && this->color == BLUE && !stateFlg) ||
+		(_object->GetObjectType() == FIRE && _object->GetCanSwap() == FALSE && this->color == RED && !stateFlg) ||
+		(_object->GetObjectType() == WOOD && _object->GetCanSwap() == FALSE && this->color == GREEN && !stateFlg)){
 		state = 1;
 		stateFlg = true;
 	}
@@ -635,6 +646,11 @@ void Player::Hit(Object* _object)
 		}
 	}
 
+	//自分が乗っている(触れている)ブロックに応じてSEを変える
+	if (_object->GetObjectType() == FIRE || _object->GetObjectType() == WOOD || _object->GetObjectType() == WATER)
+	{
+		now_riding = _object->GetObjectType() - 2;
+	}
 }
 
 void Player::MoveActor()
@@ -1199,5 +1215,14 @@ float Player::GetLength(Location l1, Location l2)
 	len = sqrtf(powf(x, 2) + powf(y, 2));
 
 	return len;
+}
+
+void Player::PlayerSound()
+{
+	//プレイヤー歩行
+	if (stageHitFlg[1][bottom] == true && vector.x != 0 && frame % 15 == 0)
+	{
+		ResourceManager::StartSound(walk_se[now_riding]);
+	}
 }
 
