@@ -51,6 +51,12 @@ private:
 
 	float r_x = 0.0f, r_y = 0.0f;
 	float d_rad = 0.0f;
+	float d_leg_rad[4];
+	float d_neck_rad = 0.0f;
+	float d_head_rad = 0.0f;
+	float d_eye_rad = 0.0f;
+	float d_left_leg[4];
+	bool left_Anim_Flg[4];
 
 	int walk_se;		//歩行効果音
 public:
@@ -68,7 +74,6 @@ public:
 	}
 
 	void EnemyDeerMove(void);	 //移動
-	//void EnemyDeerRotation(void);//回転
 	bool CheckCollision(Location l, Erea e); //ステージとの当たり判定
 };
 
