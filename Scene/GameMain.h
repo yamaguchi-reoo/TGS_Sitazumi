@@ -33,7 +33,9 @@ private:
     int frame;                                           //フレーム測定
     int stage_data[MAX_STAGE_HEIGHT][MAX_STAGE_WIDTH];   //ステージデータ格納
     int player_object;             //プレイヤーが配列の何番目に格納されているか
-    int boss_object;               
+    int boss_object;    
+    int boss_attack[128];
+    int attack_num;
 
     Object* object[OBJECT_NUM] = { nullptr };    //オブジェクト格納
     WeatherManager* weather;                        //天気管理オブジェクト
@@ -119,5 +121,7 @@ public:
 
     //そのオブジェクトが画面内に居るか判断
     bool CheckInScreen(Object* _object)const;
+
+    Location GetBossLocation();
 };
 

@@ -106,6 +106,10 @@ AbstractScene* GameMain::Update()
 	object[player_object]->SetScreenPosition(camera_location);
 	object[player_object]->Update(this);
 	object[boss_object]->Update(this);
+	for (int i = 0; i < attack_num; i++)
+	{
+		object[boss_attack[i]]->Update(this);
+	}
 	move_object_num++;
 	for (int i = 0; object[i] != nullptr; i++)
 	{
@@ -152,6 +156,10 @@ void GameMain::Draw() const
 			object[i]->Draw();
 		}
 	}
+	for (int i = 0; i < attack_num; i++)
+	{
+		object[boss_attack[i]]->Draw();
+	}
 	//プレイヤーを最後に描画
 	object[pn]->Draw();
 
@@ -186,6 +194,10 @@ void GameMain::CreateObject(Object* _object, Location _location, Erea _erea, int
 			if (object[i]->GetObjectType() == BOSS)
 			{
 				boss_object = i;
+			}
+			if (_erea.height == 1200.f)
+			{
+				boss_attack[attack_num++] = i;
 			}
 			object_num++;
 			break;
@@ -457,4 +469,9 @@ bool GameMain::CheckInScreen(Object* _object)const
 		return true;
 	}
 	return false;
+}
+
+Location GameMain::GetBossLocation()
+{
+	return object[boss_object]->GetLocation();
 }
