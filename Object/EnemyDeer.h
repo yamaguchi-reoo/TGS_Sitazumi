@@ -26,6 +26,8 @@ class EnemyDeer :
 {
 private:
 
+	int frame;
+
 	enum hitPosition
 	{
 		top,
@@ -50,6 +52,7 @@ private:
 	float r_x = 0.0f, r_y = 0.0f;
 	float d_rad = 0.0f;
 
+	int walk_se;		//歩行効果音
 public:
 
 	EnemyDeer();

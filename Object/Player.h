@@ -57,6 +57,9 @@ private:
 	float move[4] = { 0,0,0,0 };
 	Location aaa;
 
+	int walk_se[4];		//歩行SE格納
+	int now_riding;		//今乗っているブロックに応じて再生するSEを変える
+
 public:
 	Player();
 	~Player();
@@ -78,6 +81,8 @@ public:
 	float ThreePointAngle(Location l1, Location l2, Location referenceP) const;
 
 	float GetLength(Location l1, Location l2);
+
+	void PlayerSound();		//プレイヤーの状態
 
 };
 
