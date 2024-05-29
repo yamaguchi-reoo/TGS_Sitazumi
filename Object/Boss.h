@@ -8,18 +8,8 @@
 #include "BossAttackWood.h"
 
 enum class BossState {
-	/*IDLE = 0,
-	LEFT,
-	RIGHT,
-	DEATH*/
-	UP = 0,
-	DOWN,
-	LEFT,
-	RIGHT,
-	UP_LEFT,
-	UP_RIGHT,
-	DOWN_LEFT,
-	DOWN_RIGHT,
+	MOVE = 0,
+	DEATH
 };
 
 class Boss :

@@ -4,13 +4,13 @@
 #include "../Scene/GameMain.h"
 #include <algorithm>
 
-#define BOSS_SIZE 315
+#define BOSS_SIZE 250
 #define STATE_CHANGE_INTERVAL 120
 #define BOSS_MAX_SPEED 4.0f
 #define DIRECTION_CHANGE_SPEED 0.05f // 方向変更の速度（補間係数）
 
 
-Boss::Boss() :vector{ 0.0f }, boss_state(BossState::DOWN), barrier_num(3), damage_flg(false), state_change_time(STATE_CHANGE_INTERVAL), direction{ 1.0f, 0.0f }, target_direction{ 1.0f, 0.0f }, speed(0.0f)
+Boss::Boss() :vector{ 0.0f }, boss_state(BossState::MOVE), barrier_num(3), damage_flg(false), state_change_time(STATE_CHANGE_INTERVAL), direction{ 1.0f, 0.0f }, target_direction{ 1.0f, 0.0f }, speed(0.0f)
 {
 	type = BOSS;
 	can_swap = TRUE;
@@ -61,8 +61,18 @@ void Boss::Update(GameMain* _g)
 	speed = BOSS_MAX_SPEED;
 	vector = { 1.0f ,1.0f};
 
-	// ボスの移動処理を呼び出し
-	Move(_g);
+	switch (boss_state)
+	{
+	case BossState::MOVE:
+		// ボスの移動処理を呼び出し
+		Move(_g);
+		break;
+	case BossState::DEATH:
+		_g->DeleteObject(object_pos);
+		break;
+	default:
+		break;
+	}
 
 	//プレイヤーとボスの距離を計算
 	//DistanceCalc(_g);
@@ -149,20 +159,22 @@ void Boss::Update(GameMain* _g)
 		}
 		
 	}
+
+
 }
 
 void Boss::Draw() const
 {
-	//DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, FALSE);
+	DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, FALSE);
 
 	// ボスの中心座標
 	float boss_center_x = local_location.x + BOSS_SIZE / 2;
 	float boss_center_y = local_location.y + BOSS_SIZE / 2;
 
 	// バリアの半径の配列を定義
-	float barrier_rad[] = { 175, 170, 165 };
+	float barrier_rad[] = { 120, 115, 110 };
 	//本体
-	DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2, 50, 50, color, TRUE);
+	DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2, 35, 35, color, TRUE);
 
 	//羽描画
 	for (int i = 0; i < vertices.size(); i += 4)
@@ -182,7 +194,7 @@ void Boss::Draw() const
 	// 羽の描画（左側）
 	for (size_t i = 0; i < mirrored_vertices.size(); i += 4)
 	{
-		//DrawQuadrangleAA(mirrored_vertices[i].x, mirrored_vertices[i].y, mirrored_vertices[i + 1].x, mirrored_vertices[i + 1].y,mirrored_vertices[i + 2].x, mirrored_vertices[i + 2].y, mirrored_vertices[i + 3].x, mirrored_vertices[i + 3].y, color, TRUE);
+		//DrawQuadrangleAA(local_location.x + vertices[i].x, local_location.y + vertices[i].y, local_location.x + vertices[i + 1].x, local_location.y + vertices[i + 1].y, local_location.x + vertices[i + 2].x, local_location.y + vertices[i + 2].y, local_location.x + vertices[i + 3].x, local_location.y + vertices[i + 3].y, color, TRUE);
 	}
 	// フラグがTRUEだったらバリアを点滅させる
 	if (damage_effect_flg) 
@@ -419,6 +431,10 @@ void Boss::Hit(Object* _object)
 			damage_effect_time = 300;
 		}
 	}
+
+	/*if (barrier_num < 0 && boss_state != BossState::DEATH) {
+		boss_state = BossState::DEATH;
+	}*/
 }
 
 bool Boss::CheckCollision(Location l, Erea e)
