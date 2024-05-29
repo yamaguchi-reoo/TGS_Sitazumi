@@ -20,3 +20,6 @@
 #define SWAP_EFFECT_SPEED 13			//交換のアニメーション速度(数字が小さいほど速い)
 #define SWAP_EFFECT_STOP_TIME 10		//交換のアニメーション後の硬直
 
+#define DEFAULT_FREQ 40000			//音声再生速度用 通常速度
+
+

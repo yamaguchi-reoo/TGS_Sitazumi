@@ -10,6 +10,7 @@
 #include "Scene/GameMain.h"
 
 #define FRAMERATE 60.0 //フレームレート
+
 //メインプログラム 開始
 
 int WINAPI WinMain(_In_ HINSTANCE  hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR LpCmdLine, _In_ int NCmdShow) {
@@ -41,6 +42,7 @@ int WINAPI WinMain(_In_ HINSTANCE  hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     // ゲームループし、シーンマネジャーでシーンの更新
     while ((ProcessMessage() == 0) && (sceneMng->Update() != nullptr))
     {
+
         ClearDrawScreen();      // 画面の初期化
 
         PadInput::UpdateKey();  //パッドの入力処理

@@ -57,7 +57,7 @@ void BossAttackFire::Update(GameMain* _g)
 
 void BossAttackFire::Draw() const
 {
-	DrawCircle(local_location.x, local_location.y, erea.width, color, TRUE);
+	DrawCircleAA(local_location.x, local_location.y, erea.width, color, TRUE);
 }
 
 void BossAttackFire::Hit(Object* _object)

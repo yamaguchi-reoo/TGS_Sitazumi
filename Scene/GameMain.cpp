@@ -134,6 +134,19 @@ AbstractScene* GameMain::Update()
 		return new EditScene(now_stage);
 	}
 
+	//音源速度変更
+	if (KeyInput::OnPresed(KEY_INPUT_1))
+	{
+		ResourceManager::SetSoundFreq(10000);
+	}
+	if (KeyInput::OnPresed(KEY_INPUT_2))
+	{
+		ResourceManager::SetSoundFreq(50000);
+	}
+	if (KeyInput::OnPresed(KEY_INPUT_3))
+	{
+		ResourceManager::SetSoundFreq(75000);
+	}
 	test->Update(this);
 	test->SetScreenPosition(camera_location);
 #endif
@@ -144,11 +157,9 @@ AbstractScene* GameMain::Update()
 void GameMain::Draw() const
 {
 	back_ground->Draw(camera_location);
-	int pn = 0;
 	for (int i = 0; object[i] != nullptr; i++)
 	{
-		if (object[i]->GetObjectType() == PLAYER) {
-			pn = i;
+		if (player_object == i) {
 			continue;
 		}
 		if (CheckInScreen(object[i]) == true)
@@ -161,7 +172,7 @@ void GameMain::Draw() const
 		object[boss_attack[i]]->Draw();
 	}
 	//プレイヤーを最後に描画
-	object[pn]->Draw();
+	object[player_object]->Draw();
 
 	//エフェクトの描画
 	effect_spawner->Draw();

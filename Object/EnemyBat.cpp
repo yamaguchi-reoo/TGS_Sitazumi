@@ -72,7 +72,7 @@ void EnemyBat::Update(GameMain* _g)
 	// プレイヤーの中心座標との距離を計算
 	float dx = player_center_x - enemy_center_x + 10;
 	float dy = player_center_y - enemy_center_y + 10;
-	float length = sqrt(dx * dx + dy * dy);
+	float length = sqrtf(dx * dx + dy * dy);
 
 	////プレイヤーが色変えるときコウモリもスローに
 	//if (_g->GetSearchFlg()) {

@@ -69,7 +69,7 @@ void BossAttackWood::Update(GameMain* _g)
 
 void BossAttackWood::Draw() const
 {
-	DrawBox(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, TRUE);
+	DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, TRUE);
 }
 
 void BossAttackWood::Hit(Object* _object)
