@@ -6,7 +6,7 @@
 
 #define BOSS_SIZE 315
 #define STATE_CHANGE_INTERVAL 120
-#define BOSS_MAX_SPEED 2.0f
+#define BOSS_MAX_SPEED 4.0f
 #define DIRECTION_CHANGE_SPEED 0.05f // 方向変更の速度（補間係数）
 
 
@@ -58,7 +58,7 @@ void Boss::Update(GameMain* _g)
 		stageHitFlg[1][i] = false;
 	}
 
-	speed = 2.0f;
+	speed = BOSS_MAX_SPEED;
 	vector = { 1.0f ,1.0f};
 
 	// ボスの移動処理を呼び出し
@@ -223,26 +223,27 @@ void Boss::Move(GameMain* _g)
 	// プレイヤーとの距離が一定範囲内の場合にのみ移動する
 	if (distance_to_player <= 1280)
 	{
-		// プレイヤーの位置に応じてボスの目標方向を設定する
-		if (location.x > player_pos.x)
+		  // プレイヤーとの距離が600未満の場合、プレイヤーから離れる
+		if (distance_to_player < 450)
 		{
-			// プレイヤーよりも右にいる場合は左に向かって移動する
-			target_direction = { -1.0f, 0.0f };
-			//target_direction.x = -1.0f;
+			// プレイヤーから離れる方向を計算
+			target_direction.x = location.x - player_pos.x;
+			target_direction.y = location.y - player_pos.y;
 		}
+		// プレイヤーとの距離が600より大きい場合、プレイヤーに近づく
 		else
 		{
-			// プレイヤーよりも左にいる場合は右に向かって移動する
-			target_direction = {1.0f, 0.0f };
-			//target_direction.x = 1.0f;
+			// プレイヤーに近づく方向を計算
+			target_direction.x = player_pos.x - location.x;
+			target_direction.y = player_pos.y - location.y;
 		}
 
-		// プレイヤーとの距離が一定距離未満の場合、一定の距離を保つ
-		if (distance_to_player < 600)
+		// 移動方向を正規化
+		float lengths = sqrt(target_direction.x * target_direction.x + target_direction.y * target_direction.y);
+		if (lengths != 0)
 		{
-			// プレイヤーとの距離が一定距離未満なので、目標方向を逆に設定して一定距離を保つ
-			target_direction.x *= -1.0f;
-			target_direction.y *= -1.0f;
+			target_direction.x /= lengths;
+			target_direction.y /= lengths;
 		}
 
 		// 移動方向を滑らかにする
@@ -267,11 +268,10 @@ void Boss::Hit(Object* _object)
 		(_object->GetObjectType() == BLOCK && _object->GetCanHit() == TRUE) ||
 		(_object->GetObjectType() == FIRE && _object->GetCanSwap() == TRUE && this->color == RED) ||
 		(_object->GetObjectType() == WOOD && _object->GetCanSwap() == TRUE && this->color == GREEN) ||
-		(_object->GetObjectType() == WATER && _object->GetCanSwap() == TRUE && this->color == BLUE ||
-		(_object->GetObjectType() == PLAYER))
+		(_object->GetObjectType() == WATER && _object->GetCanSwap() == TRUE && this->color == BLUE)
 		)
 	{
-		if (barrier_num > 0) {
+		//if (barrier_num > 0) {
 			Location tmpl = location;
 			Erea tmpe = erea;
 			move[0] = 0;
@@ -370,6 +370,7 @@ void Boss::Hit(Object* _object)
 					vector.x = 0.f;
 					speed = 0.0f;
 					move[left] = t;
+					SetRandMove();
 					//boss_state = BossState::RIGHT;
 				}
 			}
@@ -401,7 +402,7 @@ void Boss::Hit(Object* _object)
 
 			erea.height = tmpe.height;
 			erea.width = tmpe.width;
-		}
+		//}
 	}
 
 
