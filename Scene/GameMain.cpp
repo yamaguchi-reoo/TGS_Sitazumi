@@ -411,7 +411,7 @@ void GameMain::SetStage(int _stage)
 				break;
 			case ENEMY_BOSS:
 				//ボスの生成
-				CreateObject(new Boss, { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { 315,315 }, ColorList[stage_data[i][j] - 19]);
+				CreateObject(new Boss, { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { 250,250 }, ColorList[stage_data[i][j] - 19]);
 				break;
 			default:
 				break;
