@@ -147,8 +147,8 @@ AbstractScene* GameMain::Update()
 	{
 		ResourceManager::SetSoundFreq(75000);
 	}
-	test->Update(this);
-	test->SetScreenPosition(camera_location);
+	//test->Update(this);
+	//test->SetScreenPosition(camera_location);
 #endif
 
 	return this;
