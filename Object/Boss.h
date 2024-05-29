@@ -13,7 +13,7 @@ enum class BossState {
 };
 
 class Boss :
-	public Object 
+	public Object
 {
 private:
 	enum hitPosition
@@ -35,9 +35,12 @@ private:
 	int damage_effect_time = 60;	//ダメージエフェクトの持続時間
 	bool damage_effect_flg = false; // ダメージエフェクトのフラグ
 
-	Location direction;			// 移動方向
+	//Location direction;			// 移動方向
 	Location target_direction;	// 目標方向
+
 	float speed;				// 移動速度
+	static float angle;
+	static float direction;
 
 	int state_change_time;		// 状態変更のタイミング
 
@@ -45,7 +48,7 @@ private:
 
 	bool f = false;
 	int cnt = 0;
-	int attack= 0;
+	int attack = 0;
 
 public:
 	Boss();
@@ -66,10 +69,10 @@ public:
 		return 0;
 	}
 	//ステージとの当たり判定
-	bool CheckCollision(Location l, Erea e); 
+	bool CheckCollision(Location l, Erea e);
 
 	//プレイヤーとボスの距離計算
-	float DistanceCalc(Location pos1,Location pos2);
+	float DistanceCalc(Location pos1, Location pos2);
 
 	//ボスのバリア
 	void barrier();
