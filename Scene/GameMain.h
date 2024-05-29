@@ -58,6 +58,7 @@ private:
     int fps = 0;
     int now_weather;            //現在の天気(0=通常　1=雨　2=火　3=木)
     int weather_timer;      //天気オブジェクトを生成するスパン
+    bool boss_battle_flg;   //ボス戦が始まっているか判断
 public:
 
     //コンストラクタ
@@ -123,5 +124,8 @@ public:
     bool CheckInScreen(Object* _object)const;
 
     Location GetBossLocation();
+
+    //すべてのオブジェクトを空に
+    void ResetAllObject();
 };
 
