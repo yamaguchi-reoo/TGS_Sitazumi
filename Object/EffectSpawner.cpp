@@ -112,6 +112,13 @@ void EffectSpawner::Update(GameMain* _g)
 					effect[i].spawn_flg = false;
 				}
 				break;
+			//爆発
+			case 6:
+				//指定された時間で消える
+				if (effect[i].timer > effect[i].effect_time)
+				{
+					effect[i].spawn_flg = false;
+				}
 			default:
 				break;
 			}
@@ -187,6 +194,11 @@ void EffectSpawner::Draw()const
 				DrawCircleAA(effect[i].local_location.x, effect[i].local_location.y, 10, 10, effect[i].color, TRUE);
 				SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 				break;
+				//爆発した時
+			case 6:
+				SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 - (effect[i].timer * (255 / effect[i].effect_time)));
+				DrawCircleAA(effect[i].local_location.x, effect[i].local_location.y, (float)effect[i].timer * 15, 100, effect[i].color);
+				SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 			default:
 				break;
 			}
@@ -275,6 +287,17 @@ void EffectSpawner::SpawnEffect(Location _location, Erea _erea,int _effect_type,
 			_color,
 			(float)((GetRand(25) + 12) / 100.0f)
 		 );
+		//爆発エフェクト
+	case ExplosionEffect:
+		SpawnParticle(
+			_location,
+			_erea,
+			6,
+			_time,
+			1,
+			_color,
+			0
+		);
 		break;
 	default:
 		break;
@@ -340,7 +363,7 @@ int EffectSpawner::Swap(Object* _object1, Object* _object2)
 	}
 	swap_anim[1].timer = swap_anim[0].timer;
 
-	ResourceManager::SetSoundFreq(40000);
+	ResourceManager::SetSoundFreq(DEFAULT_FREQ);
 	ResourceManager::StartSound(swap_se);
 
 	return swap_anim[0].timer;

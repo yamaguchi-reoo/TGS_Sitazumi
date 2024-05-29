@@ -9,7 +9,7 @@
 
 Location camera_location = { 0,0 };
 
-EditScene::EditScene(int _stage) : current_type(0), ui_current_type(0), tool_pickup_flg(false), current_leftbutton_flg(false), current_rightbutton_flg(false), current_upbutton_flg(false), current_downbutton_flg(false), button_interval(0), now_select_erea(0), current_type_select(-1), now_current_type(0), current_type_location{ 0 }, current_type_erea{ 0 }, disp_num(0), double_click(20), player_spawn_location{ 0,0 }, minimap_location{ 0,0 }, minimap_size(0), minimap_pickup_flg(false), minimap_button{ 0,0 }, minimap_disp_flg(false)
+EditScene::EditScene(int _stage) : current_type(0), ui_current_type(0), tool_pickup_flg(false), current_leftbutton_flg(false), current_rightbutton_flg(false), current_upbutton_flg(false), current_downbutton_flg(false), button_interval(0), now_select_erea(0), current_type_select(-1), now_current_type(0), current_type_location{ 0 }, current_type_erea{ 0 }, disp_num(0), double_click(20), player_spawn_location{ 0,0 }, minimap_location{ 0,0 }, minimap_size(0), minimap_pickup_flg(false), minimap_button{ 0,0 }, minimap_disp_flg(true)
 {
 	now_stage = _stage;
 }
@@ -285,11 +285,43 @@ AbstractScene* EditScene::Update()
 		break;
 	case MINIMAP:
 		//つかんで動かす
-		if (KeyInput::OnPressedMouse(MOUSE_INPUT_RIGHT))
+		if (KeyInput::OnPressedMouse(MOUSE_INPUT_RIGHT) && minimap_disp_flg == true)
 		{
 			minimap_pickup_flg = true;
 		}
+		//表示切替
+		if (
+			cursor.x > minimap_button.x &&
+			cursor.x < minimap_button.x + MINIMAP_BUTTON_WIDTH &&
+			cursor.y > minimap_button.y &&
+			cursor.y < minimap_button.y + MINIMAP_BUTTON_HEIGHT
+			)
+		{
+			if (KeyInput::OnMouse(MOUSE_INPUT_LEFT))
+			{
+				minimap_disp_flg = !minimap_disp_flg;
+				//ミニマップ表示切替ボタンの位置を切り替える
+				if (minimap_disp_flg == true)
+				{
+					//ボタンを追従させる
+					minimap_button.x = minimap_location.x;
+					minimap_button.y = minimap_location.y + (stage_height_num * minimap_size);
+				}
+				else
+				{
+					//ボタンを右上に移動させる
+					minimap_button.x = SCREEN_WIDTH - MINIMAP_BUTTON_WIDTH;
+					minimap_button.y = 0;
+				}
+			}
+		}
 
+		//カメラテレポート
+		else if (KeyInput::OnPressedMouse(MOUSE_INPUT_LEFT))
+		{
+			camera_location.x = (cursor.x - minimap_location.x) * (BOX_WIDTH / minimap_size) - (SCREEN_WIDTH/2);
+			camera_location.y = (cursor.y - minimap_location.y) * (BOX_HEIGHT / minimap_size) - (SCREEN_HEIGHT/2);
+		}
 		break;
 	default:
 		break;
@@ -498,28 +530,56 @@ void EditScene::Draw()const
 	SetFontSize(old_size);
 
 	//ミニマップ
-	DrawBoxAA(minimap_location.x, minimap_location.y, minimap_location.x + (stage_width_num * minimap_size) , minimap_location.y + (stage_height_num * minimap_size), 0x000000, true);
-	DrawBoxAA(minimap_location.x, minimap_location.y, minimap_location.x + (stage_width_num * minimap_size) , minimap_location.y + (stage_height_num * minimap_size), 0xffffff,false);
-	for (int i = 0; i < stage_height_num; i++)
+	if (minimap_disp_flg == true)
 	{
-		for (int j = 0; j < stage_width_num; j++)
+		DrawBoxAA(minimap_location.x, minimap_location.y, minimap_location.x + (stage_width_num * minimap_size), minimap_location.y + (stage_height_num * minimap_size), 0x000000, true);
+		DrawBoxAA(minimap_location.x, minimap_location.y, minimap_location.x + (stage_width_num * minimap_size), minimap_location.y + (stage_height_num * minimap_size), 0xffffff, false);
+		for (int i = 0; i < stage_height_num; i++)
 		{
-			if (stage[i][j]->GetStageType() != NULL_BLOCK)
+			for (int j = 0; j < stage_width_num; j++)
 			{
-				DrawBoxAA(minimap_location.x + (j * minimap_size),
-					minimap_location.y + (i * minimap_size),
-					minimap_location.x + (j * minimap_size) + minimap_size,
-					minimap_location.y + (i * minimap_size) + minimap_size,
-					draw_block_color[stage[i][j]->GetStageType()], true);
+				if (stage[i][j]->GetStageType() != NULL_BLOCK)
+				{
+					DrawBoxAA(minimap_location.x + (j * minimap_size),
+						minimap_location.y + (i * minimap_size),
+						minimap_location.x + (j * minimap_size) + minimap_size,
+						minimap_location.y + (i * minimap_size) + minimap_size,
+						draw_block_color[stage[i][j]->GetStageType()], true);
+				}
 			}
 		}
+		DrawBoxAA((camera_location.x / BOX_WIDTH) * minimap_size + minimap_location.x,
+			(camera_location.y / BOX_HEIGHT) * minimap_size + minimap_location.y,
+			(camera_location.x / BOX_WIDTH + (SCREEN_WIDTH / BOX_WIDTH)) * minimap_size + minimap_location.x,
+			(camera_location.y / BOX_HEIGHT + (SCREEN_HEIGHT / BOX_HEIGHT)) * minimap_size + minimap_location.y,
+			0xff0000, false
+		);
 	}
-	DrawBoxAA((camera_location.x / BOX_WIDTH) * minimap_size + minimap_location.x,
-		(camera_location.y / BOX_HEIGHT) * minimap_size + minimap_location.y,
-		(camera_location.x / BOX_WIDTH + (SCREEN_WIDTH / BOX_WIDTH)) * minimap_size + minimap_location.x,
-		(camera_location.y / BOX_HEIGHT + (SCREEN_HEIGHT / BOX_HEIGHT)) * minimap_size + minimap_location.y,
-		0xff0000, false
-	);
+	//ミニマップ表示切り替え
+	DrawBoxAA(minimap_button.x, minimap_button.y, minimap_button.x + MINIMAP_BUTTON_WIDTH, minimap_button.y + MINIMAP_BUTTON_HEIGHT, 0x000000, TRUE);
+	DrawBoxAA(minimap_button.x, minimap_button.y, minimap_button.x + MINIMAP_BUTTON_WIDTH, minimap_button.y + MINIMAP_BUTTON_HEIGHT, 0xffffff, FALSE);
+	if (minimap_disp_flg == true)
+	{
+		DrawTriangleAA(
+			minimap_button.x + (MINIMAP_BUTTON_WIDTH / 2) - 10,
+			minimap_button.y + (MINIMAP_BUTTON_HEIGHT / 2) + 5,
+			minimap_button.x + (MINIMAP_BUTTON_WIDTH / 2),
+			minimap_button.y + (MINIMAP_BUTTON_HEIGHT / 2) - 5,
+			minimap_button.x + (MINIMAP_BUTTON_WIDTH / 2) + 10,
+			minimap_button.y + (MINIMAP_BUTTON_HEIGHT / 2) + 5,
+			0xffffff, TRUE);
+	}
+	else
+	{
+		DrawTriangleAA(
+			minimap_button.x + (MINIMAP_BUTTON_WIDTH / 2) - 10,
+			minimap_button.y + (MINIMAP_BUTTON_HEIGHT / 2) - 5,
+			minimap_button.x + (MINIMAP_BUTTON_WIDTH / 2),
+			minimap_button.y + (MINIMAP_BUTTON_HEIGHT / 2) + 5,
+			minimap_button.x + (MINIMAP_BUTTON_WIDTH / 2) + 10,
+			minimap_button.y + (MINIMAP_BUTTON_HEIGHT / 2) - 5,
+			0xffffff, TRUE);
+	}
 }
 
 void EditScene::LoadStageData(int _stage)
@@ -688,20 +748,35 @@ void EditScene::StageShift(int _num)
 
 int EditScene::ChechSelectErea()
 {
+	//カーソルがミニマップ内かミニマップ表示切替ボタン内かどうか判断
+	if (
+		((
+			cursor.x > minimap_location.x &&
+			cursor.x < minimap_location.x + (stage_width_num * minimap_size) &&
+			cursor.y > minimap_location.y &&
+			cursor.y < minimap_location.y + (stage_height_num * minimap_size) &&
+			minimap_disp_flg == true
+			) ||
+			(
+				cursor.x > minimap_button.x &&
+				cursor.x < minimap_button.x + MINIMAP_BUTTON_WIDTH &&
+				cursor.y > minimap_button.y &&
+				cursor.y < minimap_button.y + MINIMAP_BUTTON_HEIGHT
+				))
+		&& tool_pickup_flg == false
+		)
+	{
+		return MINIMAP;
+	}
 	//ブロックのタイプ選択画面が開かれて居るか確認
 	if (current_type_select != -1)
 	{
 		return SELECT_TYPE;
 	}
 	//カーソルがツールボックス内かどうか判断
-	if (cursor.x > tool_location.x && cursor.x < tool_location.x + tool_size.width && cursor.y>tool_location.y && cursor.y < tool_location.y + tool_size.height)
+	if (cursor.x > tool_location.x && cursor.x < tool_location.x + tool_size.width && cursor.y>tool_location.y && cursor.y < tool_location.y + tool_size.height && minimap_pickup_flg == false)
 	{
 		return TOOL_BOX;
-	}
-	//カーソルがミニマップ内かどうか判断
-	else if (cursor.x > minimap_location.x && cursor.x < minimap_location.x + (stage_width_num * minimap_size) && cursor.y > minimap_location.y && cursor.y < minimap_location.y + (stage_height_num * minimap_size))
-	{
-		return MINIMAP;
 	}
 	else
 	{
@@ -766,6 +841,9 @@ void EditScene::MiniMapMoveInsideScreen()
 		minimap_location.x = SCREEN_WIDTH - (stage_width_num * minimap_size);
 	}
 
+	//ボタンを追従させる
+	minimap_button.x = minimap_location.x;
+
 	//スクリーン内から出ないようにツールボックスのY座標をマウスに沿って移動
 	minimap_location.y = cursor.y - ((stage_height_num * minimap_size) / 2);
 	if (minimap_location.y < 0)
@@ -776,6 +854,9 @@ void EditScene::MiniMapMoveInsideScreen()
 	{
 		minimap_location.y = SCREEN_HEIGHT - (stage_height_num * minimap_size);
 	}
+
+	//ボタンを追従させる
+	minimap_button.y = minimap_location.y + (stage_height_num * minimap_size);
 }
 
 void EditScene::ResetSelectData()

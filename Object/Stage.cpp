@@ -5,7 +5,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-Stage::Stage(int _type, int _stage_height) : frame(0), old_color(0),inv_flg(false), debug_flg(false), anim(0), hit_flg(false), hit_timer(-1), weather(0), change_weather_flg(false)
+Stage::Stage(int _type, int _stage_height) : frame(0), old_color(0),inv_flg(false), debug_flg(false), anim(0), hit_flg(false), hit_timer(-1), weather(0), change_weather_flg(false), delete_fire(0)
 {
 	//炎
 	if (_type == RED_BLOCK || _type == FIRE_BLOCK)
@@ -82,6 +82,11 @@ void Stage::Update(GameMain* _g)
 	{
 		_g->SetNowWeather(weather);
 		change_weather_flg = false;
+	}
+	//このステージブロックが火なら、一定時間経過で消す
+	if (type == FIRE && can_swap == FALSE && ++delete_fire > 60)
+	{
+		_g->DeleteObject(object_pos);
 	}
 }
 
@@ -169,7 +174,7 @@ void Stage::Draw()const
 			break;
 			//地面（灰）
 		case GRAY_BLOCK:
-			DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, 0xaaaaaa, true);
+			DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width + 1, local_location.y + erea.height + 1, 0xaaaaaa, true);
 			//地面内の小石
 			DrawBoxAA(local_location.x + 10, local_location.y + 20, local_location.x + 15, local_location.y + 25, 0x999999, true);
 			DrawBoxAA(local_location.x + 30, local_location.y + 15, local_location.x + 35, local_location.y + 20, 0x999999, true);
@@ -286,6 +291,12 @@ void Stage::Hit(Object* _object)
 		{
 			draw_wood_flg = true;
 		}
+	}
+
+	//火ブロックと溶岩ブロックが当たっている場合は火を消さない
+	if (this->type == FIRE && this->can_swap == FALSE && _object->GetObjectType() == FIRE && _object->GetCanSwap() == TRUE)
+	{
+		delete_fire = 0;
 	}
 }
 

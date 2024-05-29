@@ -11,6 +11,8 @@
 #define WIDTH_BUTTON_POS_Y 40    //横幅調節ボタンのY位置
 #define HEIGHT_BUTTON_POS_X 180  //縦幅調節ボタンのX位置
 #define HEIGHT_BUTTON_POS_Y 35   //縦幅調節ボタンのY位置
+#define MINIMAP_BUTTON_WIDTH 30     //ミニマップ表示切り替えボタンの幅
+#define MINIMAP_BUTTON_HEIGHT 20     //ミニマップ表示切り替えボタンの高さ
 
 //エリア区分
 enum SelectErea
