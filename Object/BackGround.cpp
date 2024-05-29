@@ -71,6 +71,7 @@ void BackGround::DrawMountain(Location _shift_location, float move_speed)const
 		SCREEN_WIDTH + shift_location.x + 200,
 		SCREEN_HEIGHT - shift_location.y,
 		0x000000, TRUE);
+
 #ifdef _DEBUG
 	DrawStringF(SCREEN_WIDTH + shift_location.x, SCREEN_HEIGHT - shift_location.y - 200, "山", 0x000000);
 #endif

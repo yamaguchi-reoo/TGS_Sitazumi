@@ -317,7 +317,7 @@ AbstractScene* EditScene::Update()
 		}
 
 		//カメラテレポート
-		else if (KeyInput::OnMouse(MOUSE_INPUT_LEFT))
+		else if (KeyInput::OnPressedMouse(MOUSE_INPUT_LEFT))
 		{
 			camera_location.x = (cursor.x - minimap_location.x) * (BOX_WIDTH / minimap_size) - (SCREEN_WIDTH/2);
 			camera_location.y = (cursor.y - minimap_location.y) * (BOX_HEIGHT / minimap_size) - (SCREEN_HEIGHT/2);
