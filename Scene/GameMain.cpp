@@ -105,10 +105,16 @@ AbstractScene* GameMain::Update()
 	//プレイヤーの更新＆色探知用
 	object[player_object]->SetScreenPosition(camera_location);
 	object[player_object]->Update(this);
-	object[boss_object]->Update(this);
+	if (object[boss_object] != nullptr)
+	{
+		object[boss_object]->Update(this);
+	}
 	for (int i = 0; i < attack_num; i++)
 	{
-		object[boss_attack[i]]->Update(this);
+		if (object[boss_attack[i]] != nullptr)
+		{
+			object[boss_attack[i]]->Update(this);
+		}
 	}
 	move_object_num++;
 	for (int i = 0; object[i] != nullptr; i++)
@@ -134,19 +140,15 @@ AbstractScene* GameMain::Update()
 		return new EditScene(now_stage);
 	}
 
-	//音源速度変更
-	if (KeyInput::OnPresed(KEY_INPUT_1))
+	if (KeyInput::OnKey(KEY_INPUT_1))
 	{
-		ResourceManager::SetSoundFreq(10000);
+		SetStage(0);
 	}
-	if (KeyInput::OnPresed(KEY_INPUT_2))
+	if (KeyInput::OnKey(KEY_INPUT_2))
 	{
-		ResourceManager::SetSoundFreq(50000);
+		SetStage(2);
 	}
-	if (KeyInput::OnPresed(KEY_INPUT_3))
-	{
-		ResourceManager::SetSoundFreq(75000);
-	}
+
 	test->Update(this);
 	test->SetScreenPosition(camera_location);
 #endif
@@ -285,9 +287,6 @@ void GameMain::UpdateCamera()
 		}
 	}
 
-	//今のステージが３（ボス）以外で、カメラ固定フラグが立ってないなら
-	if (now_stage != 3)
-	{
 		//カメラ更新
 		if (camera_x_lock_flg == false && camera_y_lock_flg == false)
 		{
@@ -309,12 +308,10 @@ void GameMain::UpdateCamera()
 			camera_location.x = lock_pos.x - (SCREEN_WIDTH / 2);
 			camera_location.y = lock_pos.y - (SCREEN_HEIGHT / 2);
 		}
-	}
-	else if (now_stage == 4)
-	{
-		camera_location.x = screen_origin.x - (SCREEN_WIDTH / 2);
-		camera_location.y = screen_origin.y + 48;
-	}
+		if (now_stage == 2)
+		{
+			camera_location = { 0,BOX_HEIGHT * 5 };
+		}
 }
 
 void GameMain::LoadStageData(int _stage)
@@ -355,11 +352,15 @@ void GameMain::LoadStageData(int _stage)
 
 void GameMain::SetStage(int _stage)
 {
+	object_num = 0;
+	//すべてのオブジェクトをリセット
+	ResetAllObject();
+
 	bool player_flg = false;	//プレイヤーを生成したか
 	now_stage = _stage;
 	//ファイルの読込
 	LoadStageData(now_stage);
-	for (int i = stage_height_num-1; i > 0; i--)
+	for (int i = stage_height_num - 1; i >= 0; i--)
 	{
 		for (int j = 0; j < stage_width_num; j++)
 		{	
@@ -426,7 +427,6 @@ void GameMain::SetStage(int _stage)
 	}
 	//カメラのリセット
 	ResetCamera();
-
 	//カメラの位置がプレイヤーの位置にならないように
 	x_pos_set_once = true;
 	y_pos_set_once = true;
@@ -471,10 +471,10 @@ int GameMain::Swap(Object* _object1, Object* _object2)
 bool GameMain::CheckInScreen(Object* _object)const
 {
 	//画面内に居るか判断
-	if (_object->GetLocation().x > camera_location.x - _object->GetErea().width - 100 &&
-		_object->GetLocation().x < camera_location.x + SCREEN_WIDTH + _object->GetErea().width + 100 &&
-		_object->GetLocation().y > camera_location.y - _object->GetErea().height - 100 &&
-		_object->GetLocation().y < camera_location.y + SCREEN_HEIGHT + _object->GetErea().height + 100
+	if (_object->GetLocation().x > camera_location.x - _object->GetErea().width - 150 &&
+		_object->GetLocation().x < camera_location.x + SCREEN_WIDTH + _object->GetErea().width + 150 &&
+		_object->GetLocation().y > camera_location.y - _object->GetErea().height - 150 &&
+		_object->GetLocation().y < camera_location.y + SCREEN_HEIGHT + _object->GetErea().height + 150
 		)
 	{
 		return true;
@@ -485,4 +485,12 @@ bool GameMain::CheckInScreen(Object* _object)const
 Location GameMain::GetBossLocation()
 {
 	return object[boss_object]->GetLocation();
+}
+
+void GameMain::ResetAllObject()
+{
+	for (int i = 0; i < OBJECT_NUM; i++)
+	{
+		object[i] = nullptr;
+	}
 }
