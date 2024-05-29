@@ -3,7 +3,7 @@
 
 BackGround::BackGround():stage_erea{0.0}
 {
-	bg_erea.width = 6000;
+	bg_erea.width = 12000;
 	bg_erea.height = 2000;
 }
 
@@ -29,7 +29,7 @@ void BackGround::Update()
 
 void BackGround::Draw(Location _camera_location)const
 {
-	Location shift_location = { -_camera_location.x / (stage_erea.width / (bg_erea.width / 10)) ,-_camera_location.y / (stage_erea.height / (bg_erea.height / 10)) };
+	Location shift_location = { -_camera_location.x / (stage_erea.width / (bg_erea.width / 12)) ,-_camera_location.y / (stage_erea.height / (bg_erea.height / 10)) };
 	for (int i = 0; i < 50; i++)
 	{
 		DrawBoxAA(shift_location.x, shift_location.y + (i * 25),
