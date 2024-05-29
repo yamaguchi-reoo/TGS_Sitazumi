@@ -94,7 +94,7 @@ private:
 	int weather;						//変更する天気
 	bool change_weather_flg;			//天気を変更するか判断
 	bool draw_wood_flg;					//木を描画するか草を描画するか判断
-
+	int delete_fire;					//足元に溶岩が無い火を消す
 public:
 	Stage(int _type, int _stage_height = 0);
 	~Stage();

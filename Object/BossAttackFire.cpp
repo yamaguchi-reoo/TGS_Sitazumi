@@ -1,6 +1,6 @@
 #include "BossAttackFire.h"
 #include "../Scene/GameMain.h"
-
+#include "../Utility/ResourceManager.h"
 
 BossAttackFire::BossAttackFire()
 {
@@ -50,6 +50,7 @@ void BossAttackFire::Update(GameMain* _g)
 	location.y += velocity.y;
 
 	if (hitFlg) {
+		_g->SpawnEffect(location, erea, ExplosionEffect, 10, RED);
 		//ここで削除
 		_g->DeleteObject(object_pos);
 	}
@@ -61,7 +62,11 @@ void BossAttackFire::Update(GameMain* _g)
 
 void BossAttackFire::Draw() const
 {
-	DrawCircleAA(local_location.x, local_location.y, erea.width, 32, color, TRUE);
+	DrawCircleAA(local_location.x, local_location.y, erea.width,100, 0xff0000, TRUE);
+	ResourceManager::StageAnimDraw(local_location, FIRE);
+	ResourceManager::StageAnimDraw({ local_location.x - 30,local_location.y }, FIRE);
+	ResourceManager::StageAnimDraw({ local_location.x,local_location.y-20 }, FIRE);
+	ResourceManager::StageAnimDraw({ local_location.x - 30,local_location.y-20 }, FIRE);
 }
 
 void BossAttackFire::Hit(Object* _object)
