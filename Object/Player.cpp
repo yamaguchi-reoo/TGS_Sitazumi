@@ -202,11 +202,11 @@ void Player::Update(GameMain* _g)
 	//音声の周波数設定
 	if (searchFlg == TRUE)
 	{
-		ResourceManager::SetSoundFreq(10000);
+		ResourceManager::SetSoundFreq(8000);
 	}
 	else
 	{
-		ResourceManager::SetSoundFreq(40000);
+		ResourceManager::SetSoundFreq(DEFAULT_FREQ);
 	}
 
 	PlayerSound();		//音声再生関連処理

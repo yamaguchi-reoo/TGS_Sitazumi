@@ -13,19 +13,19 @@ class GameMain;
 
 struct EffectAnim{
 	int timer = 0;					//経過時間
-	Location location;			//座標
-	Location local_location;	//ローカル座標
-	Erea erea;					//大きさ
+	Location location = { 0,0 };			//座標
+	Location local_location = { 0,0 };	//ローカル座標
+	Erea erea = { 0,0 };					//大きさ
 	bool spawn_flg = false;		//エフェクトがスポーンしているかどうか
-	int  effect_type;			//エフェクトの種類
-	bool touch_ground;			//地面に触れたか
-	float angle;				//移動方向
-	int effect_time;			//消えるまでの時間測定用
-	float speed;				//移動速度
-	int color;					//色
-	Location effect_shift[2];	//輝きエフェクトのずれ格納用
-	int shine_timer;			//輝きエフェクトの時間測定用
-	float rad;					//輝きエフェクトの回転方向
+	int  effect_type = 0;			//エフェクトの種類
+	bool touch_ground = false;			//地面に触れたか
+	float angle = 0.0f;				//移動方向
+	int effect_time = 0;			//消えるまでの時間測定用
+	float speed = 0.0f;				//移動速度
+	int color = 0;					//色
+	Location effect_shift[2] = {0,0};	//輝きエフェクトのずれ格納用
+	int shine_timer = 0;			//輝きエフェクトの時間測定用
+	float rad = 0.0f;					//輝きエフェクトの回転方向
 };
 
 struct SwapAnim
