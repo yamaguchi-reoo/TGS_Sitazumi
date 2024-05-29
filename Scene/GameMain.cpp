@@ -148,9 +148,12 @@ AbstractScene* GameMain::Update()
 	{
 		SetStage(2);
 	}
-
-	test->Update(this);
-	test->SetScreenPosition(camera_location);
+	if (KeyInput::OnPresed(KEY_INPUT_3))
+	{
+		ResourceManager::SetSoundFreq(75000);
+	}
+	//test->Update(this);
+	//test->SetScreenPosition(camera_location);
 #endif
 
 	return this;

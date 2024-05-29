@@ -54,6 +54,10 @@ void BossAttackFire::Update(GameMain* _g)
 		//ここで削除
 		_g->DeleteObject(object_pos);
 	}
+
+	if (local_location.x < 0 || local_location.x > 1280 || local_location.y < 0 || local_location.y > 720) {
+		_g->DeleteObject(object_pos);
+	}
 }
 
 void BossAttackFire::Draw() const

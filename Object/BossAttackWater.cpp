@@ -47,6 +47,10 @@ void BossAttackWater::Update(GameMain* _g)
 
 		location.x += velocity.x;
 		location.y += velocity.y;
+
+		if (local_location.x < 0 || local_location.x > 1280 || local_location.y < 0 || local_location.y > 720) {
+			_g->DeleteObject(object_pos);
+		}
 	}
 	else {
 		Location player = _g->GetPlayerLocation();
@@ -64,12 +68,14 @@ void BossAttackWater::Update(GameMain* _g)
 		//ここで削除
 		_g->DeleteObject(object_pos);
 	}
+
+	
 }
 
 void BossAttackWater::Draw() const
 {
 	if (flg) {
-		DrawCircleAA(local_location.x, local_location.y, erea.width, color, TRUE);
+		DrawCircleAA(local_location.x, local_location.y, erea.width, 32, color, TRUE);
 	}
 }
 

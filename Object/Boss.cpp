@@ -127,19 +127,19 @@ void Boss::Update(GameMain* _g)
 	}*/
 
 	cnt++;
-	if (cnt >= 240) {
+	if (cnt >= 240 && (local_location.x > 0 && local_location.x < 1280 && local_location.y > 0 && local_location.y < 720)) {
 		f = true;
 		if (cnt == 240) {
-			attack = GetRand(1);
+			attack = GetRand(2);
 		}
 	}
 
 	if (f) {
 		switch (attack)
 		{
-		case 0:
+		case 0://火
 			if (cnt % 30 == 0) {
-				Erea e = { 40,40 };
+				Erea e = { 20.f,20.f };
 				_g->CreateObject(new BossAttackFire, GetCenterLocation(), e, RED);
 			}
 			if (cnt > 300) {
@@ -148,9 +148,9 @@ void Boss::Update(GameMain* _g)
 			}
 			break;
 
-		case 1:
+		case 1://水
 			if (cnt % 30 == 0) {
-				Erea e = { 40,40 };
+				Erea e = { 20.f,20.f };
 				_g->CreateObject(new BossAttackWater, GetCenterLocation(), e, BLUE);
 			}
 			if (cnt > 300) {
@@ -159,7 +159,18 @@ void Boss::Update(GameMain* _g)
 			}
 			break;
 
-		default:
+		default://木
+			if (cnt % 30 == 0) {
+				Erea e = { (float)(GetRand(400) + 200),40.f};
+				Location l = _g->GetPlayerLocation();
+				l.y += _g->GetPlayerErea().height + 40.f;
+				_g->CreateObject(new BossAttackWood, l, e, GREEN);
+				f = false;
+			}
+			if (cnt > 300) {
+				cnt = 0;
+				f = false;
+			}
 			break;
 		}
 

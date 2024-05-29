@@ -458,7 +458,7 @@ void Player::Draw()const
 
 	if (searchedObj != nullptr && searchFlg) {
 		DrawCircleAA(searchedObj->GetLocalLocation().x + searchedObj->GetErea().width / 2,
-			searchedObj->GetLocalLocation().y + searchedObj->GetErea().height / 2, 40, 0xffff00, FALSE, 5);
+			searchedObj->GetLocalLocation().y + searchedObj->GetErea().height / 2, 40, 40, 0xffff00, FALSE, 5);
 	}
 	
 
