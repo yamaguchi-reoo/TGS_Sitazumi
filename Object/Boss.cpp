@@ -10,12 +10,10 @@
 #define DIRECTION_CHANGE_SPEED 0.005f // 方向変更の速度（補間係数）
 
 #define ANGLE_SPEED 0.01f
-#define RADIUS 500.0f
+#define RADIUS 300.0f
 
-float Boss::angle = 0.0f;
-float Boss::direction = 1.0f;
 
-Boss::Boss() :vector{ 0.0f }, boss_state(BossState::MOVE), barrier_num(3), damage_flg(false), state_change_time(STATE_CHANGE_INTERVAL), /*direction{ 1.0f, 0.0f },*/ target_direction{ 1.0f, 0.0f }, speed(0.0f)
+Boss::Boss() :vector{ 0.0f }, boss_state(BossState::MOVE), barrier_num(3), damage_flg(false), state_change_time(STATE_CHANGE_INTERVAL), /*direction{ 1.0f, 0.0f },*/ target_direction{ 1.0f, 0.0f }, speed(0.0f), angle(0.0f), direction(-1.0f)
 {
 	type = BOSS;
 	can_swap = TRUE;
@@ -71,6 +69,9 @@ void Boss::Update(GameMain* _g)
 	case BossState::MOVE:
 		// ボスの移動処理を呼び出し
 		Move(_g);
+		break;
+	case BossState::ATTACK:
+
 		break;
 	case BossState::DEATH:
 		_g->DeleteObject(object_pos);
@@ -234,8 +235,10 @@ void Boss::Draw() const
 	//DrawFormatString(1100, 0, color, "%d", barrier_num);
 	//DrawFormatString(1100, 0, color, "%d", damage_flg);
 	//DrawFormatString(1100, 0, color, "%d", damage_effect_time);
-	//DrawFormatString(1100, 0, color, "%f", location.x);
-	//DrawFormatString(1100, 20, color, "%f", local_location.y);
+	DrawFormatString(1100, 0, color, "%f", location.x);
+	DrawFormatString(1100, 30, color, "%f", location.y);
+	//DrawFormatString(1100, 20, color, "%f", local_location.x);
+	//DrawFormatString(1100, 20, color, "%d", boss_state);
 
 }
 
@@ -246,76 +249,82 @@ void Boss::Finalize()
 void Boss::Move(GameMain* _g)
 {
 	Location player_pos = _g->GetPlayerLocation();
-	float distance_to_player = DistanceCalc(location, player_pos);
+	Location camera_pos = _g->GetCameraLocation();
+	float distance_player = DistanceCalc(location, player_pos);
 
 	// ボスの回転角度
 	/*static float angle = 0.0f;
 	static float direction = 1.0f;*/
 
-	//// プレイヤーとの距離が一定範囲内の場合にのみ移動する
-	//if (distance_to_player <= 1280)
-	//{
-	//	  // プレイヤーとの距離が600未満の場合、プレイヤーから離れる
-	//	if (distance_to_player < 450)
-	//	{
-	//		// プレイヤーから離れる方向を計算
-	//		target_direction.x = location.x - player_pos.x;
-	//		target_direction.y = location.y - player_pos.y;
-	//	}
-	//	// プレイヤーとの距離が600より大きい場合、プレイヤーに近づく
-	//	else
-	//	{
-	//		// プレイヤーに近づく方向を計算
-	//		target_direction.x = player_pos.x - location.x;
-	//		target_direction.y = player_pos.y - location.y;
+	// プレイヤーとの距離が一定範囲内の場合にのみ移動する
+	//if (distance_player <= 1280) {
+
+	//	angle += ANGLE_SPEED * direction;
+
+	//	float target_x = (player_pos.x - 80) + RADIUS * cos(angle);
+	//	float target_y = (player_pos.y - 100) + RADIUS * sin(angle);
+
+	//	// 地面に到達したら回転方向を逆にする
+	//	if (target_y > player_pos.y) {
+	//		direction *= -1.0f; // 回転方向を逆にする
+	//		angle += ANGLE_SPEED * direction; // すぐに逆回転を反映
+	//		target_y = player_pos.y + (player_pos.y - target_y); // 地面の位置で反射する
 	//	}
 
-	//	// 移動方向を正規化
-	//	float lengths = sqrt(target_direction.x * target_direction.x + target_direction.y * target_direction.y);
-	//	if (lengths != 0)
-	//	{
-	//		target_direction.x /= lengths;
-	//		target_direction.y /= lengths;
+	//	location.x = target_x;
+	//	location.y = target_y;
+
+	//	//// ボスが画面右側の一定の位置に到達した場合に攻撃に切り替え
+	//	//if (local_location.x < SCREEN_WIDTH - BOSS_SIZE && local_location.y > 350) {
+	//	//	boss_state = BossState::ATTACK;
+	//	//}
+
+	//	//// ボスが画面左側の一定の位置に到達した場合に攻撃に切り替え
+	//	//if (local_location.x < 23 && local_location.y > 350) {
+	//	//	boss_state = BossState::ATTACK;
+	//	//}
+
+	//	// ボスが画面左側の一定の位置に到達した場合に攻撃に切り替え
+	//	if (local_location.x + BOSS_SIZE / 2 < SCREEN_WIDTH / 2 ) {
+	//		boss_state = BossState::ATTACK;
 	//	}
-
-	//	// 移動方向を滑らかにする
-	//	direction.x += (target_direction.x - direction.x) * DIRECTION_CHANGE_SPEED;
-	//	direction.y += (target_direction.y - direction.y) * DIRECTION_CHANGE_SPEED;
-
-	//	// 移動方向を正規化して移動速度を掛けてボスの位置を更新する
-	//	float length = (float)sqrt(direction.x * direction.x + direction.y * direction.y);
-	//	if (length != 0) {
-	//		direction.x /= length;
-	//		direction.y /= length;
-	//	}
-
-	//	location.x += direction.x * speed;
-	//	location.y += direction.y * speed;
 	//}
+	
+	Location boss_pos;
+
+	boss_pos.x = 24635.0f; 
+	boss_pos.y = 2050.0f;
+
+	/*boss_pos.x = location.x;
+	boss_pos.y = location.y;*/
 
 	// プレイヤーとの距離が一定範囲内の場合にのみ移動する
-	if (distance_to_player <= 1280) {
+	if (distance_player <= 1280) {
 
 		angle += ANGLE_SPEED * direction;
 
-		float target_x = (player_pos.x - 80) + RADIUS * cos(angle);
-		float target_y = (player_pos.y - 100) + RADIUS * sin(angle);
+		float target_x = boss_pos.x + (RADIUS + 150) * cos(angle);
+		float target_y = boss_pos.y + (RADIUS + 70) * sin(angle);
 
-		/*float target_x = (SCREEN_WIDTH / 2) + RADIUS * cos(angle);
-		float target_y = (SCREEN_HEIGHT / 2) + RADIUS * sin(angle);*/
-
+		/*float target_x = location.x + (RADIUS + 150) * cos(angle);
+		float target_y = 2100 + (RADIUS + 200) * sin(angle);*/
 
 		// 地面に到達したら回転方向を逆にする
-		if (target_y > player_pos.y) {
+		if (target_y > boss_pos.y) {
 			direction *= -1.0f; // 回転方向を逆にする
 			angle += ANGLE_SPEED * direction; // すぐに逆回転を反映
-			target_y = player_pos.y + (player_pos.y - target_y); // 地面の位置で反射する
 		}
 
 		location.x = target_x;
 		location.y = target_y;
+
+		// ボスが画面右側の一定の位置に到達した場合に攻撃に切り替え
+		/*if (location.x >= SCREEN_WIDTH - BOSS_SIZE - 100) {
+			boss_state = BossState::ATTACK;
+		}*/
 	}
 }
+	
 
 void Boss::Hit(Object* _object)
 {

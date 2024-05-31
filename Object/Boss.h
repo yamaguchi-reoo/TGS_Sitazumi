@@ -9,6 +9,7 @@
 
 enum class BossState {
 	MOVE = 0,
+	ATTACK,
 	DEATH
 };
 
@@ -38,9 +39,10 @@ private:
 	//Location direction;			// 移動方向
 	Location target_direction;	// 目標方向
 
-	float speed;				// 移動速度
-	static float angle;
-	static float direction;
+	float speed;				// 移動速度;
+	float angle;
+	float direction;
+
 
 	int state_change_time;		// 状態変更のタイミング
 
