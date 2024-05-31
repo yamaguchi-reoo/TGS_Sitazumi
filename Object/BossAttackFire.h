@@ -6,6 +6,7 @@ private:
 	Location velocity;
 	bool flg;
 	bool hitFlg;
+	int boundCnt;
 public:
 	BossAttackFire();
 	~BossAttackFire();

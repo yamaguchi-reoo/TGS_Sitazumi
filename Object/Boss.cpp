@@ -125,12 +125,20 @@ void Boss::Update(GameMain* _g)
 		_g->CreateObject(new BossAttackWood, l, e, GREEN);
 		f = true;
 	}*/
-
-	cnt++;
-	if (cnt >= 240 && (local_location.x > 0 && local_location.x < 1280 && local_location.y > 0 && local_location.y < 720)) {
+	
+	
+	if ((local_location.x > 0 && local_location.x < 1280 && local_location.y > 0 && local_location.y < 720) && ++cnt >= 240 ) {
+		oldF = f;
 		f = true;
 		if (cnt == 240) {
 			attack = GetRand(2);
+			if (local_location.x < 640.f) {
+				side = true;
+			}
+			else {
+				side = false;
+			}
+
 		}
 	}
 
@@ -151,19 +159,36 @@ void Boss::Update(GameMain* _g)
 		case 1://水
 			if (cnt % 30 == 0) {
 				Erea e = { 20.f,20.f };
-				_g->CreateObject(new BossAttackWater, GetCenterLocation(), e, BLUE);
+				Location l;
+				if (side) {
+					l.x = 80.f;
+					l.y = attack_num * 200.f + 250.f;
+				}
+				else {
+					l.x = 1200.f;
+					l.y = attack_num * 200.f + 250.f;
+				}
+				//_g->CreateObject(new BossAttackWater, GetCenterLocation(), e, BLUE);
+				_g->CreateObject(new BossAttackWater, l, e, BLUE);
+				attack_num++;
 			}
 			if (cnt > 300) {
 				cnt = 0;
 				f = false;
+				attack_num = 0;
 			}
 			break;
 
 		default://木
 			if (cnt % 30 == 0) {
 				Erea e = { (float)(GetRand(400) + 200),40.f};
-				Location l = _g->GetPlayerLocation();
-				l.y += _g->GetPlayerErea().height + 40.f;
+				/*Location l = _g->GetPlayerLocation();
+				l.y += _g->GetPlayerErea().height + 40.f;*/
+
+				Location l;
+				l.x = GetRand(29) * 40 + 40;
+				l.y = 930.f;
+
 				_g->CreateObject(new BossAttackWood, l, e, GREEN);
 				f = false;
 			}
