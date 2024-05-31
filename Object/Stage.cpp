@@ -186,6 +186,9 @@ void Stage::Draw()const
 			break;
 		case GREEN_BLOCK:
 			DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, true);
+			DrawBoxAA(local_location.x + 10, local_location.y + 20, local_location.x + 15, local_location.y + 25, 0x00ee00, true);
+			DrawBoxAA(local_location.x + 30, local_location.y + 15, local_location.x + 35, local_location.y + 20, 0x00ee00, true);
+			DrawBoxAA(local_location.x + 25, local_location.y + 35, local_location.x + 30, local_location.y + 40, 0x00ee00, true);
 			break;
 		case BLUE_BLOCK:
 			DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, true);
@@ -203,6 +206,8 @@ void Stage::Draw()const
 				if (draw_wood_flg == true)
 				{
 					DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, 0x84331F, true);
+					DrawLineAA(local_location.x + 10, local_location.y + 20, local_location.x + 10, local_location.y + 30, 0x73220E, TRUE);
+					DrawLineAA(local_location.x + 27, local_location.y + 30, local_location.x + 27, local_location.y + 40, 0x73220E, TRUE);
 				}
 				else
 				{

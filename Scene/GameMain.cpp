@@ -133,6 +133,11 @@ AbstractScene* GameMain::Update()
 	//管理クラスの更新
 	effect_spawner->Update(this);
 
+	//ボスステージに遷移
+	if (object[player_object]->GetLocation().x > stage_width - 200)
+	{
+		SetStage(2);
+	}
 #ifdef _DEBUG
 	//ステージをいじるシーンへ遷移
 	if (KeyInput::OnPresed(KEY_INPUT_E) && KeyInput::OnPresed(KEY_INPUT_D))

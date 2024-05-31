@@ -71,7 +71,7 @@ Player::Player()
 	walk_se[1] = ResourceManager::SetSound("Resource/Sounds/Player/walk_fire.wav");
 	walk_se[2] = ResourceManager::SetSound("Resource/Sounds/Player/walk_grass.wav");
 	walk_se[3] = ResourceManager::SetSound("Resource/Sounds/Player/walk_water.wav");
-	jump_se = ResourceManager::SetSound("Resource/Sounds/Player/player_jump1.wav");
+	jump_se = ResourceManager::SetSound("Resource/Sounds/Player/player_jump.wav");
 	damage_se[0] = ResourceManager::SetSound("Resource/Sounds/Player/damage_fire.wav");
 	damage_se[1] = ResourceManager::SetSound("Resource/Sounds/Player/damage_grass.wav");
 	damage_se[2] = ResourceManager::SetSound("Resource/Sounds/Player/damage_water.wav");
@@ -464,7 +464,6 @@ void Player::Draw()const
 			searchedObj->GetLocalLocation().y + searchedObj->GetErea().height / 2, 40, 40, 0xffff00, FALSE, 5);
 	}
 	
-
 }
 
 void Player::Finalize()
