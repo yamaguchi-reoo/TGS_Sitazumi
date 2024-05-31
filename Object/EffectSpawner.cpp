@@ -44,7 +44,7 @@ void EffectSpawner::Initialize()
 	swap_anim[1].move_flg = false;	
 	swap_anim_timer = 0;
 
-	swap_se = ResourceManager::SetSound("Resource/Sounds/swap.wav");
+	swap_se = ResourceManager::SetSound("Resource/Sounds/Effect/swap.wav");
 }
 
 void EffectSpawner::Update(GameMain* _g)

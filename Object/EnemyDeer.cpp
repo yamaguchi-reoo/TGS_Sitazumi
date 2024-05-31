@@ -61,7 +61,10 @@ void EnemyDeer::Initialize(Location _location, Erea _erea, int _color_data, int 
 
 	object_pos = _object_pos;
 
-	walk_se = ResourceManager::SetSound("Resource/Sounds/walk_normal.wav");
+	walk_se = ResourceManager::SetSound("Resource/Sounds/Player/walk_normal.wav");
+	damage_se[0] = ResourceManager::SetSound("Resource/Sounds/Enemy/enemy_damage_fire.wav");
+	damage_se[1] = ResourceManager::SetSound("Resource/Sounds/Enemy/enemy_damage_grass.wav");
+	damage_se[2] = ResourceManager::SetSound("Resource/Sounds/Enemy/enemy_damage_water.wav");
 }
 
 void EnemyDeer::Update(GameMain* _g)
@@ -404,8 +407,12 @@ void EnemyDeer::Hit(Object* _object)
 
 		)
 	{
-		deer_state = DeerState::DEATH;
-		can_swap = false;
+		if (deer_state != DeerState::DEATH)
+		{
+			deer_state = DeerState::DEATH;
+			ResourceManager::StartSound(damage_se[_object->GetObjectType() - 3]);
+			can_swap = false;
+		}
 	}
 
 	/*if (

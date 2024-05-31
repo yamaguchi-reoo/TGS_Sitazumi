@@ -33,7 +33,10 @@ void EnemyBat::Initialize(Location _location, Erea _erea, int _color_data, int _
 
 	object_pos = _object_pos;
 
-	wing_se = ResourceManager::SetSound("Resource/Sounds/flapping_wings.wav");
+	wing_se = ResourceManager::SetSound("Resource/Sounds/Enemy/flapping_wings.wav");
+	damage_se[0] = ResourceManager::SetSound("Resource/Sounds/Enemy/enemy_damage_fire.wav");
+	damage_se[1] = ResourceManager::SetSound("Resource/Sounds/Enemy/enemy_damage_grass.wav");
+	damage_se[2] = ResourceManager::SetSound("Resource/Sounds/Enemy/enemy_damage_water.wav");
 }
 
 void EnemyBat::Update(GameMain* _g)
@@ -330,6 +333,7 @@ void EnemyBat::Hit(Object* _object)
 		if (bat_state != BatState::DEATH)
 		{
 			bat_state = BatState::DEATH;
+			ResourceManager::StartSound(damage_se[_object->GetObjectType() - 3]);
 			can_swap = FALSE;
 		}
 	}
@@ -343,6 +347,7 @@ void EnemyBat::Hit(Object* _object)
 		if (bat_state != BatState::DEATH)
 		{
 			bat_state = BatState::DEATH;
+			ResourceManager::StartSound(damage_se[_object->GetObjectType() - 3]);
 			can_swap = FALSE;
 		}
 	}
@@ -354,6 +359,7 @@ void EnemyBat::Hit(Object* _object)
 		if (bat_state != BatState::DEATH)
 		{
 			bat_state = BatState::DEATH;
+			ResourceManager::StartSound(damage_se[_object->GetObjectType() - 3]);
 			can_swap = FALSE;
 		}
 	}
