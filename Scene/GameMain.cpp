@@ -134,7 +134,7 @@ AbstractScene* GameMain::Update()
 	effect_spawner->Update(this);
 
 	//ボスステージに遷移
-	if (object[player_object]->GetLocation().x > stage_width - 200)
+	if (object[player_object]->GetLocation().x > stage_width - 200 && now_stage != 2)
 	{
 		SetStage(2);
 	}
