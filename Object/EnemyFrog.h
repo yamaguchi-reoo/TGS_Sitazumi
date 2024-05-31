@@ -33,6 +33,8 @@ private:
 	int death_timer;	//死亡演出
 
 	int jump_se;		//ジャンプSE
+	int damage_se[3];	//被ダメージSE格納
+
 public:
 	EnemyFrog();
 	~EnemyFrog();

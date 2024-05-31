@@ -30,7 +30,10 @@ void EnemyFrog::Initialize(Location _location, Erea _erea, int _color_data, int 
 
 	object_pos = _object_pos;
 
-	jump_se = ResourceManager::SetSound("Resource/Sounds/frog_jump.wav");
+	jump_se = ResourceManager::SetSound("Resource/Sounds/Enemy/frog_jump.wav");
+	damage_se[0] = ResourceManager::SetSound("Resource/Sounds/Enemy/enemy_damage_fire.wav");
+	damage_se[1] = ResourceManager::SetSound("Resource/Sounds/Enemy/enemy_damage_grass.wav");
+	damage_se[2] = ResourceManager::SetSound("Resource/Sounds/Enemy/enemy_damage_water.wav");
 }
 
 void EnemyFrog::Update(GameMain* _g)
@@ -267,6 +270,7 @@ void EnemyFrog::Hit(Object* _object)
 		if (frog_state != FrogState::DEATH)
 		{
 			frog_state = FrogState::DEATH;
+			ResourceManager::StartSound(damage_se[_object->GetObjectType() - 3]);
 			can_swap = FALSE;
 		}
 	}

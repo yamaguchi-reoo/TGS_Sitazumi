@@ -47,8 +47,11 @@ private:
 	std::vector<Location>vertices;
 
 	bool f = false;
+	bool oldF = false;
 	int cnt = 0;
 	int attack = 0;
+	int attack_num = 0;
+	bool side = false;
 
 public:
 	Boss();

@@ -67,11 +67,14 @@ Player::Player()
 	}
 
 
-	walk_se[0] = ResourceManager::SetSound("Resource/Sounds/walk_normal.wav");
-	walk_se[1] = ResourceManager::SetSound("Resource/Sounds/walk_fire.wav");
-	walk_se[2] = ResourceManager::SetSound("Resource/Sounds/walk_grass.wav");
-	walk_se[3] = ResourceManager::SetSound("Resource/Sounds/walk_water.wav");
-	jump_se = ResourceManager::SetSound("Resource/Sounds/player_jump.mp3");
+	walk_se[0] = ResourceManager::SetSound("Resource/Sounds/Player/walk_normal.wav");
+	walk_se[1] = ResourceManager::SetSound("Resource/Sounds/Player/walk_fire.wav");
+	walk_se[2] = ResourceManager::SetSound("Resource/Sounds/Player/walk_grass.wav");
+	walk_se[3] = ResourceManager::SetSound("Resource/Sounds/Player/walk_water.wav");
+	jump_se = ResourceManager::SetSound("Resource/Sounds/Player/player_jump1.wav");
+	damage_se[0] = ResourceManager::SetSound("Resource/Sounds/Player/damage_fire.wav");
+	damage_se[1] = ResourceManager::SetSound("Resource/Sounds/Player/damage_grass.wav");
+	damage_se[2] = ResourceManager::SetSound("Resource/Sounds/Player/damage_water.wav");
 	now_riding = 0;
 }
 
@@ -663,9 +666,13 @@ void Player::Hit(Object* _object)
 	}
 
 	//自分が乗っている(触れている)ブロックに応じてSEを変える
-	if (_object->GetObjectType() == FIRE || _object->GetObjectType() == WOOD || _object->GetObjectType() == WATER)
+	if ((_object->GetObjectType() == FIRE && this->color != RED) || _object->GetObjectType() == WOOD || _object->GetObjectType() == WATER)
 	{
 		now_riding = _object->GetObjectType() - 2;
+	}
+	else if(_object->GetObjectType() == FIRE && this->color == RED)
+	{
+		now_riding = 0;
 	}
 }
 
@@ -1247,6 +1254,11 @@ void Player::PlayerSound()
 		if (PadInput::OnButton(XINPUT_BUTTON_A) == true && ((state == 0 && stageHitFlg[1][bottom]) || state == 1))
 		{
 			ResourceManager::StartSound(jump_se);
+		}
+
+		//ダメージ
+		if (damageFlg && !damageOldFlg && now_riding > 0) {
+			ResourceManager::StartSound(damage_se[now_riding-1]);
 		}
 	}
 }

@@ -59,6 +59,7 @@ private:
 	bool left_Anim_Flg[4];
 
 	int walk_se;		//歩行効果音
+	int damage_se[3];	//被ダメージSE格納
 public:
 
 	EnemyDeer();

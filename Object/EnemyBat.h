@@ -38,6 +38,8 @@ private:
 	int death_timer;	//死亡演出
 
 	int wing_se;		//羽SE
+	int damage_se[3];	//被ダメージSE格納
+
 	bool se_once;		//一回だけ再生	
 
 public:
