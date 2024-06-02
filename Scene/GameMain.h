@@ -59,6 +59,10 @@ private:
     int now_weather;            //現在の天気(0=通常　1=雨　2=火　3=木)
     int weather_timer;      //天気オブジェクトを生成するスパン
     bool boss_battle_flg;   //ボス戦が始まっているか判断
+    bool player_flg;	    //プレイヤーを生成したか
+    Location player_respawn;    //プレイヤーが生成された地点を保存しておく
+    bool player_respawn_flg;    //プレイヤーをリスポーンさせるか判断
+
 public:
 
     //コンストラクタ
@@ -109,7 +113,7 @@ public:
     Location GetCameraLocation();
 
     //天気の取得
-    int GetNowWeather() { return now_weather; }
+    int GetNowWeather()const { return now_weather; }
 
     //天気の設定
     void SetNowWeather(int _wearher) { now_weather = _wearher; }
@@ -127,5 +131,23 @@ public:
 
     //すべてのオブジェクトを空に
     void ResetAllObject();
+
+    //プレイヤーの更新
+    void PlayerUpdate();
+
+    //ボス＆ボス攻撃の更新
+    void BossUpdate();
+
+    //プレイヤーをリスポーンさせるかの取得
+    bool GetPlayerRespawnFlg()const { return player_respawn_flg; }
+
+    //プレイヤーをリスポーンさせるかの設定
+    void SetPlayerRespawnFlg(bool _flg) { player_respawn_flg = _flg; }
+
+    //プレイヤーリスポーン座標の取得
+    Location GetPlayerRespawnLocation()const { return player_respawn; }
+
+    //プレイヤーリスポーン座標の設定
+    void SetPlayerRespawnLocation(Location _location) { player_respawn = _location; }
 };
 

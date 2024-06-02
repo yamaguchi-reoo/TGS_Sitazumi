@@ -5,7 +5,7 @@
 #include "../Object/Stage.h"
 #include "../Utility/KeyInput.h"
 
-#define OBJECT_TYPE_NUM 24       //配置できるオブジェクトの種類数
+#define OBJECT_TYPE_NUM 25       //配置できるオブジェクトの種類数
 #define UI_OBJECT_TYPE_NUM 10     //配置できるオブジェクトの種類数
 #define WIDTH_BUTTON_POS_X 100   //横幅調節ボタンのX位置
 #define WIDTH_BUTTON_POS_Y 40    //横幅調節ボタンのY位置
@@ -25,16 +25,16 @@ enum SelectErea
 
 static char obj_string[UI_OBJECT_TYPE_NUM][256] =
 {
-    "無",
-    "地面",
-    "色地面",
+    "null",
+    "rand",
+    "color",
     "dmg",
-    "プレ",
-    "鹿",
-    "蝙蝠",
-    "蛙",
-    "ボス",
-    "天気",
+    "spawn",
+    "deer",
+    "bat",
+    "frog",
+    "boss",
+    "weather",
 };
 
 static int can_select_type[UI_OBJECT_TYPE_NUM][2] =
@@ -43,7 +43,7 @@ static int can_select_type[UI_OBJECT_TYPE_NUM][2] =
     {1,2},
     {1,3},
     {1,3},
-    {0,1},
+    {1,2},
     {1,3},
     {1,3},
     {1,3},
@@ -52,20 +52,20 @@ static int can_select_type[UI_OBJECT_TYPE_NUM][2] =
 };
 static char block_type_string[UI_OBJECT_TYPE_NUM][5][256] =
 {
-    {"無"," "," "," "," ",},
-    {"白","灰","",""," ",},
-    {"赤","緑","青"," "," ",},
-    {"炎","木","水"," "," ",},
-    {"プレ"," "," "," "," ",},
-    {"赤鹿","緑鹿","青鹿"," "," ",},
-    {"赤蝙","緑蝙","青蝙"," "," ",},
-    {"赤蛙","緑蛙","青蛙"," "," ",},
-    {"ボス"," "," "," "," "},
-    {"通常","雨","火山","種"," "},
+    {"null"," "," "," "," ",},
+    {"white","ash","",""," ",},
+    {"red","green","blue"," "," ",},
+    {"fire","wood","water"," "," ",},
+    {"def","update"," "," "," ",},
+    {"r_d","g_d","b_d"," "," ",},
+    {"r_b","g_b","b_b"," "," ",},
+    {"r_f","g_f","b_f"," "," ",},
+    {"boss"," "," "," "," "},
+    {"def","rain","fire","seed"," "},
 };
 
 //Edit表示用文字色データ
-static int draw_block_color[24]
+static int draw_block_color[25]
 {
     0xffffff,	//無
     0x000000,	//白ブロック
@@ -79,18 +79,19 @@ static int draw_block_color[24]
     0x0000cc,	//青エリア
     0xffff00,	//プレイヤー初期位置
 
+    0x00ffff,	//プレイヤーリスポーン位置設定
     0x880000,	//赤鹿
     0x008800,	//緑鹿
     0x000088,	//青鹿
     0x770000,	//赤蝙蝠
-    0x007700,	//緑蝙蝠
 
+    0x007700,	//緑蝙蝠
     0x000077,	//青蝙蝠
     0x660000,	//赤蛙
     0x006600,	//緑蛙
     0x000066,	//青蛙
-    0xffffff,	//ボス
 
+    0xffffff,	//ボス
     0xffffff,	//通常天気
     0x0000ff,	//雨
     0xff0000,	//火球

@@ -5,7 +5,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-Stage::Stage(int _type, int _stage_height) : frame(0), old_color(0),inv_flg(false), debug_flg(false), anim(0), hit_flg(false), hit_timer(-1), weather(0), change_weather_flg(false), delete_fire(0), draw_wood_flg(false)
+Stage::Stage(int _type, int _stage_height) : frame(0), old_color(0),inv_flg(false), debug_flg(false), anim(0), hit_flg(false), hit_timer(-1), weather(0), change_weather_flg(false), delete_fire(0), draw_wood_flg(false), set_respawn_flg(false),respawn_color(WHITE)
 {
 	//炎
 	if (_type == RED_BLOCK || _type == FIRE_BLOCK)
@@ -28,7 +28,7 @@ Stage::Stage(int _type, int _stage_height) : frame(0), old_color(0),inv_flg(fals
 		type = BLOCK;
 	}
 	block_type = _type;
-	if (_type == WEATHER_NORMAL || _type == WEATHER_RAIN || _type == WEATHER_FIRE || _type == WEATHER_SEED)
+	if (_type == PLAYER_RESPAWN_BLOCK || _type == WEATHER_NORMAL || _type == WEATHER_RAIN || _type == WEATHER_FIRE || _type == WEATHER_SEED)
 	{
 		can_hit = FALSE;
 		weather = _type - WEATHER_NORMAL;
@@ -77,6 +77,16 @@ void Stage::Update(GameMain* _g)
 	//EditもUpdateを呼べるようにこの書き方
 	Update();
 
+	//中間地点ブロックを輝かせる
+	if (block_type == PLAYER_RESPAWN_BLOCK && location.x == _g->GetPlayerRespawnLocation().x && location.y == _g->GetPlayerRespawnLocation().y)
+	{
+		_g->SpawnEffect(location, erea, ShineEffect, 14, WHITE);
+	}
+	else
+	{
+		//このブロックの見た目の色を変える
+		respawn_color = WHITE;
+	}
 	//天気の更新があったらする
 	if (change_weather_flg == true && weather != _g->GetNowWeather())
 	{
@@ -87,6 +97,16 @@ void Stage::Update(GameMain* _g)
 	if (type == FIRE && can_swap == FALSE && ++delete_fire > 60)
 	{
 		_g->DeleteObject(object_pos);
+	}
+	//フラグが立っているなら
+	if (set_respawn_flg)
+	{
+		//プレイヤーリスポーン位置を更新する
+		_g->SetPlayerRespawnLocation(location);
+		//このブロックの見た目の色を変える
+		respawn_color = RED;
+		//フラグをfalseにする
+		set_respawn_flg = false;
 	}
 }
 
@@ -215,6 +235,14 @@ void Stage::Draw()const
 				}
 			}
 			break;
+		case PLAYER_RESPAWN_BLOCK:
+			DrawTriangleAA(local_location.x + (erea.width / 2), local_location.y, 
+						   local_location.x + erea.width, local_location.y + (erea.height / 4), 
+						   local_location.x + (erea.width / 2), local_location.y + (erea.height / 2), respawn_color, TRUE);
+			DrawBoxAA(local_location.x + (erea.width / 2) - 2, local_location.y, local_location.x + (erea.width / 2) + 2, local_location.y + erea.height, respawn_color, TRUE);
+			DrawBoxAA(local_location.x, local_location.y + erea.height - 4, local_location.x + erea.width, local_location.y + erea.height, respawn_color, TRUE);
+			break;
+			//天気更新ブロックは何も表示しなくても良いかも
 		case WEATHER_NORMAL:
 		case WEATHER_RAIN:
 		case WEATHER_FIRE:
@@ -241,31 +269,35 @@ void Stage::Draw()const
 		case PLAYER_BLOCK:
 			//初期スポーン地点を分かりやすく
 			DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, 0xffff00, true);
-			DrawStringF(local_location.x, local_location.y, "プレイヤー", text_color[block_type]);
+			DrawStringF(local_location.x, local_location.y, "player", text_color[block_type]);
+			break;
+		case PLAYER_RESPAWN_BLOCK:
+			DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, 0xff00ff, true);
+			DrawStringF(local_location.x, local_location.y, "tyuukann", text_color[block_type]);
 			break;
 		case ENEMY_DEER_RED:
 		case ENEMY_DEER_GREEN:
 		case ENEMY_DEER_BLUE:
-			DrawStringF(local_location.x, local_location.y,"鹿",text_color[block_type]);
+			DrawStringF(local_location.x, local_location.y,"deer",text_color[block_type]);
 			break;
 		case ENEMY_BAT_RED:
 		case ENEMY_BAT_GREEN:
 		case ENEMY_BAT_BLUE:
-			DrawStringF(local_location.x, local_location.y, "蝙蝠", text_color[block_type]);
+			DrawStringF(local_location.x, local_location.y, "bat", text_color[block_type]);
 			break;
 		case ENEMY_FROG_RED:
 		case ENEMY_FROG_GREEN:
 		case ENEMY_FROG_BLUE:
-			DrawStringF(local_location.x, local_location.y, "蛙", text_color[block_type]);
+			DrawStringF(local_location.x, local_location.y, "frog", text_color[block_type]);
 			break;
 		case ENEMY_BOSS:
-			DrawStringF(local_location.x, local_location.y, "ボス", text_color[block_type]);
+			DrawStringF(local_location.x, local_location.y, "boss", text_color[block_type]);
 			break;
 			//天気ゾーン
 		case WEATHER_RAIN:
 		case WEATHER_FIRE:
 		case WEATHER_SEED:
-			DrawStringF(local_location.x, local_location.y, "天気", text_color[block_type]);
+			DrawStringF(local_location.x, local_location.y, "weather", text_color[block_type]);
 			break;
 		default:
 			//ブロックなら数字を表示
@@ -302,6 +334,12 @@ void Stage::Hit(Object* _object)
 	if (this->type == FIRE && this->can_swap == FALSE && _object->GetObjectType() == FIRE && _object->GetCanSwap() == TRUE)
 	{
 		delete_fire = 0;
+	}
+
+	//プレイヤーに当たった時、このブロックがプレイヤーリスポーン位置設定ブロックなら、フラグを立てる
+	if (_object->GetObjectType() == PLAYER && block_type == PLAYER_RESPAWN_BLOCK)
+	{
+		set_respawn_flg = true;
 	}
 }
 
