@@ -78,7 +78,7 @@ void Stage::Update(GameMain* _g)
 	Update();
 
 	//中間地点ブロックを輝かせる
-	if (block_type == PLAYER_RESPAWN_BLOCK && location.x == _g->GetPlayerRespawnLocation().x && location.y == _g->GetPlayerRespawnLocation().y)
+	if (block_type == PLAYER_RESPAWN_BLOCK && location.x == _g->GetPlayerRespawnLocation().x && location.y == _g->GetPlayerRespawnLocation().y + PLAYER_HEIGHT)
 	{
 		_g->SpawnEffect(location, erea, ShineEffect, 14, WHITE);
 	}
@@ -102,7 +102,7 @@ void Stage::Update(GameMain* _g)
 	if (set_respawn_flg)
 	{
 		//プレイヤーリスポーン位置を更新する
-		_g->SetPlayerRespawnLocation(location);
+		_g->SetPlayerRespawnLocation({ location.x,location.y - PLAYER_HEIGHT });
 		//このブロックの見た目の色を変える
 		respawn_color = RED;
 		//フラグをfalseにする

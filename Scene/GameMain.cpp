@@ -33,7 +33,7 @@ void GameMain::Initialize()
 	effect_spawner = new EffectSpawner();
 	effect_spawner->Initialize();
 
-	SetStage(now_stage);
+	SetStage(now_stage, false);
 
 	back_ground = new BackGround();
 	back_ground->Initialize({ (float)stage_width,(float)stage_height });
@@ -111,7 +111,7 @@ AbstractScene* GameMain::Update()
 	//ボスステージに遷移
 	if (object[player_object]->GetLocation().x > stage_width - 200 && now_stage != 2)
 	{
-		SetStage(2);
+		SetStage(2, false);
 	}
 #ifdef _DEBUG
 	//ステージをいじるシーンへ遷移
@@ -122,11 +122,11 @@ AbstractScene* GameMain::Update()
 
 	if (KeyInput::OnKey(KEY_INPUT_1))
 	{
-		SetStage(0);
+		SetStage(0, false);
 	}
 	if (KeyInput::OnKey(KEY_INPUT_2))
 	{
-		SetStage(2);
+		SetStage(2, false);
 	}
 	//test->Update(this);
 	//test->SetScreenPosition(camera_location);
@@ -329,11 +329,11 @@ void GameMain::LoadStageData(int _stage)
 	}
 }
 
-void GameMain::SetStage(int _stage)
+void GameMain::SetStage(int _stage, bool _delete_player)
 {
 	object_num = 0;
-	//すべてのオブジェクトをリセット
-	ResetAllObject();
+	//すべてのオブジェクトを削除
+	DeleteAllObject(_delete_player);
 
 	now_stage = _stage;
 	//ファイルの読込
@@ -363,8 +363,12 @@ void GameMain::SetStage(int _stage)
 				CreateObject(new Stage(stage_data[i][j],stage_height), { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { BOX_WIDTH ,BOX_HEIGHT }, stage_data[i][j]);
 				break;
 			case PLAYER_BLOCK:
-				//プレイヤーリスポーン地点の設定
-				player_respawn = { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT };
+				//プレイヤーがリセットされないまま別のステージへ遷移する場合はリスポーン位置を変更する
+				if (_delete_player == false)
+				{
+					//プレイヤーリスポーン地点の設定
+					player_respawn = { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT };
+				}
 				//プレイヤーが居ないなら
 				if (player_flg == false)
 				{
@@ -378,7 +382,7 @@ void GameMain::SetStage(int _stage)
 					player_respawn_flg = true;
 				}
 				//エフェクトの生成
-				effect_spawner->SpawnEffect({ (float)j * BOX_WIDTH + PLAYER_WIDTH / 2 ,(float)i * BOX_HEIGHT + PLAYER_HEIGHT / 2 }, { 20,20 }, PlayerSpawnEffect, 30, object[player_object]->GetColerData());
+				effect_spawner->SpawnEffect({ player_respawn.x + PLAYER_WIDTH / 2 ,player_respawn.y + PLAYER_HEIGHT / 2 }, { 20,20 }, PlayerSpawnEffect, 30, object[player_object]->GetColerData());
 				break;
 			case ENEMY_DEER_RED:
 			case ENEMY_DEER_GREEN:
@@ -478,7 +482,7 @@ Location GameMain::GetBossLocation()
 	return object[boss_object]->GetLocation();
 }
 
-void GameMain::ResetAllObject()
+void GameMain::DeleteAllObject(bool _player_delete)
 {
 	for (int i = 0; i < OBJECT_NUM; i++)
 	{
@@ -487,6 +491,11 @@ void GameMain::ResetAllObject()
 		{
 			object[i] = nullptr;
 		}
+	}
+	if (_player_delete)
+	{
+		object[player_object] = nullptr;
+		player_flg = false;
 	}
 }
 
@@ -522,8 +531,8 @@ void GameMain::PlayerUpdate()
 	//プレイヤーが落下したときに死亡判定とする
 	if (GetPlayerLocation().y > stage_height+100)
 	{
-		DeleteObject(player_object);
-		player_object = 0;
+		//ステージとプレイヤーをリセット
+		SetStage(now_stage, true);
 	}
 }
 

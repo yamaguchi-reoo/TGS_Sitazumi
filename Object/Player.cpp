@@ -232,6 +232,11 @@ void Player::Update(GameMain* _g)
 			damageEffectFlg = false;
 			damageEffectTime = 90;
 			damageFlg = false;
+			//エフェクトが終わった後に体力が0ならプレイヤーを削除
+			if (hp <= 0)
+			{
+				_g->DeleteObject(object_pos);
+			}
 		}
 	}
 

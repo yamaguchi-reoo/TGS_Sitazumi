@@ -95,8 +95,8 @@ public:
     //ステージデータの読込
     void LoadStageData(int _stage);
 
-    //ステージの生成
-    void SetStage(int _stage);
+    //ステージの生成 _delete_player=プレイヤーをリセットするか
+    void SetStage(int _stage,bool _delete_player);
 
     //カメラ座標を初期地点に戻す
     void ResetCamera();
@@ -129,8 +129,8 @@ public:
 
     Location GetBossLocation();
 
-    //すべてのオブジェクトを空に
-    void ResetAllObject();
+    //すべてのオブジェクトを空に _player_delete = プレイヤーも消すか
+    void DeleteAllObject(bool _player_delete);
 
     //プレイヤーの更新
     void PlayerUpdate();
