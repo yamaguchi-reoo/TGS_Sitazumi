@@ -77,13 +77,13 @@ AbstractScene* GameMain::Update()
 	{
 		for (int i = 0; object[i] != nullptr; i++)
 		{
-			//プレイヤー以外のオブジェクトの更新
-			if (object[i] != object[player_object])
+			//プレイヤーとボス以外のオブジェクトの更新
+			if (i != player_object)
 			{
-				object[i]->SetScreenPosition(camera_location);
 				//画面内のオブジェクトしかUpdateしない
 				if (CheckInScreen(object[i]))
 				{
+					object[i]->SetScreenPosition(camera_location);
 					object[i]->Update(this);
 					move_object_num++;
 					for (int j = i + 1; object[j] != nullptr; j++)
@@ -105,11 +105,14 @@ AbstractScene* GameMain::Update()
 	//プレイヤーの更新
 	PlayerUpdate();
 
+	//ボスの更新
+	BossUpdate();
+
 	//管理クラスの更新
 	effect_spawner->Update(this);
 
 	//ボスステージに遷移
-	if (object[player_object]->GetLocation().x > stage_width - 200 && now_stage != 2)
+	if (object[player_object]->GetLocation().x > stage_width - 200 && object[player_object]->GetLocation().y > stage_height && now_stage != 2)
 	{
 		SetStage(2, false);
 	}
@@ -199,6 +202,18 @@ void GameMain::CreateObject(Object* _object, Location _location, Erea _erea, int
 
 void GameMain::DeleteObject(int i)
 {
+	//プレイヤーが消されたなら
+	if (i == player_object)
+	{
+		//player_objectをリセット
+		player_object = 0;
+	}
+	//ボスが消されたなら
+	if (i == boss_object)
+	{
+		//boss_objectをリセット
+		boss_object = 0;
+	}
 	//オブジェクトを前に寄せる
 	for (int j = i; object[j] != nullptr; j++)
 	{
@@ -241,7 +256,15 @@ void GameMain::UpdateCamera()
 		//固定する位置を一度だけ設定する
 		if (x_pos_set_once == false)
 		{
-			lock_pos.x = object[player_object]->GetCenterLocation().x;
+			if (object[player_object]->GetCenterLocation().x <= (SCREEN_WIDTH / 2))
+			{
+				lock_pos.x = (SCREEN_WIDTH / 2);
+			}
+			if (object[player_object]->GetCenterLocation().x >= stage_width - (SCREEN_WIDTH / 2))
+			{
+				lock_pos.x = stage_width - (SCREEN_WIDTH / 2);
+			}
+			/*lock_pos.x = object[player_object]->GetCenterLocation().x;*/
 			x_pos_set_once = true;
 		}
 	}
@@ -261,7 +284,15 @@ void GameMain::UpdateCamera()
 		//固定する位置を一度だけ設定する
 		if (y_pos_set_once == false)
 		{
-			lock_pos.y = object[player_object]->GetCenterLocation().y;
+			if (object[player_object]->GetCenterLocation().y >= stage_height - (SCREEN_HEIGHT / 2) - 10)
+			{
+				lock_pos.y = stage_height - (SCREEN_HEIGHT / 2) - 10;
+			}
+			if (object[player_object]->GetCenterLocation().y <= (SCREEN_HEIGHT / 2))
+			{
+				lock_pos.y = (SCREEN_HEIGHT / 2);
+			}
+			//lock_pos.y = object[player_object]->GetCenterLocation().y;
 			y_pos_set_once = true;
 		}
 	}
@@ -382,7 +413,7 @@ void GameMain::SetStage(int _stage, bool _delete_player)
 					player_respawn_flg = true;
 				}
 				//エフェクトの生成
-				effect_spawner->SpawnEffect({ player_respawn.x + PLAYER_WIDTH / 2 ,player_respawn.y + PLAYER_HEIGHT / 2 }, { 20,20 }, PlayerSpawnEffect, 30, object[player_object]->GetColerData());
+				effect_spawner->SpawnEffect({ player_respawn.x + PLAYER_WIDTH / 2 ,player_respawn.y + PLAYER_HEIGHT / 2 }, { 20,20 }, PlayerSpawnEffect, 30, object[player_object]->GetColorData());
 				break;
 			case ENEMY_DEER_RED:
 			case ENEMY_DEER_GREEN:
@@ -466,7 +497,8 @@ int GameMain::Swap(Object* _object1, Object* _object2)
 bool GameMain::CheckInScreen(Object* _object)const
 {
 	//画面内に居るか判断
-	if (_object->GetLocation().x > camera_location.x - _object->GetErea().width - 150 &&
+	if (_object != nullptr &&
+		_object->GetLocation().x > camera_location.x - _object->GetErea().width - 150 &&
 		_object->GetLocation().x < camera_location.x + SCREEN_WIDTH + _object->GetErea().width + 150 &&
 		_object->GetLocation().y > camera_location.y - _object->GetErea().height - 150 &&
 		_object->GetLocation().y < camera_location.y + SCREEN_HEIGHT + _object->GetErea().height + 150
@@ -509,40 +541,56 @@ void GameMain::PlayerUpdate()
 	}
 
 	//プレイヤーの更新＆色探知用
-	object[player_object]->SetScreenPosition(camera_location);
 	if (object[player_object] != nullptr)
 	{
+		object[player_object]->SetScreenPosition(camera_location);
 		object[player_object]->Update(this);
 		move_object_num++;
-	}
-	for (int i = 0; object[i] != nullptr; i++)
-	{
-		if (object[i]->GetCanSwap() == TRUE && object[i]->GetObjectType() != PLAYER) {
-			object[player_object]->SearchColor(object[i]);
-		}
-		//各オブジェクトとの当たり判定
-		if (object[i]->HitBox(object[player_object]))
-		{
-			object[i]->Hit(object[player_object]);
-			object[player_object]->Hit(object[i]);
-		}
-	}
 
-	//プレイヤーが落下したときに死亡判定とする
-	if (GetPlayerLocation().y > stage_height+100)
-	{
-		//ステージとプレイヤーをリセット
-		SetStage(now_stage, true);
+		for (int i = 0; object[i] != nullptr; i++)
+		{
+			if (object[i]->GetObjectType() != PLAYER && object[i]->GetCanSwap() == TRUE) {
+				object[player_object]->SearchColor(object[i]);
+			}
+			//各オブジェクトとの当たり判定
+			if (object[i]->HitBox(object[player_object]))
+			{
+				object[i]->Hit(object[player_object]);
+				object[player_object]->Hit(object[i]);
+			}
+		}
+
+		//プレイヤーが落下したときに死亡判定とする
+		if (GetPlayerLocation().y > stage_height + 100)
+		{
+			//ステージとプレイヤーをリセット
+			SetStage(now_stage, true);
+		}
 	}
 }
 
 void GameMain::BossUpdate()
 {
-	if (object[boss_object] != nullptr)
-	{
-		object[boss_object]->Update(this);
-		move_object_num++;
-	}
+	//ボスをスローモーションにしないならコメント解除
+	//if (object[boss_object] != nullptr)
+	//{
+	//	object[boss_object]->SetScreenPosition(camera_location);
+	//	object[boss_object]->Update(this);
+	//	move_object_num++;
+	//	for (int i = 0; object[i] != nullptr; i++)
+	//	{
+	//		if (object[i]->GetCanSwap() == TRUE && object[i]->GetObjectType() != PLAYER) {
+	//			object[player_object]->SearchColor(object[i]);
+	//		}
+	//		//各オブジェクトとの当たり判定
+	//		if (object[i]->HitBox(object[boss_object]))
+	//		{
+	//			object[i]->Hit(object[boss_object]);
+	//			object[boss_object]->Hit(object[i]);
+	//		}
+	//	}
+	//}
+
 	for (int i = 0; i < attack_num; i++)
 	{
 		if (object[boss_attack[i]] != nullptr)

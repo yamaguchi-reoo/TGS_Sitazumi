@@ -83,7 +83,7 @@ void EnemyBat::Update(GameMain* _g)
 	//	location.y += vector.y * 0.1f;
 	//}
 	//プレイヤーの一定範囲内に入ったら
-	if (length < 300 && bat_state != BatState::DEATH) {
+	if (length < 500 && bat_state != BatState::DEATH) {
 		// 移動方向を決定
 		dx /= length;
 		dy /= length;
@@ -365,9 +365,9 @@ void EnemyBat::Hit(Object* _object)
 	}
 
 	//ダメージゾーンを上書きする
-	if ((_object->GetObjectType() == WATER && this->color == GREEN) ||
-		(_object->GetObjectType() == FIRE && this->color == BLUE) ||
-		(_object->GetObjectType() == WOOD && this->color == RED))
+	if ((this->color == GREEN && _object->GetObjectType() == WATER && _object->GetCanSwap() == FALSE) ||
+		(this->color == BLUE && _object->GetObjectType() == FIRE && _object->GetCanSwap() == FALSE) ||
+		(this->color == RED && _object->GetObjectType() == WOOD && _object->GetCanSwap() == FALSE))
 	{
 		_object->SetColorData(color);
 	}

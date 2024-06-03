@@ -415,14 +415,13 @@ void EnemyDeer::Hit(Object* _object)
 		}
 	}
 
-	/*if (
-		(this->color == RED && _object->GetObjectType() == WOOD) ||
-		(this->color == BLUE && _object->GetObjectType() == FIRE) ||
-		(this->color == GREEN && _object->GetObjectType() == WATER)
-		)
+	//ダメージゾーンを上書きする
+	if ((this->color == GREEN && _object->GetObjectType() == WATER && _object->GetCanSwap() == FALSE) ||
+		(this->color == BLUE && _object->GetObjectType() == FIRE && _object->GetCanSwap() == FALSE) ||
+		(this->color == RED && _object->GetObjectType() == WOOD && _object->GetCanSwap() == FALSE))
 	{
 		_object->SetColorData(color);
-	}*/
+	}
 }
 
 bool EnemyDeer::CheckCollision(Location l, Erea e)

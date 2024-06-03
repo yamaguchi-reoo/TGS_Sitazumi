@@ -44,6 +44,10 @@ void EditScene::Initialize()
 			stage[i][j]->Initialize(kari_location, kari_erea, stage_data[i][j], 0);
 			stage[i][j]->SetDebugFlg();
 			select_data[i][j] = false;
+			if (stage_data[i][j] == PLAYER_BLOCK)
+			{
+				camera_location = { (float)(j * BOX_WIDTH)-(SCREEN_WIDTH/2),(float)(i * BOX_HEIGHT)-(SCREEN_HEIGHT/2)};
+			}
 		}
 	}
 	current_type_location.x = tool_location.x;

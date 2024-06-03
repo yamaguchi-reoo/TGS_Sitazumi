@@ -149,5 +149,8 @@ public:
 
     //プレイヤーリスポーン座標の設定
     void SetPlayerRespawnLocation(Location _location) { player_respawn = _location; }
+
+    //現在のステージの取得
+    int GetNowStage()const { return now_stage; }
 };
 

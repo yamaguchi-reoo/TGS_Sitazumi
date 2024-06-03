@@ -88,14 +88,11 @@ void BossAttackFire::Draw() const
 {
 	DrawCircleAA(local_location.x, local_location.y, erea.width,100, 0xff0000, TRUE);
 	ResourceManager::StageAnimDraw(local_location, FIRE);
-	ResourceManager::StageAnimDraw({ local_location.x - 30,local_location.y }, FIRE);
-	ResourceManager::StageAnimDraw({ local_location.x,local_location.y-20 }, FIRE);
-	ResourceManager::StageAnimDraw({ local_location.x - 30,local_location.y-20 }, FIRE);
 }
 
 void BossAttackFire::Hit(Object* _object)
 {
-	if (_object->GetObjectType() == BLOCK && _object->GetObjectType() != WATER && _object->GetColerData() != WHITE) {
+	if (_object->GetObjectType() == BLOCK && _object->GetObjectType() != WATER && _object->GetColorData() != WHITE) {
 		_object->SetColorData(color);
 		_object->SetCanSwap(TRUE);
 		
