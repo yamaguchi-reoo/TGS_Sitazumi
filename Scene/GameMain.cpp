@@ -205,6 +205,12 @@ void GameMain::DeleteObject(int i)
 		//player_objectをリセット
 		player_object = 0;
 	}
+	//ボスが消されたなら
+	if (i == boss_object)
+	{
+		//boss_objectをリセット
+		boss_object = 0;
+	}
 	//オブジェクトを前に寄せる
 	for (int j = i; object[j] != nullptr; j++)
 	{

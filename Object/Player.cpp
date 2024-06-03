@@ -235,7 +235,7 @@ void Player::Update(GameMain* _g)
 			//エフェクトが終わった後に体力が0ならプレイヤーを削除
 			if (hp <= 0)
 			{
-				_g->DeleteObject(object_pos);
+				_g->SetStage(_g->GetNowStage(), TRUE);
 			}
 		}
 	}
