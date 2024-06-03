@@ -14,7 +14,7 @@
 static Location camera_location = { 0,0};	//カメラの座標
 static Location screen_origin = { (SCREEN_WIDTH / 2),(SCREEN_HEIGHT / 2) };
 
-GameMain::GameMain(int _stage) :frame(0), stage_data{ 0 }, now_stage(0), object_num(0), stage_width_num(0), stage_height_num(0), stage_width(0), stage_height(0), camera_x_lock_flg(true), camera_y_lock_flg(true), x_pos_set_once(false), y_pos_set_once(false), player_object(0), boss_object(0), weather(0), weather_timer(0), move_object_num(0)
+GameMain::GameMain(int _stage) :frame(0), stage_data{ 0 }, now_stage(0), object_num(0), stage_width_num(0), stage_height_num(0), stage_width(0), stage_height(0), camera_x_lock_flg(true), camera_y_lock_flg(true), x_pos_set_once(false), y_pos_set_once(false), player_object(0), boss_object(0), weather(0), weather_timer(0), move_object_num(0),player_flg(false), player_respawn_flg(false)
 {
 	now_stage = _stage;
 }
@@ -33,7 +33,7 @@ void GameMain::Initialize()
 	effect_spawner = new EffectSpawner();
 	effect_spawner->Initialize();
 
-	SetStage(now_stage);
+	SetStage(now_stage, false);
 
 	back_ground = new BackGround();
 	back_ground->Initialize({ (float)stage_width,(float)stage_height });
@@ -102,37 +102,17 @@ AbstractScene* GameMain::Update()
 		weather->Update(this);
 	}
 
-	//プレイヤーの更新＆色探知用
-	object[player_object]->SetScreenPosition(camera_location);
-	object[player_object]->Update(this);
-	if (object[boss_object] != nullptr)
-	{
-		object[boss_object]->Update(this);
-	}
-	for (int i = 0; i < attack_num; i++)
-	{
-		if (object[boss_attack[i]] != nullptr)
-		{
-			object[boss_attack[i]]->Update(this);
-		}
-	}
-	move_object_num++;
-	for (int i = 0; object[i] != nullptr; i++)
-	{
-		if (object[i]->GetCanSwap() == TRUE && object[i]->GetObjectType() != PLAYER) {
-			object[player_object]->SearchColor(object[i]);
-		}
-		//各オブジェクトとの当たり判定
-		if (object[i]->HitBox(object[player_object]))
-		{
-			object[i]->Hit(object[player_object]);
-			object[player_object]->Hit(object[i]);
-		}
-	}
+	//プレイヤーの更新
+	PlayerUpdate();
 
 	//管理クラスの更新
 	effect_spawner->Update(this);
 
+	//ボスステージに遷移
+	if (object[player_object]->GetLocation().x > stage_width - 200 && now_stage != 2)
+	{
+		SetStage(2, false);
+	}
 #ifdef _DEBUG
 	//ステージをいじるシーンへ遷移
 	if (KeyInput::OnPresed(KEY_INPUT_E) && KeyInput::OnPresed(KEY_INPUT_D))
@@ -142,15 +122,11 @@ AbstractScene* GameMain::Update()
 
 	if (KeyInput::OnKey(KEY_INPUT_1))
 	{
-		SetStage(0);
+		SetStage(0, false);
 	}
 	if (KeyInput::OnKey(KEY_INPUT_2))
 	{
-		SetStage(2);
-	}
-	if (KeyInput::OnPresed(KEY_INPUT_3))
-	{
-		ResourceManager::SetSoundFreq(75000);
+		SetStage(2, false);
 	}
 	//test->Update(this);
 	//test->SetScreenPosition(camera_location);
@@ -353,13 +329,12 @@ void GameMain::LoadStageData(int _stage)
 	}
 }
 
-void GameMain::SetStage(int _stage)
+void GameMain::SetStage(int _stage, bool _delete_player)
 {
 	object_num = 0;
-	//すべてのオブジェクトをリセット
-	ResetAllObject();
+	//すべてのオブジェクトを削除
+	DeleteAllObject(_delete_player);
 
-	bool player_flg = false;	//プレイヤーを生成したか
 	now_stage = _stage;
 	//ファイルの読込
 	LoadStageData(now_stage);
@@ -379,6 +354,7 @@ void GameMain::SetStage(int _stage)
 			case FIRE_BLOCK:
 			case WOOD_BLOCK:
 			case WATER_BLOCK:
+			case PLAYER_RESPAWN_BLOCK:
 			case WEATHER_NORMAL:
 			case WEATHER_RAIN:
 			case WEATHER_FIRE:
@@ -387,34 +363,48 @@ void GameMain::SetStage(int _stage)
 				CreateObject(new Stage(stage_data[i][j],stage_height), { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { BOX_WIDTH ,BOX_HEIGHT }, stage_data[i][j]);
 				break;
 			case PLAYER_BLOCK:
-				//プレイヤーの生成
-				CreateObject(new Player, { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { PLAYER_HEIGHT,PLAYER_WIDTH }, GREEN);
+				//プレイヤーがリセットされないまま別のステージへ遷移する場合はリスポーン位置を変更する
+				if (_delete_player == false)
+				{
+					//プレイヤーリスポーン地点の設定
+					player_respawn = { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT };
+				}
+				//プレイヤーが居ないなら
+				if (player_flg == false)
+				{
+					//プレイヤーの生成
+					CreateObject(new Player, player_respawn, { PLAYER_HEIGHT,PLAYER_WIDTH }, GREEN);
+					player_flg = true;
+				}
+				//プレイヤーが居るなら
+				else
+				{
+					player_respawn_flg = true;
+				}
 				//エフェクトの生成
-				effect_spawner->SpawnEffect({ (float)j * BOX_WIDTH + PLAYER_WIDTH / 2 ,(float)i * BOX_HEIGHT + PLAYER_HEIGHT / 2 }, { 20,20}, PlayerSpawnEffect, 30,object[player_object]->GetColerData());
-
-				player_flg = true;
+				effect_spawner->SpawnEffect({ player_respawn.x + PLAYER_WIDTH / 2 ,player_respawn.y + PLAYER_HEIGHT / 2 }, { 20,20 }, PlayerSpawnEffect, 30, object[player_object]->GetColerData());
 				break;
 			case ENEMY_DEER_RED:
 			case ENEMY_DEER_GREEN:
 			case ENEMY_DEER_BLUE:
 				//鹿の生成
-				CreateObject(new EnemyDeer, { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { 100,100 }, ColorList[stage_data[i][j] - 10]);
+				CreateObject(new EnemyDeer, { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { 100,100 }, ColorList[stage_data[i][j] - 11]);
 				break;
 			case ENEMY_BAT_RED:
 			case ENEMY_BAT_GREEN:
 			case ENEMY_BAT_BLUE:
 				//コウモリの生成
-				CreateObject(new EnemyBat, { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { 75,118 }, ColorList[stage_data[i][j] - 13]);
+				CreateObject(new EnemyBat, { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { 75,118 }, ColorList[stage_data[i][j] - 14]);
 				break;
 			case ENEMY_FROG_RED:
 			case ENEMY_FROG_GREEN:
 			case ENEMY_FROG_BLUE:
 				//カエルの生成
-				CreateObject(new EnemyFrog, {(float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT}, {50,50}, ColorList[stage_data[i][j] - 16]);
+				CreateObject(new EnemyFrog, {(float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT}, {50,50}, ColorList[stage_data[i][j] - 17]);
 				break;
 			case ENEMY_BOSS:
 				//ボスの生成
-				CreateObject(new Boss, { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { 250,250 }, ColorList[stage_data[i][j] - 19]);
+				CreateObject(new Boss, { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT }, { 250,250 }, ColorList[stage_data[i][j] - 20]);
 				break;
 			default:
 				break;
@@ -425,8 +415,10 @@ void GameMain::SetStage(int _stage)
 	//プレイヤーが生成されていないなら
 	if (player_flg == false)
 	{
+		//プレイヤーリスポーン地点の設定
+		player_respawn = { (float)100,(float)100 };
 		//プレイヤーの生成
-		CreateObject(new Player, { (float)100,(float)100 }, { PLAYER_HEIGHT,PLAYER_WIDTH }, RED);
+		CreateObject(new Player, player_respawn, { PLAYER_HEIGHT,PLAYER_WIDTH }, RED);
 	}
 	//カメラのリセット
 	ResetCamera();
@@ -490,10 +482,73 @@ Location GameMain::GetBossLocation()
 	return object[boss_object]->GetLocation();
 }
 
-void GameMain::ResetAllObject()
+void GameMain::DeleteAllObject(bool _player_delete)
 {
 	for (int i = 0; i < OBJECT_NUM; i++)
 	{
-		object[i] = nullptr;
+		//プレイヤー以外削除
+		if (i != player_object)
+		{
+			object[i] = nullptr;
+		}
+	}
+	if (_player_delete)
+	{
+		object[player_object] = nullptr;
+		player_flg = false;
+	}
+}
+
+void GameMain::PlayerUpdate()
+{
+	//プレイヤーが居ないなら(DeleteObjectされていた、もしくはobject[player_object]がプレイヤーではないなら)
+	if (object[player_object] == nullptr || object[player_object]->GetObjectType() != PLAYER)
+	{
+		//プレイヤーの生成
+		CreateObject(new Player, player_respawn, { PLAYER_HEIGHT,PLAYER_WIDTH }, GREEN);
+	}
+
+	//プレイヤーの更新＆色探知用
+	object[player_object]->SetScreenPosition(camera_location);
+	if (object[player_object] != nullptr)
+	{
+		object[player_object]->Update(this);
+		move_object_num++;
+	}
+	for (int i = 0; object[i] != nullptr; i++)
+	{
+		if (object[i]->GetCanSwap() == TRUE && object[i]->GetObjectType() != PLAYER) {
+			object[player_object]->SearchColor(object[i]);
+		}
+		//各オブジェクトとの当たり判定
+		if (object[i]->HitBox(object[player_object]))
+		{
+			object[i]->Hit(object[player_object]);
+			object[player_object]->Hit(object[i]);
+		}
+	}
+
+	//プレイヤーが落下したときに死亡判定とする
+	if (GetPlayerLocation().y > stage_height+100)
+	{
+		//ステージとプレイヤーをリセット
+		SetStage(now_stage, true);
+	}
+}
+
+void GameMain::BossUpdate()
+{
+	if (object[boss_object] != nullptr)
+	{
+		object[boss_object]->Update(this);
+		move_object_num++;
+	}
+	for (int i = 0; i < attack_num; i++)
+	{
+		if (object[boss_attack[i]] != nullptr)
+		{
+			object[boss_attack[i]]->Update(this);
+			move_object_num++;
+		}
 	}
 }

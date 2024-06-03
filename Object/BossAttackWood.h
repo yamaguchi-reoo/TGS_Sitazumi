@@ -5,6 +5,7 @@ class BossAttackWood : public Object
 private:
 	Location velocity;
 	float bambooHeight;  //高さ
+	Location startLoc;
 
 	int count;	//生え始めるまでのカウント
 	int type;	//もとから生えてるのか地面から生えてくるのか

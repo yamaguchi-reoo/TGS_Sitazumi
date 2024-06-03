@@ -10,6 +10,8 @@ BossAttackFire::BossAttackFire()
 
 	flg = false;
 	hitFlg = false;
+
+	boundCnt = 1;
 }
 
 BossAttackFire::~BossAttackFire()
@@ -46,16 +48,38 @@ void BossAttackFire::Update(GameMain* _g)
 		flg = true;
 	}
 
+	if (local_location.x < 0 || local_location.x > 1280) {
+		velocity.x = velocity.x * -1.f;
+		boundCnt--;
+	}
+
+	if (local_location.y < 0 || local_location.y > 720) {
+		velocity.y = velocity.y * -1.f;
+		if (local_location.y < 0) {
+			local_location.y = 10.f;
+		}
+		if (local_location.y > 720) {
+			local_location.y = 710.f;
+		}
+		boundCnt--;
+	}
+
 	location.x += velocity.x;
 	location.y += velocity.y;
 
-	if (hitFlg) {
-		_g->SpawnEffect(location, erea, ExplosionEffect, 10, RED);
-		//ここで削除
-		_g->DeleteObject(object_pos);
-	}
+	//if (hitFlg) {
+	//	_g->SpawnEffect(location, erea, ExplosionEffect, 10, RED);
+	//	//ここで削除
+	//	_g->DeleteObject(object_pos);
+	//}
 
-	if (local_location.x < 0 || local_location.x > 1280 || local_location.y < 0 || local_location.y > 720) {
+	if (boundCnt < 0) {
+		hitFlg = true;
+	}
+	
+
+	if ((local_location.x < 0 || local_location.x > 1280 || local_location.y < 0 || local_location.y > 720) && hitFlg) {
+		_g->SpawnEffect(location, erea, ExplosionEffect, 10, RED);
 		_g->DeleteObject(object_pos);
 	}
 }
@@ -71,10 +95,10 @@ void BossAttackFire::Draw() const
 
 void BossAttackFire::Hit(Object* _object)
 {
-	if (_object->GetObjectType() == BLOCK && _object->GetObjectType() != WATER) {
+	if (_object->GetObjectType() == BLOCK && _object->GetObjectType() != WATER && _object->GetColerData() != WHITE) {
 		_object->SetColorData(color);
 		_object->SetCanSwap(TRUE);
-		hitFlg = true;
+		
 	}
 }
 

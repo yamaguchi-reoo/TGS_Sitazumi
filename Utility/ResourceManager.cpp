@@ -31,12 +31,12 @@ void ResourceManager::DeleteResource()
 		}
 	}
 
-	for (int i = 0; sound_data[i] != NULL; i++)
-	{
-		DeleteSoundMem(sound_data[i]);
-	}
+	//for (int i = 0; sound_data[i] != NULL; i++)
+	//{
+	//	DeleteSoundMem(sound_data[i]);
+	//}
 
-	// 音をすべて削除します
+	// 音をすべて削除
 	InitSoundMem();
 }
 
