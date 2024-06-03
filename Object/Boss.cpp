@@ -5,15 +5,14 @@
 #include <algorithm>
 
 #define BOSS_SIZE 250
-#define STATE_CHANGE_INTERVAL 120
+#define STATE_CHANGE_INTERVAL 340
 #define BOSS_MAX_SPEED 4.0f
-#define DIRECTION_CHANGE_SPEED 0.005f // 方向変更の速度（補間係数）
 
 #define ANGLE_SPEED 0.01f
 #define RADIUS 300.0f
 
 
-Boss::Boss() :vector{ 0.0f }, boss_state(BossState::MOVE), barrier_num(3), damage_flg(false), state_change_time(STATE_CHANGE_INTERVAL), target_direction{ 1.0f, 0.0f }, speed(0.0f), angle(0.0f), direction(-1.0f)
+Boss::Boss() :vector{ 0.0f }, boss_state(BossState::MOVE), barrier_num(1), damage_flg(false), state_change_time(0), target_direction{ 1.0f, 0.0f }, speed(0.0f), angle(0.0f), direction(-1.0f)
 {
 	type = BOSS;
 	can_swap = TRUE;
@@ -64,6 +63,8 @@ void Boss::Update(GameMain* _g)
 	speed = BOSS_MAX_SPEED;
 	vector = { 1.0f ,1.0f };
 
+	
+
 	switch (boss_state)
 	{
 	case BossState::MOVE:
@@ -71,7 +72,7 @@ void Boss::Update(GameMain* _g)
 		Move(_g);
 		break;
 	case BossState::ATTACK:
-
+		BossAtack(_g);
 		break;
 	case BossState::DEATH:
 		_g->DeleteObject(object_pos);
@@ -99,20 +100,6 @@ void Boss::Update(GameMain* _g)
 			damage_flg = false;
 		}
 	}
-	// バリアがなくなった場合の処理
-	if (barrier_num < 0) {
-		boss_state = BossState::DEATH;
-	}
-
-	// 状態変更のタイミングをチェック
-	state_change_time--;
-	// 状態変更のタイミングが0以下になったら
-	if (state_change_time <= 0) {
-		// ランダムな方向に移動する設定を行う
-		SetRandMove();
-		// 状態変更のインターバルをリセット
-		state_change_time = STATE_CHANGE_INTERVAL;
-	}
 
 	//竹攻撃制作中
 	/*if (GetRand(60) > 58 && !f)
@@ -124,81 +111,6 @@ void Boss::Update(GameMain* _g)
 		f = true;
 	}*/
 	
-	
-	if ((local_location.x > 0 && local_location.x < 1280 && local_location.y > 0 && local_location.y < 720) && ++cnt >= 240 ) {
-		oldF = f;
-		f = true;
-		if (cnt == 240) {
-			attack = GetRand(2);
-			if (local_location.x < 640.f) {
-				side = true;
-			}
-			else {
-				side = false;
-			}
-
-		}
-	}
-
-	if (f) {
-		switch (attack)
-		{
-		case 0://火
-			if (cnt % 30 == 0) {
-				Erea e = { 20.f,20.f };
-				_g->CreateObject(new BossAttackFire, GetCenterLocation(), e, RED);
-			}
-			if (cnt > 300) {
-				cnt = 0;
-				f = false;
-			}
-			break;
-
-		case 1://水
-			if (cnt % 30 == 0) {
-				Erea e = { 20.f,20.f };
-				Location l;
-				if (side) {
-					l.x = 80.f;
-					l.y = attack_num * 200.f + 250.f;
-				}
-				else {
-					l.x = 1200.f;
-					l.y = attack_num * 200.f + 250.f;
-				}
-				//_g->CreateObject(new BossAttackWater, GetCenterLocation(), e, BLUE);
-				_g->CreateObject(new BossAttackWater, l, e, BLUE);
-				attack_num++;
-			}
-			if (cnt > 300) {
-				cnt = 0;
-				f = false;
-				attack_num = 0;
-			}
-			break;
-
-		default://木
-			if (cnt % 30 == 0) {
-				Erea e = { (float)(GetRand(400) + 200),40.f};
-				/*Location l = _g->GetPlayerLocation();
-				l.y += _g->GetPlayerErea().height + 40.f;*/
-
-				Location l;
-				l.x = GetRand(29) * 40 + 40;
-				l.y = 930.f;
-
-				_g->CreateObject(new BossAttackWood, l, e, GREEN);
-				f = false;
-			}
-			if (cnt > 300) {
-				cnt = 0;
-				f = false;
-			}
-			break;
-		}
-
-	}
-
 
 }
 
@@ -254,14 +166,29 @@ void Boss::Draw() const
 		}
 	}
 
-	//DrawFormatString(1100, 80, color, "%d", barrier_num);
+	DrawFormatString(1100, 80, color, "%d", barrier_num);
 	//DrawFormatString(1100, 0, color, "%d", damage_flg);
 	//DrawFormatString(1100, 0, color, "%d", damage_effect_time);
-	//DrawFormatString(1100, 0, color, "%f", location.x);
-	//DrawFormatString(1100, 30, color, "%f", location.y);
+	DrawFormatString(1100, 0, color, "%f", location.x);
+	DrawFormatString(1100, 30, color, "%f", location.y);
 	//DrawFormatString(1100, 20, color, "%f", local_location.x);
 	//DrawFormatString(1100, 60, color, "%d", boss_state);
+	DrawFormatString(1100, 60, color, "%d", cnt);
 
+
+	switch (boss_state)
+	{
+	case BossState::MOVE:
+		DrawString(1100, 100, "MOVE", color);
+		break;
+	case BossState::ATTACK:
+		DrawString(1100, 100, "ATTACK", color);
+		break;
+	case BossState::DEATH:
+		break;
+	default:
+		break;
+	}
 }
 
 void Boss::Finalize()
@@ -270,25 +197,62 @@ void Boss::Finalize()
 
 void Boss::Move(GameMain* _g)
 {
-	angle += ANGLE_SPEED * direction;
 
-	float target_x = (SCREEN_WIDTH - 760) + (RADIUS + 120) * cos(angle);
-	float target_y = (SCREEN_HEIGHT - 220) + (RADIUS) * sin(angle);
+	//angle += ANGLE_SPEED * direction;
 
-	//float target_x = 1280 + (RADIUS + 150) * cos(angle);
-	//float target_y = 360 + (RADIUS + 200) * sin(angle);
+	//float target_x = (SCREEN_WIDTH - 760) + (RADIUS + 120) * cos(angle);
+	//float target_y = (SCREEN_HEIGHT - 220) + (RADIUS) * sin(angle);
 
-	// 地面に到達したら回転方向を逆にする
-	if (target_y > SCREEN_HEIGHT - 200) {
-		direction *= -1.0f; // 回転方向を逆にする
-		angle += ANGLE_SPEED * direction; // すぐに逆回転を反映
-	}
+	////float target_x = 1280 + (RADIUS + 150) * cos(angle);
+	////float target_y = 360 + (RADIUS + 200) * sin(angle);
 
-	location.x = target_x;
-	location.y = target_y;
+	//// 地面に到達したら回転方向を逆にする
+	//if (target_y > SCREEN_HEIGHT - 200) {
+	//	direction *= -1.0f; // 回転方向を逆にする
+	//	angle += ANGLE_SPEED * direction; // すぐに逆回転を反映
+	//	boss_state = BossState::ATTACK;
+	//}
 
-	// ボスが画面右側の一定の位置に到達した場合に攻撃に切り替え
-	/*if (location.x >= (SCREEN_WIDTH - BOSS_SIZE) - 100) {
+	//location.x = target_x;
+	//location.y = target_y;
+
+	boss_state = BossState::ATTACK;
+	Location warp_pos[3] = {
+		 {(SCREEN_WIDTH / 2) - 100 , 250},
+		 {SCREEN_WIDTH - 300, SCREEN_HEIGHT - 200},
+		 {70 , SCREEN_HEIGHT - 200}
+	 };
+
+	srand((unsigned)time(NULL));
+	int warp_index = rand() % 3;
+
+	location = warp_pos[warp_index];
+
+	boss_state = BossState::ATTACK;
+
+	//--state_change_time;
+	//// ボスが画面右側の一定の位置に到達した場合に攻撃に切り替え
+	//if (location.x <= SCREEN_WIDTH / 2 - 100 ) {
+	//	if (state_change_time <= 0) {
+	//		state_change_time = STATE_CHANGE_INTERVAL;
+	//		boss_state = BossState::ATTACK;
+	//	}
+	//	
+	//}
+
+	//int t = 0;
+	//bool ret = true;
+	//if (/*location.x <= SCREEN_WIDTH / 2 - 100 &&*/ location.x <= SCREEN_WIDTH / 2/* && ret == true*/) {
+	//	boss_state = BossState::ATTACK;
+	//	ret = false;
+	//}
+	//if (++t >= 1200)
+	//{
+	//	t = 0;
+	//	ret = true;
+	//}
+
+	/*if (location.x < SCREEN_HEIGHT - 200 <= 0) {
 		boss_state = BossState::ATTACK;
 	}*/
 }
@@ -450,6 +414,10 @@ void Boss::Hit(Object* _object)
 			damage_flg = true;
 			damage_effect_time = 300;
 		}
+		// バリアがなくなった場合の処理
+		if (barrier_num == 0) {
+			boss_state = BossState::DEATH;
+		}
 	}
 }
 
@@ -499,6 +467,87 @@ float Boss::DistanceCalc(Location pos1, Location pos2)
 
 void Boss::barrier()
 {
+
+}
+
+void Boss::BossAtack(GameMain *_g)
+{
+	if ((local_location.x > 0 && local_location.x < 1280 && local_location.y > 0 && local_location.y < 720) && ++cnt >= 240) {
+		oldF = f;
+		f = true;
+		if (cnt == 240) {
+			attack = GetRand(2);
+			if (local_location.x < 640.f) {
+				side = true;
+			}
+			else {
+				side = false;
+			}
+		}
+	}
+
+	if (f) {
+		switch (attack)
+		{
+		case 0://火
+			if (cnt % 30 == 0) {
+				Erea e = { 20.f,20.f };
+				_g->CreateObject(new BossAttackFire, GetCenterLocation(), e, RED);
+			}
+			if (cnt > 300) {
+				cnt = 0;
+				f = false;
+				boss_state = BossState::MOVE;
+			}
+			break;
+
+		case 1://水
+			if (cnt % 30 == 0) {
+				Erea e = { 20.f,20.f };
+				Location l;
+				if (side) {
+					l.x = 80.f;
+					l.y = attack_num * 200.f + 250.f;
+				}
+				else {
+					l.x = 1200.f;
+					l.y = attack_num * 200.f + 250.f;
+				}
+				//_g->CreateObject(new BossAttackWater, GetCenterLocation(), e, BLUE);
+				_g->CreateObject(new BossAttackWater, l, e, BLUE);
+				attack_num++;
+			}
+			if (cnt > 300) {
+				cnt = 0;
+				f = false;
+				attack_num = 0;
+				boss_state = BossState::MOVE;
+			}
+			break;
+
+		default://木
+			if (cnt % 30 == 0) {
+				Erea e = { (float)(GetRand(400) + 200),40.f };
+				/*Location l = _g->GetPlayerLocation();
+				l.y += _g->GetPlayerErea().height + 40.f;*/
+
+				Location l;
+				l.x = GetRand(29) * 40 + 40;
+				l.y = 930.f;
+
+
+				_g->CreateObject(new BossAttackWood, l, e, GREEN);
+				f = false;
+			}
+			if (cnt > 300) {
+				cnt = 0;
+				f = false;
+				boss_state = BossState::MOVE;
+			}
+			break;
+		}
+	}
+	
 
 }
 
