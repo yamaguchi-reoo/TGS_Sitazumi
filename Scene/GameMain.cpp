@@ -199,6 +199,12 @@ void GameMain::CreateObject(Object* _object, Location _location, Erea _erea, int
 
 void GameMain::DeleteObject(int i)
 {
+	//プレイヤーが消されたなら
+	if (i == player_object)
+	{
+		//player_objectをリセット
+		player_object = 0;
+	}
 	//オブジェクトを前に寄せる
 	for (int j = i; object[j] != nullptr; j++)
 	{
@@ -241,7 +247,15 @@ void GameMain::UpdateCamera()
 		//固定する位置を一度だけ設定する
 		if (x_pos_set_once == false)
 		{
-			lock_pos.x = object[player_object]->GetCenterLocation().x;
+			if (object[player_object]->GetCenterLocation().x <= (SCREEN_WIDTH / 2))
+			{
+				lock_pos.x = (SCREEN_WIDTH / 2);
+			}
+			if (object[player_object]->GetCenterLocation().x >= stage_width - (SCREEN_WIDTH / 2))
+			{
+				lock_pos.x = stage_width - (SCREEN_WIDTH / 2);
+			}
+			/*lock_pos.x = object[player_object]->GetCenterLocation().x;*/
 			x_pos_set_once = true;
 		}
 	}
@@ -261,7 +275,15 @@ void GameMain::UpdateCamera()
 		//固定する位置を一度だけ設定する
 		if (y_pos_set_once == false)
 		{
-			lock_pos.y = object[player_object]->GetCenterLocation().y;
+			if (object[player_object]->GetCenterLocation().y >= stage_height - (SCREEN_HEIGHT / 2) - 10)
+			{
+				lock_pos.y = stage_height - (SCREEN_HEIGHT / 2) - 10;
+			}
+			if (object[player_object]->GetCenterLocation().y <= (SCREEN_HEIGHT / 2))
+			{
+				lock_pos.y = (SCREEN_HEIGHT / 2);
+			}
+			//lock_pos.y = object[player_object]->GetCenterLocation().y;
 			y_pos_set_once = true;
 		}
 	}
@@ -466,7 +488,8 @@ int GameMain::Swap(Object* _object1, Object* _object2)
 bool GameMain::CheckInScreen(Object* _object)const
 {
 	//画面内に居るか判断
-	if (_object->GetLocation().x > camera_location.x - _object->GetErea().width - 150 &&
+	if (_object != nullptr &&
+		_object->GetLocation().x > camera_location.x - _object->GetErea().width - 150 &&
 		_object->GetLocation().x < camera_location.x + SCREEN_WIDTH + _object->GetErea().width + 150 &&
 		_object->GetLocation().y > camera_location.y - _object->GetErea().height - 150 &&
 		_object->GetLocation().y < camera_location.y + SCREEN_HEIGHT + _object->GetErea().height + 150

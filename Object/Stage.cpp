@@ -5,7 +5,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-Stage::Stage(int _type, int _stage_height) : frame(0), old_color(0),inv_flg(false), debug_flg(false), anim(0), hit_flg(false), hit_timer(-1), weather(0), change_weather_flg(false), delete_fire(0), draw_wood_flg(false), set_respawn_flg(false),respawn_color(WHITE)
+Stage::Stage(int _type, int _stage_height) : frame(0), old_color(0),inv_flg(false), debug_flg(false), anim(0), hit_flg(false), hit_timer(-1), weather(0), change_weather_flg(false), delete_fire(0), draw_wood_flg(false), set_respawn_flg(false),respawn_color(WHITE), touch_fire(0), default_fire(true)
 {
 	//炎
 	if (_type == RED_BLOCK || _type == FIRE_BLOCK)
@@ -78,7 +78,7 @@ void Stage::Update(GameMain* _g)
 	Update();
 
 	//中間地点ブロックを輝かせる
-	if (block_type == PLAYER_RESPAWN_BLOCK && location.x == _g->GetPlayerRespawnLocation().x && location.y == _g->GetPlayerRespawnLocation().y + PLAYER_HEIGHT)
+	if (block_type == PLAYER_RESPAWN_BLOCK && location.x == _g->GetPlayerRespawnLocation().x && location.y == _g->GetPlayerRespawnLocation().y +PLAYER_HEIGHT)
 	{
 		_g->SpawnEffect(location, erea, ShineEffect, 14, WHITE);
 	}
@@ -93,8 +93,8 @@ void Stage::Update(GameMain* _g)
 		_g->SetNowWeather(weather);
 		change_weather_flg = false;
 	}
-	//このステージブロックが火なら、一定時間経過で消す
-	if (type == FIRE && can_swap == FALSE && ++delete_fire > 60)
+	//このステージブロックがゲーム中で火に変更されたブロックなら、一定時間経過で消す
+	if (default_fire == FALSE && type == FIRE && can_swap == FALSE && ++delete_fire > 180)
 	{
 		_g->DeleteObject(object_pos);
 	}
@@ -321,7 +321,7 @@ void Stage::Hit(Object* _object)
 	}
 
 	//草ブロック同士が当たった場合、座標に応じて描画を切り替える
-	if (_object->GetObjectType() == WOOD && this->type == WOOD)
+	if (this->type == WOOD && _object->GetObjectType() == WOOD )
 	{
 		//当たったオブジェクトより上か下に自分が居るなら、木の描画に切り替える
 		if ((_object->GetLocation().y < this->location.y || _object->GetLocation().y > this->location.y + this->erea.height) && _object->GetLocation().x + (_object->GetErea().width / 2) > this->location.x && _object->GetLocation().x + (_object->GetErea().width / 2) < this->location.x + this->erea.width)
@@ -337,9 +337,21 @@ void Stage::Hit(Object* _object)
 	}
 
 	//プレイヤーに当たった時、このブロックがプレイヤーリスポーン位置設定ブロックなら、フラグを立てる
-	if (_object->GetObjectType() == PLAYER && block_type == PLAYER_RESPAWN_BLOCK)
+	if (block_type == PLAYER_RESPAWN_BLOCK && _object->GetObjectType() == PLAYER)
 	{
 		set_respawn_flg = true;
+	}
+
+	//草ブロックが火ブロックに継続的に当たっていた時、色を変える
+	if (this->type == WOOD && _object->GetObjectType() == FIRE)
+	{
+		//火に触れ続けているなら
+		if ( ++touch_fire > 120)
+		{
+			SetColorData(RED);
+			//ゲーム中で変更された火
+			default_fire = FALSE;
+		}
 	}
 }
 

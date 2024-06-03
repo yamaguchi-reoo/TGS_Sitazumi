@@ -99,6 +99,8 @@ private:
 	int delete_fire;					//足元に溶岩が無い火を消す
 	bool set_respawn_flg;				//プレイヤーリスポーン位置を更新するか判断
 	int respawn_color;					//リスポーン位置設定ブロックの色
+	int touch_fire;						//火に触れている時間を測る
+	bool default_fire;					//ステージに始めから設置されている炎か判断
 
 public:
 	Stage(int _type, int _stage_height = 0);
