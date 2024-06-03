@@ -67,8 +67,8 @@ static char block_type_string[UI_OBJECT_TYPE_NUM][5][256] =
 //Edit表示用文字色データ
 static int draw_block_color[25]
 {
-    0xffffff,	//無
-    0x000000,	//白ブロック
+    0x000000,	//無
+    0xffffff,	//白ブロック
     0xaaaaaa,	//灰ブロック
     0xff0000,	//赤ブロック
     0x00ff00,	//緑ブロック

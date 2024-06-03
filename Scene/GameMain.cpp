@@ -77,13 +77,13 @@ AbstractScene* GameMain::Update()
 	{
 		for (int i = 0; object[i] != nullptr; i++)
 		{
-			//プレイヤー以外のオブジェクトの更新
-			if (object[i] != object[player_object])
+			//プレイヤーとボス以外のオブジェクトの更新
+			if (i != player_object)
 			{
-				object[i]->SetScreenPosition(camera_location);
 				//画面内のオブジェクトしかUpdateしない
 				if (CheckInScreen(object[i]))
 				{
+					object[i]->SetScreenPosition(camera_location);
 					object[i]->Update(this);
 					move_object_num++;
 					for (int j = i + 1; object[j] != nullptr; j++)
@@ -105,11 +105,14 @@ AbstractScene* GameMain::Update()
 	//プレイヤーの更新
 	PlayerUpdate();
 
+	//ボスの更新
+	BossUpdate();
+
 	//管理クラスの更新
 	effect_spawner->Update(this);
 
 	//ボスステージに遷移
-	if (object[player_object]->GetLocation().x > stage_width - 200 && now_stage != 2)
+	if (object[player_object]->GetLocation().x > stage_width - 200 && object[player_object]->GetLocation().y > stage_height && now_stage != 2)
 	{
 		SetStage(2, false);
 	}
@@ -538,40 +541,56 @@ void GameMain::PlayerUpdate()
 	}
 
 	//プレイヤーの更新＆色探知用
-	object[player_object]->SetScreenPosition(camera_location);
 	if (object[player_object] != nullptr)
 	{
+		object[player_object]->SetScreenPosition(camera_location);
 		object[player_object]->Update(this);
 		move_object_num++;
-	}
-	for (int i = 0; object[i] != nullptr; i++)
-	{
-		if (object[i]->GetCanSwap() == TRUE && object[i]->GetObjectType() != PLAYER) {
-			object[player_object]->SearchColor(object[i]);
-		}
-		//各オブジェクトとの当たり判定
-		if (object[i]->HitBox(object[player_object]))
-		{
-			object[i]->Hit(object[player_object]);
-			object[player_object]->Hit(object[i]);
-		}
-	}
 
-	//プレイヤーが落下したときに死亡判定とする
-	if (GetPlayerLocation().y > stage_height+100)
-	{
-		//ステージとプレイヤーをリセット
-		SetStage(now_stage, true);
+		for (int i = 0; object[i] != nullptr; i++)
+		{
+			if (object[i]->GetObjectType() != PLAYER && object[i]->GetCanSwap() == TRUE) {
+				object[player_object]->SearchColor(object[i]);
+			}
+			//各オブジェクトとの当たり判定
+			if (object[i]->HitBox(object[player_object]))
+			{
+				object[i]->Hit(object[player_object]);
+				object[player_object]->Hit(object[i]);
+			}
+		}
+
+		//プレイヤーが落下したときに死亡判定とする
+		if (GetPlayerLocation().y > stage_height + 100)
+		{
+			//ステージとプレイヤーをリセット
+			SetStage(now_stage, true);
+		}
 	}
 }
 
 void GameMain::BossUpdate()
 {
-	if (object[boss_object] != nullptr)
-	{
-		object[boss_object]->Update(this);
-		move_object_num++;
-	}
+	//ボスをスローモーションにしないならコメント解除
+	//if (object[boss_object] != nullptr)
+	//{
+	//	object[boss_object]->SetScreenPosition(camera_location);
+	//	object[boss_object]->Update(this);
+	//	move_object_num++;
+	//	for (int i = 0; object[i] != nullptr; i++)
+	//	{
+	//		if (object[i]->GetCanSwap() == TRUE && object[i]->GetObjectType() != PLAYER) {
+	//			object[player_object]->SearchColor(object[i]);
+	//		}
+	//		//各オブジェクトとの当たり判定
+	//		if (object[i]->HitBox(object[boss_object]))
+	//		{
+	//			object[i]->Hit(object[boss_object]);
+	//			object[boss_object]->Hit(object[i]);
+	//		}
+	//	}
+	//}
+
 	for (int i = 0; i < attack_num; i++)
 	{
 		if (object[boss_attack[i]] != nullptr)
