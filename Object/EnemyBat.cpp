@@ -83,7 +83,7 @@ void EnemyBat::Update(GameMain* _g)
 	//	location.y += vector.y * 0.1f;
 	//}
 	//プレイヤーの一定範囲内に入ったら
-	if (length < 500 && bat_state != BatState::DEATH) {
+	if (length < 450 && bat_state != BatState::DEATH) {
 		// 移動方向を決定
 		dx /= length;
 		dy /= length;

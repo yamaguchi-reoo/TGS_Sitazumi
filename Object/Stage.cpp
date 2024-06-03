@@ -348,7 +348,7 @@ void Stage::Hit(Object* _object)
 	if ((this->can_swap == FALSE && _object->GetCanSwap() == FALSE)|| (this->can_swap == TRUE && _object->GetCanSwap() == TRUE))
 	{
  		//草が火に触れ続けているなら
-		if (this->type == WOOD && _object->GetObjectType() == FIRE && ++touch_object > 120)
+		if (this->type == WOOD && _object->GetObjectType() == FIRE && ++touch_object > 10)
 		{
 			SetColorData(RED);
 			//ゲーム中で変更されたオブジェクト
@@ -356,7 +356,7 @@ void Stage::Hit(Object* _object)
 			touch_object = 0;
 		}
 		//火が水に触れ続けているなら
-		if (this->type == FIRE && _object->GetObjectType() == WATER && ++touch_object > 120)
+		if (this->type == FIRE && _object->GetObjectType() == WATER && ++touch_object > 10)
 		{
 			SetColorData(BLUE);
 			//ゲーム中で変更されたオブジェクト
@@ -364,7 +364,7 @@ void Stage::Hit(Object* _object)
 			touch_object = 0;
 		}
 		//水が草に触れ続けているなら
-		if (this->type == WATER && _object->GetObjectType() == WOOD && ++touch_object > 120)
+		if (this->type == WATER && _object->GetObjectType() == WOOD && ++touch_object > 10)
 		{
 			SetColorData(GREEN);
 			//ゲーム中で変更されたオブジェクト

@@ -20,7 +20,7 @@ public:
 	{
 		if (this == nullptr)
 		{
-			throw("不正アクセス防止\n");
+			throw("SetColorData 不正アクセス防止\n");
 		}
 		color = c;
 	}
@@ -29,7 +29,7 @@ public:
 	{
 		if (this == nullptr)
 		{
-			throw("不正アクセス防止\n");
+			throw("GetColorData 不正アクセス防止\n");
 		}
 		return color;
 	}
