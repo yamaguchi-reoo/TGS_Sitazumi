@@ -14,6 +14,7 @@ enum BlockList	{
 	WOOD_BLOCK,	
 	WATER_BLOCK	,
 	PLAYER_BLOCK,	
+	PLAYER_RESPAWN_BLOCK,	
 	ENEMY_DEER_RED,	
 	ENEMY_DEER_GREEN,
 	ENEMY_DEER_BLUE	,
@@ -45,7 +46,7 @@ static int color_data[9]
 };
 
 //Edit表示用文字色データ
-static int text_color[24]
+static int text_color[25]
 {
 	0xffffff,	//無
 	0x000000,	//白ブロック
@@ -59,18 +60,19 @@ static int text_color[24]
 	0x0000ff,	//青エリア
 	0x00ff00,	//プレイヤー初期位置
 
+	0x00ffff,	//プレイヤーリスポーン位置設定
 	0xff0000,	//赤鹿
 	0x00ff00,	//緑鹿
 	0x0000ff,	//青鹿
 	0xff0000,	//赤蝙蝠
-	0x00ff00,	//緑蝙蝠
 
+	0x00ff00,	//緑蝙蝠
 	0x0000ff,	//青蝙蝠
 	0xff0000,	//赤蛙
 	0x00ff00,	//緑蛙
 	0x0000ff,	//青蛙
-	0xffffff,	//ボス
 
+	0xffffff,	//ボス
 	0xffffff,	//通常天気
 	0x0000ff,	//雨
 	0xff0000,	//火球
@@ -95,6 +97,11 @@ private:
 	bool change_weather_flg;			//天気を変更するか判断
 	bool draw_wood_flg;					//木を描画するか草を描画するか判断
 	int delete_fire;					//足元に溶岩が無い火を消す
+	bool set_respawn_flg;				//プレイヤーリスポーン位置を更新するか判断
+	int respawn_color;					//リスポーン位置設定ブロックの色
+	int touch_fire;						//火に触れている時間を測る
+	bool default_fire;					//ステージに始めから設置されている炎か判断
+
 public:
 	Stage(int _type, int _stage_height = 0);
 	~Stage();

@@ -100,9 +100,16 @@ void Player::Update(GameMain* _g)
 	{
 		frame = 0;
 	}
+	//移動エフェクト
 	if (vector.x != 0 || vector.y != 0)
 	{
 		_g->SpawnEffect(location, erea, ShineEffect, 20, color);
+	}
+	//ステージ遷移時に座標だけ移動させる用（体力や色情報などはそのまま）
+	if (_g->GetPlayerRespawnFlg())
+	{
+		location = _g->GetPlayerRespawnLocation();
+		_g->SetPlayerRespawnFlg(false);
 	}
 	if (stageHitFlg[1][bottom] != true/* && !searchFlg*/) { //重力
 		switch (state)
@@ -225,6 +232,11 @@ void Player::Update(GameMain* _g)
 			damageEffectFlg = false;
 			damageEffectTime = 90;
 			damageFlg = false;
+			//エフェクトが終わった後に体力が0ならプレイヤーを削除
+			if (hp <= 0)
+			{
+				_g->SetStage(_g->GetNowStage(), TRUE);
+			}
 		}
 	}
 
