@@ -13,7 +13,7 @@
 #define RADIUS 300.0f
 
 
-Boss::Boss() :vector{ 0.0f }, boss_state(BossState::MOVE), barrier_num(3), damage_flg(false), state_change_time(STATE_CHANGE_INTERVAL), /*direction{ 1.0f, 0.0f },*/ target_direction{ 1.0f, 0.0f }, speed(0.0f), angle(0.0f), direction(-1.0f)
+Boss::Boss() :vector{ 0.0f }, boss_state(BossState::MOVE), barrier_num(3), damage_flg(false), state_change_time(STATE_CHANGE_INTERVAL), target_direction{ 1.0f, 0.0f }, speed(0.0f), angle(0.0f), direction(-1.0f)
 {
 	type = BOSS;
 	can_swap = TRUE;
@@ -24,7 +24,7 @@ Boss::Boss() :vector{ 0.0f }, boss_state(BossState::MOVE), barrier_num(3), damag
 	for (int i = 0; i < 4; i++) {
 		stageHitFlg[1][i] = false;
 	}
-	srand(time(0));
+	//srand(time(0));
 	//SetRandMove();
 }
 
@@ -93,18 +93,15 @@ void Boss::Update(GameMain* _g)
 		// 時間が0以下になったら
 		if (damage_effect_time <= 0)
 		{
-			// バリアが残っている場合
-			if (barrier_num > 0)
-			{
-				// バリアを1つ減少
-				barrier_num--;
-				// ダメージフラグを解除
-				damage_flg = false;
-			}
+			// バリアを1つ減少
+			barrier_num--;
+			// ダメージフラグを解除
+			damage_flg = false;
 		}
 	}
 	// バリアがなくなった場合の処理
-	if (barrier_num == 0) {
+	if (barrier_num < 0) {
+		boss_state = BossState::DEATH;
 	}
 
 	// 状態変更のタイミングをチェック
@@ -257,13 +254,13 @@ void Boss::Draw() const
 		}
 	}
 
-	//DrawFormatString(1100, 0, color, "%d", barrier_num);
+	//DrawFormatString(1100, 80, color, "%d", barrier_num);
 	//DrawFormatString(1100, 0, color, "%d", damage_flg);
 	//DrawFormatString(1100, 0, color, "%d", damage_effect_time);
-	DrawFormatString(1100, 0, color, "%f", location.x);
-	DrawFormatString(1100, 30, color, "%f", location.y);
+	//DrawFormatString(1100, 0, color, "%f", location.x);
+	//DrawFormatString(1100, 30, color, "%f", location.y);
 	//DrawFormatString(1100, 20, color, "%f", local_location.x);
-	//DrawFormatString(1100, 20, color, "%d", boss_state);
+	//DrawFormatString(1100, 60, color, "%d", boss_state);
 
 }
 
@@ -273,81 +270,27 @@ void Boss::Finalize()
 
 void Boss::Move(GameMain* _g)
 {
-	Location player_pos = _g->GetPlayerLocation();
-	Location camera_pos = _g->GetCameraLocation();
-	float distance_player = DistanceCalc(location, player_pos);
+	angle += ANGLE_SPEED * direction;
 
-	// ボスの回転角度
-	/*static float angle = 0.0f;
-	static float direction = 1.0f;*/
+	float target_x = (SCREEN_WIDTH - 760) + (RADIUS + 120) * cos(angle);
+	float target_y = (SCREEN_HEIGHT - 220) + (RADIUS) * sin(angle);
 
-	// プレイヤーとの距離が一定範囲内の場合にのみ移動する
-	//if (distance_player <= 1280) {
+	//float target_x = 1280 + (RADIUS + 150) * cos(angle);
+	//float target_y = 360 + (RADIUS + 200) * sin(angle);
 
-	//	angle += ANGLE_SPEED * direction;
-
-	//	float target_x = (player_pos.x - 80) + RADIUS * cos(angle);
-	//	float target_y = (player_pos.y - 100) + RADIUS * sin(angle);
-
-	//	// 地面に到達したら回転方向を逆にする
-	//	if (target_y > player_pos.y) {
-	//		direction *= -1.0f; // 回転方向を逆にする
-	//		angle += ANGLE_SPEED * direction; // すぐに逆回転を反映
-	//		target_y = player_pos.y + (player_pos.y - target_y); // 地面の位置で反射する
-	//	}
-
-	//	location.x = target_x;
-	//	location.y = target_y;
-
-	//	//// ボスが画面右側の一定の位置に到達した場合に攻撃に切り替え
-	//	//if (local_location.x < SCREEN_WIDTH - BOSS_SIZE && local_location.y > 350) {
-	//	//	boss_state = BossState::ATTACK;
-	//	//}
-
-	//	//// ボスが画面左側の一定の位置に到達した場合に攻撃に切り替え
-	//	//if (local_location.x < 23 && local_location.y > 350) {
-	//	//	boss_state = BossState::ATTACK;
-	//	//}
-
-	//	// ボスが画面左側の一定の位置に到達した場合に攻撃に切り替え
-	//	if (local_location.x + BOSS_SIZE / 2 < SCREEN_WIDTH / 2 ) {
-	//		boss_state = BossState::ATTACK;
-	//	}
-	//}
-	
-	Location boss_pos;
-
-	boss_pos.x = 24635.0f; 
-	boss_pos.y = 2050.0f;
-
-	/*boss_pos.x = location.x;
-	boss_pos.y = location.y;*/
-
-	// プレイヤーとの距離が一定範囲内の場合にのみ移動する
-	if (distance_player <= 1280) {
-
-		angle += ANGLE_SPEED * direction;
-
-		float target_x = boss_pos.x + (RADIUS + 150) * cos(angle);
-		float target_y = boss_pos.y + (RADIUS + 70) * sin(angle);
-
-		/*float target_x = location.x + (RADIUS + 150) * cos(angle);
-		float target_y = 2100 + (RADIUS + 200) * sin(angle);*/
-
-		// 地面に到達したら回転方向を逆にする
-		if (target_y > boss_pos.y) {
-			direction *= -1.0f; // 回転方向を逆にする
-			angle += ANGLE_SPEED * direction; // すぐに逆回転を反映
-		}
-
-		location.x = target_x;
-		location.y = target_y;
-
-		// ボスが画面右側の一定の位置に到達した場合に攻撃に切り替え
-		/*if (location.x >= SCREEN_WIDTH - BOSS_SIZE - 100) {
-			boss_state = BossState::ATTACK;
-		}*/
+	// 地面に到達したら回転方向を逆にする
+	if (target_y > SCREEN_HEIGHT - 200) {
+		direction *= -1.0f; // 回転方向を逆にする
+		angle += ANGLE_SPEED * direction; // すぐに逆回転を反映
 	}
+
+	location.x = target_x;
+	location.y = target_y;
+
+	// ボスが画面右側の一定の位置に到達した場合に攻撃に切り替え
+	/*if (location.x >= (SCREEN_WIDTH - BOSS_SIZE) - 100) {
+		boss_state = BossState::ATTACK;
+	}*/
 }
 	
 
@@ -503,15 +446,11 @@ void Boss::Hit(Object* _object)
 		)
 	{
 		//バリア減るごとにクールタイムを設ける
-		if (!damage_flg && barrier_num > 0) {
+		if (!damage_flg) {
 			damage_flg = true;
 			damage_effect_time = 300;
 		}
 	}
-
-	/*if (barrier_num < 0 && boss_state != BossState::DEATH) {
-		boss_state = BossState::DEATH;
-	}*/
 }
 
 bool Boss::CheckCollision(Location l, Erea e)
