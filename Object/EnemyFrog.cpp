@@ -276,9 +276,9 @@ void EnemyFrog::Hit(Object* _object)
 	}
 
 	//ダメージゾーンを上書きする
-	if ((_object->GetObjectType() == WATER && this->color == GREEN) ||
-		(_object->GetObjectType() == FIRE && this->color == BLUE) ||
-		(_object->GetObjectType() == WOOD && this->color == RED)) 
+	if ((this->color == GREEN && _object->GetObjectType() == WATER && _object->GetCanSwap() == FALSE) ||
+		(this->color == BLUE && _object->GetObjectType() == FIRE && _object->GetCanSwap() == FALSE) ||
+		(this->color == RED && _object->GetObjectType() == WOOD && _object->GetCanSwap() == FALSE))
 	{
 		_object->SetColorData(color);
 	}
