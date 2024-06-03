@@ -130,6 +130,8 @@ void Stage::Update()
 				block_type = FIRE_BLOCK;
 			}
 			type = FIRE;
+			//ゲーム中で変更された火
+			default_fire = FALSE;
 		}
 		else if (color == GREEN)
 		{

@@ -5,7 +5,6 @@ void ColorData::ChangeColor(ColorData* cd)
     int tmp;
 
     tmp = color;
-    color = cd->GetColerData();
+    color = cd->GetColorData();
     cd->SetColorData(tmp);
-
 }

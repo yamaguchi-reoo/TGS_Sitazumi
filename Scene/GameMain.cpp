@@ -410,7 +410,7 @@ void GameMain::SetStage(int _stage, bool _delete_player)
 					player_respawn_flg = true;
 				}
 				//エフェクトの生成
-				effect_spawner->SpawnEffect({ player_respawn.x + PLAYER_WIDTH / 2 ,player_respawn.y + PLAYER_HEIGHT / 2 }, { 20,20 }, PlayerSpawnEffect, 30, object[player_object]->GetColerData());
+				effect_spawner->SpawnEffect({ player_respawn.x + PLAYER_WIDTH / 2 ,player_respawn.y + PLAYER_HEIGHT / 2 }, { 20,20 }, PlayerSpawnEffect, 30, object[player_object]->GetColorData());
 				break;
 			case ENEMY_DEER_RED:
 			case ENEMY_DEER_GREEN:

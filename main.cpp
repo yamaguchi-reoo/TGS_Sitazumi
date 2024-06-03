@@ -39,32 +39,41 @@ int WINAPI WinMain(_In_ HINSTANCE  hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     //ステージアニメーション初期化
     ResourceManager::StageAnimInitialize();
 
-    // ゲームループし、シーンマネジャーでシーンの更新
-    while ((ProcessMessage() == 0) && (sceneMng->Update() != nullptr))
+    try
     {
+        // ゲームループし、シーンマネジャーでシーンの更新
+        while ((ProcessMessage() == 0) && (sceneMng->Update() != nullptr))
+        {
 
-        ClearDrawScreen();      // 画面の初期化
+            ClearDrawScreen();      // 画面の初期化
 
-        PadInput::UpdateKey();  //パッドの入力処理
-        KeyInput::UpdateKey();  //キーボードの入力処理
-        ResourceManager::StageAnimUpdate();     //ステージアニメーションの更新
+            PadInput::UpdateKey();  //パッドの入力処理
+            KeyInput::UpdateKey();  //キーボードの入力処理
+            ResourceManager::StageAnimUpdate();     //ステージアニメーションの更新
 
-        // シーンマネジャーでシーンの描画開始
-        sceneMng->Draw();
+            // シーンマネジャーでシーンの描画開始
+            sceneMng->Draw();
 
-        FPSC->All();
+            FPSC->All();
 #ifdef _DEBUG
-        FPSC->Disp();
+            FPSC->Disp();
 #endif
 
-        //強制終了
-        //Escapeキーまたはバックボタンを押したら強制終了
-        if(PadInput::OnButton(XINPUT_BUTTON_BACK) || (KeyInput::OnKey(KEY_INPUT_ESCAPE))) {  
-            break;
-        }
-        ScreenFlip(); // 裏画面の内容を表画面に反映する
+            //強制終了
+            //Escapeキーまたはバックボタンを押したら強制終了
+            if (PadInput::OnButton(XINPUT_BUTTON_BACK) || (KeyInput::OnKey(KEY_INPUT_ESCAPE))) {
+                break;
+            }
+            ScreenFlip(); // 裏画面の内容を表画面に反映する
 
-    };
+        };
+    }
+    catch (const char* err_log)
+    {
+        OutputDebugString(err_log);
+
+        return -1;
+    }
 
     //シーンオブジェクト終了処理
     sceneMng->Finalize();

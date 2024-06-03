@@ -1,4 +1,5 @@
 #pragma once
+
 #define RED 0xff0000
 #define GREEN 0x00ff00
 #define BLUE 0x0000ff
@@ -17,11 +18,19 @@ public:
 
 	void SetColorData(int c)
 	{
+		if (this == nullptr)
+		{
+			throw("不正アクセス防止\n");
+		}
 		color = c;
 	}
 
-	int GetColerData()
+	int GetColorData()
 	{
+		if (this == nullptr)
+		{
+			throw("不正アクセス防止\n");
+		}
 		return color;
 	}
 };

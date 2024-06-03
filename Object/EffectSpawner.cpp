@@ -234,22 +234,15 @@ void EffectSpawner::SpawnEffect(Location _location, Erea _erea,int _effect_type,
 	case PlayerSpawnEffect:
 		for (float j = 0.0f; j < 1; j += 0.125f)
 		{
-			for (int i = 0; i < EFFECT_NUM; i++)
-			{
-				if (effect[i].spawn_flg == false)
-				{
-					ResetEffect(i);
-					effect[i].spawn_flg = true;
-					effect[i].location = _location;
-					effect[i].erea = _erea;
-					effect[i].effect_type = 2;
-					effect[i].effect_time = _time;
-					effect[i].speed = 2;
-					effect[i].angle = j;
-					effect[i].color = _color;
-					break;
-				}
-			}
+			SpawnParticle(
+				_location,
+				_erea,
+				2,
+				_time,
+				2,
+				_color,
+				j
+			);
 		}
 		break;
 	//輝き
@@ -343,8 +336,8 @@ int EffectSpawner::Swap(Object* _object1, Object* _object2)
 								   _object2->GetCenterLocation().x - _object1->GetCenterLocation().x);
 	swap_anim[1].move_rad = atan2f(_object1->GetCenterLocation().y - _object2->GetCenterLocation().y,
 								   _object1->GetCenterLocation().x - _object2->GetCenterLocation().x);
-	swap_anim[0].color = _object1->GetColerData();
-	swap_anim[1].color = _object2->GetColerData();
+	swap_anim[0].color = _object1->GetColorData();
+	swap_anim[1].color = _object2->GetColorData();
 
 	//移動にかかる時間測定
 	Location move;

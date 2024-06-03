@@ -95,7 +95,7 @@ void BossAttackFire::Draw() const
 
 void BossAttackFire::Hit(Object* _object)
 {
-	if (_object->GetObjectType() == BLOCK && _object->GetObjectType() != WATER && _object->GetColerData() != WHITE) {
+	if (_object->GetObjectType() == BLOCK && _object->GetObjectType() != WATER && _object->GetColorData() != WHITE) {
 		_object->SetColorData(color);
 		_object->SetCanSwap(TRUE);
 		

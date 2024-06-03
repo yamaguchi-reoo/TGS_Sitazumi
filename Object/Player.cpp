@@ -631,21 +631,21 @@ void Player::Hit(Object* _object)
 		switch (color)
 		{
 		case RED:
-			if (_object->GetObjectType() == WATER || _object->GetColerData() == BLUE) {
+			if (_object->GetObjectType() == WATER || _object->GetColorData() == BLUE) {
 				damageFlg = true;
 			}
 			
 			break;
 
 		case BLUE:
-			if (_object->GetObjectType() == WOOD || _object->GetColerData() == GREEN) {
+			if (_object->GetObjectType() == WOOD || _object->GetColorData() == GREEN) {
 				damageFlg = true;
 			}
 			
 			break;
 
 		case GREEN:
-			if (_object->GetObjectType() == FIRE || _object->GetColerData() == FIRE) {
+			if (_object->GetObjectType() == FIRE || _object->GetColorData() == FIRE) {
 				damageFlg = true;
 			}
 			
@@ -764,7 +764,7 @@ void Player::MoveAim()
 
 bool Player::SearchColor(Object* ob)
 {
-	if (ob->GetColerData() != 0 ){
+	if (ob->GetColorData() > 0 ){
 		if(ob->GetLocalLocation().x >= 0 && ob->GetLocalLocation().x <= 1280 && ob->GetLocalLocation().y >= 0 && ob->GetLocalLocation().y <= 720) {
 			searchedObjAll[objNum] = ob;
 			if (objNum > 0 && searchedObjAll[objNum - 1]->GetLocalLocation().y + 40 <= ob->GetLocalLocation().y) {

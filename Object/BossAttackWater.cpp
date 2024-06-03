@@ -81,7 +81,7 @@ void BossAttackWater::Draw() const
 
 void BossAttackWater::Hit(Object* _object)
 {
-	if (_object->GetObjectType() == BLOCK && _object->GetObjectType() != WOOD && _object->GetColerData() != WHITE) {
+	if (_object->GetObjectType() == BLOCK && _object->GetObjectType() != WOOD && _object->GetColorData() != WHITE) {
 		_object->SetColorData(color);
 		_object->SetCanSwap(TRUE);
 		hitFlg = true;
