@@ -18,20 +18,18 @@ public:
 
 	void SetColorData(int c)
 	{
-		if (this == nullptr)
+		if (this != nullptr)
 		{
-			throw("SetColorData 不正アクセス防止\n");
+			color = c;
 		}
-		color = c;
 	}
 
 	int GetColorData()
 	{
-		if (this == nullptr)
+		if (this != nullptr)
 		{
-			throw("GetColorData 不正アクセス防止\n");
+			return color;
 		}
-		return color;
 	}
 };
 

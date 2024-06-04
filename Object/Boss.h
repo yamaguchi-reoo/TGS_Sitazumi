@@ -2,6 +2,7 @@
 #include "Object.h"
 #include <vector>
 #include <ctime>
+#include <mutex> 
 #include "EnemyBat.h"
 #include "BossAttackFire.h"
 #include "BossAttackWater.h"
@@ -40,17 +41,17 @@ private:
 	Location target_direction;	// 目標方向
 
 	float speed;				// 移動速度;
-	float angle;
-	float direction;
 
 
 	int state_change_time;		// 状態変更のタイミング
 
 	std::vector<Location>vertices;
+	std::vector<Location>warp_pos;
+	std::vector<Location>hexga_vertices;
 
 	bool f = false;
 	bool oldF = false;
-	int cnt = 0;
+	int cnt = 100;
 	int attack = 0;
 	int attack_num = 0;
 	bool side = false;
@@ -84,6 +85,7 @@ public:
 
 	void BossAtack(GameMain *_g);
 
-	// ランダムな方向に移動する設定
-	void SetRandMove();;
+	void DrawHoneycombSphere() const;
+
+	void DrawHexagon(Location center, int size, int color) const;
 };
