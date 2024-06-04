@@ -87,17 +87,20 @@ void Stage::Update(GameMain* _g)
 		//このブロックの見た目の色を変える
 		respawn_color = WHITE;
 	}
+
 	//天気の更新があったらする
 	if (change_weather_flg == true && weather != _g->GetNowWeather())
 	{
 		_g->SetNowWeather(weather);
 		change_weather_flg = false;
 	}
+
 	//このステージブロックがゲーム中で火に変更されたブロックなら、一定時間経過で消す
 	if (default_object == FALSE && type == FIRE && can_swap == FALSE && ++delete_fire > 180)
 	{
 		_g->DeleteObject(object_pos);
 	}
+
 	//フラグが立っているなら
 	if (set_respawn_flg)
 	{
@@ -107,6 +110,15 @@ void Stage::Update(GameMain* _g)
 		respawn_color = RED;
 		//フラグをfalseにする
 		set_respawn_flg = false;
+	}
+
+	//色が変わっていたら
+	if (old_color != color)
+	{
+		//エフェクトを出す
+		_g->SpawnEffect(location, erea, PlayerSpawnEffect, 10, color);
+		//更新
+		old_color = color;
 	}
 }
 
@@ -162,8 +174,6 @@ void Stage::Update()
 			type = WATER;
 			draw_wood_flg = false;
 		}
-		//更新
-		old_color = color;
 	}
 
 	//リセット
