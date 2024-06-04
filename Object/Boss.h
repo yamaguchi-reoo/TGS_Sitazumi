@@ -40,17 +40,16 @@ private:
 	Location target_direction;	// 目標方向
 
 	float speed;				// 移動速度;
-	float angle;
-	float direction;
 
 
 	int state_change_time;		// 状態変更のタイミング
 
 	std::vector<Location>vertices;
+	std::vector<Location>warp_pos;
 
 	bool f = false;
 	bool oldF = false;
-	int cnt = 0;
+	int cnt = 100;
 	int attack = 0;
 	int attack_num = 0;
 	bool side = false;

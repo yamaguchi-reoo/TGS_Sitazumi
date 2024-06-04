@@ -12,7 +12,7 @@
 #define RADIUS 300.0f
 
 
-Boss::Boss() :vector{ 0.0f }, boss_state(BossState::ATTACK), barrier_num(3), damage_flg(false), state_change_time(0), target_direction{ 1.0f, 0.0f }, speed(0.0f), angle(0.0f), direction(-1.0f)
+Boss::Boss() :vector{ 0.0f }, boss_state(BossState::ATTACK), barrier_num(3), damage_flg(false), state_change_time(0), target_direction{ 1.0f, 0.0f }, speed(0.0f)
 {
 	type = BOSS;
 	can_swap = TRUE;
@@ -49,6 +49,12 @@ void Boss::Initialize(Location _location, Erea _erea, int _color_data, int _obje
 		{ 210.0f, 135.0f }, { 250.0f,120.0f }, { 265.0f, 135.0f }, { 225.0f, 150.0f },
 		{ 260.0f, 115.0f }, { 277.5f,107.5f }, { 292.5f, 122.5f }, { 275.0f, 130.0f },
 		{ 290.0f, 102.5f }, { 330.0f, 87.5f }, { 345.0f, 102.5f }, { 305.0f, 117.5f }
+	};
+
+	warp_pos = {
+		 {(SCREEN_WIDTH / 2) - 100 , 250},		   //中央
+		 {SCREEN_WIDTH - 300, SCREEN_HEIGHT - 200},//右
+		 {70 , SCREEN_HEIGHT - 200}				   //左
 	};
 }
 
@@ -166,14 +172,14 @@ void Boss::Draw() const
 		}
 	}
 
-	DrawFormatString(1100, 80, color, "%d", barrier_num);
+	//DrawFormatString(1100, 80, color, "%d", barrier_num);
 	//DrawFormatString(1100, 0, color, "%d", damage_flg);
 	//DrawFormatString(1100, 0, color, "%d", damage_effect_time);
-	DrawFormatString(1100, 0, color, "%f", location.x);
-	DrawFormatString(1100, 30, color, "%f", location.y);
+	//DrawFormatString(1100, 0, color, "%f", location.x);
+	//DrawFormatString(1100, 30, color, "%f", location.y);
 	//DrawFormatString(1100, 20, color, "%f", local_location.x);
 	//DrawFormatString(1100, 60, color, "%d", boss_state);
-	DrawFormatString(1100, 60, color, "%d", cnt);
+	//DrawFormatString(1100, 60, color, "%d", cnt);
 
 
 	switch (boss_state)
@@ -214,13 +220,6 @@ void Boss::Move(GameMain* _g)
 
 	//location.x = target_x;
 	//location.y = target_y;
-
-	boss_state = BossState::ATTACK;
-	Location warp_pos[3] = {
-		 {(SCREEN_WIDTH / 2) - 100 , 250},		   //中央
-		 {SCREEN_WIDTH - 300, SCREEN_HEIGHT - 200},//右
-		 {70 , SCREEN_HEIGHT - 200}				   //左
-	 };
 
 	srand((unsigned)time(NULL));
 	int warp_index = rand() % 3;
