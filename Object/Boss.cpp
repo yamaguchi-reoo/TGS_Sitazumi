@@ -545,15 +545,6 @@ void Boss::BossAtack(GameMain *_g)
 			break;
 		}
 	}
-	
-
 }
 
-void Boss::SetRandMove()
-{
-	float angle = (float)static_cast<float>(rand()) / RAND_MAX * 2 * PI;
-	/*direction.x = (float)cos(angle);
-	direction.y = (float)sin(angle);*/
-	//speed = 0.0f; // 新しい方向に切り替える際に速度をリセット
-}
  

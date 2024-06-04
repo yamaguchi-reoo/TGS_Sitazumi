@@ -82,7 +82,4 @@ public:
 	void barrier();
 
 	void BossAtack(GameMain *_g);
-
-	// ランダムな方向に移動する設定
-	void SetRandMove();;
 };
