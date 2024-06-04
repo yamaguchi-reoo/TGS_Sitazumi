@@ -2,6 +2,7 @@
 #include "Object.h"
 #include <vector>
 #include <ctime>
+#include <mutex> 
 #include "EnemyBat.h"
 #include "BossAttackFire.h"
 #include "BossAttackWater.h"
@@ -46,6 +47,7 @@ private:
 
 	std::vector<Location>vertices;
 	std::vector<Location>warp_pos;
+	std::vector<Location>hexga_vertices;
 
 	bool f = false;
 	bool oldF = false;
@@ -82,4 +84,6 @@ public:
 	void barrier();
 
 	void BossAtack(GameMain *_g);
+
+	std::vector<Location>CalcHexagon(float _x, float _y, float _r);
 };

@@ -68,7 +68,7 @@ void Boss::Update(GameMain* _g)
 
 	speed = BOSS_MAX_SPEED;
 	vector = { 1.0f ,1.0f };
-	//location = { SCREEN_WIDTH - 300, SCREEN_HEIGHT - 200 };
+
 	
 
 	switch (boss_state)
@@ -130,6 +130,7 @@ void Boss::Draw() const
 
 	// バリアの半径の配列を定義
 	float barrier_rad[] = { 120, 115, 110 };
+	//float barrier_rad[] = { 120, 90, 60 };
 	//本体
 	DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2, 35, 35, color, TRUE);
 
@@ -167,8 +168,28 @@ void Boss::Draw() const
 	else
 	{
 		// バリアの描画
+		std::mutex mtx; // mutexの宣言
+
 		for (int i = 0; i < barrier_num; i++) {
+			std::vector<Location> vertex;
+			for (int j = 0; j < 6; ++j) {
+				float angle_rad = j * (2 * PI / 6); // 六角形の各頂点の角度
+				float x = local_location.x + BOSS_SIZE / 2 + barrier_rad[i] * cos(angle_rad); // x座標の計算
+				float y = local_location.y + BOSS_SIZE / 2 + barrier_rad[i] * sin(angle_rad); // y座標の計算
+				vertex.push_back({ x, y }); // 頂点をベクターに追加			
+			}
+			// mutexをロックしてからvectorへのアクセスを保護
+			mtx.lock();
+			for (int j = 0; j < 6; ++j) {
+				//DrawLineAA(vertex[j].x, vertex[j].y, vertex[(j + 1) % 6].x, vertex[(j + 1) % 6].y, color); // 六角形の各辺を描画
+				//DrawLineAA(vertex[j].x, vertex[j].y, vertex[(j + 2) % 6].x, vertex[(j + 2) % 6].y, color); // 六角形の各辺を描画
+			}
+			mtx.unlock(); // mutexをアンロック
 			DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2, barrier_rad[i], 50, color, FALSE);
+
+			//DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2, barrier_rad[i], 50, color, FALSE);
+			//DrawCircleAA(vertex.x, vertex.y, barrier_rad[i], 50, color, FALSE);
+
 		}
 	}
 
@@ -203,23 +224,6 @@ void Boss::Finalize()
 
 void Boss::Move(GameMain* _g)
 {
-	//angle += ANGLE_SPEED * direction;
-
-	//float target_x = (SCREEN_WIDTH - 760) + (RADIUS + 120) * cos(angle);
-	//float target_y = (SCREEN_HEIGHT - 220) + (RADIUS) * sin(angle);
-
-	////float target_x = 1280 + (RADIUS + 150) * cos(angle);
-	////float target_y = 360 + (RADIUS + 200) * sin(angle);
-
-	//// 地面に到達したら回転方向を逆にする
-	//if (target_y > SCREEN_HEIGHT - 200) {
-	//	direction *= -1.0f; // 回転方向を逆にする
-	//	angle += ANGLE_SPEED * direction; // すぐに逆回転を反映
-	//	boss_state = BossState::ATTACK;
-	//}
-
-	//location.x = target_x;
-	//location.y = target_y;
 
 	srand((unsigned)time(NULL));
 	int warp_index = rand() % 3;
@@ -227,32 +231,6 @@ void Boss::Move(GameMain* _g)
 	location = warp_pos[warp_index];
 
 	boss_state = BossState::ATTACK;
-
-	//--state_change_time;
-	//// ボスが画面右側の一定の位置に到達した場合に攻撃に切り替え
-	//if (location.x <= SCREEN_WIDTH / 2 - 100 ) {
-	//	if (state_change_time <= 0) {
-	//		state_change_time = STATE_CHANGE_INTERVAL;
-	//		boss_state = BossState::ATTACK;
-	//	}
-	//	
-	//}
-
-	//int t = 0;
-	//bool ret = true;
-	//if (/*location.x <= SCREEN_WIDTH / 2 - 100 &&*/ location.x <= SCREEN_WIDTH / 2/* && ret == true*/) {
-	//	boss_state = BossState::ATTACK;
-	//	ret = false;
-	//}
-	//if (++t >= 1200)
-	//{
-	//	t = 0;
-	//	ret = true;
-	//}
-
-	/*if (location.x < SCREEN_HEIGHT - 200 <= 0) {
-		boss_state = BossState::ATTACK;
-	}*/
 }
 	
 
@@ -546,5 +524,17 @@ void Boss::BossAtack(GameMain *_g)
 		}
 	}
 }
-
+std::vector<Location> Boss::CalcHexagon(float _x, float _y, float _r)
+{
+	std::vector<Location> hexga_vertices;
+	//float angle_deg = 0;
+	for (int i = 0; i < 6; ++i) {
+		float angle_rad = /*angle_deg **/ PI / 180.0f; // 度からラジアンに変換
+		float x =_x + _r * cos(angle_rad); // x座標の計算
+		float y = _y + _r * sin(angle_rad); // y座標の計算
+		vertices.push_back({ x, y }); // 頂点をベクターに追加
+		//angle_deg += 60.0f; // 次の頂点の角度を設定
+	}
+	return hexga_vertices;// 全ての頂点の座標を含むベクターを返す
+}
  
