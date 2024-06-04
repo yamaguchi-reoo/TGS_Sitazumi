@@ -85,5 +85,7 @@ public:
 
 	void BossAtack(GameMain *_g);
 
-	std::vector<Location>CalcHexagon(float _x, float _y, float _r);
+	void DrawHoneycombSphere() const;
+
+	void DrawHexagon(Location center, int size, int color) const;
 };

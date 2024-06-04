@@ -122,15 +122,21 @@ void Boss::Update(GameMain* _g)
 
 void Boss::Draw() const
 {
-	DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, FALSE);
+	//DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, FALSE);
 
 	// ボスの中心座標
-	float boss_center_x = local_location.x + BOSS_SIZE / 2;
-	float boss_center_y = local_location.y + BOSS_SIZE / 2;
+	Location center = { local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 };
 
 	// バリアの半径の配列を定義
 	float barrier_rad[] = { 120, 115, 110 };
-	//float barrier_rad[] = { 120, 90, 60 };
+	float hex_size = 10.0f; // 六角形のサイズ
+
+	// 六角形の間隔（六角形の内接円の半径の2倍）
+	float hex_height = sqrt(3) * hex_size; // 六角形の高さ
+	float hex_width = 2.3 * hex_size; // 六角形の幅
+
+	//float barrier_rad[] = { 120 };
+	
 	//本体
 	DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2, 35, 35, color, TRUE);
 
@@ -145,7 +151,7 @@ void Boss::Draw() const
 	for (int i = 0; i < vertices.size(); ++i)
 	{
 		const Location& vertex = vertices[i];
-		float mirrored_x = boss_center_x - (vertex.x - boss_center_x); // X座標を反転
+		float mirrored_x = center.x - (vertex.x - center.x); // X座標を反転
 		mirrored_vertices.push_back({ mirrored_x, vertex.y });
 	}
 
@@ -170,26 +176,37 @@ void Boss::Draw() const
 		// バリアの描画
 		std::mutex mtx; // mutexの宣言
 
+		//for (float radius : barrier_rad) {
+		//	for (float y = center.y - radius; y <= center.y + radius; y += hex_height * 0.75f) {
+		//		for (float x = center.x - radius; x <= center.x + radius; x += hex_width) {
+		//			// 列が奇数の場合、x方向にオフセット
+		//			float xOffset = (int((y - (center.y - radius)) / (hex_height * 0.75f)) % 2) * (hex_width / 2);
+		//			Location hex_center = { x + xOffset, y };
+		//			float dx = hex_center.x - center.x;
+		//			float dy = hex_center.y - center.y;
+		//			float distance = sqrt(dx * dx + dy * dy);
+		//			if (distance + hex_size <= radius) {
+		//				DrawHexagon(hex_center, hex_size, color);
+		//			}
+		//		}
+		//	}
+		//}
 		for (int i = 0; i < barrier_num; i++) {
-			std::vector<Location> vertex;
-			for (int j = 0; j < 6; ++j) {
-				float angle_rad = j * (2 * PI / 6); // 六角形の各頂点の角度
-				float x = local_location.x + BOSS_SIZE / 2 + barrier_rad[i] * cos(angle_rad); // x座標の計算
-				float y = local_location.y + BOSS_SIZE / 2 + barrier_rad[i] * sin(angle_rad); // y座標の計算
-				vertex.push_back({ x, y }); // 頂点をベクターに追加			
-			}
-			// mutexをロックしてからvectorへのアクセスを保護
-			mtx.lock();
-			for (int j = 0; j < 6; ++j) {
-				//DrawLineAA(vertex[j].x, vertex[j].y, vertex[(j + 1) % 6].x, vertex[(j + 1) % 6].y, color); // 六角形の各辺を描画
-				//DrawLineAA(vertex[j].x, vertex[j].y, vertex[(j + 2) % 6].x, vertex[(j + 2) % 6].y, color); // 六角形の各辺を描画
-			}
-			mtx.unlock(); // mutexをアンロック
+			//std::vector<Location> vertex;
+			//for (int j = 0; j < 6; ++j) {
+			//	float angle_rad = j * (2 * PI / 6); // 六角形の各頂点の角度
+			//	float x = local_location.x + BOSS_SIZE / 2 + barrier_rad[i] * cos(angle_rad); // x座標の計算
+			//	float y = local_location.y + BOSS_SIZE / 2 + barrier_rad[i] * sin(angle_rad); // y座標の計算
+			//	vertex.push_back({ x, y }); // 頂点をベクターに追加			
+			//}
+			//// mutexをロックしてからvectorへのアクセスを保護
+			//mtx.lock();
+			//for (int j = 0; j < 6; ++j) {
+			//	//DrawLineAA(vertex[j].x, vertex[j].y, vertex[(j + 1) % 6].x, vertex[(j + 1) % 6].y, color); // 六角形の各辺を描画
+			//	//DrawLineAA(vertex[j].x, vertex[j].y, vertex[(j + 2) % 6].x, vertex[(j + 2) % 6].y, color); // 六角形の各辺を描画
+			//}
+			//mtx.unlock(); // mutexをアンロック
 			DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2, barrier_rad[i], 50, color, FALSE);
-
-			//DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2, barrier_rad[i], 50, color, FALSE);
-			//DrawCircleAA(vertex.x, vertex.y, barrier_rad[i], 50, color, FALSE);
-
 		}
 	}
 
@@ -524,17 +541,38 @@ void Boss::BossAtack(GameMain *_g)
 		}
 	}
 }
-std::vector<Location> Boss::CalcHexagon(float _x, float _y, float _r)
+
+void Boss::DrawHoneycombSphere() const
 {
-	std::vector<Location> hexga_vertices;
-	//float angle_deg = 0;
-	for (int i = 0; i < 6; ++i) {
-		float angle_rad = /*angle_deg **/ PI / 180.0f; // 度からラジアンに変換
-		float x =_x + _r * cos(angle_rad); // x座標の計算
-		float y = _y + _r * sin(angle_rad); // y座標の計算
-		vertices.push_back({ x, y }); // 頂点をベクターに追加
-		//angle_deg += 60.0f; // 次の頂点の角度を設定
-	}
-	return hexga_vertices;// 全ての頂点の座標を含むベクターを返す
+	//float barrier_rad[] = { 120,115,110 };
+
+	//// バリアの中心座標
+	//Location center = { local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 };
+
+	//// 六角形模様球体の描画
+	//for (int i = 0; i < barrier_num; i++) {
+	//	for (int j = 0; j < 6; ++j) {
+	//		float angle_rad = j * (2 * PI / 6); // 六角形の各頂点の角度
+	//		float x_center = center.x + barrier_rad[i] * cos(angle_rad); // 中心のx座標の計算
+	//		float y_center = center.y + barrier_rad[i] * sin(angle_rad); // 中心のy座標の計算
+	//		DrawHexagon(center, { x_center, y_center }, 30, 6, color); // 六角形を描画
+	//	}
+	//}
 }
- 
+
+void Boss::DrawHexagon(Location center, int size, int color) const
+{
+	std::vector<Location> hexagon_vertices;
+
+	for (int i = 0; i < 6; ++i) {
+		float angle_rad = PI / 3 * i;
+		float x = center.x + size * cos(angle_rad);
+		float y = center.y + size * sin(angle_rad);
+		hexagon_vertices.push_back({ x, y });
+	}
+
+	for (size_t i = 0; i < hexagon_vertices.size(); ++i) {
+		// DrawLineAA is assumed to be a provided function to draw anti-aliased lines
+		DrawLineAA(hexagon_vertices[i].x, hexagon_vertices[i].y,hexagon_vertices[(i + 1) % 6].x, hexagon_vertices[(i + 1) % 6].y,color);
+	}
+}
