@@ -146,7 +146,6 @@ void GameMain::Draw() const
 		if (CheckInScreen(object[i]) == true)
 		{
 			object[i]->Draw();
-			DrawFormatString(object[i]->GetLocalLocation().x, object[i]->GetLocalLocation().y, 0x00ff00, "%d", object[i]->GetObjectPos());
 		}
 	}
 	for (int i = 0; i < attack_num; i++)
