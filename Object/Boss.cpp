@@ -12,7 +12,7 @@
 #define RADIUS 300.0f
 
 
-Boss::Boss() :vector{ 0.0f }, boss_state(BossState::MOVE), barrier_num(1), damage_flg(false), state_change_time(0), target_direction{ 1.0f, 0.0f }, speed(0.0f), angle(0.0f), direction(-1.0f)
+Boss::Boss() :vector{ 0.0f }, boss_state(BossState::ATTACK), barrier_num(3), damage_flg(false), state_change_time(0), target_direction{ 1.0f, 0.0f }, speed(0.0f), angle(0.0f), direction(-1.0f)
 {
 	type = BOSS;
 	can_swap = TRUE;
@@ -33,7 +33,7 @@ Boss::~Boss()
 
 void Boss::Initialize(Location _location, Erea _erea, int _color_data, int _object_pos)
 {
-	location = { _location };//x座標 ,y座標 
+	location = { SCREEN_WIDTH - 300, SCREEN_HEIGHT - 200 };//x座標 ,y座標 
 	erea = { _erea };	   //高さ、幅	
 	color = _color_data;
 
@@ -62,7 +62,7 @@ void Boss::Update(GameMain* _g)
 
 	speed = BOSS_MAX_SPEED;
 	vector = { 1.0f ,1.0f };
-
+	//location = { SCREEN_WIDTH - 300, SCREEN_HEIGHT - 200 };
 	
 
 	switch (boss_state)
@@ -197,7 +197,6 @@ void Boss::Finalize()
 
 void Boss::Move(GameMain* _g)
 {
-
 	//angle += ANGLE_SPEED * direction;
 
 	//float target_x = (SCREEN_WIDTH - 760) + (RADIUS + 120) * cos(angle);
@@ -218,9 +217,9 @@ void Boss::Move(GameMain* _g)
 
 	boss_state = BossState::ATTACK;
 	Location warp_pos[3] = {
-		 {(SCREEN_WIDTH / 2) - 100 , 250},
-		 {SCREEN_WIDTH - 300, SCREEN_HEIGHT - 200},
-		 {70 , SCREEN_HEIGHT - 200}
+		 {(SCREEN_WIDTH / 2) - 100 , 250},		   //中央
+		 {SCREEN_WIDTH - 300, SCREEN_HEIGHT - 200},//右
+		 {70 , SCREEN_HEIGHT - 200}				   //左
 	 };
 
 	srand((unsigned)time(NULL));
