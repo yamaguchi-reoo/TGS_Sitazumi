@@ -29,11 +29,11 @@ void Weather::Update(GameMain* _g)
 	{
 	case FIRE:
 		location.y += 7;
-		if (touch_ground == true)
+		if (touch_ground == true || local_location.y > SCREEN_HEIGHT)
 		{
 			_g->DeleteObject(object_pos);
 			//木に当たったなら木は消え、その場所に火を作る
-			if (delete_object->GetObjectType() == WOOD)
+			if (delete_object != 0 && delete_object->GetObjectType() == WOOD)
 			{
 				if (delete_object->GetCanSwap() == TRUE)
 				{
@@ -49,11 +49,11 @@ void Weather::Update(GameMain* _g)
 		break;
 	case WATER:
 		location.y += 20;
-		if (touch_ground == true)
+		if (touch_ground == true || local_location.y > SCREEN_HEIGHT)
 		{
 			_g->DeleteObject(object_pos);
 			//火に当たったなら火は消え、その場所に水を作る
-			if (delete_object->GetObjectType() == FIRE)
+			if (delete_object != 0 && delete_object->GetObjectType() == FIRE)
 			{
 				if (delete_object->GetCanSwap() == TRUE)
 				{
@@ -69,11 +69,11 @@ void Weather::Update(GameMain* _g)
 		break;
 	case WOOD:
 		location.y += 20;
-		if (touch_ground == true)
+		if (touch_ground == true || local_location.y > SCREEN_HEIGHT)
 		{
 			_g->DeleteObject(object_pos);
 			//水に当たったなら水は消え、その場所に草を作る
-			if (delete_object->GetObjectType() == WATER)
+			if (delete_object != 0 && delete_object->GetObjectType() == WATER)
 			{
 				if (delete_object->GetCanSwap() == TRUE)
 				{

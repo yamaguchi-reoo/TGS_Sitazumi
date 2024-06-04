@@ -64,7 +64,7 @@ private:
 	int walk_se[4];		//歩行SE格納
 	int jump_se;		//ジャンプSE格納
 	int damage_se[3];	//被ダメージSE格納
-
+	int old_jump_se;
 	int now_riding;		//今乗っているブロックに応じて再生するSEを変える
 
 
