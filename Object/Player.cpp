@@ -72,6 +72,7 @@ Player::Player()
 	walk_se[2] = ResourceManager::SetSound("Resource/Sounds/Player/walk_grass.wav");
 	walk_se[3] = ResourceManager::SetSound("Resource/Sounds/Player/walk_water.wav");
 	jump_se = ResourceManager::SetSound("Resource/Sounds/Player/player_jump.wav");
+	old_jump_se = jump_se;
 	damage_se[0] = ResourceManager::SetSound("Resource/Sounds/Player/damage_fire.wav");
 	damage_se[1] = ResourceManager::SetSound("Resource/Sounds/Player/damage_grass.wav");
 	damage_se[2] = ResourceManager::SetSound("Resource/Sounds/Player/damage_water.wav");
@@ -94,6 +95,10 @@ void Player::Initialize(Location _location, Erea _erea, int _color_data, int _ob
 
 void Player::Update(GameMain* _g)
 {
+	if (old_jump_se != jump_se)
+	{
+		printfDx("ジャンプSE変更");
+	}
 	fps = 0;
 	//放置で大きくなりすぎるのを防止
 	if (++frame > 6000)
@@ -764,7 +769,7 @@ void Player::MoveAim()
 
 bool Player::SearchColor(Object* ob)
 {
-	if (ob->GetColorData() > 0 ){
+	if (ob != nullptr && ob->GetColorData() > 0 ){
 		if(ob->GetLocalLocation().x >= 0 && ob->GetLocalLocation().x <= 1280 && ob->GetLocalLocation().y >= 0 && ob->GetLocalLocation().y <= 720) {
 			searchedObjAll[objNum] = ob;
 			if (objNum > 0 && searchedObjAll[objNum - 1]->GetLocalLocation().y + 40 <= ob->GetLocalLocation().y) {

@@ -75,25 +75,21 @@ AbstractScene* GameMain::Update()
 	//各オブジェクトの更新
 	if (object[player_object]->GetSearchFlg() == FALSE || (object[player_object]->GetSearchFlg() == TRUE && frame % 10 == 0))
 	{
-		for (int i = 0; object[i] != nullptr; i++)
+		for (int i = 0; i < OBJECT_NUM; i++)
 		{
-			//プレイヤーとボス以外のオブジェクトの更新
-			if (i != player_object)
+			//プレイヤーとボス以外の画面内オブジェクトの更新
+			if (i != player_object && CheckInScreen(object[i]))
 			{
-				//画面内のオブジェクトしかUpdateしない
-				if (CheckInScreen(object[i]))
+				object[i]->SetScreenPosition(camera_location);
+				object[i]->Update(this);
+				move_object_num++;
+				for (int j = i + 1; object[j] != nullptr; j++)
 				{
-					object[i]->SetScreenPosition(camera_location);
-					object[i]->Update(this);
-					move_object_num++;
-					for (int j = i + 1; object[j] != nullptr; j++)
+					//各オブジェクトとの当たり判定
+					if (object[i] != nullptr && CheckInScreen(object[j]) == true && object[i]->HitBox(object[j]) && object[j] != object[player_object])
 					{
-						//各オブジェクトとの当たり判定
-						if (CheckInScreen(object[j]) == true && object[i]->HitBox(object[j]) && object[j] != object[player_object])
-						{
-							object[i]->Hit(object[j]);
-							object[j]->Hit(object[i]);
-						}
+						object[i]->Hit(object[j]);
+						object[j]->Hit(object[i]);
 					}
 				}
 			}
@@ -125,7 +121,7 @@ AbstractScene* GameMain::Update()
 
 	if (KeyInput::OnKey(KEY_INPUT_1))
 	{
-		SetStage(0, false);
+		ResourceManager::StopSound(0);
 	}
 	if (KeyInput::OnKey(KEY_INPUT_2))
 	{
@@ -140,6 +136,7 @@ AbstractScene* GameMain::Update()
 
 void GameMain::Draw() const
 {
+	SetFontSize(12);
 	back_ground->Draw(camera_location);
 	for (int i = 0; object[i] != nullptr; i++)
 	{
@@ -149,6 +146,7 @@ void GameMain::Draw() const
 		if (CheckInScreen(object[i]) == true)
 		{
 			object[i]->Draw();
+			DrawFormatString(object[i]->GetLocalLocation().x, object[i]->GetLocalLocation().y, 0x00ff00, "%d", object[i]->GetObjectPos());
 		}
 	}
 	for (int i = 0; i < attack_num; i++)

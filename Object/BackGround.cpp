@@ -32,9 +32,10 @@ void BackGround::Draw(Location _camera_location)const
 	Location shift_location = { -_camera_location.x / (stage_erea.width / (bg_erea.width / 12)) ,-_camera_location.y / (stage_erea.height / (bg_erea.height / 10)) };
 	for (int i = 0; i < 50; i++)
 	{
+		//青空
 		DrawBoxAA(shift_location.x, shift_location.y + (i * 25),
 			bg_erea.width + shift_location.x, shift_location.y + (i + 1) * 25.5f,
-			GetColor((i * 3), (i * 3), 200), true);
+			GetColor((i * 3)+50, (i * 3)+50, 255), true);
 		//DrawFormatStringF(shift_location.x + (i * 25), shift_location.y+i* 25, 0x00ff00,"%d", i);
 
 	}
