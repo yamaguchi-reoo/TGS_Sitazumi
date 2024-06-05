@@ -59,7 +59,7 @@ void EnemyFrog::Update(GameMain* _g)
 		//一回だけエフェクトを出す
 		if (effect_once == false)
 		{
-			_g->SpawnEffect(location, erea, LandingEffect, 10, color);
+			_g->SpawnEffect(location, erea, LandingEffect, 15, color);
 			effect_once = true;
 		}
 		vector.y = 0.f;

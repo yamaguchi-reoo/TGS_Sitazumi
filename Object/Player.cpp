@@ -50,6 +50,7 @@ Player::Player()
 
 	objSelectNumTmp = 0;
 	searchedObjFlg = false;
+	effect_once = false;
 	swap_once = false;
 	damageFlg = false;
 	damageOldFlg = false;
@@ -95,9 +96,11 @@ void Player::Initialize(Location _location, Erea _erea, int _color_data, int _ob
 
 void Player::Update(GameMain* _g)
 {
+	//意図しない変更が発生したか測定
 	if (old_jump_se != jump_se)
 	{
 		printfDx("ジャンプSE変更");
+		old_jump_se = jump_se;
 	}
 	fps = 0;
 	//放置で大きくなりすぎるのを防止
@@ -137,9 +140,15 @@ void Player::Update(GameMain* _g)
 			break;
 		}
 		
-		
+		effect_once = false;
 	}
 	else {
+		//一回だけエフェクトを出す
+		if (effect_once == false)
+		{
+			_g->SpawnEffect(location, erea, LandingEffect, 15, color);
+			effect_once = true;
+		}
 		vector.y = 0.f;
 	}
 

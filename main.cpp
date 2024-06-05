@@ -65,6 +65,8 @@ int WINAPI WinMain(_In_ HINSTANCE  hInstance, _In_opt_ HINSTANCE hPrevInstance, 
                 break;
             }
             ScreenFlip(); // 裏画面の内容を表画面に反映する
+            // 画面の文字達を消す
+            clsDx();
 
         };
     }

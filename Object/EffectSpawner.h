@@ -7,7 +7,8 @@ enum EffectList {
 	ShineEffect,
 	DeathEffect,
 	LandingEffect,
-	ExplosionEffect
+	ExplosionEffect,
+	DamageEffect
 };
 
 class GameMain;
@@ -60,8 +61,8 @@ public:
 	void Draw()const;
 	void Finalize();
 
-	//エフェクトをスポーンさせる _location=座標 _erea=大きさ _effect_type=エフェクトの種類 _time=消えるまでのフレーム数 _color=エフェクトの色
-	void SpawnEffect(Location _location,Erea _erea,int _effect_type,int _time,int _color);
+	//エフェクトをスポーンさせる _location=座標 _erea=大きさ _effect_type=エフェクトの種類 _time=消えるまでのフレーム数 _color=エフェクトの色 _angle=進行方向
+	void SpawnEffect(Location _location,Erea _erea,int _effect_type,int _time,int _color,float _angle = 0);
 
 	//ローカル座標の更新
 	void SetScreenPosition(Location _world_to_screen, int _num);

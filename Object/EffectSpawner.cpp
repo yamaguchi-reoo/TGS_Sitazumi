@@ -227,7 +227,7 @@ void EffectSpawner::Finalize()
 
 }
 
-void EffectSpawner::SpawnEffect(Location _location, Erea _erea,int _effect_type, int _time, int _color)
+void EffectSpawner::SpawnEffect(Location _location, Erea _erea,int _effect_type, int _time, int _color, float _angle)
 {
 	switch (_effect_type)
 	{
@@ -272,7 +272,7 @@ void EffectSpawner::SpawnEffect(Location _location, Erea _erea,int _effect_type,
 		break;
 		//着地エフェクト
 	case LandingEffect:
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < 7; i++)
 		{
 			SpawnParticle(
 				{ _location.x + (_erea.width / 2) + GetRand(10),_location.y + _erea.height },
@@ -295,6 +295,18 @@ void EffectSpawner::SpawnEffect(Location _location, Erea _erea,int _effect_type,
 			1,
 			_color,
 			0
+		);
+		break;
+		//ダメージエフェクト
+	case DamageEffect:
+		SpawnParticle(
+			_location,
+			_erea,
+			6,
+			_time,
+			1,
+			_color,
+			_angle
 		);
 		break;
 	default:
