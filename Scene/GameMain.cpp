@@ -450,9 +450,6 @@ void GameMain::SetStage(int _stage, bool _delete_player)
 	}
 	//カメラのリセット
 	ResetCamera();
-	//カメラの位置がプレイヤーの位置にならないように
-	x_pos_set_once = true;
-	y_pos_set_once = true;
 }
 
 void GameMain::ResetCamera()

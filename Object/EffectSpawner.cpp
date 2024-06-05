@@ -272,7 +272,7 @@ void EffectSpawner::SpawnEffect(Location _location, Erea _erea,int _effect_type,
 		break;
 		//着地エフェクト
 	case LandingEffect:
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < 7; i++)
 		{
 			SpawnParticle(
 				{ _location.x + (_erea.width / 2) + GetRand(10),_location.y + _erea.height },
