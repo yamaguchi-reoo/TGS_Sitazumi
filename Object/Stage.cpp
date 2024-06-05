@@ -87,17 +87,25 @@ void Stage::Update(GameMain* _g)
 		//このブロックの見た目の色を変える
 		respawn_color = WHITE;
 	}
+
+	//色交換可能ブロックを輝かせる
+	if (block_type == RED_BLOCK || block_type == GREEN_BLOCK || block_type == BLUE_BLOCK)
+	{
+		_g->SpawnEffect(location, erea, DeathEffect, 15, WHITE);
+	}
 	//天気の更新があったらする
 	if (change_weather_flg == true && weather != _g->GetNowWeather())
 	{
 		_g->SetNowWeather(weather);
 		change_weather_flg = false;
 	}
+
 	//このステージブロックがゲーム中で火に変更されたブロックなら、一定時間経過で消す
 	if (default_object == FALSE && type == FIRE && can_swap == FALSE && ++delete_fire > 180)
 	{
 		_g->DeleteObject(object_pos);
 	}
+
 	//フラグが立っているなら
 	if (set_respawn_flg)
 	{
@@ -107,6 +115,15 @@ void Stage::Update(GameMain* _g)
 		respawn_color = RED;
 		//フラグをfalseにする
 		set_respawn_flg = false;
+	}
+
+	//色が変わっていたら
+	if (old_color != color)
+	{
+		//エフェクトを出す
+		_g->SpawnEffect(location, erea, PlayerSpawnEffect, 10, color);
+		//更新
+		old_color = color;
 	}
 }
 
@@ -162,8 +179,6 @@ void Stage::Update()
 			type = WATER;
 			draw_wood_flg = false;
 		}
-		//更新
-		old_color = color;
 	}
 
 	//リセット
@@ -227,9 +242,10 @@ void Stage::Draw()const
 			{
 				if (draw_wood_flg == true)
 				{
-					DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, 0x84331F, true);
-					DrawLineAA(local_location.x + 10, local_location.y + 20, local_location.x + 10, local_location.y + 30, 0x73220E, TRUE);
-					DrawLineAA(local_location.x + 27, local_location.y + 30, local_location.x + 27, local_location.y + 40, 0x73220E, TRUE);
+					DrawBoxAA(local_location.x+3, local_location.y, local_location.x + erea.width-3, local_location.y + erea.height, 0x00cc00, true);
+					DrawBoxAA(local_location.x +2, local_location.y, local_location.x + erea.width-2, local_location.y + 2, 0x00ff00, true);
+					DrawBoxAA(local_location.x+2, local_location.y + erea.height, local_location.x + erea.width-2, local_location.y + erea.height - 2, 0x00ff00, true);
+					DrawBoxAA(local_location.x + 10, local_location.y+2, local_location.x + 13, local_location.y + erea.height-2, 0x00ee00, true);
 				}
 				else
 				{

@@ -7,7 +7,8 @@ enum EffectList {
 	ShineEffect,
 	DeathEffect,
 	LandingEffect,
-	ExplosionEffect
+	ExplosionEffect,
+	DamageEffect
 };
 
 class GameMain;
@@ -60,8 +61,8 @@ public:
 	void Draw()const;
 	void Finalize();
 
-	//エフェクトをスポーンさせる _location=座標 _erea=大きさ _effect_type=エフェクトの種類 _time=消えるまでのフレーム数 _color=エフェクトの色
-	void SpawnEffect(Location _location,Erea _erea,int _effect_type,int _time,int _color);
+	//エフェクトをスポーンさせる _location=座標 _erea=大きさ _effect_type=エフェクトの種類 _time=消えるまでのフレーム数 _color=エフェクトの色 _angle=進行方向
+	void SpawnEffect(Location _location,Erea _erea,int _effect_type,int _time,int _color,float _angle = 0);
 
 	//ローカル座標の更新
 	void SetScreenPosition(Location _world_to_screen, int _num);
@@ -72,8 +73,8 @@ public:
 	//交換アニメーション
 	int Swap(Object* _object1, Object* _object2);
 
-	//エフェクトを構成するパーティクルをスポーンさせる _location=座標 _erea=大きさ _effect_type=パーティクルの種類 _time=消えるまでのフレーム数 _speed=速度 _color=エフェクトの色 _angle=進行方向
-	void SpawnParticle(Location _location, Erea _erea, int _effect_type, int _time, float _speed, int _color, float _angle);
+	//エフェクトを構成するパーティクルをスポーンさせる _location=座標 _erea=大きさ _type=パーティクルの種類 _time=消えるまでのフレーム数 _speed=速度 _color=エフェクトの色 _angle=進行方向
+	void SpawnParticle(Location _location, Erea _erea, int _type, int _time, float _speed, int _color, float _angle);
 
 };
 

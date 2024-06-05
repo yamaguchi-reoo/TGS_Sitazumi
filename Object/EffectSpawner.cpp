@@ -191,7 +191,7 @@ void EffectSpawner::Draw()const
 				//着地した時
 			case 5:
 				SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 - (effect[i].timer * (255 / effect[i].effect_time)));
-				DrawCircleAA(effect[i].local_location.x, effect[i].local_location.y, 10, 10, effect[i].color, TRUE);
+				DrawBoxAA(effect[i].local_location.x, effect[i].local_location.y, effect[i].local_location.x + effect[i].erea.width, effect[i].local_location.y + effect[i].erea.height, effect[i].color, TRUE);
 				SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 				break;
 				//爆発した時
@@ -199,6 +199,7 @@ void EffectSpawner::Draw()const
 				SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 - (effect[i].timer * (255 / effect[i].effect_time)));
 				DrawCircleAA(effect[i].local_location.x, effect[i].local_location.y, (float)effect[i].timer * 15, 100, effect[i].color);
 				SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
+				break;
 			default:
 				break;
 			}
@@ -226,7 +227,7 @@ void EffectSpawner::Finalize()
 
 }
 
-void EffectSpawner::SpawnEffect(Location _location, Erea _erea,int _effect_type, int _time, int _color)
+void EffectSpawner::SpawnEffect(Location _location, Erea _erea,int _effect_type, int _time, int _color, float _angle)
 {
 	switch (_effect_type)
 	{
@@ -271,15 +272,19 @@ void EffectSpawner::SpawnEffect(Location _location, Erea _erea,int _effect_type,
 		break;
 		//着地エフェクト
 	case LandingEffect:
-		SpawnParticle(
-			{ _location.x + (_erea.width / 2) + GetRand(10),_location.y + _erea.height },
-			_erea,
-			5,
-			_time,
-			1,
-			_color,
-			(float)((GetRand(25) + 12) / 100.0f)
-		 );
+		for (int i = 0; i < 7; i++)
+		{
+			SpawnParticle(
+				{ _location.x + (_erea.width / 2) + GetRand(10),_location.y + _erea.height },
+				{ 10,5 },
+				5,
+				_time,
+				5,
+				_color,
+				(float)((GetRand(12) + (GetRand(1) * 38)) / 100.0f)
+			);
+		}
+		break;
 		//爆発エフェクト
 	case ExplosionEffect:
 		SpawnParticle(
@@ -290,6 +295,18 @@ void EffectSpawner::SpawnEffect(Location _location, Erea _erea,int _effect_type,
 			1,
 			_color,
 			0
+		);
+		break;
+		//ダメージエフェクト
+	case DamageEffect:
+		SpawnParticle(
+			_location,
+			_erea,
+			6,
+			_time,
+			1,
+			_color,
+			_angle
 		);
 		break;
 	default:
@@ -362,7 +379,7 @@ int EffectSpawner::Swap(Object* _object1, Object* _object2)
 	return swap_anim[0].timer;
 }
 
-void EffectSpawner::SpawnParticle(Location _location, Erea _erea, int _effect_type, int _time, float _speed,int _color, float _angle)
+void EffectSpawner::SpawnParticle(Location _location, Erea _erea, int _type, int _time, float _speed,int _color, float _angle)
 {
 	for (int i = 0; i < EFFECT_NUM; i++)
 	{
@@ -372,9 +389,9 @@ void EffectSpawner::SpawnParticle(Location _location, Erea _erea, int _effect_ty
 			effect[i].spawn_flg = true;
 			effect[i].location = _location;
 			effect[i].erea = _erea;
-			effect[i].effect_type = _effect_type;
+			effect[i].effect_type = _type;
 			effect[i].effect_time = _time;
-			effect[i].speed = 1;
+			effect[i].speed = _speed;
 			effect[i].color = _color;
 			effect[i].angle = _angle;
 			break;

@@ -10,6 +10,7 @@ EnemyFrog::EnemyFrog():
 	vector{0,0}, 
 	death_timer(0), 
 	face_angle(0.0f),
+	effect_once(false),
 	jump_se(0)
 {
 	type = ENEMY;
@@ -52,8 +53,15 @@ void EnemyFrog::Update(GameMain* _g)
 		if (vector.y > 16.f) {
 			vector.y = 16.f;
 		}
+		effect_once = false;
 	}
 	else {
+		//一回だけエフェクトを出す
+		if (effect_once == false)
+		{
+			_g->SpawnEffect(location, erea, LandingEffect, 15, color);
+			effect_once = true;
+		}
 		vector.y = 0.f;
 	}
 	UpdataState(_g);

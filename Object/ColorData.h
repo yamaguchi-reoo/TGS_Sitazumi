@@ -18,7 +18,7 @@ public:
 
 	void SetColorData(int c)
 	{
-		if (this != nullptr)
+		if (this != nullptr && c != 0x000000)
 		{
 			color = c;
 		}
