@@ -227,7 +227,7 @@ void EffectSpawner::Finalize()
 
 }
 
-void EffectSpawner::SpawnEffect(Location _location, Erea _erea,int _effect_type, int _time, int _color)
+void EffectSpawner::SpawnEffect(Location _location, Erea _erea,int _effect_type, int _time, int _color, float _angle)
 {
 	switch (_effect_type)
 	{
@@ -295,6 +295,18 @@ void EffectSpawner::SpawnEffect(Location _location, Erea _erea,int _effect_type,
 			1,
 			_color,
 			0
+		);
+		break;
+		//ダメージエフェクト
+	case DamageEffect:
+		SpawnParticle(
+			_location,
+			_erea,
+			6,
+			_time,
+			1,
+			_color,
+			_angle
 		);
 		break;
 	default:

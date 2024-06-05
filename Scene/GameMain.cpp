@@ -107,8 +107,17 @@ AbstractScene* GameMain::Update()
 	//管理クラスの更新
 	effect_spawner->Update(this);
 
+	//プレイヤーがボスエリアに入ったら退路を閉じる
+	if (now_stage == 2 && object[player_object]->GetLocalLocation().x > 160 && object[player_object]->GetLocalLocation().x < 200)
+	{
+		CreateObject(new Stage(2), { 160,520 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
+		CreateObject(new Stage(2), { 160,560 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
+		CreateObject(new Stage(2), { 160,600 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
+		CreateObject(new Stage(2), { 160,640 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
+	}
+
 	//ボスステージに遷移
-	if (object[player_object]->GetLocation().x > stage_width - 200 && object[player_object]->GetLocation().y > stage_height && now_stage != 2)
+	if (now_stage != 2 && object[player_object]->GetLocation().x > stage_width - 100 && object[player_object]->GetLocation().y > stage_height-300)
 	{
 		SetStage(2, false);
 	}
@@ -317,7 +326,7 @@ void GameMain::UpdateCamera()
 		}
 		if (now_stage == 2)
 		{
-			camera_location = { 0,BOX_HEIGHT * 5 };
+			camera_location = { 160,40};
 		}
 }
 

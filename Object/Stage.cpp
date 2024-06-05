@@ -88,6 +88,11 @@ void Stage::Update(GameMain* _g)
 		respawn_color = WHITE;
 	}
 
+	//色交換可能ブロックを輝かせる
+	if (block_type == RED_BLOCK || block_type == GREEN_BLOCK || block_type == BLUE_BLOCK)
+	{
+		_g->SpawnEffect(location, erea, DeathEffect, 15, WHITE);
+	}
 	//天気の更新があったらする
 	if (change_weather_flg == true && weather != _g->GetNowWeather())
 	{
@@ -237,9 +242,10 @@ void Stage::Draw()const
 			{
 				if (draw_wood_flg == true)
 				{
-					DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, 0x84331F, true);
-					DrawLineAA(local_location.x + 10, local_location.y + 20, local_location.x + 10, local_location.y + 30, 0x73220E, TRUE);
-					DrawLineAA(local_location.x + 27, local_location.y + 30, local_location.x + 27, local_location.y + 40, 0x73220E, TRUE);
+					DrawBoxAA(local_location.x+3, local_location.y, local_location.x + erea.width-3, local_location.y + erea.height, 0x00cc00, true);
+					DrawBoxAA(local_location.x +2, local_location.y, local_location.x + erea.width-2, local_location.y + 2, 0x00ff00, true);
+					DrawBoxAA(local_location.x+2, local_location.y + erea.height, local_location.x + erea.width-2, local_location.y + erea.height - 2, 0x00ff00, true);
+					DrawBoxAA(local_location.x + 10, local_location.y+2, local_location.x + 13, local_location.y + erea.height-2, 0x00ee00, true);
 				}
 				else
 				{
