@@ -13,7 +13,7 @@
 #define RADIUS 300.0f
 
 
-Boss::Boss() :vector{ 0.0f }, boss_state(BossState::ATTACK), barrier_num(1), damage_flg(false), state_change_time(0), target_direction{ 1.0f, 0.0f }, speed(0.0f)
+Boss::Boss() :vector{ 0.0f }, boss_state(BossState::ATTACK), barrier_num(3), damage_flg(false), state_change_time(0), target_direction{ 1.0f, 0.0f }, speed(0.0f)
 {
 	type = BOSS;
 	can_swap = TRUE;
@@ -39,7 +39,7 @@ Boss::~Boss()
 
 void Boss::Initialize(Location _location, Erea _erea, int _color_data, int _object_pos)
 {
-	location = { SCREEN_WIDTH - 300, SCREEN_HEIGHT - 200 };//x座標 ,y座標 
+	location = { SCREEN_WIDTH - 200, SCREEN_HEIGHT - 300};//x座標 ,y座標 
 	erea = { _erea };	   //高さ、幅	
 	color = _color_data;
 
@@ -58,9 +58,9 @@ void Boss::Initialize(Location _location, Erea _erea, int _color_data, int _obje
 	};
 
 	warp_pos = {
-		 {(SCREEN_WIDTH / 2) - 100 , 250},		   //中央
-		 {SCREEN_WIDTH - 300, SCREEN_HEIGHT - 200},//右
-		 {70 , SCREEN_HEIGHT - 200}				   //左
+		 {(SCREEN_WIDTH / 2 + 50) , 125},		   //中央
+		 {SCREEN_WIDTH - 200, SCREEN_HEIGHT - 300},//右
+		 {250 , SCREEN_HEIGHT - 300}				   //左
 	};
 
 	barrier_rad[0] = 60;
@@ -80,23 +80,25 @@ void Boss::Update(GameMain* _g)
 	speed = BOSS_MAX_SPEED;
 	vector = { 1.0f ,1.0f };
 
-	
-
-	switch (boss_state)
-	{
-	case BossState::MOVE:
-		// ボスの移動処理を呼び出し
-		Move(_g);
-		break;
-	case BossState::ATTACK:
-		BossAtack(_g);
-		break;
-	case BossState::DEATH:
-		_g->DeleteObject(object_pos);
-		break;
-	default:
-		break;
-	}
+	Location player_pos = _g->GetPlayerLocation();
+	float to_player = DistanceCalc(local_location, player_pos);
+		switch (boss_state)
+		{
+		case BossState::MOVE:
+			// ボスの移動処理を呼び出し
+			// (to_player < 870) {
+				Move(_g);
+			//}
+			break;
+		case BossState::ATTACK:
+			BossAtack(_g);
+			break;
+		case BossState::DEATH:
+			_g->DeleteObject(object_pos);
+			break;
+		default:
+			break;
+		}
 
 	//プレイヤーとボスの距離を計算
 	//DistanceCalc(_g);
@@ -204,7 +206,7 @@ void Boss::Draw() const
 	//DrawFormatString(1100, 0, color, "%d", damage_effect_time);
 	//DrawFormatString(1100, 0, color, "%f", location.x);
 	//DrawFormatString(1100, 30, color, "%f", location.y);
-	//DrawFormatString(1100, 20, color, "%f", local_location.x);
+	DrawFormatString(1100, 20, color, "%f", local_location.x);
 	//DrawFormatString(1100, 60, color, "%d", boss_state);
 	//DrawFormatString(1100, 60, color, "%d", cnt);
 }
