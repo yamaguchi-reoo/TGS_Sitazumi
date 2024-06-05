@@ -6,6 +6,7 @@
 #include "Utility/ResourceManager.h"
 #include "Utility/common.h"
 #include "Scene/Title.h"
+#include "Scene/Help.h"
 
 #include "Scene/GameMain.h"
 

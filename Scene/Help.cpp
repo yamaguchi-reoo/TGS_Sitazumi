@@ -2,6 +2,7 @@
 #include "DxLib.h"
 #include "GameMain.h"
 #include "../Utility/PadInput.h"
+#include "../Utility/KeyInput.h"
 #include"../Utility/ResourceManager.h"
 
 Help::Help()
@@ -30,4 +31,6 @@ AbstractScene* Help::Update()
 void Help::Draw()const
 {
 	DrawString(0, 10, "Help", 0x00ff00);
+
+	DrawFormatString(0, 60, GetColor(255, 0, 0), "MouseX : %d MouseY : %d", KeyInput::GetMouseCursor().x, KeyInput::GetMouseCursor().y);
 }
