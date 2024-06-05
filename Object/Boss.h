@@ -31,6 +31,7 @@ private:
 
 	BossState boss_state;// 現在のボスの状態
 
+	float barrier_rad[3];
 	int barrier_num; // バリアの数
 
 	bool damage_flg;				//ダメージを受けたとき
@@ -88,4 +89,5 @@ public:
 	void DrawHoneycombSphere() const;
 
 	void DrawHexagon(Location center, int size, int color) const;
+
 };
