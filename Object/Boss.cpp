@@ -26,7 +26,7 @@ Boss::Boss() :vector{ 0.0f }, boss_state(BossState::ATTACK), barrier_num(3), dam
 	}
 	for (int i = 0; i < barrier_num; i++)
 	{
-		barrier_rad[i];
+		barrier_rad[i] = 0;
 	}
 
 	//srand(time(0));
@@ -81,14 +81,14 @@ void Boss::Update(GameMain* _g)
 	vector = { 1.0f ,1.0f };
 
 	Location player_pos = _g->GetPlayerLocation();
-	float to_player = DistanceCalc(local_location, player_pos);
+
+	if (player_pos.x > 120) {
+
 		switch (boss_state)
 		{
 		case BossState::MOVE:
 			// ボスの移動処理を呼び出し
-			// (to_player < 870) {
-				Move(_g);
-			//}
+			Move(_g);
 			break;
 		case BossState::ATTACK:
 			BossAtack(_g);
@@ -99,6 +99,7 @@ void Boss::Update(GameMain* _g)
 		default:
 			break;
 		}
+	}
 
 	//プレイヤーとボスの距離を計算
 	//DistanceCalc(_g);
@@ -206,7 +207,7 @@ void Boss::Draw() const
 	//DrawFormatString(1100, 0, color, "%d", damage_effect_time);
 	//DrawFormatString(1100, 0, color, "%f", location.x);
 	//DrawFormatString(1100, 30, color, "%f", location.y);
-	DrawFormatString(1100, 20, color, "%f", local_location.x);
+	//DrawFormatString(1100, 20, color, "%f", local_location.x);
 	//DrawFormatString(1100, 60, color, "%d", boss_state);
 	//DrawFormatString(1100, 60, color, "%d", cnt);
 }
@@ -217,7 +218,6 @@ void Boss::Finalize()
 
 void Boss::Move(GameMain* _g)
 {
-
 	srand((unsigned)time(NULL));
 	int warp_index = rand() % 3;
 
