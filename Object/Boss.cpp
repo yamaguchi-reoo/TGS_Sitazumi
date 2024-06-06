@@ -13,7 +13,7 @@
 #define RADIUS 300.0f
 
 
-Boss::Boss() :vector{ 0.0f }, boss_state(BossState::ATTACK), barrier_num(3), damage_flg(false), state_change_time(0), target_direction{ 1.0f, 0.0f }, speed(0.0f)
+Boss::Boss() :vector{ 0.0f }, boss_state(BossState::ATTACK), barrier_num(3), damage_flg(false), state_change_time(0), speed(0.0f)
 {
 	type = BOSS;
 	can_swap = TRUE;
@@ -167,11 +167,9 @@ void Boss::Draw() const
 		if (damage_effect_time % 20 < 10)
 		{
 			if(barrier_num > 0) {
-				DrawHoneycombSphere();
-				//for (int i = 0; i < barrier_num; i++) {
+				DrawHexagonSphere();
 				// バリアの描画
 				DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2, 115, 50, color, FALSE);
-				//}
 			}
 		}
 	}
@@ -179,7 +177,7 @@ void Boss::Draw() const
 	{
 		if (barrier_num > 0) {
 			// バリアの描画
-			DrawHoneycombSphere();
+			DrawHexagonSphere();
 			//for (int i = 0; i < barrier_num; i++) {
 			DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2, 115, 50, color, FALSE);
 		}
@@ -218,11 +216,16 @@ void Boss::Finalize()
 
 void Boss::Move(GameMain* _g)
 {
+	// 現在の時間をシードとして乱数生成器を初期化する
 	srand((unsigned)time(NULL));
+
+	// 0から2までの乱数を生成し、ワープ位置のインデックスを決定する
 	int warp_index = rand() % 3;
 
+	// 生成されたインデックスに基づいて、ボスのワープ先を設定する
 	location = warp_pos[warp_index];
 
+	// ボスの状態を攻撃状態に変更する
 	boss_state = BossState::ATTACK;
 }
 	
@@ -518,10 +521,12 @@ void Boss::BossAtack(GameMain *_g)
 	}
 }
 
-void Boss::DrawHoneycombSphere() const
+void Boss::DrawHexagonSphere() const
 {
 	// ボスの中心座標
 	Location center = { local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 };
+	// 六角形の中心
+	Location hexa_center;
 
 	// バリアの半径の配列を定義
 	float hex_size = 10.0f; // 六角形のサイズ
@@ -529,18 +534,19 @@ void Boss::DrawHoneycombSphere() const
 	//// 六角形の間隔（六角形の内接円の半径の2倍）
 	float hex_height = sqrt(3) * hex_size / 2; // 六角形の高さ
 
-	for (int i = 0; i <= 15; ++i) { // 条件を <= に変更
+	for (int i = 0; i <= 15; ++i) { 
 		for (int j = -i; j <= i; ++j) {
 			for (int k = -i; k <= i; ++k) {
 				if (abs(j + k) <= i) {
-					float x_center = center.x + (1.5f * hex_size * j);
-					float y_center = center.y + (2.0f * hex_height * k - hex_height * j);
+					// 六角形の中心座標を計算
+					hexa_center.x = center.x + (1.5f * hex_size * j);
+					hexa_center.y = center.y + (2.0f * hex_height * k - hex_height * j);
 
 					// 半径内にある六角形のみを描画
-					float distance = sqrt(pow(x_center - center.x, 2) + pow(y_center - center.y, 2));
+					float distance = sqrt(pow(hexa_center.x - center.x, 2) + pow(hexa_center.y - center.y, 2));
 					if (distance <= 110) {
 						// 描画範囲を調整して内部を埋める
-						DrawHexagon({ x_center, y_center }, hex_size * 0.9f, color); // 0.9fは調整可能
+						DrawHexagon({ hexa_center.x, hexa_center.y }, hex_size * 0.9f, color); // 0.9fは調整可能
 					}
 				}
 			}
@@ -550,12 +556,12 @@ void Boss::DrawHoneycombSphere() const
 
 void Boss::DrawHexagon(Location center, int size, int color) const
 {
-	float angle_step = 2 * PI / 6; // 六角形の各頂点の間の角度
+	float angle_space = 2 * PI / 6; // 六角形の各頂点の間の角度
 	Location vertices[6];
 
 	// 六角形の頂点座標を計算
 	for (int i = 0; i < 6; ++i) {
-		float angle = i * angle_step;
+		float angle = i * angle_space;
 		vertices[i] = { center.x + size * cos(angle), center.y + size * sin(angle) };
 	}
 
