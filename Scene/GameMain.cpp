@@ -14,7 +14,7 @@
 static Location camera_location = { 0,0};	//カメラの座標
 static Location screen_origin = { (SCREEN_WIDTH / 2),(SCREEN_HEIGHT / 2) };
 
-GameMain::GameMain(int _stage) :frame(0), stage_data{ 0 }, now_stage(0), object_num(0), stage_width_num(0), stage_height_num(0), stage_width(0), stage_height(0), camera_x_lock_flg(true), camera_y_lock_flg(true), x_pos_set_once(false), y_pos_set_once(false), player_object(0), boss_object(0), weather(0), weather_timer(0), move_object_num(0),player_flg(false), player_respawn_flg(false)
+GameMain::GameMain(int _stage) :frame(0), stage_data{ 0 }, now_stage(0), object_num(0), stage_width_num(0), stage_height_num(0), stage_width(0), stage_height(0), camera_x_lock_flg(true), camera_y_lock_flg(true), x_pos_set_once(false), y_pos_set_once(false), player_object(0), boss_object(0), weather(0), weather_timer(0), move_object_num(0),player_flg(false), player_respawn_flg(false), fadein_flg(true)
 {
 	now_stage = _stage;
 }
@@ -64,62 +64,69 @@ void GameMain::Finalize()
 
 AbstractScene* GameMain::Update()
 {
-	//リセット
-	move_object_num = 0;
 	//フレーム測定
 	frame++;
-
 	//カメラの更新
 	UpdateCamera();
-
-	//各オブジェクトの更新
-	if (object[player_object]->GetSearchFlg() == FALSE || (object[player_object]->GetSearchFlg() == TRUE && frame % 10 == 0))
+	//演出の終了
+	if (frame > FADEIN_TIME || PadInput::OnButton(XINPUT_BUTTON_B))
 	{
-		for (int i = 0; i < OBJECT_NUM; i++)
+		fadein_flg = false;
+	}
+	//演出中は更新を止める
+	if (frame == 1 || fadein_flg == false)
+	{
+		//リセット
+		move_object_num = 0;
+		//各オブジェクトの更新
+		if (object[player_object]->GetSearchFlg() == FALSE || (object[player_object]->GetSearchFlg() == TRUE && frame % 10 == 0))
 		{
-			//プレイヤーとボス以外の画面内オブジェクトの更新
-			if (i != player_object && CheckInScreen(object[i]))
+			for (int i = 0; i < OBJECT_NUM; i++)
 			{
-				object[i]->SetScreenPosition(camera_location);
-				object[i]->Update(this);
-				move_object_num++;
-				for (int j = i + 1; object[j] != nullptr; j++)
+				//プレイヤーとボス以外の画面内オブジェクトの更新
+				if (i != player_object && CheckInScreen(object[i]))
 				{
-					//各オブジェクトとの当たり判定
-					if (object[i] != nullptr && CheckInScreen(object[j]) == true && object[i]->HitBox(object[j]) && object[j] != object[player_object])
+					object[i]->SetScreenPosition(camera_location);
+					object[i]->Update(this);
+					move_object_num++;
+					for (int j = i + 1; object[j] != nullptr; j++)
 					{
-						object[i]->Hit(object[j]);
-						object[j]->Hit(object[i]);
+						//各オブジェクトとの当たり判定
+						if (object[i] != nullptr && CheckInScreen(object[j]) == true && object[i]->HitBox(object[j]) && object[j] != object[player_object])
+						{
+							object[i]->Hit(object[j]);
+							object[j]->Hit(object[i]);
+						}
 					}
 				}
 			}
+			//管理クラスの更新
+			weather->Update(this);
 		}
+
+		//プレイヤーの更新
+		PlayerUpdate();
+
+		//ボスの更新
+		BossUpdate();
+
 		//管理クラスの更新
-		weather->Update(this);
-	}
+		effect_spawner->Update(this);
 
-	//プレイヤーの更新
-	PlayerUpdate();
+		//プレイヤーがボスエリアに入ったら退路を閉じる
+		if (now_stage == 2 && object[player_object]->GetLocalLocation().x > 160 && object[player_object]->GetLocalLocation().x < 200)
+		{
+			CreateObject(new Stage(2), { 160,520 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
+			CreateObject(new Stage(2), { 160,560 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
+			CreateObject(new Stage(2), { 160,600 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
+			CreateObject(new Stage(2), { 160,640 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
+		}
 
-	//ボスの更新
-	BossUpdate();
-
-	//管理クラスの更新
-	effect_spawner->Update(this);
-
-	//プレイヤーがボスエリアに入ったら退路を閉じる
-	if (now_stage == 2 && object[player_object]->GetLocalLocation().x > 160 && object[player_object]->GetLocalLocation().x < 200)
-	{
-		CreateObject(new Stage(2), { 160,520 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
-		CreateObject(new Stage(2), { 160,560 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
-		CreateObject(new Stage(2), { 160,600 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
-		CreateObject(new Stage(2), { 160,640 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
-	}
-
-	//ボスステージに遷移
-	if (now_stage != 2 && object[player_object]->GetLocation().x > stage_width - 100 && object[player_object]->GetLocation().y > stage_height-300)
-	{
-		SetStage(2, false);
+		//ボスステージに遷移
+		if (now_stage != 2 && object[player_object]->GetLocation().x > stage_width - 100 && object[player_object]->GetLocation().y > stage_height - 300)
+		{
+			SetStage(2, false);
+		}
 	}
 #ifdef _DEBUG
 	//ステージをいじるシーンへ遷移
@@ -170,6 +177,13 @@ void GameMain::Draw() const
 	//天気管理クラスの描画
 	weather->Draw();
 
+	//フェードイン演出
+	if (fadein_flg == true)
+	{
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 - (frame*(255/FADEIN_TIME) +3));
+		DrawBox(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0x000000, true);
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
+	}
 #ifdef _DEBUG
 	DrawFormatString(100, 100, 0xffffff, "Object数:%d", object_num);
 	DrawFormatString(100, 120, 0xffffff, "Updeteが呼ばれているObject数:%d", move_object_num);
@@ -409,6 +423,8 @@ void GameMain::SetStage(int _stage, bool _delete_player)
 				//プレイヤーが居ないなら
 				if (player_flg == false)
 				{
+					//プレイヤーリスポーン地点の設定
+					player_respawn = { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT };
 					//プレイヤーの生成
 					CreateObject(new Player, player_respawn, { PLAYER_HEIGHT,PLAYER_WIDTH }, GREEN);
 					player_flg = true;
@@ -501,11 +517,22 @@ bool GameMain::CheckInScreen(Object* _object)const
 {
 	//画面内に居るか判断
 	if (_object != nullptr &&
-		_object->GetLocation().x > camera_location.x - _object->GetErea().width - 150 &&
-		_object->GetLocation().x < camera_location.x + SCREEN_WIDTH + _object->GetErea().width + 150 &&
-		_object->GetLocation().y > camera_location.y - _object->GetErea().height - 150 &&
-		_object->GetLocation().y < camera_location.y + SCREEN_HEIGHT + _object->GetErea().height + 150
+		(
+			(_object->GetObjectType() != ENEMY && 
+			 _object->GetLocation().x > camera_location.x - _object->GetErea().width - 150 &&
+		     _object->GetLocation().x < camera_location.x + SCREEN_WIDTH + _object->GetErea().width + 150 &&
+		     _object->GetLocation().y > camera_location.y - _object->GetErea().height - 150 &&
+		     _object->GetLocation().y < camera_location.y + SCREEN_HEIGHT + _object->GetErea().height + 150
+		    )
+			||
+		    (_object->GetObjectType()==ENEMY &&
+		     _object->GetLocation().x > camera_location.x - _object->GetErea().width&&
+		     _object->GetLocation().x < camera_location.x + SCREEN_WIDTH + _object->GetErea().width&&
+		     _object->GetLocation().y > camera_location.y - _object->GetErea().height&&
+		     _object->GetLocation().y < camera_location.y + SCREEN_HEIGHT + _object->GetErea().height
+		     ) 
 		)
+	   )
 	{
 		return true;
 	}

@@ -179,6 +179,8 @@ void Stage::Update()
 			type = WATER;
 			draw_wood_flg = false;
 		}
+		//火が消える時間をリセット
+		delete_fire = 0;
 	}
 
 	//リセット
