@@ -6,6 +6,7 @@
 #include "Utility/ResourceManager.h"
 #include "Utility/common.h"
 #include "Scene/Title.h"
+#include "Scene/Help.h"
 
 #include "Scene/GameMain.h"
 
@@ -28,7 +29,7 @@ int WINAPI WinMain(_In_ HINSTANCE  hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     SetDrawScreen(DX_SCREEN_BACK);                 // 描画先画面を裏にする（ダブルバッファリング）
 
     //シーンオブジェクト作成
-    SceneManager* sceneMng = new SceneManager((AbstractScene*) new GameMain(0));
+    SceneManager* sceneMng = new SceneManager((AbstractScene*) new Title);
 
     //シーンオブジェクト初期化
     sceneMng->Initialize();
@@ -65,9 +66,9 @@ int WINAPI WinMain(_In_ HINSTANCE  hInstance, _In_opt_ HINSTANCE hPrevInstance, 
                 break;
             }
             ScreenFlip(); // 裏画面の内容を表画面に反映する
+
             // 画面の文字達を消す
             clsDx();
-
         };
     }
     catch (const char* err_log)

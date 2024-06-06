@@ -63,6 +63,7 @@ private:
     Location player_respawn;    //プレイヤーが生成された地点を保存しておく
     bool player_respawn_flg;    //プレイヤーをリスポーンさせるか判断
 
+    bool fadein_flg;            //遷移してきたときのフェードイン演出
 public:
 
     //コンストラクタ

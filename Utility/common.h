@@ -22,4 +22,6 @@
 
 #define DEFAULT_FREQ 40000			//音声再生速度用 通常速度
 
+#define FADEIN_TIME 120				//ゲームメインに遷移して来た時のフェードイン演出の時間
+
 

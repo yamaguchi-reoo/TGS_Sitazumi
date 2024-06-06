@@ -489,7 +489,6 @@ void Player::Draw()const
 		DrawCircleAA(searchedObj->GetLocalLocation().x + searchedObj->GetErea().width / 2,
 			searchedObj->GetLocalLocation().y + searchedObj->GetErea().height / 2, 40, 40, 0xffff00, FALSE, 5);
 	}
-	
 }
 
 void Player::Finalize()
@@ -803,7 +802,7 @@ bool Player::ChangePlayerColor()
 void Player::SelectObject()
 {
 	bool flg = false;//選択したかどうか
-	if (searchedObjFlg && searchedObj != nullptr) {
+	if (swapTimer == -1 && searchedObjFlg && searchedObj != nullptr) {
 		
 		//X軸
 		if ((PadInput::TipLeftLStick(STICKL_X) > 0.8f || PadInput::OnButton(XINPUT_BUTTON_DPAD_RIGHT)) && oldStick[0]) {
