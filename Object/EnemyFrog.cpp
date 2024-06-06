@@ -31,6 +31,7 @@ void EnemyFrog::Initialize(Location _location, Erea _erea, int _color_data, int 
 
 	object_pos = _object_pos;
 
+	stageHitFlg[1][bottom] = true;
 	jump_se = ResourceManager::SetSound("Resource/Sounds/Enemy/frog_jump.wav");
 	damage_se[0] = ResourceManager::SetSound("Resource/Sounds/Enemy/enemy_damage_fire.wav");
 	damage_se[1] = ResourceManager::SetSound("Resource/Sounds/Enemy/enemy_damage_grass.wav");
