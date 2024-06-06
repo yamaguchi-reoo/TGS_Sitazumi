@@ -7,6 +7,8 @@ class Help :
 {
 private:
 
+    int hStrWidth, hStrLen;
+
 public:
     //コンストラクタ
     Help();
