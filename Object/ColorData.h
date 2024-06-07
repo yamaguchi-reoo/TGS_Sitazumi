@@ -30,6 +30,7 @@ public:
 		{
 			return color;
 		}
+		return -1;
 	}
 };
 
