@@ -151,7 +151,7 @@ void EffectSpawner::Update(GameMain* _g)
 				if (swap_anim[i].timer < (SWAP_EFFECT_TIMER - 10) && swap_anim[i].update_once[j] == false)
 				{
 					swap_anim[i].move_rad[j] = atan2f(swap_anim[i].goal.y - swap_anim[i].location[j].y,swap_anim[i].goal.x - swap_anim[i].location[j].x);
-					swap_anim[i].speed = (sqrtf(powf(fabsf(swap_anim[i].location[j].x - swap_anim[i].goal.x), 2) + powf(fabsf(swap_anim[i].location[j].y - swap_anim[i].goal.y), 2)) / SWAP_EFFECT_SPEED*1.5f);
+					swap_anim[i].speed = (sqrtf(powf(fabsf(swap_anim[i].location[j].x - swap_anim[i].goal.x), 2) + powf(fabsf(swap_anim[i].location[j].y - swap_anim[i].goal.y), 2)) / SWAP_EFFECT_SPEED*1.2f);
 					swap_anim[i].update_once[j] = true;
 				}
 			}
@@ -236,12 +236,9 @@ void EffectSpawner::Draw()const
 		}
 		if (swap_anim_timer > 0)
 		{
-			for (int j = 0; j < SWAP_EFFECT_NUM; j++)
-			{
-				SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200 - (swap_anim_timer * 20));
-				DrawBoxAA(swap_anim[i].local_location[j].x - (swap_anim_timer * 10), swap_anim[i].local_location[j].y - (swap_anim_timer * 10), swap_anim[i].local_location[j].x + swap_anim[i].erea.width + (swap_anim_timer * 5), swap_anim[i].local_location[j].y + swap_anim[i].erea.height + (swap_anim_timer * 5), swap_anim[i].color, true);
-				SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
-			}
+			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200 - (swap_anim_timer * 20));
+			DrawBoxAA(swap_anim[i].goal.x - (swap_anim_timer * 10), swap_anim[i].goal.y - (swap_anim_timer * 10), swap_anim[i].goal.x + swap_anim[i].erea.width + (swap_anim_timer * 5), swap_anim[i].goal.y + swap_anim[i].erea.height + (swap_anim_timer * 5), swap_anim[i].color, true);
+			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 		}
 	}
 }
