@@ -36,6 +36,7 @@
     <ClCompile Include="Object\Weather.cpp" />
     <ClCompile Include="Object\WeatherManager.cpp" />
     <ClCompile Include="Scene\EditScene.cpp" />
+    <ClCompile Include="Scene\End.cpp" />
     <ClCompile Include="Scene\GameMain.cpp" />
     <ClCompile Include="Scene\Help.cpp" />
     <ClCompile Include="Scene\SceneManager.cpp" />
@@ -64,6 +65,7 @@
     <ClInclude Include="Object\WeatherManager.h" />
     <ClInclude Include="Scene\AbstractScene.h" />
     <ClInclude Include="Scene\EditScene.h" />
+    <ClInclude Include="Scene\End.h" />
     <ClInclude Include="Scene\GameMain.h" />
     <ClInclude Include="Scene\Help.h" />
     <ClInclude Include="Scene\SceneManager.h" />
