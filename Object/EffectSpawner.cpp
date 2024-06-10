@@ -136,22 +136,22 @@ void EffectSpawner::Update(GameMain* _g)
 			//エフェクトの移動
 			if (swap_anim[i].move_flg == true)
 			{
-				if (swap_anim[i].timer > (SWAP_EFFECT_TIMER - 10))
+				if (swap_anim[i].timer > ((float)SWAP_EFFECT_TIMER - ((float)SWAP_EFFECT_TIMER/3.5f)))
 				{
-					swap_anim[i].location[j].x += 20 * cosf(swap_anim[i].move_rad[j]);
-					swap_anim[i].location[j].y += 20 * sinf(swap_anim[i].move_rad[j]);
+					swap_anim[i].location[j].x += (swap_anim[i].timer/3) * cosf(swap_anim[i].move_rad[j]);
+					swap_anim[i].location[j].y += (swap_anim[i].timer/3) * sinf(swap_anim[i].move_rad[j]);
 				}
-				else
+				else if(swap_anim[i].timer < ((float)SWAP_EFFECT_TIMER - ((float)SWAP_EFFECT_TIMER / 2.9f)))
 				{
 					swap_anim[i].location[j].x += swap_anim[i].speed * cosf(swap_anim[i].move_rad[j]);
 					swap_anim[i].location[j].y += swap_anim[i].speed * sinf(swap_anim[i].move_rad[j]);
 				}
 				SpawnEffect(swap_anim[i].location[j], swap_anim[i].erea, 1, 5, swap_anim[i].color);
 				//radの更新
-				if (swap_anim[i].timer < (SWAP_EFFECT_TIMER - 10) && swap_anim[i].update_once[j] == false)
+				if (swap_anim[i].timer < ((float)SWAP_EFFECT_TIMER - ((float)SWAP_EFFECT_TIMER / 3.5f)) && swap_anim[i].update_once[j] == false)
 				{
 					swap_anim[i].move_rad[j] = atan2f(swap_anim[i].goal.y - swap_anim[i].location[j].y,swap_anim[i].goal.x - swap_anim[i].location[j].x);
-					swap_anim[i].speed = (sqrtf(powf(fabsf(swap_anim[i].location[j].x - swap_anim[i].goal.x), 2) + powf(fabsf(swap_anim[i].location[j].y - swap_anim[i].goal.y), 2)) / SWAP_EFFECT_SPEED*1.2f);
+					swap_anim[i].speed = (sqrtf(powf(fabsf(swap_anim[i].location[j].x - swap_anim[i].goal.x), 2) + powf(fabsf(swap_anim[i].location[j].y - swap_anim[i].goal.y), 2)) / SWAP_EFFECT_SPEED);
 					swap_anim[i].update_once[j] = true;
 				}
 			}
@@ -396,7 +396,8 @@ int EffectSpawner::Swap(Object* _object1, Object* _object2)
 	swap_anim[0].speed = (sqrtf(g) / SWAP_EFFECT_SPEED);
 	swap_anim[1].speed = swap_anim[0].speed;
 
-	swap_anim[0].timer = (int)((sqrtf(g) / swap_anim[0].speed) * 0.9f) + SWAP_EFFECT_STOP_TIME;
+	//swap_anim[0].timer = (int)((sqrtf(g) / swap_anim[0].speed) * 0.9f) + SWAP_EFFECT_STOP_TIME;
+	swap_anim[0].timer = SWAP_EFFECT_TIMER + SWAP_EFFECT_STOP_TIME;
 	if (swap_anim[0].timer < 0)
 	{
 		swap_anim[0].timer = 0;

@@ -15,6 +15,8 @@ int ResourceManager::anim;
 FireAnim ResourceManager::fire_anim[ANIM_BLOCK_NUM];
 WoodAnim ResourceManager::wood_anim[ANIM_BLOCK_NUM];
 WaterAnim ResourceManager::water_anim[ANIM_BLOCK_NUM];
+int ResourceManager::screen = MakeScreen(BOX_WIDTH, BOX_HEIGHT);
+int ResourceManager::anim_handle[3];
 
 void ResourceManager::DeleteResource()
 {
@@ -64,6 +66,11 @@ void ResourceManager::StageAnimInitialize()
 
 void ResourceManager::StageAnimUpdate()
 {
+	//ハンドルリセット
+	for (int i = 0; i < 3; i++)
+	{
+		anim_handle[i] = 0;
+	}
 	//アニメーション用変数
 	if (++anim > 60)
 	{
@@ -129,30 +136,30 @@ void ResourceManager::StageAnimUpdate()
 
 void ResourceManager::StageAnimDraw(Location _location, int _type)
 {
-	switch (_type)
-	{
-		//炎
+		switch (_type)
+		{
+			//炎
 		case FIRE:
 			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 40);
 			DrawBoxAA(_location.x, _location.y, _location.x + BOX_WIDTH, _location.y + BOX_HEIGHT, 0xff0000, true);
 			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 			for (int i = 0; i < ANIM_BLOCK_NUM; i++)
-			{
-				if (i % 3 == 0)
-				{
-					DrawBoxAA(fire_anim[i].shift.x + _location.x,
-						fire_anim[i].shift.y + _location.y,
-						fire_anim[i].shift.x + fire_anim[i].erea.width + _location.x,
-						fire_anim[i].shift.y + fire_anim[i].erea.height + _location.y, 0xff9900, true);
-				}
-				else
-				{
-					DrawBoxAA(fire_anim[i].shift.x + _location.x,
-						fire_anim[i].shift.y + _location.y,
-						fire_anim[i].shift.x + fire_anim[i].erea.width + _location.x,
-						fire_anim[i].shift.y + fire_anim[i].erea.height + _location.y, 0xff0000, true);
-				}
-			}
+					{
+						if (i % 3 == 0)
+						{
+							DrawBoxAA(fire_anim[i].shift.x + _location.x,
+								fire_anim[i].shift.y + _location.y,
+								fire_anim[i].shift.x + fire_anim[i].erea.width + _location.x,
+								fire_anim[i].shift.y + fire_anim[i].erea.height + _location.y, 0xff9900, true);
+						}
+						else
+						{
+							DrawBoxAA(fire_anim[i].shift.x + _location.x,
+								fire_anim[i].shift.y + _location.y,
+								fire_anim[i].shift.x + fire_anim[i].erea.width + _location.x,
+								fire_anim[i].shift.y + fire_anim[i].erea.height + _location.y, 0xff0000, true);
+						}
+					}
 			break;
 			//木
 		case WOOD:
@@ -178,9 +185,7 @@ void ResourceManager::StageAnimDraw(Location _location, int _type)
 					water_anim[i].shift1.y + water_anim[i].erea.height + _location.y, 0x0000ee, true);
 			}
 			break;
-	default:
-		break;
-	}
+		}
 }
 
 int ResourceManager::SetGraph(const char* p)
