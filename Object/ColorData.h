@@ -7,12 +7,11 @@
 
 class ColorData
 {
-protected:
-	//色情報
-	//マクロの4色から入れる
-	int color;
-
 public:
+	//色情報
+//マクロの4色から入れる
+	int color;
+	int draw_color;		//描画する色
 	//色の交換
 	void ChangeColor(ColorData* cd);
 
@@ -30,6 +29,12 @@ public:
 		{
 			return color;
 		}
+		return -1;
+	}
+
+	void SetDrawColor(int c)
+	{
+		draw_color = c;
 	}
 };
 

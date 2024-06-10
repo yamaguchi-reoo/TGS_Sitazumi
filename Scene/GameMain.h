@@ -38,6 +38,7 @@ private:
     int attack_num;
 
     Object* object[OBJECT_NUM] = { nullptr };    //オブジェクト格納
+    Object* now_current_object;                       //現在交換対象になっているオブジェクト
     WeatherManager* weather;                        //天気管理オブジェクト
     EffectSpawner* effect_spawner;                  //エフェクト管理オブジェクト
     BackGround* back_ground;                        //背景描画用
@@ -153,5 +154,8 @@ public:
 
     //現在のステージの取得
     int GetNowStage()const { return now_stage; }
+
+    //現在交換対象になっているオブジェクトを設定する
+    void SetNowCurrentObject(Object* _object);
 };
 

@@ -98,6 +98,15 @@ AbstractScene* GameMain::Update()
 							object[j]->Hit(object[i]);
 						}
 					}
+					//プレイヤーに選択肢されているオブジェクトなら、描画色を変える
+					if (object[i] == now_current_object)
+					{
+						object[i]->SetDrawColor(WHITE);
+					}
+					else
+					{
+						object[i]->SetDrawColor(object[i]->GetColorData());
+					}
 				}
 			}
 			//管理クラスの更新
@@ -629,4 +638,9 @@ void GameMain::BossUpdate()
 			move_object_num++;
 		}
 	}
+}
+
+void GameMain::SetNowCurrentObject(Object* _object)
+{
+	now_current_object = _object;
 }

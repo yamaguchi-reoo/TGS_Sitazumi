@@ -61,7 +61,7 @@ void Stage::Initialize(Location _location, Erea _erea, int _color_data,int _obje
 		can_swap = FALSE;
 	}
 	old_color = color;
-
+	draw_color = color;
 	object_pos = _object_pos;
 
 	//天気更新ブロックなら、高さをステージの高さいっぱいに変更
@@ -209,7 +209,7 @@ void Stage::Draw()const
 			break;
 			//地面 (白)
 		case WHITE_BLOCK:
-			DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, true);
+			DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, draw_color, true);
 			break;
 			//地面（灰）
 		case GRAY_BLOCK:
@@ -221,16 +221,16 @@ void Stage::Draw()const
 			break;
 			//地面(赤、緑、青)
 		case RED_BLOCK:
-			DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, true);
+			DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, draw_color, true);
 			break;
 		case GREEN_BLOCK:
-			DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, true);
+			DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, draw_color, true);
 			DrawBoxAA(local_location.x + 10, local_location.y + 20, local_location.x + 15, local_location.y + 25, 0x00ee00, true);
 			DrawBoxAA(local_location.x + 30, local_location.y + 15, local_location.x + 35, local_location.y + 20, 0x00ee00, true);
 			DrawBoxAA(local_location.x + 25, local_location.y + 35, local_location.x + 30, local_location.y + 40, 0x00ee00, true);
 			break;
 		case BLUE_BLOCK:
-			DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, true);
+			DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, draw_color, true);
 			break;
 			//ダメージゾーンの描画
 		case FIRE_BLOCK:

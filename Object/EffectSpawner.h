@@ -1,6 +1,7 @@
 #pragma once
 #include "Object.h"
 #define EFFECT_NUM	100		//エフェクトの最大数
+#define SWAP_EFFECT_NUM 10		//一回のエフェクト時に発生するパーティクルの数
 
 enum EffectList {
 	PlayerSpawnEffect = 0,
@@ -34,13 +35,16 @@ struct SwapAnim
 {
 	bool move_flg;          //移動するか判断
 	Location start;          //オブジェクトの座標（アニメーション開始地点）
+	Location goal;          //相手のオブジェクトの座標（アニメーション終了地点）
 	Erea erea;               //オブジェクトのサイズ
-	Location location;      //交換エフェクト用変数
-	Location local_location;	//ローカル座標
-	float move_rad;        //交換エフェクト移動用
+	Location location[SWAP_EFFECT_NUM];      //交換エフェクト用変数
+	Location local_location[SWAP_EFFECT_NUM];	//ローカル座標
+	float default_rad;						   //直線で移動するときのradを格納
+	float move_rad[SWAP_EFFECT_NUM];           //交換エフェクト移動用
+	bool update_once[SWAP_EFFECT_NUM];           //交換エフェクト移動の向きを一回だけ変更する用
 	int color;             //色情報
 	int timer;              //エフェクト時間
-	int speed;              //エフェクト速度
+	float speed;              //エフェクト速度
 };
 
 class EffectSpawner

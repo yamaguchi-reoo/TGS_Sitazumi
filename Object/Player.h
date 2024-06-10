@@ -68,7 +68,6 @@ private:
 	int now_riding;		//今乗っているブロックに応じて再生するSEを変える
 
 
-
 public:
 	Player();
 	~Player();
