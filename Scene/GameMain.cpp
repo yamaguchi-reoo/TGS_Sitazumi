@@ -92,7 +92,7 @@ AbstractScene* GameMain::Update()
 					for (int j = i + 1; object[j] != nullptr; j++)
 					{
 						//各オブジェクトとの当たり判定
-						if (object[i] != nullptr && CheckInScreen(object[j]) == true && object[i]->HitBox(object[j]) && object[j] != object[player_object])
+						if (object[i] != nullptr && CheckInScreen(object[j]) == true && object[i]->HitBox(object[j]) && j != player_object)
 						{
 							object[i]->Hit(object[j]);
 							object[j]->Hit(object[i]);
@@ -528,10 +528,10 @@ bool GameMain::CheckInScreen(Object* _object)const
 	if (_object != nullptr &&
 		(
 			(_object->GetObjectType() != ENEMY && 
-			 _object->GetLocation().x > camera_location.x - _object->GetErea().width - 150 &&
-		     _object->GetLocation().x < camera_location.x + SCREEN_WIDTH + _object->GetErea().width + 150 &&
-		     _object->GetLocation().y > camera_location.y - _object->GetErea().height - 150 &&
-		     _object->GetLocation().y < camera_location.y + SCREEN_HEIGHT + _object->GetErea().height + 150
+			 _object->GetLocation().x > camera_location.x - _object->GetErea().width - 80 &&
+		     _object->GetLocation().x < camera_location.x + SCREEN_WIDTH + _object->GetErea().width + 80 &&
+		     _object->GetLocation().y > camera_location.y - _object->GetErea().height - 80 &&
+		     _object->GetLocation().y < camera_location.y + SCREEN_HEIGHT + _object->GetErea().height + 80
 		    )
 			||
 		    (_object->GetObjectType()==ENEMY &&
