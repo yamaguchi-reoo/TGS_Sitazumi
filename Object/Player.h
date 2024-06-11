@@ -66,11 +66,13 @@ private:
 	Location aaa;
 
 	int pState;//待機、移動、ジャンプ
+	int pStateOld;//待機、移動、ジャンプ
 	bool moveFrontFlg;//向いてる方向
 	bool animFlg;
 	float angle[4];//両手両足
 	float mo = 0;
 	float ang = 0;
+
 
 	int walk_se[4];		//歩行SE格納
 	int jump_se;		//ジャンプSE格納
