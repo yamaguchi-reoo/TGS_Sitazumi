@@ -70,21 +70,22 @@ void Help::Draw()const
 	// 上
 	DrawLineAA(0.f, 180.f, 1280.f, 180.f, 0xff0000);
 	// 下
-	//DrawLineAA(0.f, 540.f, 1280.f, 540.f, 0xff0000);
+	DrawLineAA(0.f, 540.f, 1280.f, 540.f, 0xff0000);
 	// 大外枠線
 	//DrawBoxAA(0.f, 0.f, 1280.f, 720.f, 0xff0000, FALSE);
 
 	//DrawLine()
 
-	 SetFontSize(90); //デフォルトでは 6
+	 SetFontSize(60); //デフォルトでは 6
 	// 多分漢字の一文字の長さは 25
-	DrawString(458, 130, "操作方法", 0xffffff);
-	DrawString(410, 310, "色について", 0xffffff);
-	DrawString(550, 495, "属性", 0xffffff);
+	DrawString(518, 145, "操作方法", 0xffffff);
+	DrawString(490, 330, "色について", 0xffffff);
+	DrawString(640, 540, "属性", 0xffffff);
 
 	// カーソル
-	DrawBox(460, 130, 547, 220, 0xff0000, FALSE);
+	//DrawBox(460, 130, 547, 220, 0xff0000, FALSE);
 	//DrawTriangleAA(460.f, 130.f, 547.f, 175.f, 460.f, 220.f, 0xff0000, TRUE);	+ 87
-	DrawTriangleAA(370.f + -50.f, 130.f + 180.f, 457.f - 50.f, 175.f + 180.f, 370.f - 50.f, 220.f + 180.f, 0xffffff, TRUE);
-	DrawTriangleAA(904.f, 130.f, 817.f, 175.f, 904.f, 220.f, 0xffffff, TRUE);
+	//DrawTriangleAA(370.f + -50.f, 130.f + 180.f, 457.f - 50.f, 175.f + 180.f, 370.f - 50.f, 220.f + 180.f, 0xffffff, TRUE);
+	//DrawTriangleAA(370.f + -50.f, 130.f + 180.f, 457.f - 50.f, 175.f + 180.f, 370.f - 50.f, 220.f + 180.f, 0xffffff, TRUE);
+	//DrawTriangleAA(904.f, 130.f, 817.f, 175.f, 904.f, 220.f, 0xffffff, TRUE);
 }
