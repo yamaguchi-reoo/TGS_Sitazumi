@@ -201,7 +201,7 @@ void GameMain::Draw() const
 	if (fadein_flg == true)
 	{
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 - (frame*(255/FADEIN_TIME) +3));
-		DrawBox(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0x000000, true);
+		DrawBox(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0xffffff, true);
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 	}
 #ifdef _DEBUG

@@ -4,6 +4,10 @@
 #include "DxLib.h"
 #include<vector>
 #include<random>
+
+#define BG_BLOCK_WIDTH_NUM 32   //ブロックの横の数
+#define BG_BLOCK_HEIGHT_NUM 18   //ブロックの横の数
+
 enum class TITLE_MENU
 {
     GAME_START = 0,
@@ -16,6 +20,18 @@ static char menu_string[3][256] =
     "PLAY",
     "HELP",
     "END"
+};
+
+struct BackGroundImage {
+    bool flg;
+    Location location;
+    Erea erea;
+    bool move_flg;
+    Location move_goal;
+    float move_speed;
+    int color;
+    float move_rad;
+    int anim_size;
 };
 
 class Title :
@@ -48,6 +64,13 @@ private:
     std::mt19937 mt_;
     std::vector<XYIdx> tiles_;
 
+    int logo_img;       //タイトルロゴの格納
+    Erea logo_size;         //ロゴ画像の大きさ
+    int swap_se;
+
+    BackGroundImage bg[BG_BLOCK_WIDTH_NUM][BG_BLOCK_HEIGHT_NUM];
+    int a_num;
+    
 public:
     //コンストラクタ
     Title();
@@ -69,6 +92,12 @@ public:
 
     //ゲームを終了するときの処理
     void GameEnd();
+
+    //タイトルの背景更新
+    void bgUpdate();
+
+    //４色の中から一定確率で抽選
+    int GetRandColor();
 };
 
 
