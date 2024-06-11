@@ -46,7 +46,7 @@ private:
 	int state_change_time;		// 状態変更のタイミング
 
 	std::vector<Location> vertices; // ボスの頂点情報
-	std::array<Location, 12> wing;
+	std::array<Location, 60> wing;
 	std::array<Location, 12> wing_mirror;
 	std::vector<Location> warp_pos; // ワープ位置情報
 

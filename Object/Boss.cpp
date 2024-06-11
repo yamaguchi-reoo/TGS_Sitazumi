@@ -39,8 +39,8 @@ Boss::~Boss()
 
 void Boss::Initialize(Location _location, Erea _erea, int _color_data, int _object_pos)
 {
-	//location = { SCREEN_WIDTH - 200, SCREEN_HEIGHT - 300};//x座標 ,y座標 
-	location = { SCREEN_WIDTH / 2, SCREEN_HEIGHT - 300 };//x座標 ,y座標 
+	location = { SCREEN_WIDTH - 200, SCREEN_HEIGHT - 300};//x座標 ,y座標 
+	//location = { SCREEN_WIDTH / 2, SCREEN_HEIGHT - 300 };//x座標 ,y座標 
 	erea = { _erea };	   //高さ、幅	
 	color = _color_data;
 
@@ -72,11 +72,11 @@ void Boss::Update(GameMain* _g)
 	vector = { 1.0f ,1.0f };
 
 	SetPosition();  // 更新時に座標を保存
-	SetWingPositions();
+	//SetWingPositions();
 	UpdateWingPositions();
 	Location player_pos = _g->GetPlayerLocation();
 
-	if (player_pos.x > 120) {
+	if (player_pos.x > 140) {
 
 		switch (boss_state)
 		{
@@ -85,7 +85,7 @@ void Boss::Update(GameMain* _g)
 			Move(_g);
 			break;
 		case BossState::ATTACK:
-			//BossAtack(_g);
+			BossAtack(_g);
 			break;
 		case BossState::DEATH:
 			_g->DeleteObject(object_pos);
@@ -450,14 +450,6 @@ void Boss::DrawWings() const
 			local_location.x + wing[i + 2].x + 10, local_location.y + wing[i + 2].y + 20,
 			local_location.x + wing[i + 3].x + 0, local_location.y + wing[i + 3].y + 30, 0x000000, TRUE);
 	}
-
-	// 羽の頂点を反転させて左側の座標を計算
-	for (size_t i = 0; i < wing_mirror.size(); i += 4) {
-		DrawQuadrangleAA(local_location.x - wing_mirror[i].x, local_location.y + wing_mirror[i].y,
-			local_location.x - wing_mirror[i + 1].x, local_location.y + wing_mirror[i + 1].y,
-			local_location.x - wing_mirror[i + 2].x, local_location.y + wing_mirror[i + 2].y,
-			local_location.x - wing_mirror[i + 3].x, local_location.y + wing_mirror[i + 3].y, 0x000000, TRUE);
-	}
 }
 
 void Boss::UpdateWingPositions()
@@ -498,7 +490,8 @@ void Boss::SetWingPositions()
 	for (size_t i = 0; i < wing.size(); ++i)
 	{
 		// wing[i] の X 座標を反転して wing_mirror[i] の X 座標にセット
-		wing_mirror[i].x = wing[i].x;
+		wing_mirror[i].x = center.x - (wing[i].x - center.x); // X座標を反転
+
 		// wing[i] の Y 座標をそのまま wing_mirror[i] の Y 座標にセット
 		wing_mirror[i].y = wing[i].y;
 	}
