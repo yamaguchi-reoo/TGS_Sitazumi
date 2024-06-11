@@ -73,6 +73,7 @@ private:
 	float mo = 0;
 	float ang = 0;
 
+
 	int walk_se[4];		//歩行SE格納
 	int jump_se;		//ジャンプSE格納
 	int damage_se[3];	//被ダメージSE格納
