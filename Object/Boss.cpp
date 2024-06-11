@@ -85,7 +85,7 @@ void Boss::Update(GameMain* _g)
 			Move(_g);
 			break;
 		case BossState::ATTACK:
-			//BossAtack(_g);
+			BossAtack(_g);
 			break;
 		case BossState::DEATH:
 			_g->DeleteObject(object_pos);

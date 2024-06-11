@@ -152,8 +152,11 @@ AbstractScene* GameMain::Update()
 	{
 		SetStage(2, false);
 	}
-	//test->Update(this);
-	//test->SetScreenPosition(camera_location);
+	
+	if (object[player_object]->GetObjectType() != PLAYER) {
+		int a;
+		a = 0;
+	}
 #endif
 
 	return this;
@@ -231,42 +234,45 @@ void GameMain::CreateObject(Object* _object, Location _location, Erea _erea, int
 
 void GameMain::DeleteObject(int i)
 {
-	//想定外のアクセスをはじく
-	if (this == nullptr || i < 0)
+	if (object[i] != nullptr)
 	{
-		return;
-	}
-	//プレイヤーが消されたなら
-	if (i == player_object)
-	{
-		//player_objectをリセット
-		player_object = 0;
-	}
-	//ボスが消されたなら
-	if (i == boss_object)
-	{
-		//boss_objectをリセット
-		boss_object = 0;
-	}
-	//オブジェクトを前に寄せる
-	for (int j = i; object[j] != nullptr; j++)
-	{
-		object[j] = object[j + 1];
-		if (object[j] != nullptr)
+		int a;
+		a = 0;
+
+
+
+		//プレイヤーが消されたなら
+		if (i == player_object)
 		{
-			object[j]->SetObjectPos(j);
-			if (object[j]->GetObjectType() == PLAYER)
-			{
-				player_object = j;
-			}
-			if (object[j]->GetObjectType() == BOSS)
-			{
-				boss_object = j;
-			}
+			//player_objectをリセット
+			player_object = 0;
 		}
-		else
+		//ボスが消されたなら
+		if (i == boss_object)
 		{
-			break;
+			//boss_objectをリセット
+			boss_object = 0;
+		}
+		//オブジェクトを前に寄せる
+		for (int j = i; object[j] != nullptr; j++)
+		{
+			object[j] = object[j + 1];
+			if (object[j] != nullptr)
+			{
+				object[j]->SetObjectPos(j);
+				if (object[j]->GetObjectType() == PLAYER)
+				{
+					player_object = j;
+				}
+				if (object[j]->GetObjectType() == BOSS)
+				{
+					boss_object = j;
+				}
+			}
+			else
+			{
+				break;
+			}
 		}
 	}
 	object_num--;
