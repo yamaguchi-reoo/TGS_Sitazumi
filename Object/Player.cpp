@@ -216,26 +216,6 @@ void Player::Update(GameMain* _g)
 			searchFlg = false;
 		}*/
 		//Yボタンで色の交換
-	//Bボタンで色の交換ができるモードと切り替え
-	if (PadInput::OnPressed(XINPUT_BUTTON_B)) {
-		SelectObject();
-		searchFlg = true;
-	}
-	else if (PadInput::OnRelease(XINPUT_BUTTON_B) && searchFlg && searchedObj != nullptr && swapTimer < 0) {
-		//交換エフェクトにかかる時間を受け取る
-		swapTimer = _g->Swap(this, searchedObj);
-		objSelectNumTmp = 0;
-		for (int i = 0; i < OBJECT_NUM; i++)
-		{
-			oldSearchedObjAll[i] = nullptr;
-		}
-		//描画する色を白に
-		draw_color = WHITE;
-	}
-	else if (PadInput::OnRelease(XINPUT_BUTTON_B) /*&& !searchedObjFlg*/ /*&& searchedObj == nullptr*/) {//交換できるオブジェクトが画面内になかった時
-		searchFlg = false;
-	}
-
 		/*if (searchedObj != nullptr) {
 			objNum = 0;
 		}*/
@@ -244,37 +224,6 @@ void Player::Update(GameMain* _g)
 		{
 			MoveAim();
 		}
-	}
-
-
-	//交換後エフェクト用の硬直
-	if (swapTimer >= 0)
-	{
-		if (swapTimer <= SWAP_EFFECT_STOP_TIME)
-		{
-			if (swap_once == false)
-			{
-				ChangePlayerColor();
-				swap_once = true;
-			}
-
-		}
-		//硬直が終わったら色を交換
-		if (--swapTimer < 0)
-		{
-			searchFlg = false;
-			swapTimer = -1;
-			searchedObj = nullptr;
-			swap_once = false;
-		}
-
-	}
-
-	MoveActor();
-	PlayerAnim();
-	if (swapTimer == -1)
-	{
-		MoveAim();
 	}
 
 	if (searchFlg) {
