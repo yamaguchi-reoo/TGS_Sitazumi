@@ -69,13 +69,13 @@ AbstractScene* Help::Update()
 
 void Help::Draw()const
 {
-	DrawString(0, 10, "Help", 0x00ff00);
+	//DrawString(0, 10, "Help", 0x00ff00);
 
 	//DrawFormatString(30, 30, 0xffffff, "%d", hStrWidth);
 
-	DrawFormatString(0, 60, GetColor(255, 0, 0), "MouseX : %d MouseY : %d", KeyInput::GetMouseCursor().x, KeyInput::GetMouseCursor().y);
-	DrawFormatString(0, 80, GetColor(255, 0, 0), "CtrY : %0.1f", PadInput::TipLeftLStick(STICKL_Y));
-	DrawFormatString(0, 100, GetColor(255, 0, 0), "menu : %d",MenuNumber);
+	//DrawFormatString(0, 60, GetColor(255, 0, 0), "MouseX : %d MouseY : %d", KeyInput::GetMouseCursor().x, KeyInput::GetMouseCursor().y);
+	//DrawFormatString(0, 80, GetColor(255, 0, 0), "CtrY : %0.1f", PadInput::TipLeftLStick(STICKL_Y));
+	//DrawFormatString(0, 100, GetColor(255, 0, 0), "menu : %d",MenuNumber);
 
 	//LineThicknessは線の太さ
 	//大外側
