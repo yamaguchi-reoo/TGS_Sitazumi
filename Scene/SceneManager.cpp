@@ -13,7 +13,7 @@ void SceneManager::Finalize()
 AbstractScene* SceneManager::Update() {
 	AbstractScene* p = mScene->Update();
 
-	if (p != mScene) {
+	if (p != mScene && p != nullptr) {
 		mScene->Finalize();
 		delete mScene;
 		mScene = p; // 次に表示したいシーン

@@ -37,6 +37,7 @@ struct SwapAnim
 	bool move_flg;          //移動するか判断
 	Location start;          //オブジェクトの座標（アニメーション開始地点）
 	Location goal;          //相手のオブジェクトの座標（アニメーション終了地点）
+	Location goal_local;    //相手のオブジェクトのローカル座標（アニメーション終了地点）
 	Erea erea;               //オブジェクトのサイズ
 	Location location[SWAP_EFFECT_NUM];      //交換エフェクト用変数
 	Location old_location[SWAP_EFFECT_NUM][AFTERIMAGE_NUM];      //残像表示用
@@ -54,6 +55,7 @@ class EffectSpawner
 private:
 	SwapAnim swap_anim[2];  //交換エフェクト用
 	int swap_anim_timer;    //交換エフェクト時間用
+	bool change_effect_flg;		//色が変わるエフェクト用
 	EffectAnim effect[EFFECT_NUM];
 	int frame;		//フレーム測定
 

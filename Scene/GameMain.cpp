@@ -231,6 +231,11 @@ void GameMain::CreateObject(Object* _object, Location _location, Erea _erea, int
 
 void GameMain::DeleteObject(int i)
 {
+	//想定外のアクセスをはじく
+	if (this == nullptr || i < 0)
+	{
+		return;
+	}
 	//プレイヤーが消されたなら
 	if (i == player_object)
 	{
@@ -630,14 +635,14 @@ void GameMain::BossUpdate()
 	//	}
 	//}
 
-	for (int i = 0; i < attack_num; i++)
-	{
-		if (object[boss_attack[i]] != nullptr)
-		{
-			object[boss_attack[i]]->Update(this);
-			move_object_num++;
-		}
-	}
+	//for (int i = 0; i < attack_num; i++)
+	//{
+	//	if (object[boss_attack[i]] != nullptr)
+	//	{
+	//		object[boss_attack[i]]->Update(this);
+	//		move_object_num++;
+	//	}
+	//}
 }
 
 void GameMain::SetNowCurrentObject(Object* _object)
