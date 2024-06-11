@@ -14,6 +14,13 @@ public:
 		left,
 		right
 	};
+
+	enum playerState
+	{
+		idle,
+		moving,
+		jump
+	};
 private:
 	int frame;				//フレーム測定用
 	Location vector; //プレイヤーのベクトル
@@ -58,8 +65,12 @@ private:
 	float move[4] = { 0,0,0,0 };
 	Location aaa;
 
+	int pState;//待機、移動、ジャンプ
+	bool moveFrontFlg;//向いてる方向
+	bool animFlg;
 	float angle[4];//両手両足
 	float mo = 0;
+	float ang = 0;
 
 	int walk_se[4];		//歩行SE格納
 	int jump_se;		//ジャンプSE格納
@@ -92,5 +103,7 @@ public:
 
 	void PlayerSound();		//プレイヤーの状態
 
+	void PlayerAnim();
+	void DrawPlayer()const;
 };
 
