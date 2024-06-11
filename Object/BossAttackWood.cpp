@@ -74,7 +74,9 @@ void BossAttackWood::Update(GameMain* _g)
 	MoveBamboo();
 	if (velocity.y == 0.f) {
 		if (count++ > 180) {
-			_g->DeleteObject(object_pos);
+			if (this != nullptr) {
+				_g->DeleteObject(object_pos);
+			}
 		}
 	}
 }
