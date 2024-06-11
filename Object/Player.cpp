@@ -68,6 +68,7 @@ Player::Player()
 	}
 	pState = idle;
 	moveFrontFlg = true;
+	animFlg = false;
 
 
 	walk_se[0] = ResourceManager::SetSound("Resource/Sounds/Player/walk_normal.wav");
@@ -168,7 +169,7 @@ void Player::Update(GameMain* _g)
 
 	oldSearchFlg = searchFlg;
 	//Bボタンで色の交換ができるモードと切り替え
-	if (PadInput::OnPressed(XINPUT_BUTTON_B)/* && searchedObjFlg*/) {
+	if (PadInput::OnPressed(XINPUT_BUTTON_B)) {
 		SelectObject();
 		searchFlg = true;
 	}
@@ -213,6 +214,7 @@ void Player::Update(GameMain* _g)
 	}
 
 	MoveActor();
+	PlayerAnim();
 	if (swapTimer == -1)
 	{
 		MoveAim();
@@ -572,6 +574,7 @@ void Player::MoveActor()
 			if (vector.x > 7.5f) {
 				vector.x = 7.5f;
 			}
+			pState = moving;
 		}
 		else if (PadInput::TipLeftLStick(STICKL_X) < -0.1f) {
 			stick = PadInput::TipLeftLStick(STICKL_X);
@@ -580,6 +583,7 @@ void Player::MoveActor()
 			if (vector.x < -7.5f) {
 				vector.x = -7.5f;
 			}
+			pState = moving;
 		}
 		else {
 			if (vector.x > 0.1f) {
@@ -589,8 +593,11 @@ void Player::MoveActor()
 				vector.x += 0.2f;
 			}
 
+			pState = moving;
+
 			if (vector.x > -0.4f && vector.x < 0.4f) {
 				vector.x = 0.f;
+				pState = idle;
 			}
 
 			//vector.x = 0.f;
@@ -604,7 +611,9 @@ void Player::MoveActor()
 		vector.y = 0.f;*/
 	}
 
-
+	if (stageHitFlg[1][bottom] != true) {
+		pState = jump;
+	}
 }
 
 void Player::MoveAim()
@@ -1131,19 +1140,40 @@ void Player::PlayerAnim()
 	case idle:
 		angle[0] = 20.f;
 		angle[1] = -20.f;
-		angle[2] = 10.f;
-		angle[3] = -10.f;
+		angle[2] = 20.f;
+		angle[3] = -20.f;
 		break;
 
 	case moving:
+		float speed;
+		speed = abs(vector.x) * 0.1f;
+		if (animFlg) {
+			angle[0] += speed;
+			angle[1] -= speed;
+			angle[2] += speed;
+			angle[3] -= speed;
 
+			if (angle[0] > 20.f) {
+				animFlg = false;
+			}
+		}
+		else {
+			angle[0] -= speed;
+			angle[1] += speed;
+			angle[2] -= speed;
+			angle[3] += speed;
+
+			if (angle[0] < -20.f) {
+				animFlg = true;
+			}
+		}
 		break;
 
 	case jump:
 		angle[0] = 20.f;
 		angle[1] = -20.f;
-		angle[2] = 10.f;
-		angle[3] = -10.f;
+		angle[2] = 0.f;
+		angle[3] = 0.f;
 		break;
 
 	default:
@@ -1153,7 +1183,7 @@ void Player::PlayerAnim()
 
 void Player::DrawPlayer() const
 {
-	if (!moveFrontFlg) {
+	if (moveFrontFlg) {
 		if (hp > 0) {
 			//頭
 			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2), local_location.y - (erea.height) + 76, 23, 15, local_location.x, local_location.y, 0, draw_color, true);
@@ -1194,42 +1224,42 @@ void Player::DrawPlayer() const
 		}
 		//腕
 		if (hp > 4) {
-			ResourceManager::DrawRotaBox(local_location.x + 25, local_location.y + 50, 28, 7, local_location.x + 35, local_location.y + 50, 0, draw_color, true);
-			ResourceManager::DrawRotaBox(local_location.x + 25, local_location.y + 50, 28, 7, local_location.x + 35, local_location.y + 50, 0, 0x000000, false);
+			ResourceManager::DrawRotaBox(local_location.x + 25, local_location.y + 50, 28, 7, local_location.x + 35, local_location.y + 50, angle[0], draw_color, true);
+			ResourceManager::DrawRotaBox(local_location.x + 25, local_location.y + 50, 28, 7, local_location.x + 35, local_location.y + 50, angle[0], 0x000000, false);
 
 		}
 		else {
-			ResourceManager::DrawRotaBox(local_location.x + 25, local_location.y + 50, 28, 7, local_location.x + 35, local_location.y + 50, 0, 0x000000, true);
+			ResourceManager::DrawRotaBox(local_location.x + 25, local_location.y + 50, 28, 7, local_location.x + 35, local_location.y + 50, angle[0], 0x000000, true);
 
 
 		}
 		if (hp > 3) {
-			ResourceManager::DrawRotaBox(local_location.x + 25, local_location.y + 55, 28, 7, local_location.x + 35, local_location.y + 55, ang, draw_color, true);
-			ResourceManager::DrawRotaBox(local_location.x + 25, local_location.y + 55, 28, 7, local_location.x + 35, local_location.y + 55, ang, 0x000000, false);
+			ResourceManager::DrawRotaBox(local_location.x + 25, local_location.y + 55, 28, 7, local_location.x + 35, local_location.y + 55, angle[1], draw_color, true);
+			ResourceManager::DrawRotaBox(local_location.x + 25, local_location.y + 55, 28, 7, local_location.x + 35, local_location.y + 55, angle[1], 0x000000, false);
 		}
 		else {
-			ResourceManager::DrawRotaBox(local_location.x + 25, local_location.y + 55, 28, 7, local_location.x + 35, local_location.y + 55, ang, 0x000000, true);
+			ResourceManager::DrawRotaBox(local_location.x + 25, local_location.y + 55, 28, 7, local_location.x + 35, local_location.y + 55, angle[1], 0x000000, true);
 		}
 
 
 		//足 前から
 		if (hp > 2) {
-			ResourceManager::DrawRotaBox(local_location.x + 30, local_location.y + 70, 7, 27, local_location.x + 30, local_location.y + 80, -20, draw_color, true);
-			ResourceManager::DrawRotaBox(local_location.x + 30, local_location.y + 70, 7, 27, local_location.x + 30, local_location.y + 80, -20, 0x000000, false);
+			ResourceManager::DrawRotaBox(local_location.x + 30, local_location.y + 70, 7, 27, local_location.x + 30, local_location.y + 80, angle[2], draw_color, true);
+			ResourceManager::DrawRotaBox(local_location.x + 30, local_location.y + 70, 7, 27, local_location.x + 30, local_location.y + 80, angle[2], 0x000000, false);
 
 		}
 		else {
 
-			ResourceManager::DrawRotaBox(local_location.x + 30, local_location.y + 70, 7, 27, local_location.x + 30, local_location.y + 80, -20, 0x000000, true);
+			ResourceManager::DrawRotaBox(local_location.x + 30, local_location.y + 70, 7, 27, local_location.x + 30, local_location.y + 80, angle[2], 0x000000, true);
 
 		}
 		if (hp > 1) {
-			ResourceManager::DrawRotaBox(local_location.x + 30, local_location.y + 70, 7, 27, local_location.x + 30, local_location.y + 80, 20, draw_color, true);
-			ResourceManager::DrawRotaBox(local_location.x + 30, local_location.y + 70, 7, 27, local_location.x + 30, local_location.y + 80, 20, 0x000000, false);
+			ResourceManager::DrawRotaBox(local_location.x + 30, local_location.y + 70, 7, 27, local_location.x + 30, local_location.y + 80, angle[3], draw_color, true);
+			ResourceManager::DrawRotaBox(local_location.x + 30, local_location.y + 70, 7, 27, local_location.x + 30, local_location.y + 80, angle[3], 0x000000, false);
 
 		}
 		else {
-			ResourceManager::DrawRotaBox(local_location.x + 30, local_location.y + 70, 7, 27, local_location.x + 30, local_location.y + 80, 20, 0x000000, true);
+			ResourceManager::DrawRotaBox(local_location.x + 30, local_location.y + 70, 7, 27, local_location.x + 30, local_location.y + 80, angle[3], 0x000000, true);
 		}
 
 		if (hp > 1) {
@@ -1298,42 +1328,42 @@ void Player::DrawPlayer() const
 		}
 		//腕
 		if (hp > 4) {
-			ResourceManager::DrawRotaBox(local_location.x + 15 , local_location.y + 50, 28, 7, local_location.x + 25, local_location.y + 50, 0 + 180, draw_color, true);
-			ResourceManager::DrawRotaBox(local_location.x + 15 , local_location.y + 50, 28, 7, local_location.x + 25, local_location.y + 50, 0 + 180, 0x000000, false);
+			ResourceManager::DrawRotaBox(local_location.x + 15 , local_location.y + 50, 28, 7, local_location.x + 25, local_location.y + 50, angle[0] + 180, draw_color, true);
+			ResourceManager::DrawRotaBox(local_location.x + 15 , local_location.y + 50, 28, 7, local_location.x + 25, local_location.y + 50, angle[0] + 180, 0x000000, false);
 			DrawCircle(local_location.x + 25, local_location.y + 50, 3, TRUE);
 		}
 		else {
-			ResourceManager::DrawRotaBox(local_location.x + 15, local_location.y + 50, 28, 7, local_location.x + 25, local_location.y + 50, 0 + 180, 0x000000, true);
+			ResourceManager::DrawRotaBox(local_location.x + 15, local_location.y + 50, 28, 7, local_location.x + 25, local_location.y + 50, angle[0] + 180, 0x000000, true);
 
 
 		}
 		if (hp > 3) {
-			ResourceManager::DrawRotaBox(local_location.x + 12, local_location.y + 55, 28, 7, local_location.x + 25, local_location.y + 55, 0 + 180, draw_color, true);
-			ResourceManager::DrawRotaBox(local_location.x + 12, local_location.y + 55, 28, 7, local_location.x + 25, local_location.y + 55, 0 + 180, 0x000000, false);
+			ResourceManager::DrawRotaBox(local_location.x + 15, local_location.y + 55, 28, 7, local_location.x + 25, local_location.y + 55, angle[1] + 180, draw_color, true);
+			ResourceManager::DrawRotaBox(local_location.x + 15, local_location.y + 55, 28, 7, local_location.x + 25, local_location.y + 55, angle[1] + 180, 0x000000, false);
 		}
 		else {
-			ResourceManager::DrawRotaBox(local_location.x + 12, local_location.y + 55, 28, 7, local_location.x + 25, local_location.y + 55, 0 + 180, 0x000000, true);
+			ResourceManager::DrawRotaBox(local_location.x + 15, local_location.y + 55, 28, 7, local_location.x + 25, local_location.y + 55, angle[1] + 180, 0x000000, true);
 		}
 
 
 		//足 前から
 		if (hp > 2) {
-			ResourceManager::DrawRotaBox(local_location.x + 30, local_location.y + 70, 7, 27, local_location.x + 30, local_location.y + 80, -20, draw_color, true);
-			ResourceManager::DrawRotaBox(local_location.x + 30, local_location.y + 70, 7, 27, local_location.x + 30, local_location.y + 80, -20, 0x000000, false);
+			ResourceManager::DrawRotaBox(local_location.x + 30, local_location.y + 70, 7, 27, local_location.x + 30, local_location.y + 80, angle[2], draw_color, true);
+			ResourceManager::DrawRotaBox(local_location.x + 30, local_location.y + 70, 7, 27, local_location.x + 30, local_location.y + 80, angle[2], 0x000000, false);
 
 		}
 		else {
 
-			ResourceManager::DrawRotaBox(local_location.x + 30, local_location.y + 70, 7, 27, local_location.x + 30, local_location.y + 80, -20, 0x000000, true);
+			ResourceManager::DrawRotaBox(local_location.x + 30, local_location.y + 70, 7, 27, local_location.x + 30, local_location.y + 80, angle[2], 0x000000, true);
 
 		}
 		if (hp > 1) {
-			ResourceManager::DrawRotaBox(local_location.x + 30, local_location.y + 70, 7, 27, local_location.x + 30, local_location.y + 80, 20, draw_color, true);
-			ResourceManager::DrawRotaBox(local_location.x + 30, local_location.y + 70, 7, 27, local_location.x + 30, local_location.y + 80, 20, 0x000000, false);
+			ResourceManager::DrawRotaBox(local_location.x + 30, local_location.y + 70, 7, 27, local_location.x + 30, local_location.y + 80, angle[3], draw_color, true);
+			ResourceManager::DrawRotaBox(local_location.x + 30, local_location.y + 70, 7, 27, local_location.x + 30, local_location.y + 80, angle[3], 0x000000, false);
 
 		}
 		else {
-			ResourceManager::DrawRotaBox(local_location.x + 30, local_location.y + 70, 7, 27, local_location.x + 30, local_location.y + 80, 20, 0x000000, true);
+			ResourceManager::DrawRotaBox(local_location.x + 30, local_location.y + 70, 7, 27, local_location.x + 30, local_location.y + 80, angle[3], 0x000000, true);
 		}
 
 		if (hp > 1) {
