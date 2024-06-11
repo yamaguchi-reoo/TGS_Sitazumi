@@ -103,7 +103,9 @@ void Stage::Update(GameMain* _g)
 	//このステージブロックがゲーム中で火に変更されたブロックなら、一定時間経過で消す
 	if (default_object == FALSE && type == FIRE && can_swap == FALSE && ++delete_fire > 180)
 	{
-		_g->DeleteObject(object_pos);
+		if (this != nullptr) {
+			_g->DeleteObject(object_pos);
+		}
 	}
 
 	//フラグが立っているなら

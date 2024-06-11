@@ -300,7 +300,10 @@ void Player::Update(GameMain* _g)
 
 	ang += 1.f;
 
-	
+	if (this == nullptr) {
+		int a;
+		a = 0;
+	}
 }
 
 void Player::Draw()const
@@ -646,7 +649,10 @@ bool Player::SearchColor(Object* ob)
 
 bool Player::ChangePlayerColor()
 {
-	ChangeColor(searchedObj);
+	if (this != nullptr && searchedObj != nullptr) {
+		ChangeColor(searchedObj);
+		return true;
+	}
 	return false;
 }
 
