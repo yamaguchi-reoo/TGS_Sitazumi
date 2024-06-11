@@ -30,19 +30,39 @@ AbstractScene* Help::Update()
 {
 	/*hStrLen = strlen("作");
 	hStrWidth = GetDrawStringWidth("作", hStrLen);*/
+	//TriangleXNum = -50.f
+	//TriangleYNum = 180.f
 
-	//if (PadInput::TipLeftLStick(STICKL_Y) > 0.1f)
-	//{
-	//	if (++MenuNumber < 3);
-	// 
-	// TriangleXNum = -50.f
-	// TriangleYNum = 180.f
-	//}
-	//else if (PadInput::TipLeftLStick(STICKL_Y) < 0.f)
-	//{
-	//	//if (++MenuNumber < 3);
-	//	//if (MenuNumber > 2)MenuNumber = 0;
-	//}
+	if (wt < 15)
+	{
+		wt++;
+	}
+
+	// 上がる
+	if (PadInput::TipLeftLStick(STICKL_Y) > 0.8f && wt >= 15)
+	{
+		//MenuY = MenuNumber * 300;
+		if (--MenuNumber > 3)
+		if (MenuNumber < 1) MenuNumber = 3;
+
+		wt = 0;
+
+	}
+	// 下がる
+	else if (PadInput::TipLeftLStick(STICKL_Y) < -0.8f && wt >= 15)
+	{
+		//MenuY = MenuNumber * 90;
+		if (++MenuNumber < -3)
+		if (MenuNumber > 3)MenuNumber = 1;
+
+		wt = 0;
+	}
+
+	// 操作方法の説明
+	if (PadInput::OnButton(XINPUT_BUTTON_B) == 1)
+	{
+		flg = true;
+	}
 
 	return this;
 }
@@ -60,32 +80,49 @@ void Help::Draw()const
 	//LineThicknessは線の太さ
 	//大外側
 	DrawBoxAA(20.f, 20.f, 1260.f, 700.f, 0xeeeeee, FALSE, 10.0f);
-	DrawBoxAA(60.f, 60.f, 1220.f, 660.f, 0xffffff, FALSE, 10.0f);
-	//DrawTriangleAA(20.f, 20.f, 60.f, 60.f, 20.f, 60.f, 0xffffff, TRUE, 10.0f);
 
-	// 中心線
-	DrawLineAA(0.f, 360.f, 1280.f, 360.f, 0xff0000);
-	DrawLineAA(640.f, 0.f, 640.f, 720.f, 0xff0000);
-	
-	// 上
-	DrawLineAA(0.f, 180.f, 1280.f, 180.f, 0xff0000);
-	// 下
-	DrawLineAA(0.f, 540.f, 1280.f, 540.f, 0xff0000);
-	// 大外枠線
-	//DrawBoxAA(0.f, 0.f, 1280.f, 720.f, 0xff0000, FALSE);
+	if (flg == false)
+	{
+		DrawBoxAA(60.f, 60.f, 1220.f, 660.f, 0xffffff, FALSE, 10.0f);
+		//DrawTriangleAA(20.f, 20.f, 60.f, 60.f, 20.f, 60.f, 0xffffff, TRUE, 10.0f);
 
-	//DrawLine()
+		// 中心線
+		//DrawLineAA(0.f, 360.f, 1280.f, 360.f, 0xff0000);
+		//DrawLineAA(640.f, 0.f, 640.f, 720.f, 0xff0000);
+		// 上
+		//DrawLineAA(0.f, 180.f, 1280.f, 180.f, 0xff0000);
+		// 下
+		//DrawLineAA(0.f, 540.f, 1280.f, 540.f, 0xff0000);
+		// 大外枠線
+		//DrawBoxAA(0.f, 0.f, 1280.f, 720.f, 0xff0000, FALSE);
 
-	 SetFontSize(60); //デフォルトでは 6
-	// 多分漢字の一文字の長さは 25
-	DrawString(518, 145, "操作方法", 0xffffff);
-	DrawString(490, 330, "色について", 0xffffff);
-	DrawString(640, 540, "属性", 0xffffff);
+		SetFontSize(60); //デフォルトでは 6
+		// 多分漢字の一文字の長さは 25
+		DrawString(518, 145, "操作方法", 0xffffff);
+		DrawString(490, 330, "色について", 0xffffff);
+		DrawString(580, 510, "属性", 0xffffff);
+		DrawString(100, 580, "タイトルへ", 0xffffff);
+
+		switch (MenuNumber)
+		{
+		case 1:
+			DrawLineAA(510, 207, 770, 207, 0xff0000, 5.0f);
+			break;
+		case 2:
+			DrawLineAA(480, 395, 800, 395, 0xff0000, 5.0f);
+			break;
+		case 3:
+			DrawLineAA(570, 575, 710, 575, 0xff0000, 5.0f);
+			break;
+		default:
+			break;
+		}
+	}
 
 	// カーソル
 	//DrawBox(460, 130, 547, 220, 0xff0000, FALSE);
-	//DrawTriangleAA(460.f, 130.f, 547.f, 175.f, 460.f, 220.f, 0xff0000, TRUE);	+ 87
+	//DrawTriangleAA(460.f, 130.f, 547.f, 175.f, 460.f, 220.f, 0xff0000, TRUE);	//+ 87
 	//DrawTriangleAA(370.f + -50.f, 130.f + 180.f, 457.f - 50.f, 175.f + 180.f, 370.f - 50.f, 220.f + 180.f, 0xffffff, TRUE);
-	//DrawTriangleAA(370.f + -50.f, 130.f + 180.f, 457.f - 50.f, 175.f + 180.f, 370.f - 50.f, 220.f + 180.f, 0xffffff, TRUE);
-	//DrawTriangleAA(904.f, 130.f, 817.f, 175.f, 904.f, 220.f, 0xffffff, TRUE);
+	//DrawTriangleAA(370.f + -50.f, 130.f + MenuY, 457.f + - 50.f, 175.f + MenuY, 370.f + - 50.f, 220.f + MenuY, 0xffffff, TRUE);
+	//DrawTriangleAA(904.f, 130.f + MenuY, 817.f, 175.f + MenuY, 904.f, 220.f + MenuY, 0xffffff, TRUE);
 }
