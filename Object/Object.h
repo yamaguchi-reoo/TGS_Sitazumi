@@ -22,6 +22,7 @@ public:
 	bool can_hit = false;	//当たり判定があるオブジェクトか
 	bool searchFlg = false;	//スローモーション中か（プレイヤー）
 	int object_pos = 0;	//ゲームメインで生成された時、オブジェクト配列のどこに格納されたか
+	bool is_boss_attack = false;	//ボスが生成した攻撃オブジェクトかどうか
 
 	//_location _erea=スポーン座標、大きさ ,_color_data=色情報, object_pos=Object配列内の自分自身の位置
 	virtual void Initialize(Location _location, Erea _erea, int _color_data, int _object_pos) = 0;
@@ -47,6 +48,7 @@ public:
 	bool GetCanHit() { return can_hit; }
 	bool GetSearchFlg() { return searchFlg;	}
 	int GetObjectPos() { return object_pos; }
+	int GetIsBossAttack() { return is_boss_attack; }
 
 	//各変数の変更
 	void SetObjectType(int _num) { type = _num; }

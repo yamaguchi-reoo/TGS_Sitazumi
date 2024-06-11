@@ -31,7 +31,7 @@ void Weather::Update(GameMain* _g)
 		location.y += 7;
 		if (touch_ground == true || local_location.y > SCREEN_HEIGHT)
 		{
-			_g->DeleteObject(object_pos);
+			_g->DeleteObject(object_pos, this);
 			//木に当たったなら木は消え、その場所に火を作る
 			if (delete_object != 0 && delete_object->GetObjectType() == WOOD)
 			{
@@ -43,7 +43,7 @@ void Weather::Update(GameMain* _g)
 				{
 					_g->CreateObject(new Stage(6), delete_object->GetLocation(), delete_object->GetErea(), 6);
 				}
-				_g->DeleteObject(delete_object->GetObjectPos());
+				_g->DeleteObject(delete_object->GetObjectPos(),this);
 			}
 		}
 		break;
@@ -51,7 +51,7 @@ void Weather::Update(GameMain* _g)
 		location.y += 20;
 		if (touch_ground == true || local_location.y > SCREEN_HEIGHT)
 		{
-			_g->DeleteObject(object_pos);
+			_g->DeleteObject(object_pos, this);
 			//火に当たったなら火は消え、その場所に水を作る
 			if (delete_object != 0 && delete_object->GetObjectType() == FIRE)
 			{
@@ -63,7 +63,7 @@ void Weather::Update(GameMain* _g)
 				{
 					_g->CreateObject(new Stage(8), delete_object->GetLocation(), delete_object->GetErea(), 8);
 				}
-				_g->DeleteObject(delete_object->GetObjectPos());
+				_g->DeleteObject(delete_object->GetObjectPos(), this);
 			}
 		}
 		break;
@@ -71,7 +71,7 @@ void Weather::Update(GameMain* _g)
 		location.y += 20;
 		if (touch_ground == true || local_location.y > SCREEN_HEIGHT)
 		{
-			_g->DeleteObject(object_pos);
+			_g->DeleteObject(object_pos, this);
 			//水に当たったなら水は消え、その場所に草を作る
 			if (delete_object != 0 && delete_object->GetObjectType() == WATER)
 			{
@@ -83,7 +83,7 @@ void Weather::Update(GameMain* _g)
 				{
 					_g->CreateObject(new Stage(7), delete_object->GetLocation(), delete_object->GetErea(), 7);
 				}
-				_g->DeleteObject(delete_object->GetObjectPos());
+				_g->DeleteObject(delete_object->GetObjectPos(), this);
 			}
 		}
 		break;

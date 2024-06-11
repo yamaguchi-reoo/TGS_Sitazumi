@@ -7,6 +7,7 @@ BossAttackFire::BossAttackFire()
 	type = FIRE;
 	can_swap = FALSE;
 	can_hit = FALSE;
+	is_boss_attack = TRUE;
 
 	flg = false;
 	hitFlg = false;
@@ -80,7 +81,7 @@ void BossAttackFire::Update(GameMain* _g)
 
 	if ((local_location.x < 0 || local_location.x > 1280 || local_location.y < 0 || local_location.y > 720) && hitFlg) {
 		_g->SpawnEffect(location, erea, ExplosionEffect, 10, RED);
-		_g->DeleteObject(object_pos);
+		_g->DeleteObject(object_pos, this);
 	}
 }
 
@@ -93,9 +94,8 @@ void BossAttackFire::Draw() const
 void BossAttackFire::Hit(Object* _object)
 {
 	if (_object->GetObjectType() == BLOCK && _object->GetObjectType() != WATER && _object->GetColorData() != WHITE) {
-		_object->SetColorData(color);
 		_object->SetCanSwap(TRUE);
-		
+		_object->SetColorData(color);
 	}
 }
 

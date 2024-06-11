@@ -14,7 +14,7 @@
 static Location camera_location = { 0,0};	//カメラの座標
 static Location screen_origin = { (SCREEN_WIDTH / 2),(SCREEN_HEIGHT / 2) };
 
-GameMain::GameMain(int _stage) :frame(0), stage_data{ 0 }, now_stage(0), object_num(0), stage_width_num(0), stage_height_num(0), stage_width(0), stage_height(0), camera_x_lock_flg(true), camera_y_lock_flg(true), x_pos_set_once(false), y_pos_set_once(false), player_object(0), boss_object(0), weather(0), weather_timer(0), move_object_num(0),player_flg(false), player_respawn_flg(false), fadein_flg(true)
+GameMain::GameMain(int _stage) :frame(0), stage_data{ 0 }, now_stage(0), object_num(0), stage_width_num(0), stage_height_num(0), stage_width(0), stage_height(0), camera_x_lock_flg(true), camera_y_lock_flg(true), x_pos_set_once(false), y_pos_set_once(false), player_object(0), boss_object(0), weather(0), weather_timer(0), move_object_num(0),player_flg(false), player_respawn_flg(false), fadein_flg(true), create_once(false)
 {
 	now_stage = _stage;
 }
@@ -60,6 +60,9 @@ void GameMain::Finalize()
 
 	back_ground->Finalize();
 	delete back_ground;
+
+	test->Finalize();
+	delete test;
 }
 
 AbstractScene* GameMain::Update()
@@ -98,12 +101,12 @@ AbstractScene* GameMain::Update()
 							object[j]->Hit(object[i]);
 						}
 					}
-					//プレイヤーに選択肢されているオブジェクトなら、描画色を変える
-					if (object[i] == now_current_object)
+					//プレイヤーに選択されているオブジェクトなら、描画色を変える
+					if (object[i]!= nullptr && object[i] == now_current_object && now_current_object != object[boss_object])
 					{
 						object[i]->SetDrawColor(WHITE);
 					}
-					else
+					else if(object[i] != nullptr)
 					{
 						object[i]->SetDrawColor(object[i]->GetColorData());
 					}
@@ -123,12 +126,17 @@ AbstractScene* GameMain::Update()
 		effect_spawner->Update(this);
 
 		//プレイヤーがボスエリアに入ったら退路を閉じる
-		if (now_stage == 2 && object[player_object]->GetLocalLocation().x > 160 && object[player_object]->GetLocalLocation().x < 200)
+		if (now_stage == 2 && object[player_object]->GetLocalLocation().x > 160 && object[player_object]->GetLocalLocation().x < 200 && create_once == false)
 		{
 			CreateObject(new Stage(2), { 160,520 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
 			CreateObject(new Stage(2), { 160,560 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
 			CreateObject(new Stage(2), { 160,600 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
 			CreateObject(new Stage(2), { 160,640 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
+			CreateObject(new Stage(1), { 120,520 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
+			CreateObject(new Stage(1), { 120,560 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
+			CreateObject(new Stage(1), { 120,600 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
+			CreateObject(new Stage(1), { 120,640 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
+			create_once = true;
 		}
 
 		//ボスステージに遷移
@@ -176,10 +184,10 @@ void GameMain::Draw() const
 			object[i]->Draw();
 		}
 	}
-	for (int i = 0; i < attack_num; i++)
-	{
-		object[boss_attack[i]]->Draw();
-	}
+	//for (int i = 0; i < attack_num; i++)
+	//{
+	//	object[boss_attack[i]]->Draw();
+	//}
 	//プレイヤーを最後に描画
 	object[player_object]->Draw();
 
@@ -222,19 +230,19 @@ void GameMain::CreateObject(Object* _object, Location _location, Erea _erea, int
 			{
 				boss_object = i;
 			}
-			if (_erea.height == 1200.f)
-			{
-				boss_attack[attack_num++] = i;
-			}
+			//if (_erea.height == 1200.f)
+			//{
+			//	boss_attack[attack_num++] = i;
+			//}
 			object_num++;
 			break;
 		}
 	}
 }
 
-void GameMain::DeleteObject(int i)
+void GameMain::DeleteObject(int i, Object* _object)
 {
-	if (object[i] != nullptr)
+	if (object[i] != nullptr && _object != nullptr && i >= 0)
 	{
 		int a;
 		a = 0;
@@ -274,8 +282,8 @@ void GameMain::DeleteObject(int i)
 				break;
 			}
 		}
+		object_num--;
 	}
-	object_num--;
 }
 
 void GameMain::UpdateCamera()
@@ -326,7 +334,7 @@ void GameMain::UpdateCamera()
 		{
 			if (object[player_object]->GetCenterLocation().y >= stage_height - (SCREEN_HEIGHT / 2) - 10)
 			{
-				lock_pos.y = stage_height - (SCREEN_HEIGHT / 2) - 10;
+				lock_pos.y = stage_height - ((float)SCREEN_HEIGHT / 2) - 10;
 			}
 			if (object[player_object]->GetCenterLocation().y <= (SCREEN_HEIGHT / 2))
 			{
@@ -493,6 +501,8 @@ void GameMain::SetStage(int _stage, bool _delete_player)
 		//プレイヤーの生成
 		CreateObject(new Player, player_respawn, { PLAYER_HEIGHT,PLAYER_WIDTH }, RED);
 	}
+	//壁生成フラグリセット
+	create_once = false;
 	//カメラのリセット
 	ResetCamera();
 }
