@@ -41,12 +41,13 @@ private:
 
 	float speed;				// 移動速度;
 	int cunt;
+	int c;
 
 	int state_change_time;		// 状態変更のタイミング
 
 	std::vector<Location> vertices; // ボスの頂点情報
-	std::vector<Location> circle;
-	std::array<Location, 15> wing;
+	std::array<Location, 12> wing;
+	std::array<Location, 12> wing_mirror;
 	std::vector<Location> warp_pos; // ワープ位置情報
 
 	bool f = false;

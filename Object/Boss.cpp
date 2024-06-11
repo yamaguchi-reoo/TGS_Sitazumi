@@ -29,8 +29,8 @@ Boss::Boss() :vector{ 0.0f }, boss_state(BossState::ATTACK), barrier_num(3), dam
 	{
 		barrier_rad[i] = 0;
 	}
-	LoadPosition();  // 初期化時に座標を読み込む
-	cunt = 0;
+	cunt = 1;
+	c = 1;
 }
 
 Boss::~Boss()
@@ -40,37 +40,12 @@ Boss::~Boss()
 void Boss::Initialize(Location _location, Erea _erea, int _color_data, int _object_pos)
 {
 	//location = { SCREEN_WIDTH - 200, SCREEN_HEIGHT - 300};//x座標 ,y座標 
-	location = { SCREEN_WIDTH / 2, SCREEN_HEIGHT - 300};//x座標 ,y座標 
+	location = { SCREEN_WIDTH / 2, SCREEN_HEIGHT - 300 };//x座標 ,y座標 
 	erea = { _erea };	   //高さ、幅	
 	color = _color_data;
 
 	object_pos = _object_pos;
 
-	//ボスの羽画用配列
-	//vertices = {
-	//	//右翼No1
-	//	{ 190.0f, 105.0f }, { 230.0f, 90.0f },{ 245.0f, 105.0f },{ 205.0f, 120.0f },
-	//	{ 240.0f, 85.0f }, { 257.5f, 77.5f },{ 272.5f, 92.5f },{ 255.0f, 100.0f },
-	//	{ 270.0f, 72.5f }, { 310.0f, 57.5f },{ 325.0f, 72.5f },{ 285.0f, 87.5f },
-	//	//右翼No2
-	//	{ 210.0f, 135.0f }, { 250.0f,120.0f }, { 265.0f, 135.0f }, { 225.0f, 150.0f },
-	//	{ 260.0f, 115.0f }, { 277.5f,107.5f }, { 292.5f, 122.5f }, { 275.0f, 130.0f },
-	//	{ 290.0f, 102.5f }, { 330.0f, 87.5f }, { 345.0f, 102.5f }, { 305.0f, 117.5f }
-	//};
-	vertices = {
-		//右翼No1
-		{ 220.0f, 35.0f },{ 350 ,-20},{270, 45},
-		//右翼No2
-
-	};
-
-	circle = {
-		{ 230.0f, 40.0f},{ 260.0f,  BOSS_SIZE / 2},
-	};
-
-	/*wing = {
-		{10, 10},{10, 10 },{10, 10}
-	};*/
 	warp_pos = {
 		 {(SCREEN_WIDTH / 2 + 50.0f) , 125.0f},		   //中央
 		 {SCREEN_WIDTH - 200.0f, SCREEN_HEIGHT - 300.0f},//右
@@ -81,6 +56,8 @@ void Boss::Initialize(Location _location, Erea _erea, int _color_data, int _obje
 	barrier_rad[1] = 55;
 	barrier_rad[2] = 50;
 
+
+	LoadPosition();  // 初期化時に座標を読み込む
 }
 
 void Boss::Update(GameMain* _g)
@@ -94,8 +71,9 @@ void Boss::Update(GameMain* _g)
 	speed = BOSS_MAX_SPEED;
 	vector = { 1.0f ,1.0f };
 
+	SetPosition();  // 更新時に座標を保存
 	SetWingPositions();
-	//UpdateWingPositions();
+	UpdateWingPositions();
 	Location player_pos = _g->GetPlayerLocation();
 
 	if (player_pos.x > 120) {
@@ -117,10 +95,6 @@ void Boss::Update(GameMain* _g)
 		}
 	}
 
-	//プレイヤーとボスの距離を計算
-	//DistanceCalc(_g);
-
-	barrier();
 	// ダメージを受けている場合の処理
 	if (damage_flg) {
 		// 時間を減少
@@ -149,6 +123,9 @@ void Boss::Update(GameMain* _g)
 	if (KeyInput::OnKey(KEY_INPUT_X))
 	{
 		cunt += 1;
+		if (cunt % 4 == 0) {
+			c += 1;
+		}
 	}
 	if (KeyInput::OnKey(KEY_INPUT_Z))
 	{
@@ -156,9 +133,13 @@ void Boss::Update(GameMain* _g)
 		if (cunt < 0) {
 			cunt = 0;
 		}
+		if (cunt % 4 == 0) {
+			c -= 1;
+			if (c < 0) {
+				c = 0;
+			}
+		}
 	}
-	SetPosition();  // 更新時に座標を保存
-
 }
 
 void Boss::Draw() const
@@ -169,32 +150,8 @@ void Boss::Draw() const
 	DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2, 35, 35, 0x000000, TRUE);
 
 	//羽描画
-	/*for (int i = 0; i < vertices.size(); i += 4)
-	{
-		DrawQuadrangleAA(local_location.x + vertices[i].x, local_location.y + vertices[i].y, local_location.x + vertices[i + 1].x, local_location.y + vertices[i + 1].y, local_location.x + vertices[i + 2].x, local_location.y + vertices[i + 2].y, local_location.x + vertices[i + 3].x, local_location.y + vertices[i + 3].y, color, TRUE);
-	}*/
-	for (int i = 0; i < circle.size(); i++){
-		//DrawCircleAA(local_location.x + circle[i].x, local_location.y + circle[i].y, 7, 100, 0x000000, TRUE);
-	}	
+	//DrawWings();
 
-	//for (int i = 0; i < vertices.size(); i += 3) {
-	//	DrawTriangleAA(local_location.x + vertices[i].x, local_location.y + vertices[i].y, local_location.x + vertices[i + 1].x, local_location.y + vertices[i + 1].y, local_location.x + vertices[i + 2].x, local_location.y + vertices[i + 2].y, 0x000000, TRUE);
-	//}
-	DrawWings();
-	// 羽の頂点を反転させて左側の座標を計算
-	std::vector<Location> mirrored_vertices;
-	//for (int i = 0; i < vertices.size(); ++i)
-	//{
-	//	const Location& vertex = vertices[i];
-	//	float mirrored_x = center.x - (vertex.x - center.x); // X座標を反転
-	//	mirrored_vertices.push_back({ mirrored_x, vertex.y });
-	//}
-
-	// 羽の描画（左側）
-	for (size_t i = 0; i < mirrored_vertices.size(); i += 4)
-	{
-		//DrawQuadrangleAA(local_location.x + vertices[i].x, local_location.y + vertices[i].y, local_location.x + vertices[i + 1].x, local_location.y + vertices[i + 1].y, local_location.x + vertices[i + 2].x, local_location.y + vertices[i + 2].y, local_location.x + vertices[i + 3].x, local_location.y + vertices[i + 3].y, color, TRUE);
-	}
 	// フラグがTRUEだったらバリアを点滅させる
 	if (damage_effect_flg)
 	{
@@ -248,13 +205,12 @@ void Boss::Draw() const
 	//DrawFormatString(1100, 60, color, "%d", boss_state);
 	//DrawFormatString(1100, 60, color, "%d", cnt);
 	//DrawFormatString(1000, 20, color, "%f   %f", KeyInput::GetMouseCursor());
-	/*DrawFormatString(1100, 20, color, "wing[0].x : %f", wing[0].x);
-	DrawFormatString(1100, 40, color, "wing[0].y : %f", wing[0].y);
-	DrawFormatString(1100, 60, color, "wing[1].x : %f", wing[1].x);
-	DrawFormatString(1100, 80, color, "wing[1].y : %f", wing[1].y);
-	DrawFormatString(1100, 100, color, "wing[2].x : %f", wing[2].x);
-	DrawFormatString(1100, 120, color, "wing[2].y : %f", wing[2].y);*/
-	DrawFormatString(1100, 0, color, "wingNumber : %d", cunt);
+	SetFontSize(24);
+	DrawFormatString(800, 30, color, "wingNumber : %d", cunt);
+	//DrawFormatString(800, 50, color, "wing : %d", c);
+	DrawFormatString(800, 50, color, "wingmirror : %f", wing_mirror[0].x);
+	DrawFormatString(800, 80, color, "wingmirror : %f", wing_mirror[0].y);
+
 }
 
 void Boss::Finalize()
@@ -480,79 +436,72 @@ void Boss::DrawHexagon(Location center, int size, int color) const
 
 void Boss::DrawWings() const
 {
+	Location center = { local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 };
 	// 羽の描画
-	for (int i = 0; i < wing.size(); i += 3) {
+	/*for (int i = 0; i < wing.size(); i += 3) {
 		DrawTriangleAA(local_location.x + wing[i].x, local_location.y + wing[i].y,
 			local_location.x + wing[i + 1].x + 20, local_location.y + wing[i + 1].y + 10,
 			local_location.x + wing[i + 2].x + 10, local_location.y + wing[i + 2].y + 20, 0x000000, TRUE);
-	}
+	}*/
 
-	/*for (int i = 0; i < wing.size(); i += 4) {
+	for (int i = 0; i < wing.size(); i += 4) {
 		DrawQuadrangleAA(local_location.x + wing[i].x, local_location.y + wing[i].y,
 			local_location.x + wing[i + 1].x + 20, local_location.y + wing[i + 1].y + 10,
 			local_location.x + wing[i + 2].x + 10, local_location.y + wing[i + 2].y + 20,
 			local_location.x + wing[i + 3].x + 0, local_location.y + wing[i + 3].y + 30, 0x000000, TRUE);
-	}*/
+	}
+
+	// 羽の頂点を反転させて左側の座標を計算
+	for (size_t i = 0; i < wing_mirror.size(); i += 4) {
+		DrawQuadrangleAA(local_location.x - wing_mirror[i].x, local_location.y + wing_mirror[i].y,
+			local_location.x - wing_mirror[i + 1].x, local_location.y + wing_mirror[i + 1].y,
+			local_location.x - wing_mirror[i + 2].x, local_location.y + wing_mirror[i + 2].y,
+			local_location.x - wing_mirror[i + 3].x, local_location.y + wing_mirror[i + 3].y, 0x000000, TRUE);
+	}
 }
 
 void Boss::UpdateWingPositions()
 {
+	if (KeyInput::OnKey(KEY_INPUT_W) || KeyInput::OnPresed(KEY_INPUT_W)) {
+		wing[cunt - 1].y -= 1.0f;
+	}
+	if (KeyInput::OnKey(KEY_INPUT_A) || KeyInput::OnPresed(KEY_INPUT_A)) {
+		wing[cunt - 1].x -= 1.0f;
+	}
+	if (KeyInput::OnKey(KEY_INPUT_S) || KeyInput::OnPresed(KEY_INPUT_S)) {
+		wing[cunt - 1].y += 1.0f;
+	}
+	if (KeyInput::OnKey(KEY_INPUT_D) || KeyInput::OnPresed(KEY_INPUT_D)) {
+		wing[cunt - 1].x += 1.0f;
+	}
+
+	if (KeyInput::OnKey(KEY_INPUT_UP)) {
+		wing[cunt - 1].y -= 1.0f;
+	}
+	if (KeyInput::OnKey(KEY_INPUT_LEFT)) {
+		wing[cunt - 1].x -= 1.0f;
+	}
+	if (KeyInput::OnKey(KEY_INPUT_DOWN)) {
+		wing[cunt - 1].y += 1.0f;
+	}
+	if (KeyInput::OnKey(KEY_INPUT_RIGHT)) {
+		wing[cunt - 1].x += 1.0f;
+	}
 }
 
 void Boss::SetWingPositions()
 {
-	if (KeyInput::OnKey(KEY_INPUT_W) || KeyInput::OnPresed(KEY_INPUT_W)) {
-		wing[cunt].y -= 2.0f;
-	}
-	if (KeyInput::OnKey(KEY_INPUT_A) || KeyInput::OnPresed(KEY_INPUT_A)) {
-		wing[cunt].x -= 2.0f;
-	}
-	if (KeyInput::OnKey(KEY_INPUT_S) || KeyInput::OnPresed(KEY_INPUT_S)) {
-		wing[cunt].y += 2.0f;
-	}
-	if (KeyInput::OnKey(KEY_INPUT_D) || KeyInput::OnPresed(KEY_INPUT_D)) {
-		wing[cunt].x += 2.0f;
-	}
 
-	/*if (KeyInput::OnKey(KEY_INPUT_W) || KeyInput::OnPresed(KEY_INPUT_W)) {
-		wing[0].y -= 1.0f;
-	}
-	if (KeyInput::OnKey(KEY_INPUT_A) || KeyInput::OnPresed(KEY_INPUT_A)) {
-		wing[0].x -= 1.0f;
-	}
-	if (KeyInput::OnKey(KEY_INPUT_S) || KeyInput::OnPresed(KEY_INPUT_S)) {
-		wing[0].y += 1.0f;
-	}
-	if (KeyInput::OnKey(KEY_INPUT_D) || KeyInput::OnPresed(KEY_INPUT_D)) {
-		wing[0].x += 1.0f;
-	}
+	// wing_mirror を更新する
+	Location center = { local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 };
 
-	if (KeyInput::OnKey(KEY_INPUT_T) || KeyInput::OnPresed(KEY_INPUT_T)) {
-		wing[1].y -= 1.0f;
+	for (size_t i = 0; i < wing.size(); ++i)
+	{
+		// wing[i] の X 座標を反転して wing_mirror[i] の X 座標にセット
+		wing_mirror[i].x = wing[i].x;
+		// wing[i] の Y 座標をそのまま wing_mirror[i] の Y 座標にセット
+		wing_mirror[i].y = wing[i].y;
 	}
-	if (KeyInput::OnKey(KEY_INPUT_F) || KeyInput::OnPresed(KEY_INPUT_F)) {
-		wing[1].x -= 1.0f;
-	}
-	if (KeyInput::OnKey(KEY_INPUT_G) || KeyInput::OnPresed(KEY_INPUT_G)) {
-		wing[1].y += 1.0f;
-	}
-	if (KeyInput::OnKey(KEY_INPUT_H) || KeyInput::OnPresed(KEY_INPUT_H)) {
-		wing[1].x += 1.0f;
-	}
-
-	if (KeyInput::OnKey(KEY_INPUT_I) || KeyInput::OnPresed(KEY_INPUT_I)) {
-		wing[2].y -= 1.0f;
-	}
-	if (KeyInput::OnKey(KEY_INPUT_J) || KeyInput::OnPresed(KEY_INPUT_J)) {
-		wing[2].x -= 1.0f;
-	}
-	if (KeyInput::OnKey(KEY_INPUT_K) || KeyInput::OnPresed(KEY_INPUT_K)) {
-		wing[2].y += 1.0f;
-	}
-	if (KeyInput::OnKey(KEY_INPUT_L) || KeyInput::OnPresed(KEY_INPUT_L)) {
-		wing[2].x += 1.0f;
-	}*/
-
 }
 
 void Boss::SetPosition()
