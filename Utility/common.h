@@ -15,10 +15,10 @@
 
 #define PLAYER_SPAWN_NUM 9      //プレイヤーの初期スポーン設定ブロックがUIの何番目か(EditScene専用)
 
-#define SWAP_EFFECT_TIMER 30			//交換のアニメーション時間
+#define SWAP_EFFECT_TIMER 40			//交換のアニメーション時間
 #define SWAP_EFFECT_SIZE 10				//交換のアニメーションサイズ
-#define SWAP_EFFECT_SPEED (SWAP_EFFECT_TIMER/3)			//交換のアニメーション速度(数字が小さいほど速い)
-#define SWAP_EFFECT_STOP_TIME (SWAP_EFFECT_TIMER/3)		//交換のアニメーション後の硬直
+#define SWAP_EFFECT_SPEED ((float)SWAP_EFFECT_TIMER/2.5f)			//交換のアニメーション速度(数字が小さいほど速い)
+#define SWAP_EFFECT_STOP_TIME 10		//交換のアニメーション後の硬直
 
 #define DEFAULT_FREQ 40000			//音声再生速度用 通常速度
 
