@@ -51,11 +51,8 @@ void BossAttackWater::Update(GameMain* _g)
 
 		if (local_location.x < 0 || local_location.x > 1280 || local_location.y < 0 || local_location.y > 720) {
 			if (this != nullptr) {
-				_g->DeleteObject(object_pos);
+				_g->DeleteObject(object_pos, this);
 			}
-		}
-	}
-			_g->DeleteObject(object_pos, this);
 		}
 	}
 	else {
@@ -72,7 +69,7 @@ void BossAttackWater::Update(GameMain* _g)
 
 	if (hitFlg) {
 		//ここで削除
-		_g->DeleteObject(object_pos);
+		_g->DeleteObject(object_pos,this);
 	}
 
 	

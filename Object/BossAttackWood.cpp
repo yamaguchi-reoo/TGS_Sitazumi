@@ -75,12 +75,8 @@ void BossAttackWood::Update(GameMain* _g)
 	if (velocity.y == 0.f) {
 		if (count++ > 180) {
 			if (this != nullptr) {
-				_g->DeleteObject(object_pos);
+				_g->DeleteObject(object_pos, this);
 			}
-		}
-	}
-}
-			_g->DeleteObject(object_pos, this);
 		}
 	}
 }
