@@ -1,6 +1,7 @@
 #pragma once
 #include "Object.h"
 #include <vector>
+#include <array>
 #include <ctime>
 #include <mutex> 
 #include "EnemyBat.h"
@@ -39,13 +40,13 @@ private:
 	bool damage_effect_flg = false; // ダメージエフェクトのフラグ
 
 	float speed;				// 移動速度;
-
+	int cunt;
 
 	int state_change_time;		// 状態変更のタイミング
 
 	std::vector<Location> vertices; // ボスの頂点情報
 	std::vector<Location> circle;
-	std::vector<Location> wing;
+	std::array<Location, 15> wing;
 	std::vector<Location> warp_pos; // ワープ位置情報
 
 	bool f = false;
@@ -99,4 +100,8 @@ public:
 
 	// 羽の位置を設定する
 	void SetWingPositions();
+
+	void SetPosition();
+
+	void LoadPosition();
 };

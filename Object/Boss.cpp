@@ -4,6 +4,7 @@
 #include "../Scene/GameMain.h"
 #include <algorithm>
 #include <iostream>
+#include <fstream>
 
 #define BOSS_SIZE 250
 #define STATE_CHANGE_INTERVAL 340
@@ -28,8 +29,8 @@ Boss::Boss() :vector{ 0.0f }, boss_state(BossState::ATTACK), barrier_num(3), dam
 	{
 		barrier_rad[i] = 0;
 	}
-	//srand(time(0));
-	//SetRandMove();
+	LoadPosition();  // 初期化時に座標を読み込む
+	cunt = 0;
 }
 
 Boss::~Boss()
@@ -67,9 +68,9 @@ void Boss::Initialize(Location _location, Erea _erea, int _color_data, int _obje
 		{ 230.0f, 40.0f},{ 260.0f,  BOSS_SIZE / 2},
 	};
 
-	wing = {
+	/*wing = {
 		{10, 10},{10, 10 },{10, 10}
-	};
+	};*/
 	warp_pos = {
 		 {(SCREEN_WIDTH / 2 + 50.0f) , 125.0f},		   //中央
 		 {SCREEN_WIDTH - 200.0f, SCREEN_HEIGHT - 300.0f},//右
@@ -145,7 +146,18 @@ void Boss::Update(GameMain* _g)
 		_g->CreateObject(new BossAttackWood, l, e, GREEN);
 		f = true;
 	}*/
-	
+	if (KeyInput::OnKey(KEY_INPUT_X))
+	{
+		cunt += 1;
+	}
+	if (KeyInput::OnKey(KEY_INPUT_Z))
+	{
+		cunt -= 1;
+		if (cunt < 0) {
+			cunt = 0;
+		}
+	}
+	SetPosition();  // 更新時に座標を保存
 
 }
 
@@ -236,12 +248,13 @@ void Boss::Draw() const
 	//DrawFormatString(1100, 60, color, "%d", boss_state);
 	//DrawFormatString(1100, 60, color, "%d", cnt);
 	//DrawFormatString(1000, 20, color, "%f   %f", KeyInput::GetMouseCursor());
-	DrawFormatString(1100, 20, color, "wing[0].x : %f", wing[0].x);
+	/*DrawFormatString(1100, 20, color, "wing[0].x : %f", wing[0].x);
 	DrawFormatString(1100, 40, color, "wing[0].y : %f", wing[0].y);
 	DrawFormatString(1100, 60, color, "wing[1].x : %f", wing[1].x);
 	DrawFormatString(1100, 80, color, "wing[1].y : %f", wing[1].y);
 	DrawFormatString(1100, 100, color, "wing[2].x : %f", wing[2].x);
-	DrawFormatString(1100, 120, color, "wing[2].y : %f", wing[2].y);
+	DrawFormatString(1100, 120, color, "wing[2].y : %f", wing[2].y);*/
+	DrawFormatString(1100, 0, color, "wingNumber : %d", cunt);
 }
 
 void Boss::Finalize()
@@ -473,59 +486,95 @@ void Boss::DrawWings() const
 			local_location.x + wing[i + 1].x + 20, local_location.y + wing[i + 1].y + 10,
 			local_location.x + wing[i + 2].x + 10, local_location.y + wing[i + 2].y + 20, 0x000000, TRUE);
 	}
+
+	/*for (int i = 0; i < wing.size(); i += 4) {
+		DrawQuadrangleAA(local_location.x + wing[i].x, local_location.y + wing[i].y,
+			local_location.x + wing[i + 1].x + 20, local_location.y + wing[i + 1].y + 10,
+			local_location.x + wing[i + 2].x + 10, local_location.y + wing[i + 2].y + 20,
+			local_location.x + wing[i + 3].x + 0, local_location.y + wing[i + 3].y + 30, 0x000000, TRUE);
+	}*/
 }
 
 void Boss::UpdateWingPositions()
 {
-		if (KeyInput::OnKey(KEY_INPUT_W) || KeyInput::OnPresed(KEY_INPUT_W)) {
-			wing[0].y -= 1.0f;
-		}
-		if (KeyInput::OnKey(KEY_INPUT_A) || KeyInput::OnPresed(KEY_INPUT_A)) {
-			wing[0].x -= 1.0f;
-		}
-		if (KeyInput::OnKey(KEY_INPUT_S) || KeyInput::OnPresed(KEY_INPUT_S)) {
-			wing[0].y += 1.0f;
-		}
-		if (KeyInput::OnKey(KEY_INPUT_D)|| KeyInput::OnPresed(KEY_INPUT_D)) {
-			wing[0].x += 1.0f;
-		}
-
-		if (KeyInput::OnKey(KEY_INPUT_T) || KeyInput::OnPresed(KEY_INPUT_T)) {
-			wing[1].y -= 1.0f;
-		}
-		if (KeyInput::OnKey(KEY_INPUT_F) || KeyInput::OnPresed(KEY_INPUT_F)) {
-			wing[1].x -= 1.0f;
-		}
-		if (KeyInput::OnKey(KEY_INPUT_G) || KeyInput::OnPresed(KEY_INPUT_G)) {
-			wing[1].y += 1.0f;
-		}
-		if (KeyInput::OnKey(KEY_INPUT_H) || KeyInput::OnPresed(KEY_INPUT_H)) {
-			wing[1].x += 1.0f;
-		}
-
-		if (KeyInput::OnKey(KEY_INPUT_I) || KeyInput::OnPresed(KEY_INPUT_I)) {
-			wing[2].y -= 1.0f;
-		}
-		if (KeyInput::OnKey(KEY_INPUT_J) || KeyInput::OnPresed(KEY_INPUT_J)) {
-			wing[2].x -= 1.0f;
-		}
-		if (KeyInput::OnKey(KEY_INPUT_K) || KeyInput::OnPresed(KEY_INPUT_K)) {
-			wing[2].y += 1.0f;
-		}
-		if (KeyInput::OnKey(KEY_INPUT_L) || KeyInput::OnPresed(KEY_INPUT_L)) {
-			wing[2].x += 1.0f;
-		}
 }
 
 void Boss::SetWingPositions()
 {
-	wing.resize(3);
-
-	for (int i = 0; i < wing.size(); ++i) {
-		std::cout << "Enter x position for wing " << i + 1 << ": ";
-		std::cin >> wing[i].x;
-		std::cout << "Enter y position for wing " << i + 1 << ": ";
-		std::cin >> wing[i].y;
+	if (KeyInput::OnKey(KEY_INPUT_W) || KeyInput::OnPresed(KEY_INPUT_W)) {
+		wing[cunt].y -= 2.0f;
+	}
+	if (KeyInput::OnKey(KEY_INPUT_A) || KeyInput::OnPresed(KEY_INPUT_A)) {
+		wing[cunt].x -= 2.0f;
+	}
+	if (KeyInput::OnKey(KEY_INPUT_S) || KeyInput::OnPresed(KEY_INPUT_S)) {
+		wing[cunt].y += 2.0f;
+	}
+	if (KeyInput::OnKey(KEY_INPUT_D) || KeyInput::OnPresed(KEY_INPUT_D)) {
+		wing[cunt].x += 2.0f;
 	}
 
+	/*if (KeyInput::OnKey(KEY_INPUT_W) || KeyInput::OnPresed(KEY_INPUT_W)) {
+		wing[0].y -= 1.0f;
+	}
+	if (KeyInput::OnKey(KEY_INPUT_A) || KeyInput::OnPresed(KEY_INPUT_A)) {
+		wing[0].x -= 1.0f;
+	}
+	if (KeyInput::OnKey(KEY_INPUT_S) || KeyInput::OnPresed(KEY_INPUT_S)) {
+		wing[0].y += 1.0f;
+	}
+	if (KeyInput::OnKey(KEY_INPUT_D) || KeyInput::OnPresed(KEY_INPUT_D)) {
+		wing[0].x += 1.0f;
+	}
+
+	if (KeyInput::OnKey(KEY_INPUT_T) || KeyInput::OnPresed(KEY_INPUT_T)) {
+		wing[1].y -= 1.0f;
+	}
+	if (KeyInput::OnKey(KEY_INPUT_F) || KeyInput::OnPresed(KEY_INPUT_F)) {
+		wing[1].x -= 1.0f;
+	}
+	if (KeyInput::OnKey(KEY_INPUT_G) || KeyInput::OnPresed(KEY_INPUT_G)) {
+		wing[1].y += 1.0f;
+	}
+	if (KeyInput::OnKey(KEY_INPUT_H) || KeyInput::OnPresed(KEY_INPUT_H)) {
+		wing[1].x += 1.0f;
+	}
+
+	if (KeyInput::OnKey(KEY_INPUT_I) || KeyInput::OnPresed(KEY_INPUT_I)) {
+		wing[2].y -= 1.0f;
+	}
+	if (KeyInput::OnKey(KEY_INPUT_J) || KeyInput::OnPresed(KEY_INPUT_J)) {
+		wing[2].x -= 1.0f;
+	}
+	if (KeyInput::OnKey(KEY_INPUT_K) || KeyInput::OnPresed(KEY_INPUT_K)) {
+		wing[2].y += 1.0f;
+	}
+	if (KeyInput::OnKey(KEY_INPUT_L) || KeyInput::OnPresed(KEY_INPUT_L)) {
+		wing[2].x += 1.0f;
+	}*/
+
+}
+
+void Boss::SetPosition()
+{
+	std::ofstream outfile("Resource/Dat/BossLocation.tet");
+	if (outfile.is_open()) {
+		for (int i = 0; i < wing.size(); ++i)
+		{
+			outfile << wing[i].x << " " << wing[i].y << "\n";
+		}
+		outfile.close();
+	}
+}
+
+void Boss::LoadPosition()
+{
+	std::ifstream infile("Resource/Dat/BossLocation.tet");
+	if (infile.is_open()) {
+		for (int i = 0; i < wing.size(); ++i)
+		{
+			infile >> wing[i].x >> wing[i].y;
+		}
+		infile.close();
+	}
 }
