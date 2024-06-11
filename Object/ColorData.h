@@ -34,7 +34,10 @@ public:
 
 	void SetDrawColor(int c)
 	{
-		draw_color = c;
+		if (this != nullptr)
+		{
+			draw_color = c;
+		}
 	}
 };
 

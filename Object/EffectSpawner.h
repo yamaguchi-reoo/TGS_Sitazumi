@@ -1,7 +1,8 @@
 #pragma once
 #include "Object.h"
-#define EFFECT_NUM	100		//エフェクトの最大数
+#define EFFECT_NUM	200		//エフェクトの最大数
 #define SWAP_EFFECT_NUM 10		//一回のエフェクト時に発生するパーティクルの数
+#define AFTERIMAGE_NUM 10		//交換エフェクトの残像の数
 
 enum EffectList {
 	PlayerSpawnEffect = 0,
@@ -38,6 +39,7 @@ struct SwapAnim
 	Location goal;          //相手のオブジェクトの座標（アニメーション終了地点）
 	Erea erea;               //オブジェクトのサイズ
 	Location location[SWAP_EFFECT_NUM];      //交換エフェクト用変数
+	Location old_location[SWAP_EFFECT_NUM][AFTERIMAGE_NUM];      //残像表示用
 	Location local_location[SWAP_EFFECT_NUM];	//ローカル座標
 	float default_rad;						   //直線で移動するときのradを格納
 	float move_rad[SWAP_EFFECT_NUM];           //交換エフェクト移動用

@@ -89,7 +89,7 @@ void Stage::Update(GameMain* _g)
 	}
 
 	//色交換可能ブロックを輝かせる
-	if (block_type == RED_BLOCK || block_type == GREEN_BLOCK || block_type == BLUE_BLOCK)
+	if ((block_type == RED_BLOCK || block_type == GREEN_BLOCK || block_type == BLUE_BLOCK) && frame % 10 == GetRand(5)+7)
 	{
 		_g->SpawnEffect(location, erea, DeathEffect, 15, WHITE);
 	}
