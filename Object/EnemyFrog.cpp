@@ -99,7 +99,9 @@ void EnemyFrog::Update(GameMain* _g)
 		_g->SpawnEffect(location, erea, DeathEffect, 15, color);
 		if (++death_timer > 60)
 		{
-			_g->DeleteObject(object_pos);
+			if (this != nullptr) {
+				_g->DeleteObject(object_pos);
+			}
 		}
 		break;
 	default:
