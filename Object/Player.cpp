@@ -169,6 +169,27 @@ void Player::Update(GameMain* _g)
 	}
 
 	oldSearchFlg = searchFlg;
+	//Bボタンで色の交換ができるモードと切り替え
+	if (PadInput::OnPressed(XINPUT_BUTTON_B)/* && searchedObjFlg*/) {
+		SelectObject();
+		searchFlg = true;
+	}
+	else if (PadInput::OnRelease(XINPUT_BUTTON_B) && searchFlg && searchedObj != nullptr && swapTimer < 0) {
+		//交換エフェクトにかかる時間を受け取る
+		swapTimer = _g->Swap(this, searchedObj);
+		objSelectNumTmp = 0;
+		for (int i = 0; i < OBJECT_NUM; i++)
+		{
+			oldSearchedObjAll[i] = nullptr;
+		}
+		//描画する色を白に
+		draw_color = WHITE;
+	}
+	else if (PadInput::OnRelease(XINPUT_BUTTON_B) /*&& !searchedObjFlg*/ /*&& searchedObj == nullptr*/) {//交換できるオブジェクトが画面内になかった時
+		searchFlg = false;
+	}
+	
+	
 
 	//交換後エフェクト用の硬直
 	if (swapTimer >= 0)
@@ -192,40 +213,7 @@ void Player::Update(GameMain* _g)
 		}
 
 	}
-	else
-	{
-		//Bボタンで色の交換ができるモードと切り替え
-		if (PadInput::OnPressed(XINPUT_BUTTON_B)/* && searchedObjFlg*/) {
-			SelectObject();
-			searchFlg = true;
-		}
-		else if (PadInput::OnRelease(XINPUT_BUTTON_B) && searchFlg && searchedObj != nullptr && swapTimer < 0) {
-			//交換エフェクトにかかる時間を受け取る
-			swapTimer = _g->Swap(this, searchedObj);
-			objSelectNumTmp = 0;
-			for (int i = 0; i < OBJECT_NUM; i++)
-			{
-				oldSearchedObjAll[i] = nullptr;
-			}
-			//描画する色を白に
-			draw_color = WHITE;
-		}
-		else if (PadInput::OnRelease(XINPUT_BUTTON_B) /*&& !searchedObjFlg*/ /*&& searchedObj == nullptr*/) {//交換できるオブジェクトが画面内になかった時
-			searchFlg = false;
-		}
-		/*else if (PadInput::OnButton(XINPUT_BUTTON_B) && searchFlg) {
-			searchFlg = false;
-		}*/
-		//Yボタンで色の交換
-		/*if (searchedObj != nullptr) {
-			objNum = 0;
-		}*/
-		MoveActor();
-		if (swapTimer == -1)
-		{
-			MoveAim();
-		}
-	}
+	
 
 	pStateOld = pState;
 	MoveActor();
@@ -1164,6 +1152,9 @@ void Player::PlayerAnim()
 	case moving:
 		float speed;
 		speed = abs(vector.x) * 0.3f;
+		if (searchFlg) {
+			speed = speed * 0.02f;
+		}
 
 		if (pState != pStateOld) {
 			angle[0] = -20.f;
