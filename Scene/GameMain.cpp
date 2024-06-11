@@ -594,7 +594,7 @@ void GameMain::PlayerUpdate()
 			//各オブジェクトとの当たり判定
 			if (object[i]->HitBox(object[player_object]))
 			{
-				object[i]->Hit(object[player_object]);
+				//object[i]->Hit(object[player_object]);
 				object[player_object]->Hit(object[i]);
 			}
 		}

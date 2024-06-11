@@ -1,6 +1,7 @@
 #pragma once
 #include "Object.h"
 #include <vector>
+#include <array>
 #include <ctime>
 #include <mutex> 
 #include "EnemyBat.h"
@@ -25,30 +26,29 @@ private:
 		left,
 		right
 	};
-	Location vector; //ボスのベクトル
+	Location vector;		//ボスのベクトル
 	bool stageHitFlg[2][4]; //bossとステージの当たり判定
-	float move[4];//各方向加速度格納用
+	float move[4];			//各方向加速度格納用
 
 	BossState boss_state;// 現在のボスの状態
 
-	float barrier_rad[3];
-	int barrier_num; // バリアの数
+	float barrier_rad[3];	// バリアの半径
+	int barrier_num;		// バリアの数
 
 	bool damage_flg;				//ダメージを受けたとき
 	int damage_effect_time = 60;	//ダメージエフェクトの持続時間
 	bool damage_effect_flg = false; // ダメージエフェクトのフラグ
 
-	//Location direction;			// 移動方向
-	Location target_direction;	// 目標方向
-
 	float speed;				// 移動速度;
-
+	int cunt;
+	int c;
 
 	int state_change_time;		// 状態変更のタイミング
 
-	std::vector<Location>vertices;
-	std::vector<Location>warp_pos;
-	std::vector<Location>hexga_vertices;
+	std::vector<Location> vertices; // ボスの頂点情報
+	std::array<Location, 60> wing;
+	std::array<Location, 12> wing_mirror;
+	std::vector<Location> warp_pos; // ワープ位置情報
 
 	bool f = false;
 	bool oldF = false;
@@ -84,10 +84,25 @@ public:
 	//ボスのバリア
 	void barrier();
 
+	//ボスの攻撃
 	void BossAtack(GameMain *_g);
 
-	void DrawHoneycombSphere() const;
+	// 六角形模様球体の描画
+	void DrawHexagonSphere() const;
 
+	//六角形描画
 	void DrawHexagon(Location center, int size, int color) const;
 
+	// 羽を描画する
+	void DrawWings() const;
+
+	// 羽の位置を更新する
+	void UpdateWingPositions();
+
+	// 羽の位置を設定する
+	void SetWingPositions();
+
+	void SetPosition();
+
+	void LoadPosition();
 };
