@@ -2,21 +2,19 @@
 #include "AbstractScene.h"
 #include "DxLib.h"
 
-class Help :
+class End :
     public AbstractScene
 {
 private:
 
-    int hStrWidth, hStrLen;
-    int MenuNumber = 0;
-    float TriangleXNum = 0.0f, TriangleYNum = 0.0f;
+    int ExitNum = 0;
 
 public:
     //コンストラクタ
-    Help();
+    End();
 
     //デストラクタ
-    ~Help();
+    ~End();
 
     //イニシャライズ
     void Initialize()override;

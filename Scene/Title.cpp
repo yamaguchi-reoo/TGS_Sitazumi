@@ -1,6 +1,8 @@
 #include "Title.h"
 #include "DxLib.h"
 #include "GameMain.h"
+#include "Help.h"
+#include "End.h"
 #include "../Utility/PadInput.h"
 #include"../Utility/ResourceManager.h"
 
@@ -122,10 +124,12 @@ AbstractScene* Title::Update()
 			case 1:
 				//ヘルプ画面
 				printfDx("ヘルプ画面");
+				return new Help();
 				break;
 			case 2:
 				//ゲーム終了
 				printfDx("ゲーム終了");
+				return new End();
 				break;
 			}
 		}
