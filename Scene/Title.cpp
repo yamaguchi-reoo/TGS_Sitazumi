@@ -9,7 +9,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-Title::Title() :frame(0), menu_location{ 0,0 }, menu_size{ 0,0 }, player_location{ 0,0 }, cursor_location{ 0,0 }, draw_stick_location{ 0,0 }, draw_stick_shift{ 0,0 }, anim_start{ 0,0 }, current_menu(0), swap_anim_flg(false), swap_anim_timer(0), stick_angle(0.0f), button_draw(false), end_game_flg(false), end_game_count(0), title_image_handle(0), a_num(0)
+Title::Title() :frame(0), menu_location{ 0,0 }, menu_size{ 0,0 }, player_location{ 0,0 }, cursor_location{ 0,0 }, draw_stick_location{ 0,0 }, draw_stick_shift{ 0,0 }, anim_start{ 0,0 }, current_menu(0), swap_anim_flg(false), swap_anim_timer(0), stick_angle(0.0f), button_draw(false), end_game_flg(false), end_game_count(0), title_image_handle(0), bg_handle(0)
 {
 }
 
@@ -115,12 +115,13 @@ AbstractScene* Title::Update()
 	
 
 	//Bボタンでアニメーションを再生
-	if (PadInput::OnRelease(XINPUT_BUTTON_B) && end_game_flg == false)
+	if (frame >10 && PadInput::OnRelease(XINPUT_BUTTON_B) && end_game_flg == false)
 	{
 		if (swap_anim_flg == false)
 		{
 			swap_anim_flg = true;
 			anim_start = menu_location[current_menu];
+
 		}
 		//再生中に押されたらスキップ
 		else
@@ -206,13 +207,10 @@ AbstractScene* Title::Update()
 					break;
 				case 1:
 					//ヘルプ画面
-					printfDx("ヘルプ画面");
 					return new Help();
 					break;
 				case 2:
 					//ゲーム終了
-					printfDx("ゲーム終了");
-					/*return new End();*/
 					end_game_flg = true;
 					title_image_handle = MakeScreen(SCREEN_WIDTH, SCREEN_HEIGHT);
 					GetDrawScreenGraph(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, title_image_handle);
@@ -267,14 +265,18 @@ void Title::Draw()const
 					DrawBoxAA(bg[i][j].location.x - bg[i][j].anim_size,
 						bg[i][j].location.y - bg[i][j].anim_size,
 						bg[i][j].location.x + bg[i][j].erea.width + bg[i][j].anim_size,
-						bg[i][j].location.y + bg[i][j].erea.height + bg[i][j].anim_size, bg[i][j].color, TRUE);
+						bg[i][j].location.y + bg[i][j].erea.height + bg[i][j].anim_size, bg[i][j].color+0x111111, TRUE);
 					DrawBoxAA(bg[i][j].location.x - bg[i][j].anim_size,
 						bg[i][j].location.y - bg[i][j].anim_size,
 						bg[i][j].location.x + bg[i][j].erea.width + bg[i][j].anim_size,
-						bg[i][j].location.y + bg[i][j].erea.height + bg[i][j].anim_size, 0x444444, FALSE);
+						bg[i][j].location.y + bg[i][j].erea.height + bg[i][j].anim_size, 0x555555, FALSE);
 				}
 			}
 		}
+		GetDrawScreenGraph(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, bg_handle);
+		ClearDrawScreen();      // 画面の初期化
+		GraphFilter(bg_handle, DX_GRAPH_FILTER_GAUSS, 16, 1400);
+		DrawGraph(0, 0, bg_handle, TRUE);
 		DrawString(0, 10, "Title", 0x00ff00);
 		DrawGraph((SCREEN_WIDTH/2)-(logo_size.width/2),50, ResourceManager::GetGraph(logo_img), TRUE);
 
@@ -447,6 +449,7 @@ void Title::bgUpdate()
 			}
 		}
 	}
+	bg_handle = MakeScreen(SCREEN_WIDTH, SCREEN_HEIGHT);
 }
 
 int Title::GetRandColor()
