@@ -9,7 +9,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-Title::Title() :frame(0), menu_location{ 0,0 }, menu_size{ 0,0 }, player_location{ 0,0 }, cursor_location{ 0,0 }, draw_stick_location{ 0,0 }, draw_stick_shift{ 0,0 }, anim_start{ 0,0 }, current_menu(0), swap_anim_flg(false), swap_anim_timer(0), stick_angle(0.0f), button_draw(false), end_game_flg(false), end_game_count(0), title_image_handle(0), bg_handle(0)
+Title::Title() :frame(0), menu_location{ 0,0 }, menu_size{ 0,0 }, player_location{ 0,0 }, player_color(0xff0000),cursor_location{ 0,0 }, draw_stick_location{ 0,0 }, draw_stick_shift{ 0,0 }, anim_start{ 0,0 }, current_menu(0), swap_anim_flg(false), swap_anim_timer(0), stick_angle(0.0f), button_draw(false), end_game_flg(false), end_game_count(0), title_image_handle(0), bg_handle(0)
 {
 }
 
@@ -273,21 +273,21 @@ void Title::Draw()const
 				}
 			}
 		}
-		GetDrawScreenGraph(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, bg_handle);
-		ClearDrawScreen();      // 画面の初期化
-		GraphFilter(bg_handle, DX_GRAPH_FILTER_GAUSS, 16, 1400);
-		DrawGraph(0, 0, bg_handle, TRUE);
-		DrawString(0, 10, "Title", 0x00ff00);
+		GetDrawScreenGraph(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, bg_handle);	//背景をハンドルに保存
+		ClearDrawScreen();													// 画面の初期化
+		GraphFilter(bg_handle, DX_GRAPH_FILTER_GAUSS, 16, 1400);			//保存した背景にぼかしをかける
+		DrawGraph(0, 0, bg_handle, TRUE);									//背景描画
+
+		//ロゴ画像描画
 		DrawGraph((SCREEN_WIDTH/2)-(logo_size.width/2),50, ResourceManager::GetGraph(logo_img), TRUE);
 
 
 		//プレイヤー画像描画
-		DrawBoxAA(player_location.x, player_location.y, player_location.x + PLAYER_WIDTH, player_location.y + PLAYER_HEIGHT, 0x000000, TRUE);
-		DrawBoxAA(player_location.x, player_location.y, player_location.x + PLAYER_WIDTH, player_location.y + PLAYER_HEIGHT, 0xffffff, FALSE);
-		DrawStringF(player_location.x, player_location.y, "プレイヤー画像", 0xffffff);
+		DrawPlayer(current_menu);
+		DrawBox(player_location.x - 50, player_location.y + PLAYER_HEIGHT, player_location.x + PLAYER_WIDTH + 50, SCREEN_HEIGHT, 0x000000, TRUE);
+		DrawBox(player_location.x - 50, player_location.y + PLAYER_HEIGHT, player_location.x + PLAYER_WIDTH + 50, SCREEN_HEIGHT+5, 0xffffff, FALSE);
 
-
-		DrawCircleAA(cursor_location.x, cursor_location.y, 10, 100, 0x00ff00, TRUE);
+		//説明UI描画
 		DrawCircleAA(draw_stick_location.x, draw_stick_location.y, 15, 100, 0x000000, TRUE);
 		DrawCircleAA(draw_stick_location.x, draw_stick_location.y, 15, 100, 0x666666, FALSE);
 		DrawCircleAA(draw_stick_location.x + draw_stick_shift.x, draw_stick_location.y + draw_stick_shift.y, 12, 100, 0x666666, TRUE);
@@ -295,6 +295,7 @@ void Title::Draw()const
 		DrawStringF(draw_stick_location.x + 25, draw_stick_location.y - 10, "Left Stick", 0xffffff);
 		DrawStringF(draw_stick_location.x + 50, draw_stick_location.y + 20, "&", 0xffffff);
 		DrawStringF(draw_stick_location.x + 35, draw_stick_location.y + 45, "B Button", 0xffffff);
+
 		SetFontSize(16);
 		if (button_draw == false)
 		{
@@ -472,4 +473,103 @@ int Title::GetRandColor()
 		return 0x000044;
 	}
 	return 0x222222;
+}
+
+void Title::DrawPlayer(int _num)const
+{
+	switch (_num)
+	{
+		case 0:
+			//頭
+			ResourceManager::DrawRotaBox(player_location.x - (PLAYER_WIDTH / 2), player_location.y - (PLAYER_HEIGHT) + 76, 23, 15, player_location.x, player_location.y, 0, player_color, true);
+			ResourceManager::DrawRotaBox(player_location.x - (PLAYER_WIDTH / 2), player_location.y - (PLAYER_HEIGHT) + 76, 23, 15, player_location.x, player_location.y, 0, 0x000000, false);
+										 					  
+			//目											  
+			ResourceManager::DrawRotaBox(player_location.x - (PLAYER_WIDTH / 2) + 6, player_location.y - (PLAYER_HEIGHT) + 76, 6, 7, player_location.x, player_location.y, 0, 0x000000, true);
+															  
+			//首											  
+			ResourceManager::DrawRotaBox(player_location.x - (PLAYER_WIDTH / 2), player_location.y - (PLAYER_HEIGHT) + 62, 10, 5, player_location.x, player_location.y, 0, player_color, true);
+			ResourceManager::DrawRotaBox(player_location.x - (PLAYER_WIDTH / 2), player_location.y - (PLAYER_HEIGHT) + 62, 10, 5, player_location.x, player_location.y, 0, 0x000000, false);
+															  
+			//胴体					 						  
+			ResourceManager::DrawRotaBox(player_location.x - (PLAYER_WIDTH / 2), player_location.y - (PLAYER_HEIGHT) + 37, 21, 37, player_location.x, player_location.y, 0, player_color, true);
+			ResourceManager::DrawRotaBox(player_location.x - (PLAYER_WIDTH / 2), player_location.y - (PLAYER_HEIGHT) + 37, 21, 37, player_location.x, player_location.y, 0, 0x000000, false);
+															  
+			//バッグ					  					  
+			ResourceManager::DrawRotaBox(player_location.x - (PLAYER_WIDTH / 2) - 15, player_location.y - (PLAYER_HEIGHT) + 40, 5, 23, player_location.x, player_location.y, 0, player_color, true);
+			ResourceManager::DrawRotaBox(player_location.x - (PLAYER_WIDTH / 2) - 15, player_location.y - (PLAYER_HEIGHT) + 40, 5, 23, player_location.x, player_location.y, 0, 0x000000, false);
+			ResourceManager::DrawRotaBox(player_location.x - (PLAYER_WIDTH / 2) - 15, player_location.y - (PLAYER_HEIGHT) + 40, 3, 15, player_location.x, player_location.y, 0, 0x000000, true);
+										 
+			//腕							
+			ResourceManager::DrawRotaBox(player_location.x + 15, player_location.y + 55, 28, 7, player_location.x + 25, player_location.y + 55, 0 + 180, player_color, true);
+			ResourceManager::DrawRotaBox(player_location.x + 15, player_location.y + 55, 28, 7, player_location.x + 25, player_location.y + 55, 0 + 180, 0x000000, false);
+										 
+			//足							
+			ResourceManager::DrawRotaBox(player_location.x + 30, player_location.y + 70, 7, 27, player_location.x + 30, player_location.y + 80, 0, player_color, true);
+			ResourceManager::DrawRotaBox(player_location.x + 30, player_location.y + 70, 7, 27, player_location.x + 30, player_location.y + 80, 0, 0x000000, false);
+
+			break;
+		case 1:
+			//頭
+			ResourceManager::DrawRotaBox(player_location.x - (PLAYER_WIDTH / 2), player_location.y - (PLAYER_HEIGHT)+76, 23, 15, player_location.x, player_location.y, 0, player_color, true);
+			ResourceManager::DrawRotaBox(player_location.x - (PLAYER_WIDTH / 2), player_location.y - (PLAYER_HEIGHT)+76, 23, 15, player_location.x, player_location.y, 0, 0x000000, false);
+
+			//目											  
+			ResourceManager::DrawRotaBox(player_location.x - (PLAYER_WIDTH / 2) + 6, player_location.y - (PLAYER_HEIGHT)+82, 6, 7, player_location.x, player_location.y, 0, 0x000000, true);
+			ResourceManager::DrawRotaBox(player_location.x - (PLAYER_WIDTH / 2) - 6, player_location.y - (PLAYER_HEIGHT)+82, 6, 7, player_location.x, player_location.y, 0, 0x000000, true);
+
+			//首											  
+			ResourceManager::DrawRotaBox(player_location.x - (PLAYER_WIDTH / 2), player_location.y - (PLAYER_HEIGHT)+62, 10, 5, player_location.x, player_location.y, 0, player_color, true);
+			ResourceManager::DrawRotaBox(player_location.x - (PLAYER_WIDTH / 2), player_location.y - (PLAYER_HEIGHT)+62, 10, 5, player_location.x, player_location.y, 0, 0x000000, false);
+
+			//腕							
+			ResourceManager::DrawRotaBox(player_location.x + 15, player_location.y + 55, 28, 7, player_location.x + 25, player_location.y + 55, 0 + 180, player_color, true);
+			ResourceManager::DrawRotaBox(player_location.x + 15, player_location.y + 55, 28, 7, player_location.x + 25, player_location.y + 55, 0 + 180, 0x000000, false);
+			ResourceManager::DrawRotaBox(player_location.x + 25, player_location.y + 55, 28, 7, player_location.x + 35, player_location.y + 55, 0, player_color, true);
+			ResourceManager::DrawRotaBox(player_location.x + 25, player_location.y + 55, 28, 7, player_location.x + 35, player_location.y + 55, 0, 0x000000, false);
+
+			//胴体					 						  
+			ResourceManager::DrawRotaBox(player_location.x - (PLAYER_WIDTH / 2), player_location.y - (PLAYER_HEIGHT)+37, 21, 37, player_location.x, player_location.y, 0, player_color, true);
+			ResourceManager::DrawRotaBox(player_location.x - (PLAYER_WIDTH / 2), player_location.y - (PLAYER_HEIGHT)+37, 21, 37, player_location.x, player_location.y, 0, 0x000000, false);
+
+	
+			//足												 														
+			ResourceManager::DrawRotaBox(player_location.x + 35, player_location.y + 70, 7, 27, player_location.x + 35, player_location.y + 80, 0, player_color, true);
+			ResourceManager::DrawRotaBox(player_location.x + 35, player_location.y + 70, 7, 27, player_location.x + 35, player_location.y + 80, 0, 0x000000, false);							
+			ResourceManager::DrawRotaBox(player_location.x + 25, player_location.y + 70, 7, 27, player_location.x + 25, player_location.y + 80, 0, player_color, true);
+			ResourceManager::DrawRotaBox(player_location.x + 25, player_location.y + 70, 7, 27, player_location.x + 25, player_location.y + 80, 0, 0x000000, false);
+
+			break;
+		case 2:
+			//頭
+			ResourceManager::DrawRotaBox(player_location.x - (PLAYER_WIDTH / 2), player_location.y - (PLAYER_HEIGHT)+76, 23, 15, player_location.x, player_location.y, 0, player_color, true);
+			ResourceManager::DrawRotaBox(player_location.x - (PLAYER_WIDTH / 2), player_location.y - (PLAYER_HEIGHT)+76, 23, 15, player_location.x, player_location.y, 0, 0x000000, false);
+
+			//目
+			ResourceManager::DrawRotaBox(player_location.x - (PLAYER_WIDTH / 2) - 6, player_location.y - (PLAYER_HEIGHT)+76, 6, 7, player_location.x, player_location.y, 0, 0x000000, true);
+
+			//首
+			ResourceManager::DrawRotaBox(player_location.x - (PLAYER_WIDTH / 2), player_location.y - (PLAYER_HEIGHT)+62, 10, 5, player_location.x, player_location.y, 0, player_color, true);
+			ResourceManager::DrawRotaBox(player_location.x - (PLAYER_WIDTH / 2), player_location.y - (PLAYER_HEIGHT)+62, 10, 5, player_location.x, player_location.y, 0, 0x000000, false);
+
+			//胴体																					
+			ResourceManager::DrawRotaBox(player_location.x - (PLAYER_WIDTH / 2), player_location.y - (PLAYER_HEIGHT)+37, 21, 37, player_location.x, player_location.y, 0, player_color, true);
+			ResourceManager::DrawRotaBox(player_location.x - (PLAYER_WIDTH / 2), player_location.y - (PLAYER_HEIGHT)+37, 21, 37, player_location.x, player_location.y, 0, 0x000000, false);
+
+			//バッグ
+			ResourceManager::DrawRotaBox(player_location.x - (PLAYER_WIDTH / 2) + 15, player_location.y - (PLAYER_HEIGHT)+40, 5, 23, player_location.x, player_location.y, 0, player_color, true);
+			ResourceManager::DrawRotaBox(player_location.x - (PLAYER_WIDTH / 2) + 15, player_location.y - (PLAYER_HEIGHT)+40, 5, 23, player_location.x, player_location.y, 0, 0x000000, false);
+			ResourceManager::DrawRotaBox(player_location.x - (PLAYER_WIDTH / 2) + 15, player_location.y - (PLAYER_HEIGHT)+40, 3, 15, player_location.x, player_location.y, 0, 0x000000, true);
+
+			//腕
+			ResourceManager::DrawRotaBox(player_location.x + 25, player_location.y + 55, 28, 7, player_location.x + 35, player_location.y + 55, 0, player_color, true);
+			ResourceManager::DrawRotaBox(player_location.x + 25, player_location.y + 55, 28, 7, player_location.x + 35, player_location.y + 55, 0, 0x000000, false);
+
+			//足												 														
+			ResourceManager::DrawRotaBox(player_location.x + 30, player_location.y + 70, 7, 27, player_location.x + 30, player_location.y + 80, 0, player_color, true);
+			ResourceManager::DrawRotaBox(player_location.x + 30, player_location.y + 70, 7, 27, player_location.x + 30, player_location.y + 80, 0, 0x000000, false);
+			break;
+		default:
+			break;
+	}
 }

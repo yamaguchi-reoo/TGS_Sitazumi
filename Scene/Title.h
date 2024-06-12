@@ -42,6 +42,7 @@ private:
     Location menu_location[3];  //メニュー項目の座標
     Erea menu_size[3];          //メニュー項目の大きさ
     Location player_location;   //プレイヤーの見た目の描画位置
+    int player_color;           //プレイヤーの色
     Location cursor_location;   //カーソルの座標
     Location draw_stick_location;   //描画するスティックの座標
     Location draw_stick_shift;   //描画するスティックをずらす座標
@@ -98,6 +99,9 @@ public:
 
     //４色の中から一定確率で抽選
     int GetRandColor();
+
+    //プレイヤーの描画
+    void DrawPlayer(int _num)const;
 };
 
 
