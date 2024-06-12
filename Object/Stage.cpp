@@ -104,7 +104,7 @@ void Stage::Update(GameMain* _g)
 	if (default_object == FALSE && type == FIRE && can_swap == FALSE && ++delete_fire > 180)
 	{
 		if (this != nullptr) {
-			_g->DeleteObject(object_pos);
+			_g->DeleteObject(object_pos, this);
 		}
 	}
 

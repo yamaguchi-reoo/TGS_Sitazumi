@@ -184,12 +184,12 @@ void EnemyBat::Move(GameMain* _g)
 		{
 			if (++death_timer > 60)
 				if (this != nullptr) {
-					_g->DeleteObject(object_pos);
+					_g->DeleteObject(object_pos, this);
 				}
 		}
 		else {
 			if (this != nullptr) {
-				_g->DeleteObject(object_pos);
+				_g->DeleteObject(object_pos, this);
 			}
 		}
 	}

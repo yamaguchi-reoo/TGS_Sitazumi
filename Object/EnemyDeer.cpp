@@ -108,7 +108,7 @@ void EnemyDeer::Update(GameMain* _g)
 		if (++deer_death_timer > 60)
 		{
 			if (this != nullptr) {
-				_g->DeleteObject(object_pos);
+				_g->DeleteObject(object_pos, this);
 			}
 		}
 	}

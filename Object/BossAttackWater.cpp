@@ -6,6 +6,7 @@ BossAttackWater::BossAttackWater()
 	type = WATER;
 	can_swap = FALSE;
 	can_hit = FALSE;
+	is_boss_attack = TRUE;
 
 	flg = false;
 	count = 0;
@@ -50,7 +51,7 @@ void BossAttackWater::Update(GameMain* _g)
 
 		if (local_location.x < 0 || local_location.x > 1280 || local_location.y < 0 || local_location.y > 720) {
 			if (this != nullptr) {
-				_g->DeleteObject(object_pos);
+				_g->DeleteObject(object_pos, this);
 			}
 		}
 	}
@@ -68,9 +69,7 @@ void BossAttackWater::Update(GameMain* _g)
 
 	if (hitFlg) {
 		//ここで削除
-		if (this != nullptr) {
-			_g->DeleteObject(object_pos);
-		}
+		_g->DeleteObject(object_pos,this);
 	}
 
 	
@@ -86,8 +85,8 @@ void BossAttackWater::Draw() const
 void BossAttackWater::Hit(Object* _object)
 {
 	if (_object->GetObjectType() == BLOCK && _object->GetObjectType() != WOOD && _object->GetColorData() != WHITE) {
-		_object->SetColorData(color);
 		_object->SetCanSwap(TRUE);
+		_object->SetColorData(color);
 		hitFlg = true;
 	}
 }

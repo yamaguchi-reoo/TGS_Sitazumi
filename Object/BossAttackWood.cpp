@@ -4,13 +4,13 @@
 BossAttackWood::BossAttackWood()
 {
 	count = 0;
-	type = 0;
+	w_type = 0;
 
 	
 	type = BLOCK;
 	can_swap = TRUE;
 	can_hit = TRUE;
-	
+	is_boss_attack = TRUE;
 }
 
 BossAttackWood::~BossAttackWood()
@@ -75,7 +75,7 @@ void BossAttackWood::Update(GameMain* _g)
 	if (velocity.y == 0.f) {
 		if (count++ > 180) {
 			if (this != nullptr) {
-				_g->DeleteObject(object_pos);
+				_g->DeleteObject(object_pos, this);
 			}
 		}
 	}
@@ -89,8 +89,8 @@ void BossAttackWood::Draw() const
 void BossAttackWood::Hit(Object* _object)
 {
 	if (_object->GetObjectType() == BLOCK && _object->GetObjectType() != FIRE && _object->GetColorData() != WHITE) {
-		_object->SetColorData(color);
 		_object->SetCanSwap(TRUE);
+		_object->SetColorData(color);
 	}
 }
 
