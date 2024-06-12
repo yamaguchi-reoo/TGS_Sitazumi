@@ -60,6 +60,8 @@ void Title::Initialize()
 			bg[i][j].anim_size = 0;
 		}
 	}
+	//プレイヤーの色をランダムで決める
+	player_color = color_list[GetRand(2)];
 }
 
 void Title::Finalize()

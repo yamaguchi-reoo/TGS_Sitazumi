@@ -71,6 +71,7 @@ private:
 
     BackGroundImage bg[BG_BLOCK_WIDTH_NUM][BG_BLOCK_HEIGHT_NUM];    //背景情報保存
     int bg_handle;
+    int color_list[3] = { 0xff0000,0x00ff00,0x0000ff };
     
 public:
     //コンストラクタ
