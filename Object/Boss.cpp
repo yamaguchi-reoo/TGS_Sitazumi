@@ -29,8 +29,10 @@ Boss::Boss() :vector{ 0.0f }, boss_state(BossState::ATTACK), barrier_num(3), dam
 	{
 		barrier_rad[i] = 0;
 	}
+
 	cunt = 1;
 	c = 1;
+	num = 0;
 }
 
 Boss::~Boss()
@@ -39,8 +41,8 @@ Boss::~Boss()
 
 void Boss::Initialize(Location _location, Erea _erea, int _color_data, int _object_pos)
 {
-	location = { SCREEN_WIDTH - 200, SCREEN_HEIGHT - 300};//x座標 ,y座標 
-	//location = { SCREEN_WIDTH / 2, SCREEN_HEIGHT - 300 };//x座標 ,y座標 
+	//location = { SCREEN_WIDTH - 200, SCREEN_HEIGHT - 300};//x座標 ,y座標 
+	location = { SCREEN_WIDTH / 2, SCREEN_HEIGHT - 300 };//x座標 ,y座標 
 	erea = { _erea };	   //高さ、幅	
 	color = _color_data;
 
@@ -71,8 +73,9 @@ void Boss::Update(GameMain* _g)
 	speed = BOSS_MAX_SPEED;
 	vector = { 1.0f ,1.0f };
 
-	SetPosition();  // 更新時に座標を保存
-	SetWingPositions();
+	SavePosition();  // 更新時に座標を保存
+
+	InvertedWingPositions();
 	UpdateWingPositions();
 	Location player_pos = _g->GetPlayerLocation();
 
@@ -85,7 +88,7 @@ void Boss::Update(GameMain* _g)
 			Move(_g);
 			break;
 		case BossState::ATTACK:
-			BossAtack(_g);
+			//BossAtack(_g);
 			break;
 		case BossState::DEATH:
 			_g->DeleteObject(object_pos);
@@ -150,7 +153,7 @@ void Boss::Draw() const
 	DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2, 35, 35, 0x000000, TRUE);
 
 	//羽描画
-	//DrawWings();
+	DrawWings();
 
 	// フラグがTRUEだったらバリアを点滅させる
 	if (damage_effect_flg)
@@ -206,7 +209,8 @@ void Boss::Draw() const
 	//DrawFormatString(1100, 60, color, "%d", cnt);
 	//DrawFormatString(1000, 20, color, "%f   %f", KeyInput::GetMouseCursor());
 	//SetFontSize(24);
-	//DrawFormatString(800, 30, color, "wingNumber : %d", cunt);
+	DrawFormatString(800, 30, color, "wingNumber : %d", cunt);
+	DrawFormatString(800, 50, color, "num : %d", num);
 	////DrawFormatString(800, 50, color, "wing : %d", c);
 	//DrawFormatString(800, 50, color, "wingmirror : %f", wing_mirror[0].x);
 	//DrawFormatString(800, 80, color, "wingmirror : %f", wing_mirror[0].y);
@@ -452,10 +456,10 @@ void Boss::DrawWings() const
 	}
 
 	for (int i = 0; i < wing.size(); i += 4) {
-		DrawQuadrangleAA(local_location.x + wing_mirror[i].x, local_location.y + wing_mirror[i].y,
-			local_location.x + wing_mirror[i + 1].x + 20, local_location.y + wing_mirror[i + 1].y + 10,
-			local_location.x + wing_mirror[i + 2].x + 10, local_location.y + wing_mirror[i + 2].y + 20,
-			local_location.x + wing_mirror[i + 3].x + 0, local_location.y + wing_mirror[i + 3].y + 30, 0x000000, TRUE);
+		DrawQuadrangleAA((local_location.x + wing_mirror[i].x) + 250, local_location.y + wing_mirror[i].y,
+			(local_location.x + wing_mirror[i + 1].x - 20) + 250, local_location.y + wing_mirror[i + 1].y + 10,
+			(local_location.x + wing_mirror[i + 2].x - 10) + 250, local_location.y + wing_mirror[i + 2].y + 20,
+			(local_location.x + wing_mirror[i + 3].x - 0) + 250, local_location.y + wing_mirror[i + 3].y + 30, 0x000000, TRUE);
 	}
 }
 
@@ -486,11 +490,40 @@ void Boss::UpdateWingPositions()
 	if (KeyInput::OnKey(KEY_INPUT_RIGHT)) {
 		wing[cunt - 1].x += 1.0f;
 	}
+
+	// マウスの位置を取得
+	float mousePos_X = KeyInput::GetMouseCursor().x;
+	float mousePos_Y = KeyInput::GetMouseCursor().y;
+
+	if (KeyInput::OnKey(KEY_INPUT_T)) {
+		num += 4;
+	}
+	if (KeyInput::OnKey(KEY_INPUT_Y)) {
+		num -= 4;
+	}
+	if (num < 0) {
+		num = 0;
+	}
+	else if (num > 36) {
+		num = 35;
+	}
+
+
+	if(KeyInput::OnPressedMouse(MOUSE_INPUT_LEFT)){
+		//羽全体の移動量を計算
+		Location wingMove = { mousePos_X - wing[num].x, mousePos_Y - wing[num].y };
+		// 羽全体の座標を更新
+		for (int i = num; i < num + 4; ++i) {
+			wing[i].x += wingMove.x - 500;
+			wing[i].y += wingMove.y - 370;
+		}
+	}
+
+
 }
 
-void Boss::SetWingPositions()
+void Boss::InvertedWingPositions()
 {
-
 	// wing_mirror を更新する
 	Location center = { local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 };
 
@@ -504,9 +537,9 @@ void Boss::SetWingPositions()
 	}
 }
 
-void Boss::SetPosition()
+void Boss::SavePosition()
 {
-	std::ofstream outfile("Resource/Dat/BossLocation.tet");
+	std::ofstream outfile("Resource/Dat/BossLocation.txt");
 	if (outfile.is_open()) {
 		for (int i = 0; i < wing.size(); ++i)
 		{
@@ -518,7 +551,7 @@ void Boss::SetPosition()
 
 void Boss::LoadPosition()
 {
-	std::ifstream infile("Resource/Dat/BossLocation.tet");
+	std::ifstream infile("Resource/Dat/BossLocation.txt");
 	if (infile.is_open()) {
 		for (int i = 0; i < wing.size(); ++i)
 		{
