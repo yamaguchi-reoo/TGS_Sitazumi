@@ -30,6 +30,11 @@ Boss::Boss() :vector{ 0.0f }, boss_state(BossState::ATTACK), barrier_num(3), dam
 		barrier_rad[i] = 0;
 	}
 
+	// wing の初期化
+	for (int i = 0; i < wing.size(); ++i) {
+		wing[i] = { 0.0f, 0.0f }; 
+		wing_mirror[i] = { 0.0f, 0.0f }; 
+	}
 	cunt = 1;
 	c = 1;
 	num = 0;
@@ -504,9 +509,6 @@ void Boss::UpdateWingPositions()
 	if (num < 0) {
 		num = 0;
 	}
-	else if (num > 36) {
-		num = 35;
-	}
 
 
 	if(KeyInput::OnPressedMouse(MOUSE_INPUT_LEFT)){
@@ -518,8 +520,6 @@ void Boss::UpdateWingPositions()
 			wing[i].y += wingMove.y - 370;
 		}
 	}
-
-
 }
 
 void Boss::InvertedWingPositions()
