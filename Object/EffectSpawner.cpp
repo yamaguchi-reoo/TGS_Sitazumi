@@ -7,7 +7,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-EffectSpawner::EffectSpawner() :frame(0), swap_anim_timer(0),swap_se(0)
+EffectSpawner::EffectSpawner() :frame(0), swap_anim_timer(0),swap_se(0), change_effect_flg(false)
 {
 	for (int i = 0; i < EFFECT_NUM; i++)
 	{
@@ -171,18 +171,21 @@ void EffectSpawner::Update(GameMain* _g)
 				}
 			}
 		}
-		if (--swap_anim[i].timer < SWAP_EFFECT_STOP_TIME)
+		if (swap_anim[i].move_flg == true && --swap_anim[i].timer < SWAP_EFFECT_STOP_TIME)
 		{
 			swap_anim[i].move_flg = false;
+			//色交換完了エフェクト
+			//_g->SpawnEffect(swap_anim[i].goal, swap_anim[i].erea, PlayerSpawnEffect, 30, swap_anim[i].color);
+
 		}
-		//if (swap_anim[i].timer < SWAP_EFFECT_STOP_TIME && swap_anim[i].timer > 0)
-		//{
-		//	swap_anim_timer++;
-		//}
-		//else
-		//{
-		//	swap_anim_timer = 0;
-		//}
+	}
+	if (swap_anim[0].timer < SWAP_EFFECT_STOP_TIME)
+	{
+		swap_anim_timer++;
+	}
+	else
+	{
+		swap_anim_timer = 0;
 	}
 }
 
@@ -281,12 +284,12 @@ void EffectSpawner::Draw()const
 				}
 				SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 			}
-			if (swap_anim_timer < SWAP_EFFECT_STOP_TIME)
-			{
-				SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200 - (swap_anim_timer * 20));
-				DrawBoxAA(swap_anim[i].goal.x - (swap_anim_timer * 10), swap_anim[i].goal.y - (swap_anim_timer * 10), swap_anim[i].goal.x + swap_anim[i].erea.width + (swap_anim_timer * 5), swap_anim[i].goal.y + swap_anim[i].erea.height + (swap_anim_timer * 5), swap_anim[i].color, true);
-				SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
-			}
+		}
+		if (swap_anim_timer > 0)
+		{
+			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200 - (swap_anim_timer * 20));
+			DrawBoxAA(swap_anim[i].goal_local.x - (swap_anim_timer * 10), swap_anim[i].goal_local.y - (swap_anim_timer * 10), swap_anim[i].goal_local.x + swap_anim[i].erea.width + (swap_anim_timer * 5), swap_anim[i].goal_local.y + swap_anim[i].erea.height + (swap_anim_timer * 5), swap_anim[i].color, true);
+			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 		}
 	}
 }
@@ -432,6 +435,8 @@ int EffectSpawner::Swap(Object* _object1, Object* _object2)
 	swap_anim[1].start = _object2->GetCenterLocation();
 	swap_anim[0].goal = _object2->GetCenterLocation();
 	swap_anim[1].goal = _object1->GetCenterLocation();
+	swap_anim[0].goal_local = { _object2->GetLocalLocation().x + (_object2->GetErea().width / 2), _object2->GetLocalLocation().y + (_object2->GetErea().height / 2) };
+	swap_anim[1].goal_local = { _object1->GetLocalLocation().x + (_object1->GetErea().width / 2), _object1->GetLocalLocation().y + (_object1->GetErea().height / 2) };
 	swap_anim[0].erea = { SWAP_EFFECT_SIZE ,SWAP_EFFECT_SIZE };
 	swap_anim[1].erea = { SWAP_EFFECT_SIZE ,SWAP_EFFECT_SIZE };
 	swap_anim[0].move_flg = true;

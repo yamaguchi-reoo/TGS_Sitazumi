@@ -34,7 +34,7 @@ private:
     int stage_data[MAX_STAGE_HEIGHT][MAX_STAGE_WIDTH];   //ステージデータ格納
     int player_object;             //プレイヤーが配列の何番目に格納されているか
     int boss_object;    
-    int boss_attack[128];
+    //int boss_attack[128];
     int attack_num;
 
     Object* object[OBJECT_NUM] = { nullptr };    //オブジェクト格納
@@ -63,7 +63,7 @@ private:
     bool player_flg;	    //プレイヤーを生成したか
     Location player_respawn;    //プレイヤーが生成された地点を保存しておく
     bool player_respawn_flg;    //プレイヤーをリスポーンさせるか判断
-
+    bool create_once;           //一回だけ壁を作る
     bool fadein_flg;            //遷移してきたときのフェードイン演出
 public:
 
@@ -88,8 +88,8 @@ public:
     //オブジェクトの生成
     void CreateObject(Object* _object, Location _location, Erea _erea, int _color_data);
 
-    //オブジェクトの削除
-    void DeleteObject(int i);
+    //オブジェクトの削除 i = 消すオブジェクトの位置  _object = この関数を呼びだしたオブジェクト
+    void DeleteObject(int i,Object* _object);
 
     //カメラの更新
     void UpdateCamera();

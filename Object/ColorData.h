@@ -10,8 +10,8 @@ class ColorData
 public:
 	//色情報
 //マクロの4色から入れる
-	int color;
-	int draw_color;		//描画する色
+	int color = 0;
+	int draw_color = 0;		//描画する色
 	//色の交換
 	void ChangeColor(ColorData* cd);
 
@@ -23,7 +23,7 @@ public:
 		}
 	}
 
-	int GetColorData()
+	int GetColorData()const
 	{
 		if (this != nullptr)
 		{

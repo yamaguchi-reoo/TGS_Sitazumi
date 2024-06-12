@@ -96,7 +96,7 @@ void Boss::Update(GameMain* _g)
 			//BossAtack(_g);
 			break;
 		case BossState::DEATH:
-			_g->DeleteObject(object_pos);
+			_g->DeleteObject(object_pos, this);
 			break;
 		default:
 			break;
