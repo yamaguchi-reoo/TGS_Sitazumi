@@ -453,7 +453,7 @@ void Boss::DrawWings() const
 {
 	Location center = { local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 };
 	// 羽の描画
-	for (int i = 0; i < wing.size(); i += 4) {
+	/*for (int i = 0; i < wing.size(); i += 4) {
 		DrawQuadrangleAA(local_location.x + wing[i].x, (local_location.y + wing[i].y),
 			local_location.x + wing[i + 1].x + 20, local_location.y + wing[i + 1].y + 10,
 			local_location.x + wing[i + 2].x + 10, local_location.y + wing[i + 2].y + 20,
@@ -465,28 +465,33 @@ void Boss::DrawWings() const
 			(local_location.x + wing_mirror[i + 1].x - 20) + 250, local_location.y + wing_mirror[i + 1].y + 10,
 			(local_location.x + wing_mirror[i + 2].x - 10) + 250, local_location.y + wing_mirror[i + 2].y + 20,
 			(local_location.x + wing_mirror[i + 3].x - 0) + 250, local_location.y + wing_mirror[i + 3].y + 30, 0x000000, TRUE);
-	}
+	}*/
 	// アニメーションに基づいて描画位置を計算
-	//float angle = sin(PI * 2.f / 40.f * wing_fps) * 20.f; // アニメーションに適した角度を計算
+	float angle = sin(PI * 2.f / 40.f * wing_fps) * 20.f; // アニメーションに適した角度を計算
 
-	//// 羽の描画（左側）
-	//for (int i = 0; i < wing.size(); i += 4) {
-	//	float delta_y = 0.f;
-	//	if (i < 4) {
-	//		delta_y = sin(PI * 2.f / 60.f * wing_fps + i) * 5.f; // 1番目の羽はあまり動かない
-	//	}
-	//	else if (i < 8) {
-	//		delta_y = sin(PI * 2.f / 60.f * wing_fps + i) * 10.f; // 2番目の羽は中程度に動く
-	//	}
-	//	else {
-	//		delta_y = sin(PI * 2.f / 60.f * wing_fps + i) * 15.f; // 3番目の羽は大きく動く
-	//	}
-
-	//	DrawQuadrangleAA(local_location.x + wing[i].x, local_location.y + wing[i].y + angle + delta_y,
-	//		local_location.x + wing[i + 1].x + 20, local_location.y + wing[i + 1].y + 10 + angle + delta_y,
-	//		local_location.x + wing[i + 2].x + 10, local_location.y + wing[i + 2].y + 20 + angle + delta_y,
-	//		local_location.x + wing[i + 3].x + 0, local_location.y + wing[i + 3].y + 30 + angle + delta_y, 0x000000, TRUE);
-	//}
+	// 羽の描画（）
+	for (int i = 0; i < wing.size(); i += 4) {
+		float delta_y = 0.f;
+		if (i < 4) {
+			delta_y = sin(PI * 2.f / 60.f * wing_fps + i) * 5.f; // 1番目の羽はあまり動かない
+		}
+		else if (i < 8) {
+			delta_y = sin(PI * 2.f / 60.f * wing_fps + i) * 10.f; // 2番目の羽は中程度に動く
+		}
+		else {
+			delta_y = sin(PI * 2.f / 60.f * wing_fps + i) * 20.f; // 3番目の羽は大きく動く
+		}
+		//右羽
+		DrawQuadrangleAA(local_location.x + wing[i].x + (angle + 10), local_location.y + wing[i].y + angle + delta_y,
+			local_location.x + wing[i + 1].x + 20 + (angle + 10), local_location.y + wing[i + 1].y + 10 + angle + delta_y,
+			local_location.x + wing[i + 2].x + 10 + (angle + 10), local_location.y + wing[i + 2].y + 20 + angle + delta_y,
+			local_location.x + wing[i + 3].x + (angle + 10), local_location.y + wing[i + 3].y + 30 + angle + delta_y, 0x000000, TRUE);
+		//左羽
+		DrawQuadrangleAA(local_location.x + wing_mirror[i].x + 250 - (angle + 10), local_location.y + wing_mirror[i].y + angle + delta_y,
+			local_location.x + wing_mirror[i + 1].x - 20 + 250 - (angle + 10), local_location.y + wing_mirror[i + 1].y + 10 + angle + delta_y,
+			local_location.x + wing_mirror[i + 2].x - 10 + 250 - (angle + 10), local_location.y + wing_mirror[i + 2].y + 20 + angle + delta_y,
+			local_location.x + wing_mirror[i + 3].x + 250 - (angle + 10), local_location.y + wing_mirror[i + 3].y + 30 + angle + delta_y, 0x000000, TRUE);
+	}
 
 	//// 羽の描画（右側）
 	//for (int i = 0; i < wing_mirror.size(); i += 4) {
