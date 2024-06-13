@@ -462,7 +462,7 @@ void GameMain::SetStage(int _stage, bool _delete_player)
 				if (player_flg == false)
 				{
 					//プレイヤーリスポーン地点の設定
-					player_respawn = { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT };
+					//player_respawn = { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT };
 					//プレイヤーの生成
 					CreateObject(new Player, player_respawn, { PLAYER_HEIGHT,PLAYER_WIDTH }, GREEN);
 					player_flg = true;
@@ -625,7 +625,7 @@ void GameMain::PlayerUpdate()
 			//各オブジェクトとの当たり判定
 			if (object[i]->HitBox(object[player_object]))
 			{
-				//object[i]->Hit(object[player_object]);
+				object[i]->Hit(object[player_object]);
 				object[player_object]->Hit(object[i]);
 			}
 		}

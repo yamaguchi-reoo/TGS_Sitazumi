@@ -26,8 +26,6 @@ class EnemyDeer :
 {
 private:
 
-	int frame;
-
 	enum hitPosition
 	{
 		top,

@@ -9,7 +9,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-Title::Title() :frame(0), menu_location{ 0,0 }, menu_size{ 0,0 }, player_location{ 0,0 }, player_color(0xff0000),cursor_location{ 0,0 }, draw_stick_location{ 0,0 }, draw_stick_shift{ 0,0 }, anim_start{ 0,0 }, current_menu(0), swap_anim_flg(false), swap_anim_timer(0), stick_angle(0.0f), button_draw(false), end_game_flg(false), end_game_count(0), title_image_handle(0), bg_handle(0), circleAng(0)
+Title::Title() :frame(0), menu_location{ 0,0 }, menu_size{ 0,0 }, player_location{ 0,0 }, player_color(0xff0000),cursor_location{ 0,0 }, draw_stick_location{ 0,0 }, draw_stick_shift{ 0,0 }, anim_start{ 0,0 }, current_menu(0), swap_anim_flg(false), swap_anim_timer(0), stick_angle(0.0f), button_draw(false), end_game_flg(false), end_game_count(0), title_image_handle(0), bg_handle(0), circleAng(0), rise_se(0), cursor_se(0)
 {
 }
 
@@ -28,6 +28,14 @@ void Title::Initialize()
 	menu_size[1] = { 75,150 };
 	menu_size[2] = { 75,150 };
 
+	for (int i = 0; i < 7; i++)
+	{
+		logo_location[i] = { 0,0 };
+		for (int j = 0; j < i; j++)
+		{
+			logo_location[i].x += 90;
+		}
+	}
 	int xnum = (SCREEN_WIDTH / cellSize_) + 1;
 	int ynum = (SCREEN_HEIGHT / cellSize_) + 1;
 	tiles_.reserve(xnum * ynum);
@@ -44,6 +52,8 @@ void Title::Initialize()
 	GetGraphSizeF(ResourceManager::GetGraph(logo_img), &logo_size.width, &logo_size.height);
 
 	swap_se = ResourceManager::SetSound("Resource/Sounds/Effect/swap.wav");
+	rise_se = ResourceManager::SetSound("Resource/Sounds/System/rise.wav");
+	cursor_se = ResourceManager::SetSound("Resource/Sounds/Player/cursor.mp3");
 
 	for (int i = 0; i < BG_BLOCK_WIDTH_NUM; i++)
 	{
@@ -62,6 +72,7 @@ void Title::Initialize()
 	}
 	//プレイヤーの色をランダムで決める
 	player_color = color_list[GetRand(2)];
+	bg_handle = MakeScreen(SCREEN_WIDTH, SCREEN_HEIGHT);
 }
 
 void Title::Finalize()
@@ -92,22 +103,43 @@ AbstractScene* Title::Update()
 	//演出中もしくはエンドアニメーション中は更新しない
 	if (swap_anim_flg == false && end_game_flg == false)
 	{
-		//選択メニュー更新
-		if (cursor_location.x < player_location.x && cursor_location.y < player_location.y + (PLAYER_HEIGHT / 2) - 30)
+		//選択メニュー更新（スティック）
+		if (current_menu != 0 && cursor_location.x < player_location.x && cursor_location.y < player_location.y + (PLAYER_HEIGHT / 2) - 30)
 		{
 			current_menu = 0;
+			ResourceManager::StartSound(cursor_se);
 		}
-		else if (cursor_location.x > player_location.x && cursor_location.x < player_location.x + PLAYER_WIDTH && cursor_location.y < player_location.y + (PLAYER_HEIGHT / 2) - 30)
+		else if (current_menu != 1 && cursor_location.x > player_location.x && cursor_location.x < player_location.x + PLAYER_WIDTH && cursor_location.y < player_location.y + (PLAYER_HEIGHT / 2) - 30)
 		{
 			current_menu = 1;
+			ResourceManager::StartSound(cursor_se);
 		}
-		else if (cursor_location.x > player_location.x + PLAYER_WIDTH && cursor_location.y < player_location.y + (PLAYER_HEIGHT / 2) - 30)
+		else if (current_menu != 2 && cursor_location.x > player_location.x + PLAYER_WIDTH && cursor_location.y < player_location.y + (PLAYER_HEIGHT / 2) - 30)
 		{
 			current_menu = 2;
+			ResourceManager::StartSound(cursor_se);
 		}
 		//カーソル更新
 		cursor_location.x = player_location.x + (PLAYER_WIDTH / 2) + PadInput::TipLeftLStick(STICKL_X) * 100;
 		cursor_location.y = player_location.y + (PLAYER_HEIGHT / 2) - PadInput::TipLeftLStick(STICKL_Y) * 100;
+
+		//選択メニュー更新（十字キー）
+		if (PadInput::OnButton(XINPUT_BUTTON_DPAD_LEFT))
+		{
+			if (--current_menu < 0)
+			{
+				current_menu = 2;
+			}
+			ResourceManager::StartSound(cursor_se);
+		}
+		if (PadInput::OnButton(XINPUT_BUTTON_DPAD_RIGHT))
+		{
+			if (++current_menu > 2)
+			{
+				current_menu = 0;
+			}
+			ResourceManager::StartSound(cursor_se);
+		}
 	}
 
 	draw_stick_shift.x = cosf(stick_angle * M_PI * 2) * 5;
@@ -123,12 +155,13 @@ AbstractScene* Title::Update()
 		{
 			swap_anim_flg = true;
 			anim_start = menu_location[current_menu];
-
+			ResourceManager::StartSound(rise_se);
 		}
 		//再生中に押されたらスキップ
 		else
 		{
 			swap_anim_timer = 255;
+			ResourceManager::StopSound(rise_se);
 		}
 	}
 
@@ -285,86 +318,19 @@ void Title::Draw()const
 		GraphFilter(bg_handle, DX_GRAPH_FILTER_GAUSS, 16, 1400);			//保存した背景にぼかしをかける
 		DrawGraph(0, 0, bg_handle, TRUE);									//背景描画
 
+
 		//ロゴ画像描画
-		DrawGraph((SCREEN_WIDTH/2)-(logo_size.width/2),50, ResourceManager::GetGraph(logo_img), TRUE);
-
-
-		//プレイヤー画像描画
-		DrawPlayer(current_menu);
-		DrawBox(player_location.x - 50, player_location.y + PLAYER_HEIGHT, player_location.x + PLAYER_WIDTH + 50, SCREEN_HEIGHT, 0x000000, TRUE);
-		DrawBox(player_location.x - 50, player_location.y + PLAYER_HEIGHT, player_location.x + PLAYER_WIDTH + 50, SCREEN_HEIGHT+5, 0xffffff, FALSE);
-
-		//説明UI描画
-		DrawCircleAA(draw_stick_location.x, draw_stick_location.y, 15, 100, 0x000000, TRUE);
-		DrawCircleAA(draw_stick_location.x, draw_stick_location.y, 15, 100, 0x666666, FALSE);
-		DrawCircleAA(draw_stick_location.x + draw_stick_shift.x, draw_stick_location.y + draw_stick_shift.y, 12, 100, 0x666666, TRUE);
-		SetFontSize(24);
-		DrawStringF(draw_stick_location.x + 25, draw_stick_location.y - 10, "Left Stick", 0xffffff);
-		DrawStringF(draw_stick_location.x + 50, draw_stick_location.y + 20, "&", 0xffffff);
-		DrawStringF(draw_stick_location.x + 35, draw_stick_location.y + 45, "B Button", 0xffffff);
-
-		SetFontSize(16);
-		if (button_draw == false)
+		SetFontSize(144);
+		for (int i = 0; i < 7; i++)
 		{
-			//ボタンイメージ描画
-			DrawCircleAA(draw_stick_location.x, draw_stick_location.y + 60, 12, 100, 0xff0000, FALSE);
-			DrawStringF(draw_stick_location.x - 3, draw_stick_location.y + 53, "B", 0xff0000);
-			
-			//押してる演出の描画
-			DrawLineAA(draw_stick_location.x - 20, draw_stick_location.y + 63, draw_stick_location.x - 25, draw_stick_location.y + 60, 0xffffff, TRUE);
-			DrawLineAA(draw_stick_location.x - 20, draw_stick_location.y + 58, draw_stick_location.x - 25, draw_stick_location.y + 53, 0xffffff, TRUE);
-			DrawLineAA(draw_stick_location.x + 20, draw_stick_location.y + 63, draw_stick_location.x + 25, draw_stick_location.y + 60, 0xffffff, TRUE);
-			DrawLineAA(draw_stick_location.x + 20, draw_stick_location.y + 58, draw_stick_location.x + 25, draw_stick_location.y + 53, 0xffffff, TRUE);
-		}
-		else
-		{
-			DrawCircleAA(draw_stick_location.x, draw_stick_location.y + 55, 12, 100, 0xff0000, TRUE);
-			DrawCircleAA(draw_stick_location.x, draw_stick_location.y + 60, 12, 100, 0xff0000, TRUE);
-			DrawBoxAA(draw_stick_location.x - 12, draw_stick_location.y + 55, draw_stick_location.x + 12, draw_stick_location.y + 60, 0xff0000, TRUE);
-			DrawStringF(draw_stick_location.x - 3, draw_stick_location.y + 48, "B", 0x000000);
-		}
-
-		SetFontSize(48);
-		//メニュー項目の描画
-		for (int i = 0; i < 3; i++)
-		{
-			if (swap_anim_timer <= 30)
+			if (swap_anim_flg == false)
 			{
-				DrawBoxAA(menu_location[i].x, menu_location[i].y, menu_location[i].x + menu_size[i].width, menu_location[i].y + menu_size[i].height, 0x000000, TRUE);
-				DrawBoxAA(menu_location[i].x, menu_location[i].y, menu_location[i].x + menu_size[i].width, menu_location[i].y + menu_size[i].height, 0xffffff, FALSE);
+				DrawFormatString(logo_location[i].x + 325, logo_location[i].y + 60, logo_color[i], "%s", logo_string[i]);
 			}
-			else if (current_menu == i)
+			else
 			{
-				DrawBoxAA(menu_location[i].x, menu_location[i].y, menu_location[i].x + menu_size[i].width, menu_location[i].y + menu_size[i].height, 0x000000, TRUE);
-				DrawBoxAA(menu_location[i].x, menu_location[i].y, menu_location[i].x + menu_size[i].width, menu_location[i].y + menu_size[i].height, 0xffffff, FALSE);
-			}
-			if (swap_anim_timer <= 30)
-			{
-				DrawFormatStringF(menu_location[i].x + (menu_size[i].width / 2) - (GetDrawStringWidth(menu_string[i], strlen(menu_string[i])) / 2), menu_location[i].y + (menu_size[i].height / 2) - 24, 0xffffff, "%s", menu_string[i]);
-				//選択中のメニューに交換カーソルを出す
-				if (current_menu == i)
-				{
-					DrawCircleAA(menu_location[i].x + (menu_size[i].width / 2), menu_location[i].y + (menu_size[i].height / 2), 70.f, 40, 0xffff00, FALSE, 4.f * 1.75f);
+				DrawFormatString(logo_location[i].x + 325+GetRand(10)-5, logo_location[i].y + 60 + GetRand(10)-5, logo_color[i], "%s", logo_string[i]);
 
-					Location base;
-					base.x = menu_location[i].x + (menu_size[i].width / 2);
-					base.y = menu_location[i].y + (menu_size[i].height / 2);
-
-					Location l[3];
-					l[0].x = base.x;
-					l[0].y = base.y - 70;
-
-					l[0] = RotationLocation(base, l[0], (float)(circleAng * M_PI / 180));
-
-					l[1] = RotationLocation(base, l[0], (float)(120.f * M_PI / 180));
-
-					l[2] = RotationLocation(base, l[0], (float)(240.f * M_PI / 180));
-
-
-					DrawCircleAA(l[0].x, l[0].y, 15.f * 1.75f, 32, 0xcc0000, TRUE);
-					DrawCircleAA(l[1].x, l[1].y, 15.f * 1.75f, 32, 0x3c78d8, TRUE);
-					DrawCircleAA(l[2].x, l[2].y, 15.f * 1.75f, 32, 0x6aa84f, TRUE);
-				}
 			}
 		}
 		if (swap_anim_flg == true)
@@ -372,6 +338,87 @@ void Title::Draw()const
 			SetDrawBlendMode(DX_BLENDMODE_ALPHA, swap_anim_timer);
 			DrawBox(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0xffffff, true);
 			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
+		}
+		else
+		{
+			//プレイヤー画像描画
+			DrawPlayer(current_menu);
+			DrawBox(player_location.x - 50, player_location.y + PLAYER_HEIGHT, player_location.x + PLAYER_WIDTH + 50, SCREEN_HEIGHT, 0x000000, TRUE);
+			DrawBox(player_location.x - 50, player_location.y + PLAYER_HEIGHT, player_location.x + PLAYER_WIDTH + 50, SCREEN_HEIGHT + 5, 0xffffff, FALSE);
+
+			//説明UI描画
+			DrawCircleAA(draw_stick_location.x, draw_stick_location.y, 15, 100, 0x000000, TRUE);
+			DrawCircleAA(draw_stick_location.x, draw_stick_location.y, 15, 100, 0x666666, FALSE);
+			DrawCircleAA(draw_stick_location.x + draw_stick_shift.x, draw_stick_location.y + draw_stick_shift.y, 12, 100, 0x666666, TRUE);
+			SetFontSize(24);
+			DrawStringF(draw_stick_location.x + 25, draw_stick_location.y - 10, "Left Stick", 0xffffff);
+			DrawStringF(draw_stick_location.x + 50, draw_stick_location.y + 20, "&", 0xffffff);
+			DrawStringF(draw_stick_location.x + 35, draw_stick_location.y + 45, "B Button", 0xffffff);
+
+			SetFontSize(16);
+			if (button_draw == false)
+			{
+				//ボタンイメージ描画
+				DrawCircleAA(draw_stick_location.x, draw_stick_location.y + 60, 12, 100, 0xff0000, FALSE);
+				DrawStringF(draw_stick_location.x - 3, draw_stick_location.y + 53, "B", 0xff0000);
+
+				//押してる演出の描画
+				DrawLineAA(draw_stick_location.x - 20, draw_stick_location.y + 63, draw_stick_location.x - 25, draw_stick_location.y + 60, 0xffffff, TRUE);
+				DrawLineAA(draw_stick_location.x - 20, draw_stick_location.y + 58, draw_stick_location.x - 25, draw_stick_location.y + 53, 0xffffff, TRUE);
+				DrawLineAA(draw_stick_location.x + 20, draw_stick_location.y + 63, draw_stick_location.x + 25, draw_stick_location.y + 60, 0xffffff, TRUE);
+				DrawLineAA(draw_stick_location.x + 20, draw_stick_location.y + 58, draw_stick_location.x + 25, draw_stick_location.y + 53, 0xffffff, TRUE);
+			}
+			else
+			{
+				DrawCircleAA(draw_stick_location.x, draw_stick_location.y + 55, 12, 100, 0xff0000, TRUE);
+				DrawCircleAA(draw_stick_location.x, draw_stick_location.y + 60, 12, 100, 0xff0000, TRUE);
+				DrawBoxAA(draw_stick_location.x - 12, draw_stick_location.y + 55, draw_stick_location.x + 12, draw_stick_location.y + 60, 0xff0000, TRUE);
+				DrawStringF(draw_stick_location.x - 3, draw_stick_location.y + 48, "B", 0x000000);
+			}
+
+			SetFontSize(48);
+			//メニュー項目の描画
+			for (int i = 0; i < 3; i++)
+			{
+				if (swap_anim_timer <= 30)
+				{
+					DrawBoxAA(menu_location[i].x, menu_location[i].y, menu_location[i].x + menu_size[i].width, menu_location[i].y + menu_size[i].height, 0x000000, TRUE);
+					DrawBoxAA(menu_location[i].x, menu_location[i].y, menu_location[i].x + menu_size[i].width, menu_location[i].y + menu_size[i].height, 0xffffff, FALSE);
+				}
+				else if (current_menu == i)
+				{
+					DrawBoxAA(menu_location[i].x, menu_location[i].y, menu_location[i].x + menu_size[i].width, menu_location[i].y + menu_size[i].height, 0x000000, TRUE);
+					DrawBoxAA(menu_location[i].x, menu_location[i].y, menu_location[i].x + menu_size[i].width, menu_location[i].y + menu_size[i].height, 0xffffff, FALSE);
+				}
+				if (swap_anim_timer <= 30)
+				{
+					DrawFormatStringF(menu_location[i].x + (menu_size[i].width / 2) - (GetDrawStringWidth(menu_string[i], strlen(menu_string[i])) / 2), menu_location[i].y + (menu_size[i].height / 2) - 24, 0xffffff, "%s", menu_string[i]);
+					//選択中のメニューに交換カーソルを出す
+					if (current_menu == i)
+					{
+						DrawCircleAA(menu_location[i].x + (menu_size[i].width / 2), menu_location[i].y + (menu_size[i].height / 2), 70.f, 40, 0xffff00, FALSE, 4.f * 1.75f);
+
+						Location base;
+						base.x = menu_location[i].x + (menu_size[i].width / 2);
+						base.y = menu_location[i].y + (menu_size[i].height / 2);
+
+						Location l[3];
+						l[0].x = base.x;
+						l[0].y = base.y - 70;
+
+						l[0] = RotationLocation(base, l[0], (float)(circleAng * M_PI / 180));
+
+						l[1] = RotationLocation(base, l[0], (float)(120.f * M_PI / 180));
+
+						l[2] = RotationLocation(base, l[0], (float)(240.f * M_PI / 180));
+
+
+						DrawCircleAA(l[0].x, l[0].y, 15.f * 1.75f, 32, 0xcc0000, TRUE);
+						DrawCircleAA(l[1].x, l[1].y, 15.f * 1.75f, 32, 0x3c78d8, TRUE);
+						DrawCircleAA(l[2].x, l[2].y, 15.f * 1.75f, 32, 0x6aa84f, TRUE);
+					}
+				}
+			}
 		}
 	}
 	else
@@ -476,7 +523,6 @@ void Title::bgUpdate()
 			}
 		}
 	}
-	bg_handle = MakeScreen(SCREEN_WIDTH, SCREEN_HEIGHT);
 }
 
 int Title::GetRandColor()

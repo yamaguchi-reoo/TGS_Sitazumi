@@ -70,7 +70,7 @@ void EnemyDeer::Initialize(Location _location, Erea _erea, int _color_data, int 
 void EnemyDeer::Update(GameMain* _g)
 {
 
-	frame++;
+	__super::Update(_g);
 	
 	if (frame % 30 == 0)
 	{

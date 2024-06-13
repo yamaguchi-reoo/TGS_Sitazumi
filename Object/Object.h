@@ -17,6 +17,7 @@ class Object : public BoxCollider, public ColorData
 {
 public:
 
+	int frame = 0;			//フレーム数測定
 	int type = 0;		//Objectの種類格納 0=BLOCK 1=PLAYER 2=ENEMY 3=FIRE 4=WOOD 5=WATER 6=EFFECT
 	bool can_swap = false;	//交換できるオブジェクトか
 	bool can_hit = false;	//当たり判定があるオブジェクトか
@@ -27,7 +28,13 @@ public:
 	//_location _erea=スポーン座標、大きさ ,_color_data=色情報, object_pos=Object配列内の自分自身の位置
 	virtual void Initialize(Location _location, Erea _erea, int _color_data, int _object_pos) = 0;
 
-	virtual void Update(GameMain* _g) = 0;
+	virtual void Update(GameMain* _g)
+	{
+		if (++frame > 6000)
+		{
+			frame = 0;
+		}
+	}
 
 	virtual void Draw()const = 0;
 

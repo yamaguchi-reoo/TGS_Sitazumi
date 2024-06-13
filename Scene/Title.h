@@ -22,6 +22,27 @@ static char menu_string[3][256] =
     "END"
 };
 
+static int logo_color[7]
+{
+    0xff0000,
+    0xffffff,
+    0x0000ff,
+    0xffffff,
+    0xffffff,
+    0xffffff,
+    0x00ff00,
+};
+
+static char logo_string[7][2]
+{
+    "S",
+    "w",
+    "a",
+    "p",
+    "p",
+    "e",
+    "r",
+};
 struct BackGroundImage {
     bool flg;
     Location location;
@@ -42,6 +63,7 @@ private:
     Location menu_location[3];  //メニュー項目の座標
     Erea menu_size[3];          //メニュー項目の大きさ
     Location player_location;   //プレイヤーの見た目の描画位置
+    Location logo_location[7];  //タイトルロゴの文字位置
     int player_color;           //プレイヤーの色
     Location cursor_location;   //カーソルの座標
     Location draw_stick_location;   //描画するスティックの座標
@@ -68,6 +90,8 @@ private:
     int logo_img;       //タイトルロゴの格納
     Erea logo_size;         //ロゴ画像の大きさ
     int swap_se;        //交換SE
+    int rise_se;       //遷移SE
+    int cursor_se;      //カーソルSE
 
     BackGroundImage bg[BG_BLOCK_WIDTH_NUM][BG_BLOCK_HEIGHT_NUM];    //背景情報保存
     int bg_handle;

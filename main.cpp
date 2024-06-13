@@ -40,6 +40,9 @@ int WINAPI WinMain(_In_ HINSTANCE  hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     //ステージアニメーション初期化
     ResourceManager::StageAnimInitialize();
 
+    //フォント変更 候補:"Franklin Gothic" "HGS創英角ｺﾞｼｯｸUB" "HGｺﾞｼｯｸE" ステージ後半で変更"Wingdings"
+    ChangeFont("Franklin Gothic");
+
     try
     {
         // ゲームループし、シーンマネジャーでシーンの更新

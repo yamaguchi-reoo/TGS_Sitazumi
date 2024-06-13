@@ -4,7 +4,6 @@
 #include"../Utility/ResourceManager.h"
 
 EnemyFrog::EnemyFrog():
-	frame(0),
 	timer(0),
 	frog_state(FrogState::LEFT_JUMP), 
 	vector{0,0}, 
@@ -40,11 +39,8 @@ void EnemyFrog::Initialize(Location _location, Erea _erea, int _color_data, int 
 
 void EnemyFrog::Update(GameMain* _g)
 {
+	__super::Update(_g);
 
-	if (++frame > 360)
-	{
-		frame = 0;
-	}
 	//if (vector.x != 0 || vector.y != 0)
 	//{
 	//	_g->SpawnEffect(location, erea, 1, 20, color);
