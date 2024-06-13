@@ -66,6 +66,12 @@ private:
     bool create_once;           //一回だけ壁を作る
     bool fadein_flg;            //遷移してきたときのフェードイン演出
 
+    Location Gdraw_stick_location;   //描画するスティックの座標
+    Location Gdraw_stick_shift;   //描画するスティックをずらす座標
+    float Gstick_angle;          //スティックのアングルを保存
+    bool Gbutton_draw;           //どの画像を描画するか
+
+
     bool game_over_flg;         //ゲームオーバーか
     bool game_clear_flg;
     bool game_pause_flg;
@@ -182,5 +188,8 @@ public:
     Location RotationLocation(Location BaseLoc, Location Loc, float r) const;
 
     bool GetPauseAfter() { return pause_after_flg; }
+
+    // チュートリアルエリアのプレイヤー描画専用
+    void DrawPlayer()const;
 };
 
