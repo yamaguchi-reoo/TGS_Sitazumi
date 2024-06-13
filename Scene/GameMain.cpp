@@ -62,7 +62,6 @@ void GameMain::Initialize()
 	bgm_abnormality = ResourceManager::SetSound("Resource/Sounds/BGM/GameMainAbnormality.wav");
 
 	ResourceManager::StartSound(bgm_normal, TRUE);
-	ResourceManager::StartSound(bgm_noise, TRUE);
 }
 
 void GameMain::Finalize()
