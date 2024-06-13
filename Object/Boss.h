@@ -40,6 +40,7 @@ private:
 	bool damage_effect_flg = false; // ダメージエフェクトのフラグ
 
 	float speed;				//移動速度;
+
 	int cunt;
 	int c;
 	int num;
@@ -50,6 +51,8 @@ private:
 	std::vector<Location> warp_pos; //ワープ位置情報
 	std::array<Location, 36> wing;	//ボスの羽の位置情報
 	std::array<Location, 36> wing_mirror;//ミラー羽の位置情報
+
+	int wing_fps;
 
 	bool f = false;
 	bool oldF = false;
@@ -108,4 +111,6 @@ public:
 
 	//羽の座標をファイルから読み込む
 	void LoadPosition();
+
+	void BossAnimation();
 };
