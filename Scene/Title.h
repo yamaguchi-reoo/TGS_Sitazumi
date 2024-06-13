@@ -42,6 +42,7 @@ private:
     Location menu_location[3];  //メニュー項目の座標
     Erea menu_size[3];          //メニュー項目の大きさ
     Location player_location;   //プレイヤーの見た目の描画位置
+    int player_color;           //プレイヤーの色
     Location cursor_location;   //カーソルの座標
     Location draw_stick_location;   //描画するスティックの座標
     Location draw_stick_shift;   //描画するスティックをずらす座標
@@ -66,10 +67,11 @@ private:
 
     int logo_img;       //タイトルロゴの格納
     Erea logo_size;         //ロゴ画像の大きさ
-    int swap_se;
+    int swap_se;        //交換SE
 
-    BackGroundImage bg[BG_BLOCK_WIDTH_NUM][BG_BLOCK_HEIGHT_NUM];
-    int a_num;
+    BackGroundImage bg[BG_BLOCK_WIDTH_NUM][BG_BLOCK_HEIGHT_NUM];    //背景情報保存
+    int bg_handle;
+    int color_list[3] = { 0xff0000,0x00ff00,0x0000ff };
     
 public:
     //コンストラクタ
@@ -98,6 +100,9 @@ public:
 
     //４色の中から一定確率で抽選
     int GetRandColor();
+
+    //プレイヤーの描画
+    void DrawPlayer(int _num)const;
 };
 
 

@@ -209,6 +209,8 @@ void GameMain::Draw() const
 	DrawFormatString(100, 120, 0xffffff, "Updeteが呼ばれているObject数:%d", move_object_num);
 
 	test->Draw();
+	//チュートリアル表示テスト
+	DrawString(300 - camera_location.x, stage_height-100 - camera_location.y, "aaaaa", 0xff0000, TRUE);
 #endif
 }
 
