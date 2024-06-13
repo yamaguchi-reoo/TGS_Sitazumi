@@ -212,9 +212,9 @@ void GameMain::Draw() const
 	test->Draw();
 	//チュートリアル表示テスト
 	SetFontSize(50);
-	//DrawString(300 - camera_location.x, stage_height-100 - camera_location.y, "aaaaa", 0xff0000, TRUE);
+	DrawString(KeyInput::GetMouseCursor().x - camera_location.x, stage_height- KeyInput::GetMouseCursor().y - camera_location.y, "aaaaa", 0xff0000, TRUE);
 	DrawFormatString(0, 40, 0xff0000, "%0.1f x %0.1f y", camera_location.x, stage_height - camera_location.y);
-	DrawFormatString(KeyInput::GetMouseCursor().x, KeyInput::GetMouseCursor().y, 0xff0000, "%0.1f x %0.1f y", camera_location.x, stage_height - camera_location.y);
+	DrawFormatString(0, 90, GetColor(255, 0, 0), "%d %d", KeyInput::GetMouseCursor().x, KeyInput::GetMouseCursor().y);
 #endif
 
 	SetFontSize(50);

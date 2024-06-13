@@ -340,7 +340,7 @@ void Player::Draw()const
 
 	if (searchedObj != nullptr && searchFlg) {
 		DrawCircleAA(searchedObj->GetLocalLocation().x + searchedObj->GetErea().width / 2,
-			searchedObj->GetLocalLocation().y + searchedObj->GetErea().height / 2, 40, 40, 0xffff00, FALSE, 5);
+			searchedObj->GetLocalLocation().y + searchedObj->GetErea().height / 2, 40, 40, 0xffff00, FALSE, 4);
 
 		Location base;
 		base.x = searchedObj->GetLocalLocation().x + searchedObj->GetErea().width / 2;
@@ -356,11 +356,11 @@ void Player::Draw()const
 
 		l[2] = RotationLocation(base, l[0], (float)(240.f * M_PI / 180));
 		
-		for (int i = 0; i < 3; i++)
-		{
-			DrawCircleAA(l[i].x, l[i].y, 20, 32, 0xffff00, TRUE);
-		}
-
+		
+		DrawCircleAA(l[0].x, l[0].y, 15, 32, 0xcc0000, TRUE);
+		DrawCircleAA(l[1].x, l[1].y, 15, 32, 0x3c78d8, TRUE);
+		DrawCircleAA(l[2].x, l[2].y, 15, 32, 0x6aa84f, TRUE);
+	
 	}
 	
 }
