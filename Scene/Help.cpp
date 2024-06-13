@@ -79,7 +79,10 @@ void Help::Draw()const
 	DrawFormatString(1100, 60, GetColor(255, 0, 0), "%d %d", KeyInput::GetMouseCursor().x, KeyInput::GetMouseCursor().y);
 	//DrawFormatString(700, 100, GetColor(255, 0, 0), "menu : %d",MenuNumber);
 
-	DrawBoxAA(320.f, 20.f, 1260.f, 700.f, 0xffffff, FALSE, 7.0f);
+	if (MenuNumber != 4 && MenuNumber != 5)
+	{
+		DrawBoxAA(320.f, 20.f, 1260.f, 700.f, 0xffffff, FALSE, 7.0f);
+	}
 
 	//LineThicknessは線の太さ
 	//大外側
@@ -107,6 +110,8 @@ void Help::Draw()const
 	{
 		
 	case 1:	//操作方法
+
+		//カーソル描画
 		DrawLineAA(30.f, 100.f, 280.f, 100.f, 0xff0000, 5.0f);
 
 		DrawCircleAA(500.f, 85.f, 50.f, 32, 0x1c2b3e);
@@ -148,7 +153,33 @@ void Help::Draw()const
 		DrawLineAA(30.f, 240.f, 280.f, 240.f, 0xff0000, 5.0f);
 		break;
 	case 3: //属性
+
+		//カーソル描画
 		DrawLineAA(30.f, 380.f, 280.f, 380.f, 0xff0000, 5.0f);
+
+		DrawCircleAA(770.f, 140.f, 100.f, 32, 0xcc0000, TRUE);
+		DrawLineAA(690.f, 244.f, 580.f, 445.f, 0xffffff, 10.0f);
+		DrawLineAA(648.f, 250.f, 690.f, 246.f, 0xffffff, 10.0f);
+		DrawLineAA(687.f, 241.f, 695.f, 285.f, 0xffffff, 10.0f);
+
+		DrawCircleAA(510.f, 550.f, 100.f, 32, 0x3c78d8, TRUE);
+
+		DrawLineAA(618.f, 554.f, 930.f, 554.f, 0xffffff, 10.0f);
+		DrawLineAA(620.f, 555.f, 652.f, 521.f, 0xffffff, 10.0f);
+		DrawLineAA(620.f, 555.f, 655.f, 576.f, 0xffffff, 10.0f);
+
+		DrawCircleAA(1060.f, 550.f, 100.f, 32, 0x6aa84f, TRUE);
+		
+		DrawLineAA(840.f, 240.f, 980.f, 445.f, 0xffffff, 10.0f);
+		DrawLineAA(832.f, 291.f, 840.f, 240.f, 0xffffff, 10.0f);
+		DrawLineAA(840.f, 240.f, 891.f, 250.f, 0xffffff, 10.0f);
+
+		SetFontSize(30);
+		DrawString(650, 370, "矢印の方向に強い", 0xffffff);
+		DrawString(710, 110, "   赤\n(火属性)", 0xFFFF55);
+		DrawString(450, 525, "   青\n(水属性)", 0xFFFF55);
+		DrawString(1000, 520, "   緑\n(木属性)", 0xFFFF55);
+
 		break;
 	case 4: //タイトルへ
 		DrawLineAA(30.f, 520.f, 280.f, 520.f, 0xff0000, 5.0f);
@@ -158,10 +189,5 @@ void Help::Draw()const
 		break;
 	default:
 		break;
-	}
-
-	if (flg == false)
-	{
-		
 	}
 }

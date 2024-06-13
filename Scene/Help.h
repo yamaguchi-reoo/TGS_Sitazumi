@@ -7,12 +7,9 @@ class Help :
 {
 private:
 
-    //int hStrWidth, hStrLen;
-    int MenuNumber = 1;
-    float TriangleXNum = 0.0f, TriangleYNum = 0.0f;
+    int MenuNumber = 3;
     int MenuY = 1;
     int wt = 0;
-    bool flg = false;
 
 public:
     //コンストラクタ
