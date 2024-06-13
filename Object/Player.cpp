@@ -585,7 +585,7 @@ void Player::MoveActor()
 			break;
 
 		case 1:
-			vector.y = -15.f;
+			vector.y = -23.f;
 
 			break;
 

@@ -112,50 +112,14 @@ AbstractScene* GameMain::Update()
 	Gdraw_stick_shift.y = sinf(Gstick_angle * M_PI * 2) * 5;
 
 	//演出の終了
-	if (frame > FADEIN_TIME || PadInput::OnButton(XINPUT_BUTTON_B))
+	if ((frame > FADEIN_TIME || PadInput::OnButton(XINPUT_BUTTON_B)) && fadein_flg == true)
 	{
 		fadein_flg = false;
 	}
 	//演出中は更新を止める
 	if (frame == 1 || fadein_flg == false)
 	{
-		//リセット
-		move_object_num = 0;
-		//各オブジェクトの更新
-		if (object[player_object]->GetSearchFlg() == FALSE || (object[player_object]->GetSearchFlg() == TRUE && frame % 10 == 0))
-		{
-			for (int i = 0; i < OBJECT_NUM; i++)
-			{
-				//プレイヤーとボス以外の画面内オブジェクトの更新
-				if (i != player_object && CheckInScreen(object[i]))
-				{
-					object[i]->SetScreenPosition(camera_location);
-					object[i]->Update(this);
-					move_object_num++;
-					for (int j = i + 1; object[j] != nullptr; j++)
-					{
-						//各オブジェクトとの当たり判定
-						if (object[i] != nullptr && CheckInScreen(object[j]) == true && object[i]->HitBox(object[j]) && j != player_object)
-						{
-							object[i]->Hit(object[j]);
-							object[j]->Hit(object[i]);
-						}
-					}
-					//プレイヤーに選択されているオブジェクトなら、描画色を変える
-					if (object[i] != nullptr && object[i] == now_current_object && now_current_object != object[boss_object])
-					{
-						object[i]->SetDrawColor(WHITE);
-					}
-					else if (object[i] != nullptr)
-					{
-						object[i]->SetDrawColor(object[i]->GetColorData());
-					}
-				}
-			}
-			//管理クラスの更新
-			weather->Update(this);
-		}
-		if (game_clear_flg)
+			if (game_clear_flg)
 		{
 			if (PadInput::TipLeftLStick(STICKL_X) < -0.5f || PadInput::OnButton(XINPUT_BUTTON_DPAD_LEFT))
 			{
@@ -241,93 +205,79 @@ AbstractScene* GameMain::Update()
 		}
 		else
 		{
-			if (PadInput::OnButton(XINPUT_BUTTON_START) && !game_pause_flg)
+		if (PadInput::OnButton(XINPUT_BUTTON_START) && !game_pause_flg)
 			{
 				game_pause_flg = true;
 			}
 
-			if (PadInput::OnRelease(XINPUT_BUTTON_B) && pause_after_flg)
+		if (PadInput::OnRelease(XINPUT_BUTTON_B) && pause_after_flg)
 			{
 				pause_after_flg = false;
 			}
-
-			//フレーム測定
-			frame++;
-			//カメラの更新
-			UpdateCamera();
-			//演出の終了
-			if (frame > FADEIN_TIME || PadInput::OnButton(XINPUT_BUTTON_B))
+			//リセット
+			move_object_num = 0;
+			//各オブジェクトの更新
+			if (object[player_object]->GetSearchFlg() == FALSE || (object[player_object]->GetSearchFlg() == TRUE && frame % 10 == 0))
 			{
-				fadein_flg = false;
-			}
-			//演出中は更新を止める
-			if (frame == 1 || fadein_flg == false)
-			{
-				//リセット
-				move_object_num = 0;
-				//各オブジェクトの更新
-				if (object[player_object]->GetSearchFlg() == FALSE || (object[player_object]->GetSearchFlg() == TRUE && frame % 10 == 0))
+				for (int i = 0; i < OBJECT_NUM; i++)
 				{
-					for (int i = 0; i < OBJECT_NUM; i++)
+					//プレイヤーとボス以外の画面内オブジェクトの更新
+					if (i != player_object && CheckInScreen(object[i]))
 					{
-						//プレイヤーとボス以外の画面内オブジェクトの更新
-						if (i != player_object && CheckInScreen(object[i]))
+						object[i]->SetScreenPosition(camera_location);
+						object[i]->Update(this);
+						move_object_num++;
+						for (int j = i + 1; object[j] != nullptr; j++)
 						{
-							object[i]->SetScreenPosition(camera_location);
-							object[i]->Update(this);
-							move_object_num++;
-							for (int j = i + 1; object[j] != nullptr; j++)
+							//各オブジェクトとの当たり判定
+							if (object[i] != nullptr && CheckInScreen(object[j]) == true && object[i]->HitBox(object[j]) && j != player_object)
 							{
-								//各オブジェクトとの当たり判定
-								if (object[i] != nullptr && CheckInScreen(object[j]) == true && object[i]->HitBox(object[j]) && j != player_object)
-								{
-									object[i]->Hit(object[j]);
-									object[j]->Hit(object[i]);
-								}
-							}
-							//プレイヤーに選択されているオブジェクトなら、描画色を変える
-							if (object[i] != nullptr && object[i] == now_current_object && now_current_object != object[boss_object])
-							{
-								object[i]->SetDrawColor(WHITE);
-							}
-							else if (object[i] != nullptr)
-							{
-								object[i]->SetDrawColor(object[i]->GetColorData());
+								object[i]->Hit(object[j]);
+								object[j]->Hit(object[i]);
 							}
 						}
+						//プレイヤーに選択されているオブジェクトなら、描画色を変える
+						if (object[i] != nullptr && object[i] == now_current_object && now_current_object != object[boss_object])
+						{
+							object[i]->SetDrawColor(WHITE);
+						}
+						else if (object[i] != nullptr)
+						{
+							object[i]->SetDrawColor(object[i]->GetColorData());
+						}
 					}
-					//管理クラスの更新
-					weather->Update(this);
 				}
-
-				//プレイヤーの更新
-				PlayerUpdate();
-
-				//ボスの更新
-				BossUpdate();
-
 				//管理クラスの更新
-				effect_spawner->Update(this);
+				weather->Update(this);
+			}
 
-				//プレイヤーがボスエリアに入ったら退路を閉じる
-				if (now_stage == 2 && object[player_object]->GetLocalLocation().x > 160 && object[player_object]->GetLocalLocation().x < 200 && create_once == false)
-				{
-					CreateObject(new Stage(2), { 160,520 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
-					CreateObject(new Stage(2), { 160,560 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
-					CreateObject(new Stage(2), { 160,600 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
-					CreateObject(new Stage(2), { 160,640 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
-					CreateObject(new Stage(1), { 120,520 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
-					CreateObject(new Stage(1), { 120,560 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
-					CreateObject(new Stage(1), { 120,600 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
-					CreateObject(new Stage(1), { 120,640 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
-					create_once = true;
-				}
+			//プレイヤーの更新
+			PlayerUpdate();
 
-				//ボスステージに遷移
-				if (now_stage != 2 && object[player_object]->GetLocation().x > stage_width - 100 && object[player_object]->GetLocation().y > stage_height - 300)
-				{
-					SetStage(2, false);
-				}
+			//ボスの更新
+			BossUpdate();
+
+			//管理クラスの更新
+			effect_spawner->Update(this);
+
+			//プレイヤーがボスエリアに入ったら退路を閉じる
+			if (now_stage == 2 && object[player_object]->GetLocalLocation().x > 160 && object[player_object]->GetLocalLocation().x < 200 && create_once == false)
+			{
+				CreateObject(new Stage(2), { 160,520 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
+				CreateObject(new Stage(2), { 160,560 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
+				CreateObject(new Stage(2), { 160,600 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
+				CreateObject(new Stage(2), { 160,640 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
+				CreateObject(new Stage(1), { 120,520 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
+				CreateObject(new Stage(1), { 120,560 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
+				CreateObject(new Stage(1), { 120,600 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
+				CreateObject(new Stage(1), { 120,640 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
+				create_once = true;
+			}
+
+			//ボスステージに遷移
+			if (now_stage != 2 && object[player_object]->GetLocation().x > stage_width - 100 && object[player_object]->GetLocation().y > stage_height - 300)
+			{
+				SetStage(2, false);
 			}
 		}
 
