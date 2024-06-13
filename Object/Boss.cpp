@@ -37,6 +37,7 @@ Boss::Boss() :vector{ 0.0f }, boss_state(BossState::ATTACK), barrier_num(3), dam
 	cunt = 1;
 	c = 1;
 	num = 0;
+	boss_anim = 0.0f;
 }
 
 Boss::~Boss()
@@ -61,7 +62,6 @@ void Boss::Initialize(Location _location, Erea _erea, int _color_data, int _obje
 	barrier_rad[0] = 60;
 	barrier_rad[1] = 55;
 	barrier_rad[2] = 50;
-
 
 	LoadPosition();  // 初期化時に座標を読み込む
 }
@@ -88,6 +88,7 @@ void Boss::Update(GameMain* _g)
 
 	//アニメーション
 	BossAnimation();
+	boss_anim = sin(PI * 2.f / 60.f * wing_fps) * 5.f;
 	Location player_pos = _g->GetPlayerLocation();
 
 	if (player_pos.x > 140) {
@@ -161,7 +162,7 @@ void Boss::Draw() const
 	//DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, FALSE);
 
 	//本体
-	DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2, 35, 35, 0x000000, TRUE);
+	DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 35, 35, 0x000000, TRUE);
 
 	//羽描画
 	DrawWings();
@@ -174,9 +175,9 @@ void Boss::Draw() const
 			if(barrier_num > 0) {
 				DrawHexagonSphere();
 				// バリアの描画
-				DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2, 115, 50, color, FALSE);
-				DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2, 112.5, 50, color, FALSE);
-				DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2, 110, 50, color, FALSE);
+				DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 115, 50, color, FALSE);
+				DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 112.5, 50, color, FALSE);
+				DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 110, 50, color, FALSE);
 			}
 		}
 	}
@@ -186,9 +187,9 @@ void Boss::Draw() const
 			// バリアの描画
 			DrawHexagonSphere();
 			//for (int i = 0; i < barrier_num; i++) {
-			DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2, 115, 50, color, FALSE);
-			DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2, 112.5, 50, color, FALSE);
-			DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2, 110, 50, color, FALSE);
+			DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 115, 50, color, FALSE);
+			DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 112.5, 50, color, FALSE);
+			DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 110, 50, color, FALSE);
 		}
 	}
 
@@ -206,7 +207,7 @@ void Boss::Draw() const
 			break;
 			// それ以上のバリアは想定しないが、必要に応じて追加
 		}
-		DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2, barrier_rad[i], 50, barrier_color, FALSE);
+		DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, barrier_rad[i], 50, barrier_color, FALSE);
 	}
 
 
@@ -443,7 +444,7 @@ void Boss::DrawHexagon(Location center, int size, int color) const
 
 	// 六角形の描画
 	for (int i = 0; i < 6; ++i) {
-		DrawLineAA(vertices[i].x, vertices[i].y, vertices[(i + 1) % 6].x, vertices[(i + 1) % 6].y, color);
+		DrawLineAA(vertices[i].x, vertices[i].y + boss_anim, vertices[(i + 1) % 6].x, vertices[(i + 1) % 6].y + boss_anim, color);
 	}
 }
 

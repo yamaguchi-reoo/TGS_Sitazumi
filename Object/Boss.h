@@ -52,7 +52,8 @@ private:
 	std::array<Location, 40> wing;	//ボスの羽の位置情報
 	std::array<Location, 40> wing_mirror;//ミラー羽の位置情報
 
-	int wing_fps;
+	int wing_fps; //羽の加算用
+	float boss_anim;
 
 	bool f = false;
 	bool oldF = false;
