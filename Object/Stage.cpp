@@ -5,7 +5,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-Stage::Stage(int _type, int _stage_height) : frame(0), old_color(0),inv_flg(false), debug_flg(false), anim(0), hit_flg(false), hit_timer(-1), weather(0), change_weather_flg(false), delete_fire(0), draw_wood_flg(false), set_respawn_flg(false),respawn_color(WHITE), touch_object(0), default_object(true)
+Stage::Stage(int _type, int _stage_height) :old_color(0),inv_flg(false), debug_flg(false), anim(0), hit_flg(false), hit_timer(-1), weather(0), change_weather_flg(false), delete_fire(0), draw_wood_flg(false), set_respawn_flg(false),respawn_color(WHITE), touch_object(0), default_object(true)
 {
 	//炎
 	if (_type == RED_BLOCK || _type == FIRE_BLOCK)
@@ -74,6 +74,8 @@ void Stage::Initialize(Location _location, Erea _erea, int _color_data,int _obje
 
 void Stage::Update(GameMain* _g)
 {
+	__super::Update(_g);
+
 	//EditもUpdateを呼べるようにこの書き方
 	Update();
 
@@ -188,7 +190,6 @@ void Stage::Update()
 	//リセット
 	hit_flg = false;
 
-	frame++;	
 	//hit_timerに0が入ったらアニメーション開始
 	if (hit_timer >= 0)
 	{

@@ -32,6 +32,8 @@ void BossAttackWater::Finalize()
 
 void BossAttackWater::Update(GameMain* _g)
 {
+	__super::Update(_g);
+
 	if (flg) {
 		if (moveFlg) {
 			if (velocity.y < -4.f) {

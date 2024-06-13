@@ -110,6 +110,8 @@ void Player::Initialize(Location _location, Erea _erea, int _color_data, int _ob
 void Player::Update(GameMain* _g)
 {
 	
+	__super::Update(_g);
+
 	//意図しない変更が発生したか測定
 	if (old_jump_se != jump_se)
 	{
@@ -117,11 +119,6 @@ void Player::Update(GameMain* _g)
 		old_jump_se = jump_se;
 	}
 	fps = 0;
-	//放置で大きくなりすぎるのを防止
-	if (++frame > 6000)
-	{
-		frame = 0;
-	}
 	//移動エフェクト
 	if (vector.x != 0 || vector.y != 0)
 	{
