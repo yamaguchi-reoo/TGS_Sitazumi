@@ -75,6 +75,10 @@ private:
     Location cursor_location; 
     float circleAng;
 
+
+    int bgm_normal;             //通常BGM
+    int bgm_noise;             //ノイズBGM
+    int bgm_abnormality;             //異常BGM
 public:
 
     //コンストラクタ

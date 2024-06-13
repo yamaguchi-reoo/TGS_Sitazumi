@@ -56,6 +56,12 @@ void GameMain::Initialize()
 
 	test = new BossAttackWater();
 	test->Initialize({ 10000,1600 }, { 40,40 }, RED, 1000);
+
+	bgm_normal = ResourceManager::SetSound("Resource/Sounds/BGM/GameMainNormal.wav");
+	bgm_noise = ResourceManager::SetSound("Resource/Sounds/BGM/GameMainNoise1.wav");
+	bgm_abnormality = ResourceManager::SetSound("Resource/Sounds/BGM/GameMainAbnormality.wav");
+
+	ResourceManager::StartSound(bgm_normal, TRUE);
 }
 
 void GameMain::Finalize()

@@ -84,10 +84,13 @@ public:
 	static int GetDivGraph(int _num1, int _num2);
 
 	//音源再生開始
-	static void StartSound(int _num);
+	static void StartSound(int _num, bool roop_flg = false);
 
 	//音源再生終了
 	static void StopSound(int _num);
+
+	//音源音量調整
+	static void SetSoundVolume(int _num, int _volume);
 
 	//音源再生速度調整
 	static void SetSoundFreq(int _num);
