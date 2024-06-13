@@ -344,7 +344,26 @@ void Title::Draw()const
 				//選択中のメニューに交換カーソルを出す
 				if (current_menu == i)
 				{
-					DrawCircleAA(menu_location[i].x + (menu_size[i].width / 2), menu_location[i].y + (menu_size[i].height / 2), 70, 40, 0xffff00, FALSE, 5);
+					DrawCircleAA(menu_location[i].x + (menu_size[i].width / 2), menu_location[i].y + (menu_size[i].height / 2), 70.f, 40, 0xffff00, FALSE, 4.f * 1.75f);
+
+					Location base;
+					base.x = menu_location[i].x + (menu_size[i].width / 2);
+					base.y = menu_location[i].y + (menu_size[i].height / 2);
+
+					Location l[3];
+					l[0].x = base.x;
+					l[0].y = base.y - 70;
+
+					l[0] = RotationLocation(base, l[0], (float)(circleAng * M_PI / 180));
+
+					l[1] = RotationLocation(base, l[0], (float)(120.f * M_PI / 180));
+
+					l[2] = RotationLocation(base, l[0], (float)(240.f * M_PI / 180));
+
+
+					DrawCircleAA(l[0].x, l[0].y, 15.f * 1.75f, 32, 0xcc0000, TRUE);
+					DrawCircleAA(l[1].x, l[1].y, 15.f * 1.75f, 32, 0x3c78d8, TRUE);
+					DrawCircleAA(l[2].x, l[2].y, 15.f * 1.75f, 32, 0x6aa84f, TRUE);
 				}
 			}
 		}
@@ -579,4 +598,20 @@ void Title::DrawPlayer(int _num)const
 		default:
 			break;
 	}
+}
+
+Location Title::RotationLocation(Location BaseLoc, Location Loc, float r) const
+{
+	Location l;
+	l.x = Loc.x - BaseLoc.x;
+	l.y = Loc.y - BaseLoc.y;
+
+	Location ret;
+	ret.x = l.x * cosf(r) - l.y * sinf(r);
+	ret.y = l.x * sinf(r) + l.y * cosf(r);
+
+	ret.x += BaseLoc.x;
+	ret.y += BaseLoc.y;
+
+	return ret;
 }
