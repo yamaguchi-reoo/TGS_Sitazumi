@@ -172,7 +172,7 @@ void Player::Update(GameMain* _g)
 
 	oldSearchFlg = searchFlg;
 	//Bボタンで色の交換ができるモードと切り替え
-	if (PadInput::OnPressed(XINPUT_BUTTON_B)/* && searchedObjFlg*/) {
+	if (PadInput::OnPressed(XINPUT_BUTTON_B) && !_g->GetPauseAfter()/* && searchedObjFlg*/) {
 		SelectObject();
 		searchFlg = true;
 	}

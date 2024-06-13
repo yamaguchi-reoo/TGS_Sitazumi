@@ -259,17 +259,30 @@ int ResourceManager::GetDivGraph(int _num1, int _num2)
 	return div_image_data[_num1][_num2];
 }
 
-void ResourceManager::StartSound(int _num)
+void ResourceManager::StartSound(int _num, bool roop_flg)
 {
 	// 再生周波数を設定する
-	SetFrequencySoundMem(sound_freq, sound_data[_num]);
+	//SetFrequencySoundMem(sound_freq, sound_data[_num]);
+	
 	//再生
-	PlaySoundMem(sound_data[_num], DX_PLAYTYPE_BACK);
+	if (roop_flg)
+	{
+		PlaySoundMem(sound_data[_num], DX_PLAYTYPE_LOOP);
+	}
+	else
+	{
+		PlaySoundMem(sound_data[_num], DX_PLAYTYPE_BACK);
+	}
 }
 
 void ResourceManager::StopSound(int _num)
 {
 	StopSoundMem(sound_data[_num]);
+}
+
+void ResourceManager::SetSoundVolume(int _num, int _volume)
+{
+	ChangeVolumeSoundMem(_volume, sound_data[_num]);
 }
 
 void ResourceManager::SetSoundFreq(int _num)

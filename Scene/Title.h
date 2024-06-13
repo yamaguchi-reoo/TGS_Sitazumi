@@ -89,6 +89,7 @@ private:
 
     int logo_img;       //タイトルロゴの格納
     Erea logo_size;         //ロゴ画像の大きさ
+    int title_bgm;      //タイトルBGM
     int swap_se;        //交換SE
     int rise_se;       //遷移SE
     int cursor_se;      //カーソルSE

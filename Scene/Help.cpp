@@ -12,6 +12,13 @@ Help::Help()
 
 }
 
+Help::Help(int _stage, Location _location, Player _player)
+{
+	stage = _stage;
+	location = _location;
+	player = _player;
+}
+
 Help::~Help()
 {
 
@@ -60,7 +67,8 @@ AbstractScene* Help::Update()
 			return new Title();
 			break;
 		case 5:
-			return new GameMain(0);
+			//return new GameMain(0);
+			return new GameMain(stage, location, player);
 			break;
 		default:
 			break;
