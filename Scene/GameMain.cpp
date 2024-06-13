@@ -15,7 +15,7 @@
 static Location camera_location = { 0,0};	//カメラの座標
 static Location screen_origin = { (SCREEN_WIDTH / 2),(SCREEN_HEIGHT / 2) };
 
-GameMain::GameMain(int _stage) :frame(0), stage_data{ 0 }, now_stage(0), object_num(0), stage_width_num(0), stage_height_num(0), stage_width(0), stage_height(0), camera_x_lock_flg(true), camera_y_lock_flg(true), x_pos_set_once(false), y_pos_set_once(false), player_object(0), boss_object(0), weather(0), weather_timer(0), move_object_num(0),player_flg(false), player_respawn_flg(false), fadein_flg(true), create_once(false)
+GameMain::GameMain(int _stage) :frame(0), stage_data{ 0 }, now_stage(0), object_num(0), stage_width_num(0), stage_height_num(0), stage_width(0), stage_height(0), camera_x_lock_flg(true), camera_y_lock_flg(true), x_pos_set_once(false), y_pos_set_once(false), player_object(0), boss_object(0), weather(0), weather_timer(0), move_object_num(0),player_flg(false), player_respawn_flg(false), fadein_flg(true), create_once(false), bgm_normal(0), bgm_noise(0)
 {
 	now_stage = _stage;
 }
@@ -43,6 +43,13 @@ void GameMain::Initialize()
 
 	test = new BossAttackWater();
 	test->Initialize({ 10000,1600 }, { 40,40 }, RED, 1000);
+
+	bgm_normal = ResourceManager::SetSound("Resource/Sounds/BGM/GameMainNormal.wav");
+	bgm_noise = ResourceManager::SetSound("Resource/Sounds/BGM/GameMainNoise1.wav");
+	bgm_abnormality = ResourceManager::SetSound("Resource/Sounds/BGM/GameMainAbnormality.wav");
+
+	ResourceManager::StartSound(bgm_normal, TRUE);
+	ResourceManager::StartSound(bgm_noise, TRUE);
 }
 
 void GameMain::Finalize()
@@ -68,6 +75,8 @@ void GameMain::Finalize()
 
 AbstractScene* GameMain::Update()
 {
+	ResourceManager::SetSoundVolume(bgm_normal, 255 - object[player_object]->GetLocation().x/100);
+	ResourceManager::SetSoundVolume(bgm_noise, object[player_object]->GetLocation().x/100);
 	//フレーム測定
 	frame++;
 	//カメラの更新

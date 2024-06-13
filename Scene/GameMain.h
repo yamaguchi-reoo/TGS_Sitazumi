@@ -65,6 +65,10 @@ private:
     bool player_respawn_flg;    //プレイヤーをリスポーンさせるか判断
     bool create_once;           //一回だけ壁を作る
     bool fadein_flg;            //遷移してきたときのフェードイン演出
+
+    int bgm_normal;             //通常BGM
+    int bgm_noise;             //ノイズBGM
+    int bgm_abnormality;             //異常BGM
 public:
 
     //コンストラクタ
