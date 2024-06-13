@@ -58,6 +58,11 @@ private:
 
 	int walk_se;		//歩行効果音
 	int damage_se[3];	//被ダメージSE格納
+
+	int anim_fps;
+	float leg_angle[4];
+	float leg_angle_speed;
+	bool leg_move_direction[4];
 public:
 
 	EnemyDeer();
@@ -74,5 +79,7 @@ public:
 
 	void EnemyDeerMove(void);	 //移動
 	bool CheckCollision(Location l, Erea e); //ステージとの当たり判定
+
+	void DeerAnim();
 };
 
