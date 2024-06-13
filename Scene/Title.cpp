@@ -553,6 +553,16 @@ void Title::DrawPlayer(int _num)const
 	switch (_num)
 	{
 		case 0:
+			//帽子　中央
+			DrawTriangleAA(player_location.x + (PLAYER_WIDTH / 2), player_location.y, player_location.x + 20, player_location.y + 20, player_location.x + 40, player_location.y + 20, player_color, true);
+			DrawTriangleAA(player_location.x + (PLAYER_WIDTH / 2), player_location.y, player_location.x + 20, player_location.y + 20, player_location.x + 40, player_location.y + 20, 0x000000, false);
+			//帽子　右側	  									   					  						  						  		 
+			DrawTriangleAA(player_location.x + (PLAYER_WIDTH / 2), player_location.y, player_location.x + 40, player_location.y + 20, player_location.x + 52, player_location.y + 15, player_color, true);
+			DrawTriangleAA(player_location.x + (PLAYER_WIDTH / 2), player_location.y, player_location.x + 40, player_location.y + 20, player_location.x + 52, player_location.y + 15, 0x000000, false);
+			//帽子　左側	  									   					  						  						  		 
+			DrawTriangleAA(player_location.x + (PLAYER_WIDTH / 2), player_location.y, player_location.x + 8, player_location.y + 15, player_location.x + 20, player_location.y + 20, player_color, true);
+			DrawTriangleAA(player_location.x + (PLAYER_WIDTH / 2), player_location.y, player_location.x + 8, player_location.y + 15, player_location.x + 20, player_location.y + 20, 0x000000, false);
+			
 			//頭
 			ResourceManager::DrawRotaBox(player_location.x - (PLAYER_WIDTH / 2), player_location.y - (PLAYER_HEIGHT) + 76, 23, 15, player_location.x, player_location.y, 0, player_color, true);
 			ResourceManager::DrawRotaBox(player_location.x - (PLAYER_WIDTH / 2), player_location.y - (PLAYER_HEIGHT) + 76, 23, 15, player_location.x, player_location.y, 0, 0x000000, false);
@@ -580,9 +590,19 @@ void Title::DrawPlayer(int _num)const
 			//足							
 			ResourceManager::DrawRotaBox(player_location.x + 30, player_location.y + 70, 7, 27, player_location.x + 30, player_location.y + 80, 0, player_color, true);
 			ResourceManager::DrawRotaBox(player_location.x + 30, player_location.y + 70, 7, 27, player_location.x + 30, player_location.y + 80, 0, 0x000000, false);
-
+																																							 
 			break;
 		case 1:
+			//帽子　中央
+			DrawTriangleAA(player_location.x + (PLAYER_WIDTH / 2), player_location.y+3, player_location.x + 20, player_location.y + 23, player_location.x + 40, player_location.y + 23, player_color, true);
+			DrawTriangleAA(player_location.x + (PLAYER_WIDTH / 2), player_location.y+3, player_location.x + 20, player_location.y + 23, player_location.x + 40, player_location.y + 23, 0x000000, false);
+			//帽子　右側	  									 					 						  						  		 
+			DrawTriangleAA(player_location.x + (PLAYER_WIDTH / 2), player_location.y+3, player_location.x + 40, player_location.y + 23, player_location.x + 52, player_location.y + 18, player_color, true);
+			DrawTriangleAA(player_location.x + (PLAYER_WIDTH / 2), player_location.y+3, player_location.x + 40, player_location.y + 23, player_location.x + 52, player_location.y + 18, 0x000000, false);
+			//帽子　左側	  									 				  						  						  		 
+			DrawTriangleAA(player_location.x + (PLAYER_WIDTH / 2), player_location.y+3, player_location.x + 8, player_location.y + 18, player_location.x + 20, player_location.y + 23, player_color, true);
+			DrawTriangleAA(player_location.x + (PLAYER_WIDTH / 2), player_location.y+3, player_location.x + 8, player_location.y + 18, player_location.x + 20, player_location.y + 23, 0x000000, false);
+		
 			//頭
 			ResourceManager::DrawRotaBox(player_location.x - (PLAYER_WIDTH / 2), player_location.y - (PLAYER_HEIGHT)+76, 23, 15, player_location.x, player_location.y, 0, player_color, true);
 			ResourceManager::DrawRotaBox(player_location.x - (PLAYER_WIDTH / 2), player_location.y - (PLAYER_HEIGHT)+76, 23, 15, player_location.x, player_location.y, 0, 0x000000, false);
@@ -614,6 +634,16 @@ void Title::DrawPlayer(int _num)const
 
 			break;
 		case 2:
+			//帽子　中央
+			DrawTriangleAA(player_location.x + (PLAYER_WIDTH / 2), player_location.y, player_location.x + 20, player_location.y + 20, player_location.x + 40, player_location.y + 20, player_color, true);
+			DrawTriangleAA(player_location.x + (PLAYER_WIDTH / 2), player_location.y, player_location.x + 20, player_location.y + 20, player_location.x + 40, player_location.y + 20, 0x000000, false);
+			//帽子　右側	  									   					  						  						  		 
+			DrawTriangleAA(player_location.x + (PLAYER_WIDTH / 2), player_location.y, player_location.x + 40, player_location.y + 20, player_location.x + 52, player_location.y + 15, player_color, true);
+			DrawTriangleAA(player_location.x + (PLAYER_WIDTH / 2), player_location.y, player_location.x + 40, player_location.y + 20, player_location.x + 52, player_location.y + 15, 0x000000, false);
+			//帽子　左側	  									   					  						  						  		 
+			DrawTriangleAA(player_location.x + (PLAYER_WIDTH / 2), player_location.y, player_location.x + 8, player_location.y + 15, player_location.x + 20, player_location.y + 20, player_color, true);
+			DrawTriangleAA(player_location.x + (PLAYER_WIDTH / 2), player_location.y, player_location.x + 8, player_location.y + 15, player_location.x + 20, player_location.y + 20, 0x000000, false);
+			
 			//頭
 			ResourceManager::DrawRotaBox(player_location.x - (PLAYER_WIDTH / 2), player_location.y - (PLAYER_HEIGHT)+76, 23, 15, player_location.x, player_location.y, 0, player_color, true);
 			ResourceManager::DrawRotaBox(player_location.x - (PLAYER_WIDTH / 2), player_location.y - (PLAYER_HEIGHT)+76, 23, 15, player_location.x, player_location.y, 0, 0x000000, false);

@@ -40,14 +40,14 @@ void BackGround::Draw(Location _camera_location)const
 
 	}
 	//後でランダムな形で生成するようにする
-	DrawMountain({ shift_location.x - 200, shift_location.y - 50 }, { 300,300 }, 0.1f);
-	DrawMountain({ shift_location.x - 6400, shift_location.y }, { 310,300 }, 0.1f);
-	DrawMountain({ shift_location.x - 8400, shift_location.y + 50 }, { 200,300 }, 0.1f);
-	DrawMountain(shift_location, {150,150},0.2f);
-	DrawMountain({ shift_location.x - 500, shift_location.y - 50 }, { 140,70 }, 0.3f);
-	DrawMountain({ shift_location.x - 500, shift_location.y - 50 }, {140,70} ,0.3f);
-	DrawMountain({ shift_location.x - 400, shift_location.y - 100 }, {140,70} ,0.35f);
-	DrawMountain({ shift_location.x - 300, shift_location.y - 50 }, { 110,150 }, 0.5f);
+	//DrawMountain({ shift_location.x - 200, shift_location.y - 50 }, { 300,300 }, 0.1f);
+	//DrawMountain({ shift_location.x - 6400, shift_location.y }, { 310,300 }, 0.1f);
+	//DrawMountain({ shift_location.x - 8400, shift_location.y + 50 }, { 200,300 }, 0.1f);
+	//DrawMountain(shift_location, {150,150},0.2f);
+	//DrawMountain({ shift_location.x - 500, shift_location.y - 50 }, { 140,70 }, 0.3f);
+	//DrawMountain({ shift_location.x - 500, shift_location.y - 50 }, {140,70} ,0.3f);
+	//DrawMountain({ shift_location.x - 400, shift_location.y - 100 }, {140,70} ,0.35f);
+	//DrawMountain({ shift_location.x - 300, shift_location.y - 50 }, { 110,150 }, 0.5f);
 
 #ifdef _DEBUG
 	DrawStringF(shift_location.x, 300.0f, "左端", 0x00ff00);
