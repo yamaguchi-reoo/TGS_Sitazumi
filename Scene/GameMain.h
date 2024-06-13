@@ -65,6 +65,12 @@ private:
     bool player_respawn_flg;    //プレイヤーをリスポーンさせるか判断
     bool create_once;           //一回だけ壁を作る
     bool fadein_flg;            //遷移してきたときのフェードイン演出
+
+    Location Gdraw_stick_location;   //描画するスティックの座標
+    Location Gdraw_stick_shift;   //描画するスティックをずらす座標
+    float Gstick_angle;          //スティックのアングルを保存
+    bool Gbutton_draw;           //どの画像を描画するか
+
 public:
 
     //コンストラクタ
@@ -157,5 +163,8 @@ public:
 
     //現在交換対象になっているオブジェクトを設定する
     void SetNowCurrentObject(Object* _object);
+
+    // チュートリアルエリアのプレイヤー描画専用
+    void DrawPlayer()const;
 };
 
