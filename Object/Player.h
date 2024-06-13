@@ -73,6 +73,8 @@ private:
 	float mo = 0;
 	float ang = 0;
 
+	float circleAng;
+
 
 	int walk_se[4];		//歩行SE格納
 	int jump_se;		//ジャンプSE格納
@@ -107,5 +109,8 @@ public:
 
 	void PlayerAnim();
 	void DrawPlayer()const;
+
+	//引数:もとになる座標、回転させたい座標、回転させたい角度
+	Location RotationLocation(Location BaseLoc, Location Loc, float r) const;
 };
 
