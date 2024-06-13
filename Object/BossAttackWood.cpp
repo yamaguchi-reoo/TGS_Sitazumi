@@ -45,7 +45,7 @@ void BossAttackWood::Finalize()
 
 void BossAttackWood::Update(GameMain* _g)
 {
-	
+	__super::Update(_g);
 
 	//if (count > 180) {
 	//	MoveBamboo();

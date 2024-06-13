@@ -20,7 +20,6 @@ public:
 		right
 	};
 private:
-	int frame;				//フレーム測定
 	int timer;				//時間測定
 	FrogState frog_state;	//カエルの状態
 

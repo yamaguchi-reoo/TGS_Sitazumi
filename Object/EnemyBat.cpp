@@ -41,6 +41,8 @@ void EnemyBat::Initialize(Location _location, Erea _erea, int _color_data, int _
 
 void EnemyBat::Update(GameMain* _g)
 {
+	__super::Update(_g);
+
 	up += 1;
 	// 羽の角度を変化させる
 	if (bat_state != BatState::DEATH)

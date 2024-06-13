@@ -42,6 +42,8 @@ EnemyDeer::EnemyDeer()
 	deer_draw = d_draw::vr_one;
 
 	frame = 0;
+
+	anim_fps = 0;
 }
 
 EnemyDeer::~EnemyDeer()
@@ -69,8 +71,8 @@ void EnemyDeer::Initialize(Location _location, Erea _erea, int _color_data, int 
 
 void EnemyDeer::Update(GameMain* _g)
 {
-
-	frame++;
+	++anim_fps;
+	__super::Update(_g);
 	
 	if (frame % 30 == 0)
 	{
@@ -112,6 +114,7 @@ void EnemyDeer::Update(GameMain* _g)
 			}
 		}
 	}
+	DeerAnim();
 }
 
 void EnemyDeer::Draw()const
@@ -203,6 +206,91 @@ void EnemyDeer::Draw()const
 	
 	//当たり判定のBox
 	//DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, GetColor(255, 255, 255), FALSE);
+
+	//if (deer_state == DeerState::LEFT || deer_state == DeerState::GRAVITY || deer_state == DeerState::IDLE || (deer_state == DeerState::DEATH))
+	//{
+	//	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 - (deer_death_timer * 4));
+
+	//	//頭
+	//	ResourceManager::DrawRotaBox(local_location.x + 16.0f, local_location.y + 10.0f, 30.0f, 20.0f, local_location.x + 16.0f, local_location.y + 10.0f, d_head_rad, draw_color, true);
+	//	//目
+	//	ResourceManager::DrawRotaBox(local_location.x + 8.0f, local_location.y + 10.0f, 8.0f, 9.0f, local_location.x + 8.0f, local_location.y + 10.0f, d_eye_rad, 0x000000, true);
+
+	//	switch (deer_draw)
+	//	{
+	//	case d_draw::vr_one:
+
+	//		//首 vr.1
+	//		//ResourceManager::DrawRotaBox(local_location.x + 22.0f, local_location.y + 30.0f, 17.0f, 10.0f, local_location.x + 22.0f, local_location.y + 30.0f, d_neck_rad, color, true);
+	//		//ResourceManager::DrawRotaBox(local_location.x + 26.0f, local_location.y + 45.0f, 10.0f, 10.0f, local_location.x + 26.0f, local_location.y + 45.0f, d_neck_rad, color, true);
+
+	//		ResourceManager::DrawRotaBox(local_location.x + 25.0f, local_location.y + 38.0f, 13.0f, 24.0f, local_location.x + 25.0f, local_location.y + 38.0f, d_neck_rad, draw_color, true);
+
+	//		//胴体 vr.1
+	//		ResourceManager::DrawRotaBox(local_location.x + 53.0f, local_location.y + 63.0f, 65.0f, 15.0f, local_location.x + 53.0f, local_location.y + 63.0f, 0.f, draw_color, true);
+	//		break;
+
+	//	case d_draw::vr_two:
+
+	//		//首 vr.2
+	//		ResourceManager::DrawRotaBox(local_location.x + 25.0f, local_location.y + 38.0f, 13.0f, 24.0f, local_location.x + 25.0f, local_location.y + 38.0f, d_neck_rad, draw_color, true);
+
+	//		//胴体 vr.2
+	//		ResourceManager::DrawRotaBox(local_location.x + 34.0f, local_location.y + 63.0f, 30.0f, 15.0f, local_location.x + 34.0f, local_location.y + 63.0f, d_rad, draw_color, true);
+	//		ResourceManager::DrawRotaBox(local_location.x + 72.0f, local_location.y + 63.0f, 30.0f, 15.0f, local_location.x + 72.0f, local_location.y + 63.0f, d_rad, draw_color, true);
+	//		break;
+	//	}
+
+	//	//足　左から
+	//	ResourceManager::DrawRotaBox(local_location.x + 25.0f + d_left_leg[0], local_location.y + 88.0f, 10.0f, 25.0f, local_location.x + 25.0f - d_left_leg[0], local_location.y + 88.0f, leg_angle[0], draw_color, true);
+	//	ResourceManager::DrawRotaBox(local_location.x + 41.0f + d_left_leg[1], local_location.y + 88.0f, 10.0f, 25.0f, local_location.x + 41.0f, local_location.y + 88.0f, leg_angle[1], draw_color, true);
+	//	ResourceManager::DrawRotaBox(local_location.x + 66.0f + d_left_leg[2], local_location.y + 88.0f, 10.0f, 25.0f, local_location.x + 66.0f, local_location.y + 88.0f, leg_angle[2], draw_color, true);
+	//	ResourceManager::DrawRotaBox(local_location.x + 81.0f + d_left_leg[3], local_location.y + 88.0f, 10.0f, 25.0f, local_location.x + 81.0f, local_location.y + 88.0f, leg_angle[3], draw_color, true);
+
+	//	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
+	//}
+	//else if (deer_state == DeerState::RIGHT || (deer_state == DeerState::DEATH))
+	//{
+	//	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 - (deer_death_timer * 4));
+
+	//	//頭
+	//	ResourceManager::DrawRotaBox(local_location.x - erea.width + 15.0f, local_location.y - 10.0f, 30.0f, 20.0f, local_location.x, local_location.y, d_rad, draw_color, true);
+	//	//目
+	//	ResourceManager::DrawRotaBox(local_location.x - erea.width + 8.0f, local_location.y - 10.0f, 8.0f, 9.0f, local_location.x, local_location.y, d_rad, 0x000000, true);
+
+	//	switch (deer_draw)
+	//	{
+	//	case d_draw::vr_one:
+
+	//		//首 vr.1
+	//		//ResourceManager::DrawRotaBox(local_location.x - erea.width + 21.0f, local_location.y - 30.0f, 17.0f, 10.0f, local_location.x, local_location.y, d_rad, color, true);
+	//		//ResourceManager::DrawRotaBox(local_location.x - erea.width + 25.0f, local_location.y - 45.0f, 10.0f, 10.0f, local_location.x, local_location.y, d_rad, color, true);
+
+	//		ResourceManager::DrawRotaBox(local_location.x - erea.width + 23.0f, local_location.y - 38.0f, 13.0f, 24.0f, local_location.x, local_location.y, d_rad, draw_color, true);
+
+	//		//胴体 vr.1
+	//		ResourceManager::DrawRotaBox(local_location.x - erea.width + 52.0f, local_location.y - 63.0f, 65.0f, 15.0f, local_location.x, local_location.y, d_rad, draw_color, true);
+	//		break;
+
+	//	case d_draw::vr_two:
+
+	//		//首 vr.2
+	//		ResourceManager::DrawRotaBox(local_location.x - erea.width + 23.0f, local_location.y - 38.0f, 13.0f, 24.0f, local_location.x, local_location.y, d_rad, draw_color, true);
+
+	//		//胴体 vr.2
+	//		ResourceManager::DrawRotaBox(local_location.x - erea.width + 52.0f, local_location.y - 63.0f, 65.0f, 15.0f, local_location.x, local_location.y, d_rad, draw_color, true);
+	//		ResourceManager::DrawRotaBox(local_location.x - erea.width + 52.0f, local_location.y - 63.0f, 65.0f, 15.0f, local_location.x, local_location.y, d_rad, draw_color, true);
+	//		break;
+	//	}
+
+	//	//足　左から
+	//	ResourceManager::DrawRotaBox(local_location.x - erea.width + 25.0f, local_location.y - 88.0f, 10.0f, 25.0f, local_location.x, local_location.y, d_rad, draw_color, true);
+	//	ResourceManager::DrawRotaBox(local_location.x - erea.width + 40.0f, local_location.y - 88.0f, 10.0f, 25.0f, local_location.x, local_location.y, d_rad, draw_color, true);
+	//	ResourceManager::DrawRotaBox(local_location.x - erea.width + 65.0f, local_location.y - 88.0f, 10.0f, 25.0f, local_location.x, local_location.y, d_rad, draw_color, true);
+	//	ResourceManager::DrawRotaBox(local_location.x - erea.width + 80.0f, local_location.y - 88.0f, 10.0f, 25.0f, local_location.x, local_location.y, d_rad, draw_color, true);
+
+	//	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
+	//}
 }
 
 void EnemyDeer::EnemyDeerMove()
@@ -461,4 +549,16 @@ bool EnemyDeer::CheckCollision(Location l, Erea e)
 		ret = true;
 	}
 	return ret;
+}
+
+void EnemyDeer::DeerAnim()
+{
+	for (int i = 0; i < 4; ++i) {
+		if (leg_move_direction[i]) {
+			leg_angle[i] += leg_angle_speed;
+			if (leg_angle[i] > 30.0f) {
+				leg_move_direction[i] = false;
+			}
+		}
+	}
 }
