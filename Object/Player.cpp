@@ -254,14 +254,18 @@ void Player::Update(GameMain* _g)
 
 	PlayerSound();		//音声再生関連処理
 
+
 	//damage
 	if (damageFlg == true && !damageOldFlg) {
-		hp--;
-		damageEffectFlg = true;
+		if (damageEffectFlg == false) {
+			damageEffectFlg = true;
+		}
 	}
-	if (damageEffectFlg) {
-		damageEffectTime--;
-		if (damageEffectTime < 0) {
+	if (damageEffectFlg == true) {
+		if (damageEffectTime-- == 90) {
+			hp--;
+		}
+		if (damageEffectTime <= 0) {
 			damageEffectFlg = false;
 			damageEffectTime = 90;
 			damageFlg = false;
@@ -310,7 +314,7 @@ void Player::Draw()const
 {
 	//DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, FALSE, 2.f);
 
-	if (damageEffectFlg) {
+	if (damageEffectFlg == true) {
 		if (damageEffectTime % 10 == 0) {
 			float ang = 0.f;
 			//DrawBox(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, FALSE);

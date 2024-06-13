@@ -53,7 +53,7 @@ private:
 	bool damageFlg; //ダメージを受けたとき
 	bool damageOldFlg; //ダメージを受けたとき
 	static int hp;
-	int damageEffectTime = 60;
+	int damageEffectTime = 90;
 	bool damageEffectFlg = false;
 	bool effect_once;	//エフェクトを一回だけ出す用
 

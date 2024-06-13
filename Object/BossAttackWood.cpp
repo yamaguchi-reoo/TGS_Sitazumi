@@ -7,9 +7,9 @@ BossAttackWood::BossAttackWood()
 	w_type = 0;
 
 	
-	type = BLOCK;
-	can_swap = TRUE;
-	can_hit = TRUE;
+	type = WOOD;
+	can_swap = FALSE;
+	can_hit = FALSE;
 	is_boss_attack = TRUE;
 }
 
@@ -45,32 +45,6 @@ void BossAttackWood::Finalize()
 
 void BossAttackWood::Update(GameMain* _g)
 {
-	
-
-	//if (count > 180) {
-	//	MoveBamboo();
-	//	if (velocity.y == 0.f) {
-	//		_g->DeleteObject(object_pos);
-	//	}
-	//}
-	//else {//プレイヤーを探す
-	//	if (location.x - _g->GetPlayerLocation().x < 0.f) {//プレイヤーより右
-	//		velocity.x += 0.1f;
-	//		if (velocity.x > 5.f) {
-	//			velocity.x = 5.f;
-	//		}
-	//	}
-	//	else if (location.x - _g->GetPlayerLocation().x > 0.f) {
-	//		velocity.x -= 0.1f;
-	//		if (velocity.x < -5.f) {
-	//			velocity.x = -5.f;
-	//		}
-	//	}
-
-	//	location.x += velocity.x;
-	//}
-
-
 	MoveBamboo();
 	if (velocity.y == 0.f) {
 		if (count++ > 180) {
@@ -84,6 +58,12 @@ void BossAttackWood::Update(GameMain* _g)
 void BossAttackWood::Draw() const
 {
 	DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, TRUE);
+
+
+	DrawBoxAA(local_location.x + 3, local_location.y, local_location.x + erea.width - 3, local_location.y + erea.height, 0x00cc00, true);
+	DrawBoxAA(local_location.x + 2, local_location.y, local_location.x + erea.width - 2, local_location.y + 2, 0x00ff00, true);
+	DrawBoxAA(local_location.x + 2, local_location.y + erea.height, local_location.x + erea.width - 2, local_location.y + erea.height - 2, 0x00ff00, true);
+	DrawBoxAA(local_location.x + 10, local_location.y + 2, local_location.x + 13, local_location.y + erea.height - 2, 0x00ee00, true);
 }
 
 void BossAttackWood::Hit(Object* _object)

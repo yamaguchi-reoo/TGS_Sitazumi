@@ -362,19 +362,34 @@ void Boss::BossAtack(GameMain *_g)
 
 		default://木
 			if (cnt % 30 == 0) {
-				Erea e = { (float)(GetRand(400) + 200),40.f };
+				Erea e = { (float)(GetRand(400) + 400),40.f };
 				/*Location l = _g->GetPlayerLocation();
 				l.y += _g->GetPlayerErea().height + 40.f;*/
 
 				Location l;
-				l.x = GetRand(29) * 40 + 40;
+				float x;
+				int i = 0;
+				do
+				{
+					x = (GetRand(29)) * 40 + 200;
+					for (int j = woodNum; j > 0; j--)
+					{
+						if (x != attackWood[j]) {
+							i = 99;
+						}
+					}
+				} while (i++ < 3);
+					
+				l.x = x;
 				l.y = 930.f;
 
+				attackWood[woodNum++] = l.x;
 
 				_g->CreateObject(new BossAttackWood, l, e, GREEN);
 				f = false;
 			}
 			if (cnt > 300) {
+				woodNum = 0;
 				cnt = 0;
 				f = false;
 				boss_state = BossState::MOVE;

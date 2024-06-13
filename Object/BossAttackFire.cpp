@@ -68,11 +68,6 @@ void BossAttackFire::Update(GameMain* _g)
 	location.x += velocity.x;
 	location.y += velocity.y;
 
-	//if (hitFlg) {
-	//	_g->SpawnEffect(location, erea, ExplosionEffect, 10, RED);
-	//	//ここで削除
-	//	_g->DeleteObject(object_pos);
-	//}
 
 	if (boundCnt < 0) {
 		hitFlg = true;

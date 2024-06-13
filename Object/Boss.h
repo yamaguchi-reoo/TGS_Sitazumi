@@ -56,6 +56,8 @@ private:
 	int attack = 0;
 	int attack_num = 0;
 	bool side = false;
+	float attackWood[3];
+	int woodNum = 0;
 
 public:
 	Boss();
