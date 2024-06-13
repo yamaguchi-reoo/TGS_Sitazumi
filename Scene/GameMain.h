@@ -66,6 +66,16 @@ private:
     bool create_once;           //一回だけ壁を作る
     bool fadein_flg;            //遷移してきたときのフェードイン演出
 
+    bool game_over_flg;         //ゲームオーバーか
+    bool game_clear_flg;
+    bool game_pause_flg;
+    bool pause_after_flg;
+
+    int cursor;
+    Location cursor_location; 
+    float circleAng;
+
+
     int bgm_normal;             //通常BGM
     int bgm_noise;             //ノイズBGM
     int bgm_abnormality;             //異常BGM
@@ -73,6 +83,8 @@ public:
 
     //コンストラクタ
     GameMain(int _stage);
+
+    GameMain(int _stage, Location _respawn_locatoin, Player p);
 
     //デストラクタ
     ~GameMain();
@@ -161,5 +173,14 @@ public:
 
     //現在交換対象になっているオブジェクトを設定する
     void SetNowCurrentObject(Object* _object);
+
+    //ゲームオーバーかどうかを設定
+    void SetGameOverFlg(bool f) { game_over_flg = f; }
+
+    //座標の回転
+    //引数:もとになる座標、回転させたい座標、回転させたい角度
+    Location RotationLocation(Location BaseLoc, Location Loc, float r) const;
+
+    bool GetPauseAfter() { return pause_after_flg; }
 };
 
