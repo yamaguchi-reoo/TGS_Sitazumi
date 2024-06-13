@@ -3,6 +3,7 @@
 #include "../Utility/KeyInput.h"
 #include "../Utility/ResourceManager.h"
 #include "../Scene/GameMain.h"
+#define _USE_MATH_DEFINES
 #include <math.h>
 
 // Playerのhpが変わるのはメモリの破損のせいかな？
@@ -70,6 +71,10 @@ Player::Player()
 	pStateOld = idle;
 	moveFrontFlg = true;
 	animFlg = false;
+
+	
+	circleAng = 0.f;
+	
 
 
 	walk_se[0] = ResourceManager::SetSound("Resource/Sounds/Player/walk_normal.wav");
@@ -304,6 +309,12 @@ void Player::Update(GameMain* _g)
 		int a;
 		a = 0;
 	}
+
+	
+	if (circleAng++ >= 360.f) {
+		circleAng = 0.f;
+	}
+	
 }
 
 void Player::Draw()const
@@ -330,7 +341,28 @@ void Player::Draw()const
 	if (searchedObj != nullptr && searchFlg) {
 		DrawCircleAA(searchedObj->GetLocalLocation().x + searchedObj->GetErea().width / 2,
 			searchedObj->GetLocalLocation().y + searchedObj->GetErea().height / 2, 40, 40, 0xffff00, FALSE, 5);
+
+		Location base;
+		base.x = searchedObj->GetLocalLocation().x + searchedObj->GetErea().width / 2;
+		base.y = searchedObj->GetLocalLocation().y + searchedObj->GetErea().height / 2;
+
+		Location l[3];
+		l[0].x = searchedObj->GetLocalLocation().x + searchedObj->GetErea().width / 2;
+		l[0].y = (searchedObj->GetLocalLocation().y + searchedObj->GetErea().height / 2) - 40;
+
+		l[0] = RotationLocation(base, l[0], (float)(circleAng * M_PI / 180));
+
+		l[1] = RotationLocation(base, l[0], (float)(120.f * M_PI / 180));
+
+		l[2] = RotationLocation(base, l[0], (float)(240.f * M_PI / 180));
+		
+		for (int i = 0; i < 3; i++)
+		{
+			DrawCircleAA(l[i].x, l[i].y, 20, 32, 0xffff00, TRUE);
+		}
+
 	}
+	
 }
 
 void Player::Finalize()
@@ -1422,5 +1454,30 @@ void Player::DrawPlayer() const
 		}
 
 	}
+}
+
+Location Player::RotationLocation(Location BaseLoc, Location Loc, float r) const
+{
+	Location l;
+	l.x = Loc.x - BaseLoc.x;
+	l.y = Loc.y - BaseLoc.y;
+
+	Location ret;
+	ret.x = l.x * cosf(r) - l.y * sinf(r);
+	ret.y = l.x * sinf(r) + l.y * cosf(r);
+
+	ret.x += BaseLoc.x;
+	ret.y += BaseLoc.y;
+
+	/*
+	  r : 角度(ラジアン)
+	  x : 元のX座標
+	  y : 元のY座標
+
+	  X = x * cos( r ) - y * sin( r )
+	  Y = x * sin( r ) + y * cos( r )
+	*/
+
+	return ret;
 }
 
