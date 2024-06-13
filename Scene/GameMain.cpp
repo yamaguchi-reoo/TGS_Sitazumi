@@ -1,6 +1,7 @@
 ﻿#include "GameMain.h"
 #include "Dxlib.h"
 #include "../Utility/PadInput.h"
+#include "../Utility/KeyInput.h"
 #include "../Utility/common.h"
 #include"../Utility/ResourceManager.h"
 #include "EditScene.h"
@@ -198,20 +199,27 @@ void GameMain::Draw() const
 	weather->Draw();
 
 	//フェードイン演出
-	if (fadein_flg == true)
+	/*if (fadein_flg == true)
 	{
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 - (frame*(255/FADEIN_TIME) +3));
 		DrawBox(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0xffffff, true);
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
-	}
+	}*/
 #ifdef _DEBUG
 	DrawFormatString(100, 100, 0xffffff, "Object数:%d", object_num);
 	DrawFormatString(100, 120, 0xffffff, "Updeteが呼ばれているObject数:%d", move_object_num);
 
 	test->Draw();
 	//チュートリアル表示テスト
-	DrawString(300 - camera_location.x, stage_height-100 - camera_location.y, "aaaaa", 0xff0000, TRUE);
+	SetFontSize(50);
+	DrawString(KeyInput::GetMouseCursor().x - camera_location.x, stage_height- KeyInput::GetMouseCursor().y - camera_location.y, "aaaaa", 0xff0000, TRUE);
+	DrawFormatString(0, 40, 0xff0000, "%0.1f x %0.1f y", camera_location.x, stage_height - camera_location.y);
+	DrawFormatString(0, 90, GetColor(255, 0, 0), "%d %d", KeyInput::GetMouseCursor().x, KeyInput::GetMouseCursor().y);
 #endif
+
+	SetFontSize(50);
+	//DrawBox()
+
 }
 
 void GameMain::CreateObject(Object* _object, Location _location, Erea _erea, int _color_data)
