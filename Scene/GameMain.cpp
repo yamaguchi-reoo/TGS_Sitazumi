@@ -58,14 +58,19 @@ void GameMain::Initialize()
 	test->Initialize({ 10000,1600 }, { 40,40 }, RED, 1000);
 
 	bgm_normal = ResourceManager::SetSound("Resource/Sounds/BGM/GameMainNormal.wav");
-	bgm_noise = ResourceManager::SetSound("Resource/Sounds/BGM/GameMainNoise1.wav");
-	bgm_abnormality = ResourceManager::SetSound("Resource/Sounds/BGM/GameMainAbnormality.wav");
+	bgm_noise = ResourceManager::SetSound("Resource/Sounds/BGM/GameMainNoise.wav");
+	bgm_abnormal = ResourceManager::SetSound("Resource/Sounds/BGM/GameMainAbnormal.wav");
 
 	ResourceManager::StartSound(bgm_normal, TRUE);
 }
 
 void GameMain::Finalize()
 {
+	//BGMを止める
+	ResourceManager::StopSound(bgm_normal);
+	ResourceManager::StopSound(bgm_noise);
+	ResourceManager::StopSound(bgm_abnormal);
+
 	for (int i = 0; object[i] != nullptr; i++)
 	{
 		//生成済みのオブジェクトを削除

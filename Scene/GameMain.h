@@ -78,7 +78,7 @@ private:
 
     int bgm_normal;             //通常BGM
     int bgm_noise;             //ノイズBGM
-    int bgm_abnormality;             //異常BGM
+    int bgm_abnormal;          //異常BGM
 public:
 
     //コンストラクタ
