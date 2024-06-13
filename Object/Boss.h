@@ -32,23 +32,24 @@ private:
 
 	BossState boss_state;// 現在のボスの状態
 
-	float barrier_rad[3];	// バリアの半径
-	int barrier_num;		// バリアの数
+	float barrier_rad[3];	//バリアの半径
+	int barrier_num;		//バリアの数
 
 	bool damage_flg;				//ダメージを受けたとき
 	int damage_effect_time = 60;	//ダメージエフェクトの持続時間
 	bool damage_effect_flg = false; // ダメージエフェクトのフラグ
 
-	float speed;				// 移動速度;
+	float speed;				//移動速度;
 	int cunt;
 	int c;
+	int num;
 
-	int state_change_time;		// 状態変更のタイミング
+	int state_change_time;		//状態変更のタイミング
 
-	std::vector<Location> vertices; // ボスの頂点情報
-	std::array<Location, 12> wing;
-	std::array<Location, 12> wing_mirror;
-	std::vector<Location> warp_pos; // ワープ位置情報
+	std::vector<Location> vertices; //ボスの頂点情報
+	std::vector<Location> warp_pos; //ワープ位置情報
+	std::array<Location, 36> wing;	//ボスの羽の位置情報
+	std::array<Location, 36> wing_mirror;//ミラー羽の位置情報
 
 	bool f = false;
 	bool oldF = false;
@@ -68,10 +69,10 @@ public:
 	void Draw()const override;
 	void Finalize()override;
 
-	// ボスの移動処理
+	//ボスの移動処理
 	void Move(GameMain* _g);
 
-	// ヒット時の処理
+	//ヒット時の処理
 	void Hit(Object* _object)override;
 
 	bool SearchColor(Object* ob) {
@@ -89,22 +90,24 @@ public:
 	//ボスの攻撃
 	void BossAtack(GameMain *_g);
 
-	// 六角形模様球体の描画
+	//六角形模様球体の描画
 	void DrawHexagonSphere() const;
 
 	//六角形描画
 	void DrawHexagon(Location center, int size, int color) const;
 
-	// 羽を描画する
+	//羽を描画する
 	void DrawWings() const;
 
-	// 羽の位置を更新する
+	//羽の位置を更新する
 	void UpdateWingPositions();
 
-	// 羽の位置を設定する
-	void SetWingPositions();
+	//羽の位置を設定する
+	void InvertedWingPositions();
 
-	void SetPosition();
+	//羽の座標をファイルに保存
+	void SavePosition();
 
+	//羽の座標をファイルから読み込む
 	void LoadPosition();
 };

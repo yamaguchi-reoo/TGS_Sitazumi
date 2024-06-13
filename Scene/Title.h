@@ -66,10 +66,10 @@ private:
 
     int logo_img;       //タイトルロゴの格納
     Erea logo_size;         //ロゴ画像の大きさ
-    int swap_se;
+    int swap_se;        //交換SE
 
-    BackGroundImage bg[BG_BLOCK_WIDTH_NUM][BG_BLOCK_HEIGHT_NUM];
-    int a_num;
+    BackGroundImage bg[BG_BLOCK_WIDTH_NUM][BG_BLOCK_HEIGHT_NUM];    //背景情報保存
+    int bg_handle;
     
 public:
     //コンストラクタ

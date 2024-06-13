@@ -1,5 +1,6 @@
 #include "Help.h"
 #include "DxLib.h"
+#include "Title.h"
 #include "GameMain.h"
 #include "../Utility/PadInput.h"
 #include "../Utility/KeyInput.h"
@@ -28,32 +29,24 @@ void Help::Finalize()
 
 AbstractScene* Help::Update()
 {
-	/*hStrLen = strlen("作");
-	hStrWidth = GetDrawStringWidth("作", hStrLen);*/
-	//TriangleXNum = -50.f
-	//TriangleYNum = 180.f
-
 	if (wt < 15)
 	{
 		wt++;
 	}
-
-	// 上がる
-	if (PadInput::TipLeftLStick(STICKL_Y) > 0.8f && wt >= 15)
+		
+	// 下がる
+	if (PadInput::TipLeftLStick(STICKL_Y) < -0.8f && wt >= 15)
 	{
-		//MenuY = MenuNumber * 300;
-		if (--MenuNumber > 3)
-		if (MenuNumber < 1) MenuNumber = 3;
+		if (++MenuNumber < 6) {}
+		if (MenuNumber > 4)MenuNumber = 5;
 
 		wt = 0;
-
 	}
-	// 下がる
-	else if (PadInput::TipLeftLStick(STICKL_Y) < -0.8f && wt >= 15)
+	// 上がる
+	else if (PadInput::TipLeftLStick(STICKL_Y) > 0.8f && wt >= 15)
 	{
-		//MenuY = MenuNumber * 90;
-		if (++MenuNumber < -3)
-		if (MenuNumber > 3)MenuNumber = 1;
+		if (--MenuNumber > 5){}
+		if (MenuNumber < 1) MenuNumber = 1;
 
 		wt = 0;
 	}
@@ -61,7 +54,17 @@ AbstractScene* Help::Update()
 	// 操作方法の説明
 	if (PadInput::OnButton(XINPUT_BUTTON_B) == 1)
 	{
-		flg = true;
+		switch (MenuNumber)
+		{
+		case 4:
+			return new Title();
+			break;
+		case 5:
+			return new GameMain(0);
+			break;
+		default:
+			break;
+		}
 	}
 
 	return this;
@@ -73,56 +76,92 @@ void Help::Draw()const
 
 	//DrawFormatString(30, 30, 0xffffff, "%d", hStrWidth);
 
-	//DrawFormatString(0, 60, GetColor(255, 0, 0), "MouseX : %d MouseY : %d", KeyInput::GetMouseCursor().x, KeyInput::GetMouseCursor().y);
-	//DrawFormatString(0, 80, GetColor(255, 0, 0), "CtrY : %0.1f", PadInput::TipLeftLStick(STICKL_Y));
-	//DrawFormatString(0, 100, GetColor(255, 0, 0), "menu : %d",MenuNumber);
+	DrawFormatString(1100, 60, GetColor(255, 0, 0), "%d %d", KeyInput::GetMouseCursor().x, KeyInput::GetMouseCursor().y);
+	//DrawFormatString(700, 100, GetColor(255, 0, 0), "menu : %d",MenuNumber);
+
+	DrawBoxAA(320.f, 20.f, 1260.f, 700.f, 0xffffff, FALSE, 7.0f);
 
 	//LineThicknessは線の太さ
 	//大外側
-	DrawBoxAA(20.f, 20.f, 1260.f, 700.f, 0xeeeeee, FALSE, 10.0f);
+	DrawBoxAA(10.f, 20.f, 300.f, 130.f, 0xeeeeee, FALSE, 7.0f);
+	DrawBoxAA(10.f, 160.f, 300.f, 270.f, 0xeeeeee, FALSE, 7.0f);
+	DrawBoxAA(10.f, 300.f, 300.f, 410.f, 0xeeeeee, FALSE, 7.0f);
+	DrawBoxAA(10.f, 440.f, 300.f, 560.f, 0xeeeeee, FALSE, 7.0f);
+	DrawBoxAA(10.f, 590.f, 300.f, 700.f, 0xeeeeee, FALSE, 7.0f);
+
+	// 中心線
+	DrawLineAA(0.f, 360.f, 1280.f, 360.f, 0xff0000);
+	DrawLineAA(640.f, 0.f, 640.f, 720.f, 0xff0000);
+
+	SetFontSize(40);
+	DrawString(70, 600, " ゲーム\nスタート", 0xffffff);
+
+	SetFontSize(50); //デフォルトでは 6
+	// 多分漢字の一文字の長さは 25
+	DrawString(50, 50, "操作方法", 0xffffff);
+	DrawString(27, 190, "色について", 0xffffff);
+	DrawString(105, 330, "属性", 0xffffff);
+	DrawString(25, 475, "タイトルへ", 0xffffff);
+
+	switch (MenuNumber)
+	{
+		
+	case 1:	//操作方法
+		DrawLineAA(30.f, 100.f, 280.f, 100.f, 0xff0000, 5.0f);
+
+		DrawCircleAA(500.f, 85.f, 50.f, 32, 0x1c2b3e);
+		DrawCircleAA(500.f, 85.f, 30.f, 32, 0x525156);
+		DrawString(610, 60, "左スティック：移動", 0xffffff);
+
+		DrawCircleAA(500.f, 215.f, 50.f,  32, 0x1c2b3e);
+		DrawCircleAA(500.f, 215.f, 30.f, 32, 0x557b0e);
+		DrawString(488, 190, "A", 0xffffff);
+		DrawString(630, 190, "Aボタン：ジャンプ", 0xffffff);
+
+		DrawCircleAA(500.f, 355.f, 50.f, 32, 0x1c2b3e);
+		DrawCircleAA(500.f, 355.f, 30.f, 32, 0xc5482c);
+		DrawString(488, 332, "B", 0xffffff);
+		DrawString(630, 310, "Bボタン\n(長押し)", 0xffffff);
+		DrawString(840, 330, "：色の交換", 0xffffff);
+
+		DrawCircleAA(390.f, 500.f, 50.f, 32, 0x1c2b3e);
+		DrawCircleAA(390.f, 500.f, 30.f, 32, 0xc5482c);
+		DrawString(380, 478, "B", 0xffffff);
+		DrawString(440, 478, "＋", 0xffffff);
+		DrawCircleAA(540.f, 500.f, 50.f, 32, 0x1c2b3e);
+		DrawBox(525, 460, 555, 545, 0x211d1e, TRUE);
+		DrawBox(500, 490, 580, 515, 0x211d1e, TRUE);
+		DrawString(630, 450, "B(長押し中)\n十字カーソル", 0xffffff);
+		DrawString(925, 470, "：色の選択", 0xffffff);
+
+		DrawCircleAA(390.f, 620.f, 50.f, 32, 0x1c2b3e);
+		DrawCircleAA(390.f, 620.f, 30.f, 32, 0xc5482c);
+		DrawString(380, 595, "B", 0xffffff);
+		DrawString(440, 595, "＋", 0xffffff);
+		DrawCircleAA(540.f, 620.f, 50.f, 32, 0x1c2b3e);
+		DrawCircleAA(540.f, 620.f, 30.f, 32, 0x525156);
+		DrawString(630, 578, "B(長押し中)\n左スティック", 0xffffff);
+		DrawString(925, 590, "：色の選択", 0xffffff);
+
+		break;
+	case 2:	//色
+		DrawLineAA(30.f, 240.f, 280.f, 240.f, 0xff0000, 5.0f);
+		break;
+	case 3: //属性
+		DrawLineAA(30.f, 380.f, 280.f, 380.f, 0xff0000, 5.0f);
+		break;
+	case 4: //タイトルへ
+		DrawLineAA(30.f, 520.f, 280.f, 520.f, 0xff0000, 5.0f);
+		break;
+	case 5:
+		DrawLineAA(30.f, 683.f, 280.f, 683.f, 0xff0000, 5.0f);
+		break;
+	default:
+		break;
+	}
 
 	if (flg == false)
 	{
-		DrawBoxAA(60.f, 60.f, 1220.f, 660.f, 0xffffff, FALSE, 10.0f);
-		//DrawTriangleAA(20.f, 20.f, 60.f, 60.f, 20.f, 60.f, 0xffffff, TRUE, 10.0f);
-
-		// 中心線
-		//DrawLineAA(0.f, 360.f, 1280.f, 360.f, 0xff0000);
-		//DrawLineAA(640.f, 0.f, 640.f, 720.f, 0xff0000);
-		// 上
-		//DrawLineAA(0.f, 180.f, 1280.f, 180.f, 0xff0000);
-		// 下
-		//DrawLineAA(0.f, 540.f, 1280.f, 540.f, 0xff0000);
-		// 大外枠線
-		//DrawBoxAA(0.f, 0.f, 1280.f, 720.f, 0xff0000, FALSE);
-
-		SetFontSize(60); //デフォルトでは 6
-		// 多分漢字の一文字の長さは 25
-		DrawString(518, 145, "操作方法", 0xffffff);
-		DrawString(490, 330, "色について", 0xffffff);
-		DrawString(580, 510, "属性", 0xffffff);
-		DrawString(100, 580, "タイトルへ", 0xffffff);
-
-		switch (MenuNumber)
-		{
-		case 1:
-			DrawLineAA(510, 207, 770, 207, 0xff0000, 5.0f);
-			break;
-		case 2:
-			DrawLineAA(480, 395, 800, 395, 0xff0000, 5.0f);
-			break;
-		case 3:
-			DrawLineAA(570, 575, 710, 575, 0xff0000, 5.0f);
-			break;
-		default:
-			break;
-		}
+		
 	}
-
-	// カーソル
-	//DrawBox(460, 130, 547, 220, 0xff0000, FALSE);
-	//DrawTriangleAA(460.f, 130.f, 547.f, 175.f, 460.f, 220.f, 0xff0000, TRUE);	//+ 87
-	//DrawTriangleAA(370.f + -50.f, 130.f + 180.f, 457.f - 50.f, 175.f + 180.f, 370.f - 50.f, 220.f + 180.f, 0xffffff, TRUE);
-	//DrawTriangleAA(370.f + -50.f, 130.f + MenuY, 457.f + - 50.f, 175.f + MenuY, 370.f + - 50.f, 220.f + MenuY, 0xffffff, TRUE);
-	//DrawTriangleAA(904.f, 130.f + MenuY, 817.f, 175.f + MenuY, 904.f, 220.f + MenuY, 0xffffff, TRUE);
 }
