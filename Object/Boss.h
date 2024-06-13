@@ -49,8 +49,8 @@ private:
 
 	std::vector<Location> vertices; //ボスの頂点情報
 	std::vector<Location> warp_pos; //ワープ位置情報
-	std::array<Location, 36> wing;	//ボスの羽の位置情報
-	std::array<Location, 36> wing_mirror;//ミラー羽の位置情報
+	std::array<Location, 40> wing;	//ボスの羽の位置情報
+	std::array<Location, 40> wing_mirror;//ミラー羽の位置情報
 
 	int wing_fps;
 
@@ -112,5 +112,11 @@ public:
 	//羽の座標をファイルから読み込む
 	void LoadPosition();
 
+	//ボスの羽アニメーション
 	void BossAnimation();
+
+	//状態を渡す
+	BossState GetBossState(){
+		return boss_state;
+	}
 };
