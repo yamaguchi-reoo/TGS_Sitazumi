@@ -87,6 +87,8 @@ private:
 
 	int now_riding;		//今乗っているブロックに応じて再生するSEを変える
 
+	int deathTimer = 0;
+	int d = 0;//へんなところでダメージを受ける対策おそらくメモリ
 
 public:
 	Player();

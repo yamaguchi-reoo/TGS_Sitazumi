@@ -80,7 +80,7 @@ void BossAttackWater::Update(GameMain* _g)
 void BossAttackWater::Draw() const
 {
 	if (flg) {
-		DrawCircleAA(local_location.x, local_location.y, erea.width, 32, color, TRUE);
+		DrawCircleAA(local_location.x, local_location.y, erea.width, 32, draw_color, TRUE);
 	}
 }
 

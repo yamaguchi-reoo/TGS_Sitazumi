@@ -108,6 +108,7 @@ void Boss::Update(GameMain* _g)
 			break;
 		case BossState::DEATH:
 			_g->DeleteObject(object_pos, this);
+			_g->SetGameClearFlg(true);
 			break;
 		default:
 			break;
@@ -370,12 +371,12 @@ void Boss::BossAtack(GameMain *_g)
 				Erea e = { 20.f,20.f };
 				Location l;
 				if (side) {
-					l.x = 80.f;
-					l.y = attack_num * 200.f + 250.f;
+					l.x = 300.f;
+					l.y = attack_num * 150.f + 150.f;
 				}
 				else {
 					l.x = 1200.f;
-					l.y = attack_num * 200.f + 250.f;
+					l.y = attack_num * 150.f + 150.f;
 				}
 				//_g->CreateObject(new BossAttackWater, GetCenterLocation(), e, BLUE);
 				_g->CreateObject(new BossAttackWater, l, e, BLUE);
@@ -396,13 +397,30 @@ void Boss::BossAtack(GameMain *_g)
 				can_swap = true;
 			}
 			if (cnt % 30 == 0) {
-				Erea e = { (float)(GetRand(400) + 200),40.f };
+				Erea e = { (float)(GetRand(400) + 400),40.f };
 				/*Location l = _g->GetPlayerLocation();
 				l.y += _g->GetPlayerErea().height + 40.f;*/
 
 				Location l;
-				l.x = (float)(GetRand(29) * 40 + 40);
+				
+				float x;
+				int i = 0;
+				do
+				{
+					x = (GetRand(29)) * 40 + 200;
+					for (int j = woodNum; j > 0; j--)
+					{
+						if (x != attackWood[j]) {
+							i = 99;
+						}
+					}
+				} while (i++ < 3);
+
+				l.x = x;
+
 				l.y = 930.f;
+
+				attackWood[woodNum++] = l.x;
 
 
 				_g->CreateObject(new BossAttackWood, l, e, GREEN);
@@ -412,6 +430,7 @@ void Boss::BossAtack(GameMain *_g)
 				cnt = 0;
 				f = false;
 				boss_state = BossState::MOVE;
+				woodNum = 0;
 				t = 0;
 			}
 			break;
