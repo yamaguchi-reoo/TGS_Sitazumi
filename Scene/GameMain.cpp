@@ -8,16 +8,29 @@
 #include <fstream>
 #include <iostream>
 #include <string>
-
 #define _USE_MATH_DEFINES
 #include <math.h>
+#include "Title.h"
+#include "End.h"
+#include "Help.h"
+
 
 static Location camera_location = { 0,0};	//カメラの座標
 static Location screen_origin = { (SCREEN_WIDTH / 2),(SCREEN_HEIGHT / 2) };
 
-GameMain::GameMain(int _stage) :frame(0), stage_data{ 0 }, now_stage(0), object_num(0), stage_width_num(0), stage_height_num(0), stage_width(0), stage_height(0), camera_x_lock_flg(true), camera_y_lock_flg(true), x_pos_set_once(false), y_pos_set_once(false), player_object(0), boss_object(0), weather(0), weather_timer(0), move_object_num(0),player_flg(false), player_respawn_flg(false), fadein_flg(true), create_once(false)
+GameMain::GameMain(int _stage) :frame(0), stage_data{ 0 }, now_stage(0), object_num(0), stage_width_num(0), stage_height_num(0), stage_width(0), stage_height(0), camera_x_lock_flg(true), camera_y_lock_flg(true), x_pos_set_once(false), y_pos_set_once(false), player_object(0), boss_object(0), weather(0), weather_timer(0), move_object_num(0), player_flg(false), player_respawn_flg(false), fadein_flg(true), create_once(false), game_over_flg(false), game_clear_flg(false), game_pause_flg(false), pause_after_flg(false), cursor(0)
 {
 	now_stage = _stage;
+}
+
+GameMain::GameMain(int _stage, Location _respawn_locatoin, Player p) :frame(0), stage_data{ 0 }, now_stage(0), object_num(0), stage_width_num(0), stage_height_num(0), stage_width(0), stage_height(0), camera_x_lock_flg(true), camera_y_lock_flg(true), x_pos_set_once(false), y_pos_set_once(false), player_object(0), boss_object(0), weather(0), weather_timer(0), move_object_num(0), player_flg(false), player_respawn_flg(false), fadein_flg(true), create_once(false), game_over_flg(false), game_clear_flg(false), game_pause_flg(false), cursor(0)
+{
+	//now_stage = _stage;
+	//player_respawn = _respawn_locatoin;
+
+	//Object* play = dynamic_cast<Object*>(&p);
+	//CreateObject(play, player_respawn, { PLAYER_HEIGHT,PLAYER_WIDTH }, play->GetColorData());
+	//player_flg = true;
 }
 
 GameMain::~GameMain()
@@ -34,19 +47,31 @@ void GameMain::Initialize()
 	effect_spawner = new EffectSpawner();
 	effect_spawner->Initialize();
 
+	back_ground = new BackGround();
+
 	SetStage(now_stage, false);
 
-	back_ground = new BackGround();
 	back_ground->Initialize({ (float)stage_width,(float)stage_height });
 
 	lock_pos = camera_location;
 
 	test = new BossAttackWater();
 	test->Initialize({ 10000,1600 }, { 40,40 }, RED, 1000);
+
+	bgm_normal = ResourceManager::SetSound("Resource/Sounds/BGM/GameMainNormal.wav");
+	bgm_noise = ResourceManager::SetSound("Resource/Sounds/BGM/GameMainNoise.wav");
+	bgm_abnormal = ResourceManager::SetSound("Resource/Sounds/BGM/GameMainAbnormal.wav");
+
+	ResourceManager::StartSound(bgm_normal, TRUE);
 }
 
 void GameMain::Finalize()
 {
+	//BGMを止める
+	ResourceManager::StopSound(bgm_normal);
+	ResourceManager::StopSound(bgm_noise);
+	ResourceManager::StopSound(bgm_abnormal);
+
 	for (int i = 0; object[i] != nullptr; i++)
 	{
 		//生成済みのオブジェクトを削除
@@ -72,107 +97,221 @@ AbstractScene* GameMain::Update()
 	frame++;
 	//カメラの更新
 	UpdateCamera();
+
+	if (frame % 5 == 0)
+	{
+		Gbutton_draw = !Gbutton_draw;
+	}
+	// チュートリアルエリア：左スティック
+	Gstick_angle += 0.05f;
+	if (Gstick_angle > 1)
+	{
+		Gstick_angle = 0;
+	}
+
+	Gdraw_stick_shift.x = cosf(Gstick_angle * M_PI * 2) * 5;
+	Gdraw_stick_shift.y = sinf(Gstick_angle * M_PI * 2) * 5;
+
 	//演出の終了
-	if (frame > FADEIN_TIME || PadInput::OnButton(XINPUT_BUTTON_B))
+	if ((frame > FADEIN_TIME || PadInput::OnButton(XINPUT_BUTTON_B)) && fadein_flg == true)
 	{
 		fadein_flg = false;
 	}
 	//演出中は更新を止める
 	if (frame == 1 || fadein_flg == false)
 	{
-		//リセット
-		move_object_num = 0;
-		//各オブジェクトの更新
-		if (object[player_object]->GetSearchFlg() == FALSE || (object[player_object]->GetSearchFlg() == TRUE && frame % 10 == 0))
+			if (game_clear_flg)
 		{
-			for (int i = 0; i < OBJECT_NUM; i++)
+			if (PadInput::TipLeftLStick(STICKL_X) < -0.5f || PadInput::OnButton(XINPUT_BUTTON_DPAD_LEFT))
 			{
-				//プレイヤーとボス以外の画面内オブジェクトの更新
-				if (i != player_object && CheckInScreen(object[i]))
+				cursor = 0;
+			}
+			else if (PadInput::TipLeftLStick(STICKL_X) > 0.5f || PadInput::OnButton(XINPUT_BUTTON_DPAD_RIGHT))
+			{
+				cursor = 1;
+			}
+
+			if (PadInput::OnButton(XINPUT_BUTTON_B)) {
+				if (cursor == 0)
 				{
-					object[i]->SetScreenPosition(camera_location);
-					object[i]->Update(this);
-					move_object_num++;
-					for (int j = i + 1; object[j] != nullptr; j++)
-					{
-						//各オブジェクトとの当たり判定
-						if (object[i] != nullptr && CheckInScreen(object[j]) == true && object[i]->HitBox(object[j]) && j != player_object)
-						{
-							object[i]->Hit(object[j]);
-							object[j]->Hit(object[i]);
-						}
-					}
-					//プレイヤーに選択されているオブジェクトなら、描画色を変える
-					if (object[i]!= nullptr && object[i] == now_current_object && now_current_object != object[boss_object])
-					{
-						object[i]->SetDrawColor(WHITE);
-					}
-					else if(object[i] != nullptr)
-					{
-						object[i]->SetDrawColor(object[i]->GetColorData());
-					}
+					return new Title();
+				}
+				else
+				{
+					return new End();
 				}
 			}
-			//管理クラスの更新
-			weather->Update(this);
+
+
+			if (circleAng++ >= 360.f) {
+				circleAng = 0.f;
+			}
 		}
-
-		//プレイヤーの更新
-		PlayerUpdate();
-
-		//ボスの更新
-		BossUpdate();
-
-		//管理クラスの更新
-		effect_spawner->Update(this);
-
-		//プレイヤーがボスエリアに入ったら退路を閉じる
-		if (now_stage == 2 && object[player_object]->GetLocalLocation().x > 160 && object[player_object]->GetLocalLocation().x < 200 && create_once == false)
+		//ゲームオーバー
+		else if (game_over_flg)
 		{
-			CreateObject(new Stage(2), { 160,520 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
-			CreateObject(new Stage(2), { 160,560 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
-			CreateObject(new Stage(2), { 160,600 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
-			CreateObject(new Stage(2), { 160,640 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
-			CreateObject(new Stage(1), { 120,520 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
-			CreateObject(new Stage(1), { 120,560 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
-			CreateObject(new Stage(1), { 120,600 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
-			CreateObject(new Stage(1), { 120,640 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
-			create_once = true;
+			if (PadInput::TipLeftLStick(STICKL_X) < -0.5f || PadInput::OnButton(XINPUT_BUTTON_DPAD_LEFT))
+			{
+				cursor = 0;
+			}
+			else if (PadInput::TipLeftLStick(STICKL_X) > 0.5f || PadInput::OnButton(XINPUT_BUTTON_DPAD_RIGHT))
+			{
+				cursor = 1;
+			}
+
+			if (PadInput::OnButton(XINPUT_BUTTON_B)) {
+				if (cursor == 0)
+				{
+					SetStage(now_stage, true);
+					game_over_flg = false;
+				}
+				else
+				{
+					return new Title();
+				}
+			}
+
+
+			if (circleAng++ >= 360.f) {
+				circleAng = 0.f;
+			}
+		}
+		else if (game_pause_flg)
+		{
+			if (PadInput::TipLeftLStick(STICKL_X) < -0.5f || PadInput::OnButton(XINPUT_BUTTON_DPAD_LEFT))
+			{
+				cursor = 0;
+			}
+			else if (PadInput::TipLeftLStick(STICKL_X) > 0.5f || PadInput::OnButton(XINPUT_BUTTON_DPAD_RIGHT))
+			{
+				cursor = 1;
+			}
+
+			if (PadInput::OnButton(XINPUT_BUTTON_B) || PadInput::OnButton(XINPUT_BUTTON_START)) {
+				if (cursor == 0)
+				{
+					game_pause_flg = false;
+					pause_after_flg = true;
+				}
+				else
+				{
+					return new Title();
+				}
+			}
+
+
+			if (circleAng++ >= 360.f) {
+				circleAng = 0.f;
+			}
+		}
+		else
+		{
+		if (PadInput::OnButton(XINPUT_BUTTON_START) && !game_pause_flg)
+			{
+				game_pause_flg = true;
+			}
+
+		if (PadInput::OnRelease(XINPUT_BUTTON_B) && pause_after_flg)
+			{
+				pause_after_flg = false;
+			}
+			//リセット
+			move_object_num = 0;
+			//各オブジェクトの更新
+			if (object[player_object]->GetSearchFlg() == FALSE || (object[player_object]->GetSearchFlg() == TRUE && frame % 10 == 0))
+			{
+				for (int i = 0; i < OBJECT_NUM; i++)
+				{
+					//プレイヤーとボス以外の画面内オブジェクトの更新
+					if (i != player_object && CheckInScreen(object[i]))
+					{
+						object[i]->SetScreenPosition(camera_location);
+						object[i]->Update(this);
+						move_object_num++;
+						for (int j = i + 1; object[j] != nullptr; j++)
+						{
+							//各オブジェクトとの当たり判定
+							if (object[i] != nullptr && CheckInScreen(object[j]) == true && object[i]->HitBox(object[j]) && j != player_object)
+							{
+								object[i]->Hit(object[j]);
+								object[j]->Hit(object[i]);
+							}
+						}
+						//プレイヤーに選択されているオブジェクトなら、描画色を変える
+						if (object[i] != nullptr && object[i] == now_current_object && now_current_object != object[boss_object])
+						{
+							object[i]->SetDrawColor(WHITE);
+						}
+						else if (object[i] != nullptr)
+						{
+							object[i]->SetDrawColor(object[i]->GetColorData());
+						}
+					}
+				}
+				//管理クラスの更新
+				weather->Update(this);
+			}
+
+			//プレイヤーの更新
+			PlayerUpdate();
+
+			//ボスの更新
+			BossUpdate();
+
+			//管理クラスの更新
+			effect_spawner->Update(this);
+
+			////背景の更新
+			//back_ground->Update();
+
+			//プレイヤーがボスエリアに入ったら退路を閉じる
+			if (now_stage == 2 && object[player_object]->GetLocalLocation().x > 160 && object[player_object]->GetLocalLocation().x < 200 && create_once == false)
+			{
+				CreateObject(new Stage(2), { 160,520 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
+				CreateObject(new Stage(2), { 160,560 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
+				CreateObject(new Stage(2), { 160,600 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
+				CreateObject(new Stage(2), { 160,640 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
+				CreateObject(new Stage(1), { 120,520 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
+				CreateObject(new Stage(1), { 120,560 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
+				CreateObject(new Stage(1), { 120,600 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
+				CreateObject(new Stage(1), { 120,640 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
+				create_once = true;
+			}
+
+			//ボスステージに遷移
+			if (now_stage != 2 && object[player_object]->GetLocation().x > stage_width - 100 && object[player_object]->GetLocation().y > stage_height - 300)
+			{
+				SetStage(2, false);
+			}
 		}
 
-		//ボスステージに遷移
-		if (now_stage != 2 && object[player_object]->GetLocation().x > stage_width - 100 && object[player_object]->GetLocation().y > stage_height - 300)
+
+#ifdef _DEBUG
+		//ステージをいじるシーンへ遷移
+		if (KeyInput::OnPresed(KEY_INPUT_E) && KeyInput::OnPresed(KEY_INPUT_D))
+		{
+			return new EditScene(now_stage);
+		}
+
+		if (KeyInput::OnKey(KEY_INPUT_1))
+		{
+			ResourceManager::StopSound(0);
+		}
+		if (KeyInput::OnKey(KEY_INPUT_2))
 		{
 			SetStage(2, false);
 		}
-	}
-#ifdef _DEBUG
-	//ステージをいじるシーンへ遷移
-	if (KeyInput::OnPresed(KEY_INPUT_E) && KeyInput::OnPresed(KEY_INPUT_D))
-	{
-		return new EditScene(now_stage);
-	}
 
-	if (KeyInput::OnKey(KEY_INPUT_1))
-	{
-		ResourceManager::StopSound(0);
-	}
-	if (KeyInput::OnKey(KEY_INPUT_2))
-	{
-		SetStage(2, false);
-	}
-	
-	if (object[player_object]->GetObjectType() != PLAYER) {
-		int a;
-		a = 0;
-	}
+
 #endif
 
-	return this;
+	}
+		return this;
 }
 
 void GameMain::Draw() const
 {
+	
 	SetFontSize(12);
 	back_ground->Draw(camera_location);
 	for (int i = 0; object[i] != nullptr; i++)
@@ -189,9 +328,7 @@ void GameMain::Draw() const
 	//{
 	//	object[boss_attack[i]]->Draw();
 	//}
-	//プレイヤーを最後に描画
-	object[player_object]->Draw();
-
+	
 	//エフェクトの描画
 	effect_spawner->Draw();
 
@@ -205,6 +342,183 @@ void GameMain::Draw() const
 		DrawBox(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0xffffff, true);
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 	}*/
+
+	if (game_clear_flg)
+	{
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200);
+		DrawBox(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0xffffff, true);
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
+
+		DrawBoxAA(200, 410, 500, 510, 0x000000, TRUE);
+		DrawBoxAA(200, 410, 500, 510, 0xffffff, FALSE);
+		DrawBoxAA(780, 410, 1080, 510, 0x000000, TRUE);
+		DrawBoxAA(780, 410, 1080, 510, 0xffffff, FALSE);
+
+		int fontsize = 192 / 2;
+		SetFontSize(fontsize * 2);
+		DrawString(200, 100, "G", 0xff0000);
+		DrawString(200 + fontsize * 1, 100, "A", 0xffffff);
+		DrawString(200 + fontsize * 2, 100, "M", 0xffffff);
+		DrawString(200 + fontsize * 3, 100, "E", 0xffffff);
+		DrawString(200 + fontsize * 4, 100, "C", 0x00ff00);
+		DrawString(200 + fontsize * 5, 100, "L", 0xffffff);
+		DrawString(200 + fontsize * 6, 100, "E", 0xffffff);
+		DrawString(200 + fontsize * 7, 100, "A", 0xffffff);
+		DrawString(200 + fontsize * 8, 100, "R", 0x0000ff);
+
+		SetFontSize(48);
+		DrawString(285, 436, "TITLE", 0xffffff);
+		DrawString(890, 436, "END", 0xffffff);
+
+		Location circleLoc;
+
+		if (cursor == 0) {
+			circleLoc.x = 350.f;
+			circleLoc.y = 460.f;
+		}
+		else {
+			circleLoc.x = 930.f;
+			circleLoc.y = 460.f;
+		}
+
+		DrawCircleAA(circleLoc.x, circleLoc.y, 40.f * 2.3f, 40, 0xffff00, FALSE, 4.f * 2.3f);
+
+		Location base;
+		base.x = circleLoc.x;
+		base.y = circleLoc.y;
+
+		Location l[3];
+		l[0].x = base.x;
+		l[0].y = base.y - 40.f * 2.3f;
+
+		l[0] = RotationLocation(base, l[0], (float)(circleAng * M_PI / 180));
+
+		l[1] = RotationLocation(base, l[0], (float)(120.f * M_PI / 180));
+
+		l[2] = RotationLocation(base, l[0], (float)(240.f * M_PI / 180));
+
+
+		DrawCircleAA(l[0].x, l[0].y, 15.f * 1.5f, 32, 0xcc0000, TRUE);
+		DrawCircleAA(l[1].x, l[1].y, 15.f * 1.5f, 32, 0x3c78d8, TRUE);
+		DrawCircleAA(l[2].x, l[2].y, 15.f * 1.5f, 32, 0x6aa84f, TRUE);
+	}
+
+	//ゲームオーバー
+	if (game_over_flg)
+	{
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200);
+		DrawBox(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0x000000,true);
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
+		
+		DrawBoxAA(200, 410, 500, 510, 0x000000, TRUE);
+		DrawBoxAA(200, 410, 500, 510, 0xffffff, FALSE);
+		DrawBoxAA(780, 410, 1080, 510, 0x000000, TRUE);
+		DrawBoxAA(780, 410, 1080, 510, 0xffffff, FALSE);
+
+		int fontsize = 192 / 2;
+		SetFontSize(fontsize * 2);
+		DrawString(240, 100, "G", 0xff0000);
+		DrawString(240 + fontsize * 1, 100, "A", 0xffffff);
+		DrawString(240 + fontsize * 2, 100, "M", 0xffffff);
+		DrawString(240 + fontsize * 3, 100, "E", 0xffffff);
+		DrawString(240 + fontsize * 4, 100, "O", 0x00ff00);
+		DrawString(240 + fontsize * 5, 100, "V", 0xffffff);
+		DrawString(240 + fontsize * 6, 100, "E", 0xffffff);
+		DrawString(240 + fontsize * 7, 100, "R", 0x0000ff);
+
+		SetFontSize(48);
+		DrawString(260, 436, "RESTART", 0xffffff);
+		DrawString(860, 436, "TITLE", 0xffffff);
+
+		Location circleLoc;
+
+		if (cursor == 0) {
+			circleLoc.x = 350.f;
+			circleLoc.y = 460.f;
+		}
+		else {
+			circleLoc.x = 930.f;
+			circleLoc.y = 460.f;
+		}
+
+		DrawCircleAA(circleLoc.x, circleLoc.y, 40.f * 2.3f, 40, 0xffff00, FALSE, 4.f * 2.3f);
+
+		Location base;
+		base.x = circleLoc.x;
+		base.y = circleLoc.y;
+
+		Location l[3];
+		l[0].x = base.x;
+		l[0].y = base.y - 40.f * 2.3f;
+
+		l[0] = RotationLocation(base, l[0], (float)(circleAng * M_PI / 180));
+
+		l[1] = RotationLocation(base, l[0], (float)(120.f * M_PI / 180));
+
+		l[2] = RotationLocation(base, l[0], (float)(240.f * M_PI / 180));
+
+
+		DrawCircleAA(l[0].x, l[0].y, 15.f * 1.5f, 32, 0xcc0000, TRUE);
+		DrawCircleAA(l[1].x, l[1].y, 15.f * 1.5f, 32, 0x3c78d8, TRUE);
+		DrawCircleAA(l[2].x, l[2].y, 15.f * 1.5f, 32, 0x6aa84f, TRUE);
+	}
+
+	if (game_pause_flg)
+	{
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200);
+		DrawBox(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0x000000, true);
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
+
+		DrawBoxAA(200, 410, 500, 510, 0x000000, TRUE);
+		DrawBoxAA(200, 410, 500, 510, 0xffffff, FALSE);
+		DrawBoxAA(780, 410, 1080, 510, 0x000000, TRUE);
+		DrawBoxAA(780, 410, 1080, 510, 0xffffff, FALSE);
+
+		int fontsize = 192 / 2;
+		SetFontSize(fontsize * 2);
+		DrawString(400, 100, "P", 0xff0000);
+		DrawString(400 + fontsize * 1, 100, "A", 0xffffff);
+		DrawString(400 + fontsize * 2, 100, "U", 0x00ff00);
+		DrawString(400 + fontsize * 3, 100, "S", 0xffffff);
+		DrawString(400 + fontsize * 4, 100, "E", 0x0000ff);
+
+		SetFontSize(48);
+		DrawString(300, 436, "BACK", 0xffffff);
+		DrawString(860, 436, "TITLE", 0xffffff);
+
+		Location circleLoc;
+
+		if (cursor == 0) {
+			circleLoc.x = 350.f;
+			circleLoc.y = 460.f;
+		}
+		else {
+			circleLoc.x = 930.f;
+			circleLoc.y = 460.f;
+		}
+
+		DrawCircleAA(circleLoc.x, circleLoc.y, 40.f * 2.3f, 40, 0xffff00, FALSE, 4.f * 2.3f);
+
+		Location base;
+		base.x = circleLoc.x;
+		base.y = circleLoc.y;
+
+		Location l[3];
+		l[0].x = base.x;
+		l[0].y = base.y - 40.f * 2.3f;
+
+		l[0] = RotationLocation(base, l[0], (float)(circleAng * M_PI / 180));
+
+		l[1] = RotationLocation(base, l[0], (float)(120.f * M_PI / 180));
+
+		l[2] = RotationLocation(base, l[0], (float)(240.f * M_PI / 180));
+
+
+		DrawCircleAA(l[0].x, l[0].y, 15.f * 1.5f, 32, 0xcc0000, TRUE);
+		DrawCircleAA(l[1].x, l[1].y, 15.f * 1.5f, 32, 0x3c78d8, TRUE);
+		DrawCircleAA(l[2].x, l[2].y, 15.f * 1.5f, 32, 0x6aa84f, TRUE);
+	}
+	
 #ifdef _DEBUG
 	DrawFormatString(100, 100, 0xffffff, "Object数:%d", object_num);
 	DrawFormatString(100, 120, 0xffffff, "Updeteが呼ばれているObject数:%d", move_object_num);
@@ -212,14 +526,50 @@ void GameMain::Draw() const
 	test->Draw();
 	//チュートリアル表示テスト
 	SetFontSize(50);
-	DrawString(KeyInput::GetMouseCursor().x - camera_location.x, stage_height- KeyInput::GetMouseCursor().y - camera_location.y, "aaaaa", 0xff0000, TRUE);
-	DrawFormatString(0, 40, 0xff0000, "%0.1f x %0.1f y", camera_location.x, stage_height - camera_location.y);
-	DrawFormatString(0, 90, GetColor(255, 0, 0), "%d %d", KeyInput::GetMouseCursor().x, KeyInput::GetMouseCursor().y);
+	//DrawString(KeyInput::GetMouseCursor().x - camera_location.x, stage_height- KeyInput::GetMouseCursor().y - camera_location.y, "aaaaa", 0xff0000, TRUE);
+	//DrawFormatString(0, 40, 0xff0000, "%0.1f x %0.1f y", camera_location.x, stage_height - camera_location.y);
+	DrawFormatString(0, 60, 0xff0000, "%0.1f x %0.1f y",  camera_location.x + KeyInput::GetMouseCursor().x, stage_height - KeyInput::GetMouseCursor().y - camera_location.y);
+	DrawFormatString(0, 100, 0xff0000, "%0.1f x %0.1f y", 1830 - camera_location.x, stage_height - 646 - camera_location.y);
 #endif
 
-	SetFontSize(50);
-	//DrawBox()
+	// 1742 - camera_location.x, stage_height - 560 - camera_location.y
+	// 2023 - camera_location.x, stage_height - 357 - camera_location.y
 
+	// チュートリアルテキストはボスエリアで描画しない
+	if (now_stage != 2)
+	{
+		SetFontSize(50);
+		DrawBoxAA(515 - camera_location.x, stage_height - 546 - camera_location.y, 903 - camera_location.x, stage_height - 317 - camera_location.y, 0xffffff, FALSE, 3.0f);
+		DrawBoxAA(518 - camera_location.x, stage_height - 543 - camera_location.y, 900 - camera_location.x, stage_height - 320 - camera_location.y, 0x555555, TRUE, 3.0f);
+
+		// 左スティック：移動の説明
+		DrawCircleAA(580 - camera_location.x, stage_height - 480 - camera_location.y, 25, 100, 0x000000, TRUE);
+		DrawCircleAA(580 - camera_location.x, stage_height - 480 - camera_location.y, 25, 100, 0x666666, FALSE, 3.0f);
+		DrawCircleAA(580 - camera_location.x + Gdraw_stick_shift.x, stage_height - 480 - camera_location.y + Gdraw_stick_shift.y, 18, 100, 0x666666, TRUE);
+		DrawStringF(610 - camera_location.x, stage_height - 500 - camera_location.y, "：移動", 0xffffff);
+
+		if (Gbutton_draw == false)
+		{
+			//ボタンイメージ描画
+			DrawCircleAA(577 - camera_location.x, stage_height - 460 - camera_location.y + 60, 25, 100, 0xff0000, FALSE);
+			DrawStringF(577 - camera_location.x - 12, stage_height - 460 - camera_location.y + 38, "A", 0xff0000);
+		}
+		else
+		{
+			DrawCircleAA(577 - camera_location.x, stage_height - 460 - camera_location.y + 55, 25, 100, 0xff0000, TRUE);
+			DrawCircleAA(577 - camera_location.x, stage_height - 460 - camera_location.y + 60, 25, 100, 0xff0000, TRUE);
+			DrawStringF(577 - camera_location.x - 12, stage_height - 460 - camera_location.y + 33, "A", 0x000000);
+		}
+		DrawStringF(610 - camera_location.x, stage_height - 428 - camera_location.y, "：ジャンプ", 0xffffff);
+
+		DrawBoxAA(1742 - camera_location.x, stage_height - 700 - camera_location.y, 2073 - camera_location.x, stage_height - 397 - camera_location.y, 0xffffff, FALSE, 3.0f);
+		DrawBoxAA(1745 - camera_location.x, stage_height - 697 - camera_location.y, 2070 - camera_location.x, stage_height - 400 - camera_location.y, 0x555555, TRUE, 3.0f);
+		DrawPlayer();
+	}
+	
+
+	//プレイヤーを最後に描画
+	object[player_object]->Draw();
 }
 
 void GameMain::CreateObject(Object* _object, Location _location, Erea _erea, int _color_data)
@@ -421,12 +771,18 @@ void GameMain::LoadStageData(int _stage)
 void GameMain::SetStage(int _stage, bool _delete_player)
 {
 	object_num = 0;
+
 	//すべてのオブジェクトを削除
 	DeleteAllObject(_delete_player);
 
 	now_stage = _stage;
+
+	//背景クラスのステージも変更
+	back_ground->SetNowStage(now_stage);
+
 	//ファイルの読込
 	LoadStageData(now_stage);
+
 	for (int i = stage_height_num - 1; i >= 0; i--)
 	{
 		for (int j = 0; j < stage_width_num; j++)
@@ -634,7 +990,9 @@ void GameMain::PlayerUpdate()
 		if (GetPlayerLocation().y > stage_height + 100)
 		{
 			//ステージとプレイヤーをリセット
-			SetStage(now_stage, true);
+			//SetStage(now_stage, true);
+
+			game_over_flg = true;
 		}
 	}
 }
@@ -674,4 +1032,63 @@ void GameMain::BossUpdate()
 void GameMain::SetNowCurrentObject(Object* _object)
 {
 	now_current_object = _object;
+}
+
+void GameMain::DrawPlayer()const
+{
+	// 1830 - camera_location.x, stage_height - 646 - camera_location.y 
+
+	//帽子　中央
+	//DrawTriangleAA(local_location.x + (erea.width / 2), local_location.y, local_location.x + 20, local_location.y + 20, local_location.x + 40, local_location.y + 20, draw_color, true);
+	//DrawTriangleAA(local_location.x + (erea.width / 2), local_location.y, local_location.x + 20, local_location.y + 20, local_location.x + 40, local_location.y + 20, 0x000000, false);
+	////帽子　右側
+	//DrawTriangleAA(local_location.x + (erea.width / 2), local_location.y, local_location.x + 40, local_location.y + 20, local_location.x + 52, local_location.y + 15, draw_color, true);
+	//DrawTriangleAA(local_location.x + (erea.width / 2), local_location.y, local_location.x + 40, local_location.y + 20, local_location.x + 52, local_location.y + 15, 0x000000, false);
+	////帽子　左側
+	//DrawTriangleAA(local_location.x + (erea.width / 2), local_location.y, local_location.x + 8, local_location.y + 15, local_location.x + 20, local_location.y + 20, draw_color, true);
+	//DrawTriangleAA(local_location.x + (erea.width / 2), local_location.y, local_location.x + 8, local_location.y + 15, local_location.x + 20, local_location.y + 20, 0x000000, false);
+
+	//頭
+	ResourceManager::DrawRotaBox(1830 - camera_location.x, stage_height - 646 - camera_location.y, 23, 15, 1830 - camera_location.x, stage_height - 646 - camera_location.y, 0, GREEN, true);
+	ResourceManager::DrawRotaBox(1830 - camera_location.x, stage_height - 646 - camera_location.y, 23, 15, 1830 - camera_location.x, stage_height - 646 - camera_location.y, 0, 0x000000, false);
+
+	//目
+	ResourceManager::DrawRotaBox(1830 - camera_location.x - 6, stage_height - 646 - camera_location.y, 6, 7, 1830 - camera_location.x, stage_height - 646 - camera_location.y, 0, 0x000000, true);
+
+	//首
+	ResourceManager::DrawRotaBox(1830 - camera_location.x, stage_height - 646 - camera_location.y - 14, 10, 5, 1830 - camera_location.x, stage_height - 646 - camera_location.y, 0, GREEN, true);
+	ResourceManager::DrawRotaBox(1830 - camera_location.x, stage_height - 646 - camera_location.y - 14, 10, 5, 1830 - camera_location.x, stage_height - 646 - camera_location.y, 0, 0x000000, false);
+
+	//胴体																					
+	ResourceManager::DrawRotaBox(1830 - camera_location.x, stage_height - 646 - camera_location.y - 40, 21, 37, 1830 - camera_location.x, stage_height - 646 - camera_location.y, 0, GREEN, true);
+	ResourceManager::DrawRotaBox(1830 - camera_location.x, stage_height - 646 - camera_location.y - 40, 21, 37, 1830 - camera_location.x, stage_height - 646 - camera_location.y, 0, 0x000000, false);
+
+	//バッグ
+	ResourceManager::DrawRotaBox(1830 - camera_location.x + 15, stage_height - 646 - camera_location.y - 40, 5, 23, 1830 - camera_location.x, stage_height - 646 - camera_location.y, 0, GREEN, true);
+	ResourceManager::DrawRotaBox(1830 - camera_location.x + 15, stage_height - 646 - camera_location.y - 40, 5, 23, 1830 - camera_location.x, stage_height - 646 - camera_location.y, 0, 0x000000, false);
+	ResourceManager::DrawRotaBox(1830 - camera_location.x + 15, stage_height - 646 - camera_location.y - 40, 3, 15, 1830 - camera_location.x, stage_height - 646 - camera_location.y, 0, 0x000000, true);
+
+	//腕
+	ResourceManager::DrawRotaBox(1830 - camera_location.x, stage_height - 646 - camera_location.y, 28, 7, 1830 - camera_location.x, stage_height - 616 - camera_location.y - 15, -60.0f, GREEN, true);
+	ResourceManager::DrawRotaBox(1830 - camera_location.x, stage_height - 646 - camera_location.y, 28, 7, 1830 - camera_location.x, stage_height - 616 - camera_location.y - 15, -60.0f, 0x000000, false);
+
+	//足												 														
+	//ResourceManager::DrawRotaBox(player_location.x + 30, player_location.y + 70, 7, 27, player_location.x + 30, player_location.y + 80, 0, GREEN, true);
+	//ResourceManager::DrawRotaBox(player_location.x + 30, player_location.y + 70, 7, 27, player_location.x + 30, player_location.y + 80, 0, 0x000000, false);
+}
+
+Location GameMain::RotationLocation(Location BaseLoc, Location Loc, float r) const
+{
+	Location l;
+	l.x = Loc.x - BaseLoc.x;
+	l.y = Loc.y - BaseLoc.y;
+
+	Location ret;
+	ret.x = l.x * cosf(r) - l.y * sinf(r);
+	ret.y = l.x * sinf(r) + l.y * cosf(r);
+
+	ret.x += BaseLoc.x;
+	ret.y += BaseLoc.y;
+
+	return ret;
 }

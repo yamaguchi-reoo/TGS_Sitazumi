@@ -82,10 +82,22 @@ Player::Player()
 	walk_se[2] = ResourceManager::SetSound("Resource/Sounds/Player/walk_grass.wav");
 	walk_se[3] = ResourceManager::SetSound("Resource/Sounds/Player/walk_water.wav");
 	jump_se = ResourceManager::SetSound("Resource/Sounds/Player/player_jump.wav");
-	old_jump_se = jump_se;
 	damage_se[0] = ResourceManager::SetSound("Resource/Sounds/Player/damage_fire.wav");
 	damage_se[1] = ResourceManager::SetSound("Resource/Sounds/Player/damage_grass.wav");
 	damage_se[2] = ResourceManager::SetSound("Resource/Sounds/Player/damage_water.wav");
+	cursor_se = ResourceManager::SetSound("Resource/Sounds/Player/cursor.wav");
+
+	for (int i = 0; i < 4; i++)
+	{
+		old_walk_se[i] = walk_se[i];
+	}
+	old_jump_se = jump_se;
+	for (int i = 0; i < 3; i++)
+	{
+		old_damage_se[i] = damage_se[i];
+	}
+	old_cursor_se = cursor_se;
+
 	now_riding = 0;
 	draw_color = 0;
 }
@@ -112,12 +124,9 @@ void Player::Update(GameMain* _g)
 	
 	__super::Update(_g);
 
-	//意図しない変更が発生したか測定
-	if (old_jump_se != jump_se)
-	{
-		printfDx("ジャンプSE変更");
-		old_jump_se = jump_se;
-	}
+	//意図しない変更を防止
+	SavePlayerSound();
+
 	fps = 0;
 	//移動エフェクト
 	if (vector.x != 0 || vector.y != 0)
@@ -172,7 +181,7 @@ void Player::Update(GameMain* _g)
 
 	oldSearchFlg = searchFlg;
 	//Bボタンで色の交換ができるモードと切り替え
-	if (PadInput::OnPressed(XINPUT_BUTTON_B)/* && searchedObjFlg*/) {
+	if (PadInput::OnPressed(XINPUT_BUTTON_B) && !_g->GetPauseAfter()/* && searchedObjFlg*/) {
 		SelectObject();
 		searchFlg = true;
 	}
@@ -584,7 +593,7 @@ void Player::MoveActor()
 			break;
 
 		case 1:
-			vector.y = -15.f;
+			vector.y = -23.f;
 
 			break;
 
@@ -689,9 +698,9 @@ void Player::SelectObject()
 {
 	bool flg = false;//選択したかどうか
 	if (swapTimer == -1 && searchedObjFlg && searchedObj != nullptr) {
-		
 		//X軸
 		if ((PadInput::TipLeftLStick(STICKL_X) > 0.8f || PadInput::OnButton(XINPUT_BUTTON_DPAD_RIGHT)) && oldStick[0]) {
+			ResourceManager::StartSound(cursor_se);
 			oldStick[0] = false;
 			flg = true;
 			float nearLen[4] = { 1000.f,1000.f,1000.f,1000.f };
@@ -818,6 +827,7 @@ void Player::SelectObject()
 
 		}
 		else if ((PadInput::TipLeftLStick(STICKL_X) < -0.8f || PadInput::OnButton(XINPUT_BUTTON_DPAD_LEFT)) && oldStick[1]) {
+			ResourceManager::StartSound(cursor_se);
 			oldStick[1] = false;
 			flg = true;
 
@@ -966,6 +976,7 @@ void Player::SelectObject()
 		}
 		//Y軸
 		if ((PadInput::TipLeftLStick(STICKL_Y) > 0.8f || PadInput::OnButton(XINPUT_BUTTON_DPAD_UP)) && oldStick[2]) {
+			ResourceManager::StartSound(cursor_se);
 			oldStick[2] = false;
 			flg = true;
 
@@ -987,6 +998,7 @@ void Player::SelectObject()
 			}
 		}
 		else if ((PadInput::TipLeftLStick(STICKL_Y) < -0.8f || PadInput::OnButton(XINPUT_BUTTON_DPAD_DOWN)) && oldStick[3]) {
+			ResourceManager::StartSound(cursor_se); 
 			oldStick[3] = false;
 			flg = true;
 
@@ -1476,5 +1488,31 @@ Location Player::RotationLocation(Location BaseLoc, Location Loc, float r) const
 	*/
 
 	return ret;
+}
+
+void Player::SavePlayerSound()
+{
+	for (int i = 0; i < 4; i++)
+	{
+		if (old_walk_se[i] != walk_se[i])
+		{
+			walk_se[i] = old_walk_se[i];
+		}
+	}
+	if (old_jump_se != jump_se)
+	{
+		jump_se = old_jump_se;
+	}
+	for (int i = 0; i < 3; i++)
+	{
+		if (old_damage_se[i] != damage_se[i])
+		{
+			damage_se[i] = old_damage_se[i];
+		}
+	}
+	if (old_cursor_se != cursor_se)
+	{
+		cursor_se = old_cursor_se;
+	}
 }
 

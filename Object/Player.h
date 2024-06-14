@@ -78,7 +78,13 @@ private:
 	int walk_se[4];		//歩行SE格納
 	int jump_se;		//ジャンプSE格納
 	int damage_se[3];	//被ダメージSE格納
-	int old_jump_se;
+	int cursor_se;		//色交換カーソルSE格納
+
+	int old_walk_se[4];		//旧歩行SE格納
+	int old_jump_se;		//旧ジャンプSE格納
+	int old_damage_se[3];	//旧被ダメージSE格納
+	int old_cursor_se;		//旧色交換カーソルSE格納
+
 	int now_riding;		//今乗っているブロックに応じて再生するSEを変える
 
 
@@ -111,5 +117,8 @@ public:
 
 	//引数:もとになる座標、回転させたい座標、回転させたい角度
 	Location RotationLocation(Location BaseLoc, Location Loc, float r) const;
+
+	//音源の破損防止
+	void SavePlayerSound();
 };
 
