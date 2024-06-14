@@ -265,12 +265,12 @@ AbstractScene* GameMain::Update()
 		}
 		else
 		{
-		if (PadInput::OnButton(XINPUT_BUTTON_START) && !game_pause_flg)
+			if (PadInput::OnButton(XINPUT_BUTTON_START) && !game_pause_flg)
 			{
 				game_pause_flg = true;
 			}
 
-		if (PadInput::OnRelease(XINPUT_BUTTON_B) && pause_after_flg)
+			if (PadInput::OnRelease(XINPUT_BUTTON_B) && pause_after_flg)
 			{
 				pause_after_flg = false;
 			}
