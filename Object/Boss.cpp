@@ -14,7 +14,7 @@
 #define RADIUS 300.0f
 
 
-Boss::Boss() :vector{ 0.0f }, boss_state(BossState::ATTACK), barrier_num(3), damage_flg(false), state_change_time(0), speed(0.0f),wing_fps(0)
+Boss::Boss() :vector{ 0.0f }, boss_state(BossState::ATTACK), barrier_num(0), damage_flg(false), state_change_time(0), speed(0.0f),wing_fps(0)
 {
 	type = BOSS;
 	can_swap = TRUE;
@@ -58,9 +58,9 @@ void Boss::Initialize(Location _location, Erea _erea, int _color_data, int _obje
 	object_pos = _object_pos;
 
 	warp_pos = {
-		 {(SCREEN_WIDTH / 2 + 50.0f) , 125.0f},		   //中央
+		 {(SCREEN_WIDTH / 2 + 50.0f) , 125.0f},			 //中央
 		 {SCREEN_WIDTH - 300.0f, SCREEN_HEIGHT - 400.0f},//右
-		 {370.0f , SCREEN_HEIGHT - 400.0f}				   //左
+		 {370.0f , SCREEN_HEIGHT - 400.0f}				 //左
 	};
 
 	barrier_rad[0] = 60;
@@ -168,7 +168,8 @@ void Boss::Draw() const
 
 	//本体
 	DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 35, 35, 0x000000, TRUE);
-	DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 36, 36, color, FALSE);
+	DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 35, 34, 0xFFFFFF, FALSE, 3.0f);
+	DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 36, 36, color, FALSE, 2.0f);
 
 	//羽描画
 	DrawWings();
@@ -181,9 +182,9 @@ void Boss::Draw() const
 			if(barrier_num > 0) {
 				DrawHexagonSphere();
 				// バリアの描画
-				DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 115, 50, color, FALSE);
-				DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 112.5, 50, color, FALSE);
-				DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 110, 50, color, FALSE);
+				DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 115, 50, color, FALSE, 3.0f);
+				DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 112.5, 50, color, FALSE, 2.0f);
+				DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 109, 50, color, FALSE);
 			}
 		}
 	}
@@ -193,9 +194,9 @@ void Boss::Draw() const
 			// バリアの描画
 			DrawHexagonSphere();
 			//for (int i = 0; i < barrier_num; i++) {
-			DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 115, 50, color, FALSE);
-			DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 112.5, 50, color, FALSE);
-			DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 110, 50, color, FALSE);
+			DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 115, 50, color, FALSE , 3.0f);
+			DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 112.5, 50, color, FALSE, 2.0f);
+			DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 109, 50, color, FALSE);
 		}
 	}
 
@@ -368,7 +369,7 @@ void Boss::BossAtack(GameMain *_g)
 				can_swap = true;
 			}
 			if (cnt % 30 == 0) {
-				Erea e = { 20.f,20.f };
+				Erea e = { 40.f,40.f };
 				Location l;
 				if (side) {
 					l.x = 300.f;
