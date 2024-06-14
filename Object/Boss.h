@@ -44,6 +44,7 @@ private:
 	int cunt;
 	int c;
 	int num;
+	int t = 0;
 
 	int state_change_time;		//状態変更のタイミング
 

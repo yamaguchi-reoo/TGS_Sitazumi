@@ -167,6 +167,7 @@ void Boss::Draw() const
 
 	//本体
 	DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 35, 35, 0x000000, TRUE);
+	DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 36, 36, color, FALSE);
 
 	//羽描画
 	DrawWings();
@@ -227,7 +228,7 @@ void Boss::Draw() const
 	//SetFontSize(24);
 	//DrawFormatString(800, 30, color, "wingNumber : %d", cunt);
 	//DrawFormatString(800, 50, color, "num : %d", num);
-	////DrawFormatString(800, 50, color, "wing : %d", c);
+	DrawFormatString(800, 50, color, "t : %d", t);
 	//DrawFormatString(800, 50, color, "wingmirror : %f", wing_mirror[0].x);
 	//DrawFormatString(800, 80, color, "wingmirror : %f", wing_mirror[0].y);
 
@@ -340,9 +341,14 @@ void Boss::BossAtack(GameMain *_g)
 	}
 
 	if (f) {
+		can_swap = false;
 		switch (attack)
 		{
 		case 0://火
+			color = RED;
+			if (++t > 60) {
+				can_swap = true;
+			}
 			if (cnt % 30 == 0) {
 				Erea e = { 20.f,20.f };
 				_g->CreateObject(new BossAttackFire, GetCenterLocation(), e, RED);
@@ -351,10 +357,15 @@ void Boss::BossAtack(GameMain *_g)
 				cnt = 0;
 				f = false;
 				boss_state = BossState::MOVE;
+				t = 0;
 			}
 			break;
 
 		case 1://水
+			color = BLUE;
+			if (++t > 60) {
+				can_swap = true;
+			}
 			if (cnt % 30 == 0) {
 				Erea e = { 20.f,20.f };
 				Location l;
@@ -375,10 +386,15 @@ void Boss::BossAtack(GameMain *_g)
 				f = false;
 				attack_num = 0;
 				boss_state = BossState::MOVE;
+				t = 0;
 			}
 			break;
 
 		default://木
+			color = GREEN;
+			if (++t > 20) {
+				can_swap = true;
+			}
 			if (cnt % 30 == 0) {
 				Erea e = { (float)(GetRand(400) + 200),40.f };
 				/*Location l = _g->GetPlayerLocation();
@@ -396,6 +412,7 @@ void Boss::BossAtack(GameMain *_g)
 				cnt = 0;
 				f = false;
 				boss_state = BossState::MOVE;
+				t = 0;
 			}
 			break;
 		}
