@@ -267,11 +267,11 @@ void ResourceManager::StartSound(int _num, bool roop_flg)
 	//再生
 	if (roop_flg)
 	{
-		PlaySoundMem(sound_data[_num], DX_PLAYTYPE_LOOP);
+		PlaySoundMem(sound_data[_num], DX_PLAYTYPE_LOOP, FALSE);
 	}
 	else
 	{
-		PlaySoundMem(sound_data[_num], DX_PLAYTYPE_BACK);
+		PlaySoundMem(sound_data[_num], DX_PLAYTYPE_BACK, FALSE);
 	}
 }
 
@@ -282,7 +282,19 @@ void ResourceManager::StopSound(int _num)
 
 void ResourceManager::SetSoundVolume(int _num, int _volume)
 {
-	ChangeVolumeSoundMem(_volume, sound_data[_num]);
+	if (_volume > 255)
+	{
+		ChangeVolumeSoundMem(255, sound_data[_num]);
+
+	}
+	else if (_volume < 0)
+	{
+		ChangeVolumeSoundMem(0, sound_data[_num]);
+	}
+	else
+	{
+		ChangeVolumeSoundMem(_volume, sound_data[_num]);
+	}
 }
 
 void ResourceManager::SetSoundFreq(int _num)
