@@ -89,7 +89,7 @@ public:
 	//音源再生終了
 	static void StopSound(int _num);
 
-	//音源音量調整
+	//音源音量調整　_volume=0～255
 	static void SetSoundVolume(int _num, int _volume);
 
 	//音源再生速度調整

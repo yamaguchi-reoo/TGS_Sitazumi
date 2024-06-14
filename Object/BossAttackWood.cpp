@@ -86,7 +86,12 @@ void BossAttackWood::Draw() const
 {
 	for (int i = 0; i < (erea.height / BOX_HEIGHT); i++)
 	{
-		ResourceManager::StageAnimDraw({ local_location.x, local_location.y + (i * BOX_HEIGHT) }, WOOD);
+		//ResourceManager::StageAnimDraw({ local_location.x, local_location.y + (i * BOX_HEIGHT) }, WOOD);
+		DrawBoxAA(local_location.x + 3, local_location.y + (i * BOX_HEIGHT), local_location.x + erea.width - 3, local_location.y + erea.height + (i * BOX_HEIGHT), 0x00cc00, true);
+		DrawBoxAA(local_location.x + 2, local_location.y + (i * BOX_HEIGHT), local_location.x + erea.width - 2, local_location.y + 2 + (i * BOX_HEIGHT), 0x00ff00, true);
+		DrawBoxAA(local_location.x + 2, local_location.y + erea.height + (i * BOX_HEIGHT), local_location.x + erea.width - 2, local_location.y + erea.height - 2 + (i * BOX_HEIGHT), 0x00ff00, true);
+		DrawBoxAA(local_location.x + 10, local_location.y + 2 + (i * BOX_HEIGHT), local_location.x + 13, local_location.y + erea.height - 2 + (i * BOX_HEIGHT), 0x00ee00, true);
+
 	}
 
 	//DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, TRUE);

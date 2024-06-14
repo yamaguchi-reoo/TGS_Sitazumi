@@ -271,14 +271,14 @@ AbstractScene* GameMain::Update()
 			//プレイヤーがボスエリアに入ったら退路を閉じる
 			if (now_stage == 2 && object[player_object]->GetLocalLocation().x > 160 && object[player_object]->GetLocalLocation().x < 200 && create_once == false)
 			{
+				CreateObject(new Stage(2), { 160,520 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
 				CreateObject(new Stage(2), { 160,560 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
 				CreateObject(new Stage(2), { 160,600 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
 				CreateObject(new Stage(2), { 160,640 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
-				CreateObject(new Stage(2), { 160,680 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
+				CreateObject(new Stage(1), { 120,520 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
 				CreateObject(new Stage(1), { 120,560 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
 				CreateObject(new Stage(1), { 120,600 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
 				CreateObject(new Stage(1), { 120,640 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
-				CreateObject(new Stage(1), { 120,680 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
 				create_once = true;
 			}
 
@@ -315,7 +315,6 @@ AbstractScene* GameMain::Update()
 
 void GameMain::Draw() const
 {
-	
 	SetFontSize(12);
 	back_ground->Draw(camera_location);
 	for (int i = 0; object[i] != nullptr; i++)
@@ -421,7 +420,7 @@ void GameMain::Draw() const
 
 		int fontsize = 192 / 2;
 		SetFontSize(fontsize * 2);
-		DrawString(240, 100, "G", 0xff0000);
+		DrawString(240,				   100, "G", 0xff0000);
 		DrawString(240 + fontsize * 1, 100, "A", 0xffffff);
 		DrawString(240 + fontsize * 2, 100, "M", 0xffffff);
 		DrawString(240 + fontsize * 3, 100, "E", 0xffffff);
@@ -429,7 +428,6 @@ void GameMain::Draw() const
 		DrawString(240 + fontsize * 5, 100, "V", 0xffffff);
 		DrawString(240 + fontsize * 6, 100, "E", 0xffffff);
 		DrawString(240 + fontsize * 7, 100, "R", 0x0000ff);
-
 		SetFontSize(48);
 		DrawString(260, 436, "RESTART", 0xffffff);
 		DrawString(860, 436, "TITLE", 0xffffff);
@@ -529,7 +527,6 @@ void GameMain::Draw() const
 
 	DrawFormatString(100, 140, 0xffffff, "normal:%d", 255 - (int)(camera_location.x / 100));
 	DrawFormatString(100, 160, 0xffffff, "noise:%d", (int)(camera_location.x / 100));
-
 	test->Draw();
 	//チュートリアル表示テスト
 	SetFontSize(50);
@@ -735,7 +732,7 @@ void GameMain::UpdateCamera()
 		}
 		if (now_stage == 2)
 		{
-			camera_location = { 160,80};
+			camera_location = { 160,40};
 		}
 }
 
@@ -881,14 +878,19 @@ void GameMain::SetStage(int _stage, bool _delete_player)
 	//BGMの再生
 	if (now_stage == 0)
 	{
+		ResourceManager::StopSound(bgm_normal);
+		ResourceManager::StopSound(bgm_noise);
+		ResourceManager::StopSound(bgm_abnormal);
+
 		ResourceManager::StartSound(bgm_normal, TRUE);
 		ResourceManager::StartSound(bgm_noise, TRUE);
-		ResourceManager::StopSound(bgm_abnormal);
 	}
 	else if (now_stage == 2)
 	{
 		ResourceManager::StopSound(bgm_normal);
 		ResourceManager::StopSound(bgm_noise);
+		ResourceManager::StopSound(bgm_abnormal);
+
 		ResourceManager::StartSound(bgm_abnormal,TRUE);
 	}
 }

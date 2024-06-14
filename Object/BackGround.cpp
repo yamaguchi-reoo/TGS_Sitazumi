@@ -15,6 +15,10 @@ BackGround::~BackGround()
 void BackGround::Initialize(Erea _stage_erea)
 {
 	stage_erea = _stage_erea;
+
+	font_handle[0] = CreateFontToHandle("Franklin Gothic", 48, -1, -1);
+	font_handle[1] = CreateFontToHandle("Wingdings", 48, -1, -1);
+
 }
 
 void BackGround::Finalize()
@@ -31,8 +35,7 @@ void BackGround::Draw(Location _camera_location)const
 {
 	Location shift_location = { -_camera_location.x / (stage_erea.width / (bg_erea.width / 12)) ,-_camera_location.y / (stage_erea.height / (bg_erea.height / 10)) };
 	int r = 0, g = 0, b = 0;
-	float bg_color = (_camera_location.x / 100);
-	int rand;
+	float bg_color = (_camera_location.x / 80);
 	for (int i = 0; i < 50; i++)
 	{
 		if (now_stage == 2)
@@ -43,28 +46,28 @@ void BackGround::Draw(Location _camera_location)const
 		}
 		else
 		{
-			if ((i * 3) + 50 - bg_color > 255)
+			if ((i * 3) + 50 - (int)bg_color > 255)
 			{
 				r = 255;
 				g = 255;
 			}
-			else if ((i * 3) + 50 - bg_color < 0)
+			else if ((i * 3) + 50 - (int)bg_color < 0)
 			{
 				r = 0;
 				g = 0;
 			}
 			else
 			{
-				r = (i * 3) + 50 - bg_color;
-				g = (i * 3) + 50 - bg_color;
+				r = (i * 3) + 50 - (int)bg_color;
+				g = (i * 3) + 50 - (int)bg_color;
 			}
-			if (255 - bg_color < 0)
+			if (255 - (int)bg_color < 0)
 			{
 				b = 0;
 			}
 			else
 			{
-				b = 255 - bg_color;
+				b = 255 - (int)bg_color;
 			}
 		}
 		//青空
@@ -74,12 +77,20 @@ void BackGround::Draw(Location _camera_location)const
 	}
 	for (int i = 0; i < 50; i++)
 	{
-		if (GetRand(bg_color) > 100)
+		if (GetRand((int)bg_color) > 100)
 		{
-			int rand = GetRand(35);
-			DrawBoxAA(rand * 40, i * 40,
-				rand * 40 + 40, i * 40 + 40,
-				GetColor(GetRand(1) * 100, GetRand(1) * 100, GetRand(1) * 100), TRUE);
+			if (GetRand(1) == 1)
+			{
+				int rand = GetRand(35);
+				DrawFormatStringToHandle(rand * 40, i * 40,GetColor(GetRand(1) * 100, GetRand(1) * 100, GetRand(1) * 100),font_handle[1],"%d",GetRand(9));
+			}
+			else
+			{
+				int rand = GetRand(35);
+				DrawBox(rand * 40, i * 40,
+					rand * 40 + 40, i * 40 + 40,
+					GetColor(GetRand(1) * 100, GetRand(1) * 100, GetRand(1) * 100), TRUE);
+			}
 		}
 	}
 
