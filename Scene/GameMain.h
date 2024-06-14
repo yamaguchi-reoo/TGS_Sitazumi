@@ -82,6 +82,7 @@ private:
     int clear_timer;
 
     int cursor;
+    int cursorOld;
     Location cursor_location; 
     float circleAng;
 
@@ -89,6 +90,9 @@ private:
     int bgm_normal;             //通常BGM
     int bgm_noise;             //ノイズBGM
     int bgm_abnormal;          //異常BGM
+
+    int cursor_se;  //かーそるSE 
+    int decision_se;    //決定SE
 public:
 
     //コンストラクタ

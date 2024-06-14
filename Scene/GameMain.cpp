@@ -41,6 +41,9 @@ void GameMain::Initialize()
 	bgm_noise = ResourceManager::SetSound("Resource/Sounds/BGM/GameMainNoise.wav");
 	bgm_abnormal = ResourceManager::SetSound("Resource/Sounds/BGM/GameMainAbnormal.wav");
 
+	cursor_se = ResourceManager::SetSound("Resource/Sounds/Player/cursor.wav");
+	decision_se = ResourceManager::SetSound("Resource/Sounds/System/decision.wav");
+
 	ResourceManager::StartSound(bgm_normal, TRUE);
 
 	back_ground = new BackGround();
@@ -144,23 +147,32 @@ AbstractScene* GameMain::Update()
 	{
 		if (game_clear_flg)
 		{
+			cursorOld = cursor;
 			if (clear_timer++ > 90) {
 				if (PadInput::TipLeftLStick(STICKL_X) < -0.5f || PadInput::OnButton(XINPUT_BUTTON_DPAD_LEFT))
 				{
 					cursor = 0;
+					if (cursorOld == 1) {
+						ResourceManager::StartSound(cursor_se);
+					}
 				}
 				else if (PadInput::TipLeftLStick(STICKL_X) > 0.5f || PadInput::OnButton(XINPUT_BUTTON_DPAD_RIGHT))
 				{
 					cursor = 1;
+					if (cursorOld == 0) {
+						ResourceManager::StartSound(cursor_se);
+					}
 				}
 
 				if (PadInput::OnButton(XINPUT_BUTTON_B)) {
 					if (cursor == 0)
 					{
+						ResourceManager::StartSound(decision_se);
 						return new Title();
 					}
 					else
 					{
+						ResourceManager::StartSound(decision_se);
 						return new End();
 					}
 				}
@@ -178,24 +190,33 @@ AbstractScene* GameMain::Update()
 		//ゲームオーバー
 		else if (game_over_flg)
 		{
+			cursorOld = cursor;
 			if (PadInput::TipLeftLStick(STICKL_X) < -0.5f || PadInput::OnButton(XINPUT_BUTTON_DPAD_LEFT))
 			{
 				cursor = 0;
+				if (cursorOld == 1) {
+					ResourceManager::StartSound(cursor_se);
+				}
 			}
 			else if (PadInput::TipLeftLStick(STICKL_X) > 0.5f || PadInput::OnButton(XINPUT_BUTTON_DPAD_RIGHT))
 			{
 				cursor = 1;
+				if (cursorOld == 0) {
+					ResourceManager::StartSound(cursor_se);
+				}
 			}
 
 			if (PadInput::OnButton(XINPUT_BUTTON_B)) {
 				if (cursor == 0)
 				{
+					ResourceManager::StartSound(decision_se);
 					SetStage(now_stage, true);
 					game_over_flg = false;
 					pause_after_flg = true;
 				}
 				else
 				{
+					ResourceManager::StartSound(decision_se);
 					return new Title();
 				}
 			}
@@ -207,23 +228,32 @@ AbstractScene* GameMain::Update()
 		}
 		else if (game_pause_flg)
 		{
+			cursorOld = cursor;
 			if (PadInput::TipLeftLStick(STICKL_X) < -0.5f || PadInput::OnButton(XINPUT_BUTTON_DPAD_LEFT))
 			{
 				cursor = 0;
+				if (cursorOld == 1) {
+					ResourceManager::StartSound(cursor_se);
+				}
 			}
 			else if (PadInput::TipLeftLStick(STICKL_X) > 0.5f || PadInput::OnButton(XINPUT_BUTTON_DPAD_RIGHT))
 			{
 				cursor = 1;
+				if (cursorOld == 0) {
+					ResourceManager::StartSound(cursor_se);
+				}
 			}
 
 			if (PadInput::OnButton(XINPUT_BUTTON_B) || PadInput::OnButton(XINPUT_BUTTON_START)) {
 				if (cursor == 0)
 				{
+					ResourceManager::StartSound(decision_se);
 					game_pause_flg = false;
 					pause_after_flg = true;
 				}
 				else
 				{
+					ResourceManager::StartSound(decision_se);
 					return new Title();
 				}
 			}
