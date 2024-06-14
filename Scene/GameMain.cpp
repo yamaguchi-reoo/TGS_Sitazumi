@@ -106,7 +106,7 @@ AbstractScene* GameMain::Update()
 	Gdraw_stick_shift.x = cosf(Gstick_angle * M_PI * 2) * 5;
 	Gdraw_stick_shift.y = sinf(Gstick_angle * M_PI * 2) * 5;
 
-	if (GetPlayerLocation().x >= 1540.0f && GetPlayerLocation().y >= 2580.0f)
+	if (GetPlayerLocation().x >= 1540.0f && GetPlayerLocation().y <= 2580.0f)
 	{
 		if (GColor == GREEN && GNum != 26 || GColor == BLUE && GNum < 160)
 		{
@@ -364,12 +364,12 @@ void GameMain::Draw() const
 	weather->Draw();
 
 	//フェードイン演出
-	/*if (fadein_flg == true)
+	if (fadein_flg == true)
 	{
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 - (frame*(255/FADEIN_TIME) +3));
 		DrawBox(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0xffffff, true);
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
-	}*/
+	}
 
 	if (game_clear_flg)
 	{
@@ -579,7 +579,7 @@ void GameMain::Draw() const
 		DrawCircleAA(580 - camera_location.x, stage_height - 480 - camera_location.y, 25, 100, 0x000000, TRUE);
 		DrawCircleAA(580 - camera_location.x, stage_height - 480 - camera_location.y, 25, 100, 0x666666, FALSE, 3.0f);
 		DrawCircleAA(580 - camera_location.x + Gdraw_stick_shift.x, stage_height - 480 - camera_location.y + Gdraw_stick_shift.y, 18, 100, 0x666666, TRUE);
-		DrawStringF(610 - camera_location.x, stage_height - 500 - camera_location.y, "：移動", 0xffffff);
+		DrawStringF(610 - camera_location.x, stage_height - 500 - camera_location.y, "：Move", 0xffffff);
 
 		if (Gbutton_draw[0] == false)
 		{
@@ -593,7 +593,7 @@ void GameMain::Draw() const
 			DrawCircleAA(577 - camera_location.x, stage_height - 460 - camera_location.y + 60, 25, 100, 0xff0000, TRUE);
 			DrawStringF(577 - camera_location.x - 12, stage_height - 460 - camera_location.y + 33, "A", 0x000000);
 		}
-		DrawStringF(610 - camera_location.x, stage_height - 428 - camera_location.y, "：ジャンプ", 0xffffff);
+		DrawStringF(610 - camera_location.x, stage_height - 428 - camera_location.y, "：Jump", 0xffffff);
 
 		// 色ブロックに乗れるかチュートリアルテキスト
 		DrawBoxAA(1742 - camera_location.x, stage_height - 700 - camera_location.y, 2073 - camera_location.x, stage_height - 397 - camera_location.y, 0xffffff, FALSE, 3.0f);
@@ -616,8 +616,6 @@ void GameMain::Draw() const
 			DrawLineAA(1910 - camera_location.x, stage_height - 680 - camera_location.y, 2012 - camera_location.x, stage_height - 580 - camera_location.y, 0x3300CC, 20.0f);
 			DrawLineAA(2012 - camera_location.x, stage_height - 680 - camera_location.y, 1910 - camera_location.x, stage_height - 580 - camera_location.y, 0x3300CC, 20.0f);
 		}
-
-		//DrawBox(1910 - camera_location.x, stage_height - 680 - camera_location.y, 2012 - camera_location.x, stage_height - 580 - camera_location.y, 0xff0000, FALSE);
 
 		DrawPlayer();
 	}
