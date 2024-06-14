@@ -325,7 +325,8 @@ void Boss::BossAtack(GameMain *_g)
 		oldF = f;
 		f = true;
 		if (cnt == 240) {
-			attack = GetRand(2);
+			//attack = GetRand(2);
+			attack = 1;
 			if (local_location.x < 640.f) {
 				side = true;
 			}

@@ -47,6 +47,12 @@ void GameMain::Initialize()
 	effect_spawner = new EffectSpawner();
 	effect_spawner->Initialize();
 
+	bgm_normal = ResourceManager::SetSound("Resource/Sounds/BGM/GameMainNormal.wav");
+	bgm_noise = ResourceManager::SetSound("Resource/Sounds/BGM/GameMainNoise.wav");
+	bgm_abnormal = ResourceManager::SetSound("Resource/Sounds/BGM/GameMainAbnormal.wav");
+
+	ResourceManager::StartSound(bgm_normal, TRUE);
+
 	back_ground = new BackGround();
 
 	SetStage(now_stage, false);
@@ -57,12 +63,6 @@ void GameMain::Initialize()
 
 	test = new BossAttackWater();
 	test->Initialize({ 10000,1600 }, { 40,40 }, RED, 1000);
-
-	bgm_normal = ResourceManager::SetSound("Resource/Sounds/BGM/GameMainNormal.wav");
-	bgm_noise = ResourceManager::SetSound("Resource/Sounds/BGM/GameMainNoise.wav");
-	bgm_abnormal = ResourceManager::SetSound("Resource/Sounds/BGM/GameMainAbnormal.wav");
-
-	ResourceManager::StartSound(bgm_normal, TRUE);
 }
 
 void GameMain::Finalize()
@@ -93,6 +93,10 @@ void GameMain::Finalize()
 
 AbstractScene* GameMain::Update()
 {
+	//BGM音量更新
+	ResourceManager::SetSoundVolume(bgm_normal, 255 - (int)(camera_location.x / 100));
+	ResourceManager::SetSoundVolume(bgm_noise,  (int)(camera_location.x/100));
+
 	//フレーム測定
 	frame++;
 	//カメラの更新
@@ -267,14 +271,14 @@ AbstractScene* GameMain::Update()
 			//プレイヤーがボスエリアに入ったら退路を閉じる
 			if (now_stage == 2 && object[player_object]->GetLocalLocation().x > 160 && object[player_object]->GetLocalLocation().x < 200 && create_once == false)
 			{
-				CreateObject(new Stage(2), { 160,520 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
 				CreateObject(new Stage(2), { 160,560 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
 				CreateObject(new Stage(2), { 160,600 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
 				CreateObject(new Stage(2), { 160,640 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
-				CreateObject(new Stage(1), { 120,520 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
+				CreateObject(new Stage(2), { 160,680 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
 				CreateObject(new Stage(1), { 120,560 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
 				CreateObject(new Stage(1), { 120,600 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
 				CreateObject(new Stage(1), { 120,640 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
+				CreateObject(new Stage(1), { 120,680 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
 				create_once = true;
 			}
 
@@ -523,6 +527,9 @@ void GameMain::Draw() const
 	DrawFormatString(100, 100, 0xffffff, "Object数:%d", object_num);
 	DrawFormatString(100, 120, 0xffffff, "Updeteが呼ばれているObject数:%d", move_object_num);
 
+	DrawFormatString(100, 140, 0xffffff, "normal:%d", 255 - (int)(camera_location.x / 100));
+	DrawFormatString(100, 160, 0xffffff, "noise:%d", (int)(camera_location.x / 100));
+
 	test->Draw();
 	//チュートリアル表示テスト
 	SetFontSize(50);
@@ -728,7 +735,7 @@ void GameMain::UpdateCamera()
 		}
 		if (now_stage == 2)
 		{
-			camera_location = { 160,40};
+			camera_location = { 160,80};
 		}
 }
 
@@ -871,6 +878,19 @@ void GameMain::SetStage(int _stage, bool _delete_player)
 	create_once = false;
 	//カメラのリセット
 	ResetCamera();
+	//BGMの再生
+	if (now_stage == 0)
+	{
+		ResourceManager::StartSound(bgm_normal, TRUE);
+		ResourceManager::StartSound(bgm_noise, TRUE);
+		ResourceManager::StopSound(bgm_abnormal);
+	}
+	else if (now_stage == 2)
+	{
+		ResourceManager::StopSound(bgm_normal);
+		ResourceManager::StopSound(bgm_noise);
+		ResourceManager::StartSound(bgm_abnormal,TRUE);
+	}
 }
 
 void GameMain::ResetCamera()

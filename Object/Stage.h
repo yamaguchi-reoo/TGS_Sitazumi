@@ -101,6 +101,9 @@ private:
 	int touch_object;					//弱点のブロックに触れている時間を測る
 	bool default_object;				//ステージに始めから設置されているオブジェクトか判断
 
+	int change_fire;					//色更新時のSE
+	int change_wood;					//色更新時のSE
+	int change_water;					//色更新時のSE
 public:
 	Stage(int _type, int _stage_height = 0);
 	~Stage();

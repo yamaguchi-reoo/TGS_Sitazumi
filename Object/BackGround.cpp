@@ -32,7 +32,7 @@ void BackGround::Draw(Location _camera_location)const
 	Location shift_location = { -_camera_location.x / (stage_erea.width / (bg_erea.width / 12)) ,-_camera_location.y / (stage_erea.height / (bg_erea.height / 10)) };
 	int r = 0, g = 0, b = 0;
 	float bg_color = (_camera_location.x / 100);
-
+	int rand;
 	for (int i = 0; i < 50; i++)
 	{
 		if (now_stage == 2)
@@ -72,6 +72,17 @@ void BackGround::Draw(Location _camera_location)const
 			bg_erea.width + shift_location.x, shift_location.y + (i + 1) * 25.5f,
 			GetColor(r, g, b), true);
 	}
+	for (int i = 0; i < 50; i++)
+	{
+		if (GetRand(bg_color) > 100)
+		{
+			int rand = GetRand(35);
+			DrawBoxAA(rand * 40, i * 40,
+				rand * 40 + 40, i * 40 + 40,
+				GetColor(GetRand(1) * 100, GetRand(1) * 100, GetRand(1) * 100), TRUE);
+		}
+	}
+
 	//後でランダムな形で生成するようにする
 	//DrawMountain({ shift_location.x - 200, shift_location.y - 50 }, { 300,300 }, 0.1f);
 	//DrawMountain({ shift_location.x - 6400, shift_location.y }, { 310,300 }, 0.1f);

@@ -10,6 +10,10 @@ private:
 	bool hitFlg;
 	int count;
 	float len;
+	Location f_location;
+	Erea f_erea;
+	float rad;
+
 public:
 	BossAttackWater();
 	~BossAttackWater();

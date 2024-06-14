@@ -1,6 +1,9 @@
 #include "BossAttackWater.h"
 #include "../Scene/GameMain.h"
 
+#define _USE_MATH_DEFINES
+#include <math.h>
+
 BossAttackWater::BossAttackWater()
 {
 	type = WATER;
@@ -12,6 +15,7 @@ BossAttackWater::BossAttackWater()
 	count = 0;
 	moveFlg = false;
 	hitFlg = false;
+	rad = 0.0f;
 }
 
 BossAttackWater::~BossAttackWater()
@@ -24,6 +28,9 @@ void BossAttackWater::Initialize(Location _location, Erea _erea, int _color_data
 	color = _color_data;
 	erea = _erea;
 	object_pos = _object_pos;
+
+	f_location = _location;
+	f_erea = { 5,5 };
 }
 
 void BossAttackWater::Finalize()
@@ -68,8 +75,17 @@ void BossAttackWater::Update(GameMain* _g)
 		velocity.y = (float)(GetRand(6) - 3);
 		flg = true;
 	}
-
+	rad += 0.02f;
+	if (rad > 6.28f)
+	{
+		rad = 0.0f;
+	}
+	f_location = local_location;
+	//radに応じた向きに進める
+	f_location.x += 20 * cosf(5.0f * (frame / 5) + M_PI) * cosf(rad);
+	f_location.y += 20 * cosf(5.0f * (frame / 5) + M_PI) * sinf(rad);
 	if (hitFlg) {
+		_g->SpawnEffect(location, erea, ExplosionEffect, 10, BLUE);
 		//ここで削除
 		_g->DeleteObject(object_pos,this);
 	}
@@ -80,13 +96,21 @@ void BossAttackWater::Update(GameMain* _g)
 void BossAttackWater::Draw() const
 {
 	if (flg) {
-		DrawCircleAA(local_location.x, local_location.y, erea.width, 32, color, TRUE);
+		for (int i = 0; i < 5; i++)
+		{
+			DrawCircleAA(local_location.x + (i * 3), local_location.y - (i * 3), erea.width - (i * 4), 32, GetColor(i * 25, i * 25, 255), TRUE);
+		}
+		DrawCircleAA(local_location.x + 9, local_location.y - 12, erea.width - 16, 32, GetColor(255, 255, 255), TRUE);
+
 	}
+	DrawCircleAA(f_location.x, f_location.y, f_erea.width, 32, GetColor(100, 100, 255), TRUE);
+	DrawCircleAA(f_location.x, f_location.y, f_erea.width-2, 32, GetColor(120, 120, 255), TRUE);
+
 }
 
 void BossAttackWater::Hit(Object* _object)
 {
-	if (_object->GetObjectType() == BLOCK && _object->GetObjectType() != WOOD && _object->GetColorData() != WHITE) {
+	if ((_object->GetObjectType() == BLOCK || _object->GetObjectType() == FIRE) && _object->GetColorData() != WHITE) {
 		_object->SetCanSwap(TRUE);
 		_object->SetColorData(color);
 		hitFlg = true;

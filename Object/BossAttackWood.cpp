@@ -1,5 +1,6 @@
 #include "BossAttackWood.h"
 #include "../Scene/GameMain.h"
+#include "../Utility/ResourceManager.h"
 
 BossAttackWood::BossAttackWood()
 {
@@ -83,12 +84,17 @@ void BossAttackWood::Update(GameMain* _g)
 
 void BossAttackWood::Draw() const
 {
-	DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, TRUE);
+	for (int i = 0; i < (erea.height / BOX_HEIGHT); i++)
+	{
+		ResourceManager::StageAnimDraw({ local_location.x, local_location.y + (i * BOX_HEIGHT) }, WOOD);
+	}
+
+	//DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, TRUE);
 }
 
 void BossAttackWood::Hit(Object* _object)
 {
-	if (_object->GetObjectType() == BLOCK && _object->GetObjectType() != FIRE && _object->GetColorData() != WHITE) {
+	if ((_object->GetObjectType() == BLOCK || _object->GetObjectType() == WATER) && _object->GetColorData() != WHITE) {
 		_object->SetCanSwap(TRUE);
 		_object->SetColorData(color);
 	}

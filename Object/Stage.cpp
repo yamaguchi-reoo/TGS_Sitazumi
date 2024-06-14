@@ -5,7 +5,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-Stage::Stage(int _type, int _stage_height) :old_color(0),inv_flg(false), debug_flg(false), anim(0), hit_flg(false), hit_timer(-1), weather(0), change_weather_flg(false), delete_fire(0), draw_wood_flg(false), set_respawn_flg(false),respawn_color(WHITE), touch_object(0), default_object(true)
+Stage::Stage(int _type, int _stage_height) :old_color(0),inv_flg(false), debug_flg(false), anim(0), hit_flg(false), hit_timer(-1), weather(0), change_weather_flg(false), delete_fire(0), draw_wood_flg(false), set_respawn_flg(false),respawn_color(WHITE), touch_object(0), default_object(true), change_fire(0),change_water(0),change_wood(0)
 {
 	//炎
 	if (_type == RED_BLOCK || _type == FIRE_BLOCK)
@@ -64,12 +64,9 @@ void Stage::Initialize(Location _location, Erea _erea, int _color_data,int _obje
 	draw_color = color;
 	object_pos = _object_pos;
 
-	//天気更新ブロックなら、高さをステージの高さいっぱいに変更
-	//if (block_type == WEATHER_RAIN || block_type == WEATHER_FIRE || block_type == WEATHER_SEED)
-	//{
-	//	location.y = 0;
-	//	erea.height = stage_height;
-	//}
+	change_fire = ResourceManager::SetSound("Resource/Sounds/Effect/change_fire.wav");
+	change_wood = ResourceManager::SetSound("Resource/Sounds/Effect/change_grass.wav");
+	change_water = ResourceManager::SetSound("Resource/Sounds/Effect/change_water.wav");
 }
 
 void Stage::Update(GameMain* _g)
@@ -372,6 +369,7 @@ void Stage::Hit(Object* _object)
 		if (this->type == WOOD && _object->GetObjectType() == FIRE && ++touch_object > 10)
 		{
 			SetColorData(RED);
+			ResourceManager::StartSound(change_fire);
 			//ゲーム中で変更されたオブジェクト
 			default_object = FALSE;
 			touch_object = 0;
@@ -380,6 +378,7 @@ void Stage::Hit(Object* _object)
 		if (this->type == FIRE && _object->GetObjectType() == WATER && ++touch_object > 10)
 		{
 			SetColorData(BLUE);
+			ResourceManager::StartSound(change_water);
 			//ゲーム中で変更されたオブジェクト
 			default_object = FALSE;
 			touch_object = 0;
@@ -388,6 +387,7 @@ void Stage::Hit(Object* _object)
 		if (this->type == WATER && _object->GetObjectType() == WOOD && ++touch_object > 10)
 		{
 			SetColorData(GREEN);
+			ResourceManager::StartSound(change_wood);
 			//ゲーム中で変更されたオブジェクト
 			default_object = FALSE;
 			touch_object = 0;

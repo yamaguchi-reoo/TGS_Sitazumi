@@ -578,6 +578,12 @@ void Player::Hit(Object* _object)
 	{
 		now_riding = 0;
 	}
+
+	//ボスの木攻撃に当たった時、プレイヤーを跳ねさせる
+	if (_object->GetObjectType() == BLOCK && _object->GetIsBossAttack() == TRUE && _object->GetLocation().y > this->location.y)
+	{
+		vector.y = -20;
+	}
 }
 
 void Player::MoveActor()
