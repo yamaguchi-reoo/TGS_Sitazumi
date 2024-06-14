@@ -86,6 +86,7 @@ Player::Player()
 	damage_se[0] = ResourceManager::SetSound("Resource/Sounds/Player/damage_fire.wav");
 	damage_se[1] = ResourceManager::SetSound("Resource/Sounds/Player/damage_grass.wav");
 	damage_se[2] = ResourceManager::SetSound("Resource/Sounds/Player/damage_water.wav");
+	cursor_se = ResourceManager::SetSound("Resource/Sounds/Player/cursor.wav");
 	now_riding = 0;
 	draw_color = 0;
 }
@@ -584,7 +585,7 @@ void Player::MoveActor()
 			break;
 
 		case 1:
-			vector.y = -15.f;
+			vector.y = -23.f;
 
 			break;
 
@@ -689,9 +690,9 @@ void Player::SelectObject()
 {
 	bool flg = false;//選択したかどうか
 	if (swapTimer == -1 && searchedObjFlg && searchedObj != nullptr) {
-		
 		//X軸
 		if ((PadInput::TipLeftLStick(STICKL_X) > 0.8f || PadInput::OnButton(XINPUT_BUTTON_DPAD_RIGHT)) && oldStick[0]) {
+			ResourceManager::StartSound(cursor_se);
 			oldStick[0] = false;
 			flg = true;
 			float nearLen[4] = { 1000.f,1000.f,1000.f,1000.f };
@@ -818,6 +819,7 @@ void Player::SelectObject()
 
 		}
 		else if ((PadInput::TipLeftLStick(STICKL_X) < -0.8f || PadInput::OnButton(XINPUT_BUTTON_DPAD_LEFT)) && oldStick[1]) {
+			ResourceManager::StartSound(cursor_se);
 			oldStick[1] = false;
 			flg = true;
 
