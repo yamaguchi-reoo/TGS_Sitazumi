@@ -229,7 +229,7 @@ void Boss::Draw() const
 	//SetFontSize(24);
 	//DrawFormatString(800, 30, color, "wingNumber : %d", cunt);
 	//DrawFormatString(800, 50, color, "num : %d", num);
-	DrawFormatString(800, 50, color, "t : %d", t);
+	//DrawFormatString(800, 50, color, "t : %d", t);
 	//DrawFormatString(800, 50, color, "wingmirror : %f", wing_mirror[0].x);
 	//DrawFormatString(800, 80, color, "wingmirror : %f", wing_mirror[0].y);
 
@@ -522,6 +522,17 @@ void Boss::DrawWings() const
 			local_location.x + wing_mirror[i + 1].x - 20 + 250 - angle, local_location.y + wing_mirror[i + 1].y + 10 + angle + delta_y,
 			local_location.x + wing_mirror[i + 2].x - 10 + 250 - angle, local_location.y + wing_mirror[i + 2].y + 20 + angle + delta_y,
 			local_location.x + wing_mirror[i + 3].x + 250 - angle, local_location.y + wing_mirror[i + 3].y + 30 + angle + delta_y, 0x000000, TRUE);
+
+		//右羽
+		DrawQuadrangleAA(local_location.x + wing[i].x + angle, local_location.y + wing[i].y + angle + delta_y,
+			local_location.x + wing[i + 1].x + 20 + angle, local_location.y + wing[i + 1].y + 10 + angle + delta_y,
+			local_location.x + wing[i + 2].x + 10 + angle, local_location.y + wing[i + 2].y + 20 + angle + delta_y,
+			local_location.x + wing[i + 3].x + angle, local_location.y + wing[i + 3].y + 30 + angle + delta_y, 0xFFFFFF, FALSE, 3.0f);
+		//左羽
+		DrawQuadrangleAA(local_location.x + wing_mirror[i].x + 250 - angle, local_location.y + wing_mirror[i].y + angle + delta_y,
+			local_location.x + wing_mirror[i + 1].x - 20 + 250 - angle, local_location.y + wing_mirror[i + 1].y + 10 + angle + delta_y,
+			local_location.x + wing_mirror[i + 2].x - 10 + 250 - angle, local_location.y + wing_mirror[i + 2].y + 20 + angle + delta_y,
+			local_location.x + wing_mirror[i + 3].x + 250 - angle, local_location.y + wing_mirror[i + 3].y + 30 + angle + delta_y, 0xFFFFFF, FALSE, 3.0f);
 	}
 }
 

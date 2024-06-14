@@ -18,7 +18,9 @@ Help::~Help()
 
 void Help::Initialize()
 {
-
+	cursor_se = ResourceManager::SetSound("Resource/Sounds/Player/cursor.wav");
+	decision_se = ResourceManager::SetSound("Resource/Sounds/System/decision.wav");
+	ResourceManager::SetSoundVolume(decision_se, 200);
 }
 
 void Help::Finalize()
@@ -46,6 +48,7 @@ AbstractScene* Help::Update()
 	// 下がる
 	if (PadInput::TipLeftLStick(STICKL_Y) < -0.8f && wt >= 15)
 	{
+		ResourceManager::StartSound(cursor_se);
 		if (++MenuNumber < 6) {}
 		if (MenuNumber > 4)MenuNumber = 5;
 
@@ -54,6 +57,7 @@ AbstractScene* Help::Update()
 	// 上がる
 	else if (PadInput::TipLeftLStick(STICKL_Y) > 0.8f && wt >= 15)
 	{
+		ResourceManager::StartSound(cursor_se);
 		if (--MenuNumber > 5){}
 		if (MenuNumber < 1) MenuNumber = 1;
 
@@ -63,6 +67,7 @@ AbstractScene* Help::Update()
 	// 操作方法の説明
 	if (PadInput::OnButton(XINPUT_BUTTON_B) == 1)
 	{
+		ResourceManager::StartSound(decision_se);
 		switch (MenuNumber)
 		{
 		case 4:

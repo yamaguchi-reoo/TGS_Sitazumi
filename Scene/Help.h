@@ -14,6 +14,9 @@ private:
     bool button_draw = false;
     int frame = 0;
 
+    int decision_se;    //決定SE	  
+    int cursor_se;      //カーソルSE
+
 public:
     //コンストラクタ
     Help();
