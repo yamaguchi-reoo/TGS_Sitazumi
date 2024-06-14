@@ -69,8 +69,10 @@ private:
     Location Gdraw_stick_location;   //描画するスティックの座標
     Location Gdraw_stick_shift;   //描画するスティックをずらす座標
     float Gstick_angle;          //スティックのアングルを保存
-    bool Gbutton_draw;           //どの画像を描画するか
-
+    bool Gbutton_draw[3];           //どの画像を描画するか
+    int GNum;
+    int GColor;
+    int GGNum;
 
     bool game_over_flg;         //ゲームオーバーか
     bool game_clear_flg;
@@ -82,6 +84,7 @@ private:
     int clear_timer;
 
     int cursor;
+    int cursorOld;
     Location cursor_location; 
     float circleAng;
 
@@ -90,6 +93,9 @@ private:
     int bgm_normal;             //通常BGM
     int bgm_noise;             //ノイズBGM
     int bgm_abnormal;          //異常BGM
+
+    int cursor_se;  //かーそるSE 
+    int decision_se;    //決定SE
 public:
 
     //コンストラクタ
