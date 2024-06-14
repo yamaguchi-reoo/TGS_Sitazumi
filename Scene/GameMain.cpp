@@ -92,7 +92,7 @@ AbstractScene* GameMain::Update()
 	//カメラの更新
 	UpdateCamera();
 
-	if (frame % 10 == 0)
+	if (frame % 5 == 0)
 	{
 		Gbutton_draw = !Gbutton_draw;
 	}
