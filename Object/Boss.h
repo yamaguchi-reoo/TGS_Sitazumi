@@ -96,7 +96,7 @@ public:
 	void DrawHexagonSphere() const;
 
 	//六角形描画
-	void DrawHexagon(Location center, int size, int color) const;
+	void DrawHexagon(Location center, float size, int color) const;
 
 	//羽を描画する
 	void DrawWings() const;
