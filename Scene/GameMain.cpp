@@ -47,9 +47,10 @@ void GameMain::Initialize()
 	effect_spawner = new EffectSpawner();
 	effect_spawner->Initialize();
 
+	back_ground = new BackGround();
+
 	SetStage(now_stage, false);
 
-	back_ground = new BackGround();
 	back_ground->Initialize({ (float)stage_width,(float)stage_height });
 
 	lock_pos = camera_location;
@@ -259,6 +260,9 @@ AbstractScene* GameMain::Update()
 
 			//管理クラスの更新
 			effect_spawner->Update(this);
+
+			////背景の更新
+			//back_ground->Update();
 
 			//プレイヤーがボスエリアに入ったら退路を閉じる
 			if (now_stage == 2 && object[player_object]->GetLocalLocation().x > 160 && object[player_object]->GetLocalLocation().x < 200 && create_once == false)
@@ -767,12 +771,18 @@ void GameMain::LoadStageData(int _stage)
 void GameMain::SetStage(int _stage, bool _delete_player)
 {
 	object_num = 0;
+
 	//すべてのオブジェクトを削除
 	DeleteAllObject(_delete_player);
 
 	now_stage = _stage;
+
+	//背景クラスのステージも変更
+	back_ground->SetNowStage(now_stage);
+
 	//ファイルの読込
 	LoadStageData(now_stage);
+
 	for (int i = stage_height_num - 1; i >= 0; i--)
 	{
 		for (int j = 0; j < stage_width_num; j++)
