@@ -50,7 +50,7 @@ Boss::~Boss()
 
 void Boss::Initialize(Location _location, Erea _erea, int _color_data, int _object_pos)
 {
-	location = { SCREEN_WIDTH - 300.0f, SCREEN_HEIGHT - 300};//x座標 ,y座標 
+	location = { SCREEN_WIDTH - 300.0f, SCREEN_HEIGHT - 400};//x座標 ,y座標 
 	//location = { SCREEN_WIDTH / 2, SCREEN_HEIGHT - 300 };//x座標 ,y座標 
 	erea = { _erea };	   //高さ、幅	
 	color = _color_data;
@@ -59,8 +59,8 @@ void Boss::Initialize(Location _location, Erea _erea, int _color_data, int _obje
 
 	warp_pos = {
 		 {(SCREEN_WIDTH / 2 + 50.0f) , 125.0f},		   //中央
-		 {SCREEN_WIDTH - 300.0f, SCREEN_HEIGHT - 300.0f},//右
-		 {370.0f , SCREEN_HEIGHT - 300.0f}				   //左
+		 {SCREEN_WIDTH - 300.0f, SCREEN_HEIGHT - 400.0f},//右
+		 {370.0f , SCREEN_HEIGHT - 400.0f}				   //左
 	};
 
 	barrier_rad[0] = 60;
