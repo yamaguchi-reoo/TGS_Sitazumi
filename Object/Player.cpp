@@ -289,6 +289,8 @@ void Player::Update(GameMain* _g)
 
 	if (hp <= 0) {
 		damageEffectFlg = false;
+		vector.x = 0.f;
+		vector.y = 0.f;
 	}
 
 	if (damageEffectFlg >= 2) {
