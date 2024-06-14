@@ -6,6 +6,8 @@ private:
 	Erea bg_erea;		//背景の幅
 	Erea stage_erea;	//ステージの幅
 	int now_stage;			//現在のステージ数
+
+	int font_handle[2];        //使用フォント
 public:
 	BackGround();
 	~BackGround();

@@ -369,7 +369,7 @@ void Boss::BossAtack(GameMain *_g)
 				can_swap = true;
 			}
 			if (cnt % 30 == 0) {
-				Erea e = { 20.f,20.f };
+				Erea e = { 40.f,40.f };
 				Location l;
 				if (side) {
 					l.x = 300.f;

@@ -61,6 +61,8 @@ private:
 
 	//SE格納
 	int swap_se;
+	int swap_move_se;
+
 public:
 	EffectSpawner();
 	~EffectSpawner();
