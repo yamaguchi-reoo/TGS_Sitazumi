@@ -582,7 +582,10 @@ void Player::Hit(Object* _object)
 		(_object->GetObjectType() == FIRE && _object->GetCanSwap() == FALSE && this->color == BLUE) ||
 		(_object->GetObjectType() == WOOD && _object->GetCanSwap() == FALSE && this->color == RED))
 	{
-		_object->SetColorData(color);
+		if (!_object->GetIsBossAttack())
+		{
+			_object->SetColorData(color);
+		}
 	}
 
 	if ((_object->GetObjectType() == WATER && _object->GetCanSwap() == FALSE && this->color == BLUE && !stateFlg) ||
@@ -1290,6 +1293,7 @@ void Player::DrawPlayer() const
 		}
 		else {
 			ResourceManager::DrawRotaBox(local_location.x + 25, local_location.y + 50, 28, 7, local_location.x + 35, local_location.y + 50, angle[0], 0x000000, true);
+			ResourceManager::DrawRotaBox(local_location.x + 25, local_location.y + 50, 28, 7, local_location.x + 35, local_location.y + 50, angle[0], 0xffffff, false);
 
 
 		}
@@ -1317,19 +1321,25 @@ void Player::DrawPlayer() const
 		else {
 			//頭
 			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2), local_location.y - (erea.height) + 76, 23, 15, local_location.x, local_location.y, 0, 0x000000, true);
+			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2), local_location.y - (erea.height) + 76, 23, 15, local_location.x, local_location.y, 0, 0xffffff, false);
 
 			//目
 			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2) - 6, local_location.y - (erea.height) + 76, 6, 7, local_location.x, local_location.y, 0, 0x000000, true);
+			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2) - 6, local_location.y - (erea.height) + 76, 6, 7, local_location.x, local_location.y, 0, 0xffffff, false);
 
 			//首
 			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2), local_location.y - (erea.height) + 62, 10, 5, local_location.x, local_location.y, 0, 0x000000, true);
+			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2), local_location.y - (erea.height) + 62, 10, 5, local_location.x, local_location.y, 0, 0xffffff, false);
 
 			//胴体
 			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2), local_location.y - (erea.height) + 37, 21, 37, local_location.x, local_location.y, 0, 0x000000, true);
+			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2), local_location.y - (erea.height) + 37, 21, 37, local_location.x, local_location.y, 0, 0xffffff, false);
 
 			//バッグ
 			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2) + 15, local_location.y - (erea.height) + 40, 5, 23, local_location.x, local_location.y, 0, 0x000000, true);
+			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2) + 15, local_location.y - (erea.height) + 40, 5, 23, local_location.x, local_location.y, 0, 0xffffff, false);
 			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2) + 15, local_location.y - (erea.height) + 40, 3, 15, local_location.x, local_location.y, 0, 0x000000, true);
+			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2) + 15, local_location.y - (erea.height) + 40, 3, 15, local_location.x, local_location.y, 0, 0xffffff, false);
 		}
 		//腕
 	
@@ -1339,6 +1349,7 @@ void Player::DrawPlayer() const
 		}
 		else {
 			ResourceManager::DrawRotaBox(local_location.x + 25, local_location.y + 55, 28, 7, local_location.x + 35, local_location.y + 55, angle[1], 0x000000, true);
+			ResourceManager::DrawRotaBox(local_location.x + 25, local_location.y + 55, 28, 7, local_location.x + 35, local_location.y + 55, angle[1], 0xffffff, false);
 		}
 
 
@@ -1351,6 +1362,7 @@ void Player::DrawPlayer() const
 		else {
 
 			ResourceManager::DrawRotaBox(local_location.x + 30, local_location.y + 70, 7, 27, local_location.x + 30, local_location.y + 80, angle[2], 0x000000, true);
+			ResourceManager::DrawRotaBox(local_location.x + 30, local_location.y + 70, 7, 27, local_location.x + 30, local_location.y + 80, angle[2], 0xffffff, false);
 
 		}
 		if (hp > 1) {
@@ -1360,6 +1372,7 @@ void Player::DrawPlayer() const
 		}
 		else {
 			ResourceManager::DrawRotaBox(local_location.x + 30, local_location.y + 70, 7, 27, local_location.x + 30, local_location.y + 80, angle[3], 0x000000, true);
+			ResourceManager::DrawRotaBox(local_location.x + 30, local_location.y + 70, 7, 27, local_location.x + 30, local_location.y + 80, angle[3], 0xffffff, false);
 		}
 
 		if (hp > 1) {
@@ -1388,12 +1401,13 @@ void Player::DrawPlayer() const
 		}
 	}
 	else {
-		if (hp > 4) {
+		if (hp > 3) {
 			ResourceManager::DrawRotaBox(local_location.x + 15, local_location.y + 50, 28, 7, local_location.x + 25, local_location.y + 50, angle[0] + 180, draw_color, true);
 			ResourceManager::DrawRotaBox(local_location.x + 15, local_location.y + 50, 28, 7, local_location.x + 25, local_location.y + 50, angle[0] + 180, 0x000000, false);
 		}
 		else {
 			ResourceManager::DrawRotaBox(local_location.x + 15, local_location.y + 50, 28, 7, local_location.x + 25, local_location.y + 50, angle[0] + 180, 0x000000, true);
+			ResourceManager::DrawRotaBox(local_location.x + 15, local_location.y + 50, 28, 7, local_location.x + 25, local_location.y + 50, angle[0] + 180, 0xffffff, false);
 
 		}
 		if (hp > 0) {
@@ -1420,28 +1434,35 @@ void Player::DrawPlayer() const
 		else {
 			//頭
 			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2), local_location.y - (erea.height) + 76, 23, 15, local_location.x, local_location.y, 0, 0x000000, true);
+			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2), local_location.y - (erea.height) + 76, 23, 15, local_location.x, local_location.y, 0, 0xffffff, false);
 
 			//目
 			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2) - 6, local_location.y - (erea.height) + 76, 6, 7, local_location.x, local_location.y, 0, 0x000000, true);
+			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2) - 6, local_location.y - (erea.height) + 76, 6, 7, local_location.x, local_location.y, 0, 0xffffff, false);
 
 			//首
 			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2), local_location.y - (erea.height) + 62, 10, 5, local_location.x, local_location.y, 0, 0x000000, true);
+			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2), local_location.y - (erea.height) + 62, 10, 5, local_location.x, local_location.y, 0, 0xffffff, false);
 
 			//胴体
 			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2), local_location.y - (erea.height) + 37, 21, 37, local_location.x, local_location.y, 0, 0x000000, true);
+			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2), local_location.y - (erea.height) + 37, 21, 37, local_location.x, local_location.y, 0, 0xffffff, false);
 
 			//バッグ
 			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2) + 15, local_location.y - (erea.height) + 40, 5, 23, local_location.x, local_location.y, 0, 0x000000, true);
+			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2) + 15, local_location.y - (erea.height) + 40, 5, 23, local_location.x, local_location.y, 0, 0xffffff, false);
 			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2) + 15, local_location.y - (erea.height) + 40, 3, 15, local_location.x, local_location.y, 0, 0x000000, true);
+			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2) + 15, local_location.y - (erea.height) + 40, 3, 15, local_location.x, local_location.y, 0, 0xffffff, false);
 		}
 		//腕
 
-		if (hp > 3) {
+		if (hp > 4) {
 			ResourceManager::DrawRotaBox(local_location.x + 15, local_location.y + 55, 28, 7, local_location.x + 25, local_location.y + 55, angle[1] + 180, draw_color, true);
 			ResourceManager::DrawRotaBox(local_location.x + 15, local_location.y + 55, 28, 7, local_location.x + 25, local_location.y + 55, angle[1] + 180, 0x000000, false);
 		}
 		else {
 			ResourceManager::DrawRotaBox(local_location.x + 15, local_location.y + 55, 28, 7, local_location.x + 25, local_location.y + 55, angle[1] + 180, 0x000000, true);
+			ResourceManager::DrawRotaBox(local_location.x + 15, local_location.y + 55, 28, 7, local_location.x + 25, local_location.y + 55, angle[1] + 180, 0xffffff, false);
 		}
 
 
@@ -1454,6 +1475,7 @@ void Player::DrawPlayer() const
 		else {
 
 			ResourceManager::DrawRotaBox(local_location.x + 30, local_location.y + 70, 7, 27, local_location.x + 30, local_location.y + 80, angle[2], 0x000000, true);
+			ResourceManager::DrawRotaBox(local_location.x + 30, local_location.y + 70, 7, 27, local_location.x + 30, local_location.y + 80, angle[2], 0xffffff, false);
 
 		}
 		if (hp > 1) {
@@ -1463,6 +1485,7 @@ void Player::DrawPlayer() const
 		}
 		else {
 			ResourceManager::DrawRotaBox(local_location.x + 30, local_location.y + 70, 7, 27, local_location.x + 30, local_location.y + 80, angle[3], 0x000000, true);
+			ResourceManager::DrawRotaBox(local_location.x + 30, local_location.y + 70, 7, 27, local_location.x + 30, local_location.y + 80, angle[3], 0xffffff, false);
 		}
 
 		if (hp > 1) {
