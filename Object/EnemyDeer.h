@@ -61,8 +61,9 @@ private:
 
 	int anim_fps;
 	float leg_angle[4];
-	float leg_angle_speed;
-	bool leg_move_direction[4];
+	bool anim_flg[4];
+	float speed;
+
 public:
 
 	EnemyDeer();
