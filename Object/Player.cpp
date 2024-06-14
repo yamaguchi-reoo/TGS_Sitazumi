@@ -219,7 +219,9 @@ void Player::Update(GameMain* _g)
 	
 
 	pStateOld = pState;
-	MoveActor();
+	if (hp > 0) {
+		MoveActor();
+	}
 	PlayerAnim();
 	if (swapTimer == -1)
 	{
@@ -257,25 +259,34 @@ void Player::Update(GameMain* _g)
 
 	PlayerSound();		//音声再生関連処理
 
+	
 	//damage
-	if (damageFlg == true && !damageOldFlg) {
-		hp--;
-		damageEffectFlg = true;
+	if (damageFlg == true && !damageOldFlg && d == 1) {
+		if (damageEffectFlg == false) {
+			damageEffectFlg = true;
+		}
 	}
-	if (damageEffectFlg) {
+	if (damageEffectFlg == true) {
+		if (damageEffectTime == 90) {
+			hp--;
+		}
 		damageEffectTime--;
-		if (damageEffectTime < 0) {
+		if (damageEffectTime <= 0) {
 			damageEffectFlg = false;
 			damageEffectTime = 90;
 			damageFlg = false;
 			//エフェクトが終わった後に体力が0ならプレイヤーを削除
-			if (hp <= 0)
-			{
-				_g->SetStage(_g->GetNowStage(), TRUE);
-			}
 		}
 	}
 
+	if (hp <= 0) {
+		damageEffectFlg = false;
+	}
+
+	if (damageEffectFlg >= 2) {
+		damageEffectFlg = false;
+	}
+	
 
 	for (int i = 0; i < 4; i++) {
 		stageHitFlg[0][i] = false;
@@ -313,13 +324,27 @@ void Player::Update(GameMain* _g)
 		circleAng = 0.f;
 	}
 	
+	if (hp <= 0) {
+		deathTimer++;
+		if (deathTimer > 90)
+		{
+			_g->SetGameOverFlg(true);
+			//_g->SetStage(_g->GetNowStage(), TRUE);
+		}
+	}
+
+	d = 0;
 }
 
 void Player::Draw()const
 {
 	//DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, FALSE, 2.f);
 
-	if (damageEffectFlg) {
+	if(hp <= 0){
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 - (deathTimer * 2));
+	}
+
+	if (damageEffectFlg == true) {
 		if (damageEffectTime % 10 == 0) {
 			float ang = 0.f;
 			//DrawBox(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, FALSE);
@@ -334,7 +359,7 @@ void Player::Draw()const
 	
 	}
 
-	//DrawFormatString(local_location.x, local_location.y, 0xffff00, "hp : %d", hp);
+	//DrawFormatString(local_location.x, local_location.y, 0xffff00, "d : %d", d);
 
 	if (searchedObj != nullptr && searchFlg) {
 		DrawCircleAA(searchedObj->GetLocalLocation().x + searchedObj->GetErea().width / 2,
@@ -360,7 +385,7 @@ void Player::Draw()const
 		DrawCircleAA(l[2].x, l[2].y, 15, 32, 0x6aa84f, TRUE);
 	
 	}
-	
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 }
 
 void Player::Finalize()
@@ -518,6 +543,7 @@ void Player::Hit(Object* _object)
 		case RED:
 			if (_object->GetObjectType() == WATER || _object->GetColorData() == BLUE) {
 				damageFlg = true;
+				d = 1;
 			}
 			
 			break;
@@ -525,6 +551,7 @@ void Player::Hit(Object* _object)
 		case BLUE:
 			if (_object->GetObjectType() == WOOD || _object->GetColorData() == GREEN) {
 				damageFlg = true;
+				d = 1;
 			}
 			
 			break;
@@ -532,6 +559,7 @@ void Player::Hit(Object* _object)
 		case GREEN:
 			if (_object->GetObjectType() == FIRE || _object->GetColorData() == RED) {
 				damageFlg = true;
+				d = 1;
 			}
 			
 			break;

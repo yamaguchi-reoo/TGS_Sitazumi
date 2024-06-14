@@ -7,9 +7,9 @@ BossAttackWood::BossAttackWood()
 	w_type = 0;
 
 	
-	type = BLOCK;
-	can_swap = TRUE;
-	can_hit = TRUE;
+	type = WOOD;
+	can_swap = FALSE;
+	can_hit = FALSE;
 	is_boss_attack = TRUE;
 }
 
