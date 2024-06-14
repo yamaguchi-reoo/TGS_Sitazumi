@@ -5,6 +5,9 @@ class BackGround
 private:
 	Erea bg_erea;		//背景の幅
 	Erea stage_erea;	//ステージの幅
+	int now_stage;			//現在のステージ数
+
+	int font_handle[2];        //使用フォント
 public:
 	BackGround();
 	~BackGround();
@@ -15,4 +18,5 @@ public:
 	void Draw(Location _camera_location)const;
 	void DrawWood(Location _shift_location, float move_speed)const;
 	void DrawMountain(Location _shift_location, Erea _erea,float move_speed)const;
+	void SetNowStage(int _now_stage) { now_stage = _now_stage; }
 };

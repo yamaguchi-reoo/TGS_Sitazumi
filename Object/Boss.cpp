@@ -29,10 +29,14 @@ Boss::Boss() :vector{ 0.0f }, boss_state(BossState::ATTACK), barrier_num(3), dam
 	}
 
 	// wing の初期化
-	for (int i = 0; i < wing.size(); ++i) {
+	/*for (int i = 0; i < wing.size(); i++) {
 		wing[i] = { 0.0f, 0.0f }; 
 		wing_mirror[i] = { 0.0f, 0.0f }; 
-	}
+	}*/
+	// wing の初期化
+	wing.fill({ 0.0f,0.0f });
+	wing_mirror.fill({ 0.0f,0.0f });
+
 
 	cunt = 1;
 	c = 1;
@@ -46,7 +50,7 @@ Boss::~Boss()
 
 void Boss::Initialize(Location _location, Erea _erea, int _color_data, int _object_pos)
 {
-	location = { SCREEN_WIDTH - 300.0f, SCREEN_HEIGHT - 300};//x座標 ,y座標 
+	location = { SCREEN_WIDTH - 300.0f, SCREEN_HEIGHT - 400};//x座標 ,y座標 
 	//location = { SCREEN_WIDTH / 2, SCREEN_HEIGHT - 300 };//x座標 ,y座標 
 	erea = { _erea };	   //高さ、幅	
 	color = _color_data;
@@ -55,8 +59,8 @@ void Boss::Initialize(Location _location, Erea _erea, int _color_data, int _obje
 
 	warp_pos = {
 		 {(SCREEN_WIDTH / 2 + 50.0f) , 125.0f},		   //中央
-		 {SCREEN_WIDTH - 300.0f, SCREEN_HEIGHT - 300.0f},//右
-		 {370.0f , SCREEN_HEIGHT - 300.0f}				   //左
+		 {SCREEN_WIDTH - 300.0f, SCREEN_HEIGHT - 400.0f},//右
+		 {370.0f , SCREEN_HEIGHT - 400.0f}				   //左
 	};
 
 	barrier_rad[0] = 60;
@@ -88,7 +92,7 @@ void Boss::Update(GameMain* _g)
 
 	//アニメーション
 	BossAnimation();
-	boss_anim = sin(PI * 2.f / 60.f * wing_fps) * 5.f;
+	boss_anim = (float)sin(PI * 2.f / 60.f * wing_fps) * 5.f;
 	Location player_pos = _g->GetPlayerLocation();
 
 	if (player_pos.x > 140) {
@@ -104,6 +108,7 @@ void Boss::Update(GameMain* _g)
 			break;
 		case BossState::DEATH:
 			_g->DeleteObject(object_pos, this);
+			_g->SetGameClearFlg(true);
 			break;
 		default:
 			break;
@@ -163,6 +168,7 @@ void Boss::Draw() const
 
 	//本体
 	DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 35, 35, 0x000000, TRUE);
+	DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 36, 36, color, FALSE);
 
 	//羽描画
 	DrawWings();
@@ -223,7 +229,7 @@ void Boss::Draw() const
 	//SetFontSize(24);
 	//DrawFormatString(800, 30, color, "wingNumber : %d", cunt);
 	//DrawFormatString(800, 50, color, "num : %d", num);
-	////DrawFormatString(800, 50, color, "wing : %d", c);
+	//DrawFormatString(800, 50, color, "t : %d", t);
 	//DrawFormatString(800, 50, color, "wingmirror : %f", wing_mirror[0].x);
 	//DrawFormatString(800, 80, color, "wingmirror : %f", wing_mirror[0].y);
 
@@ -336,9 +342,14 @@ void Boss::BossAtack(GameMain *_g)
 	}
 
 	if (f) {
+		can_swap = false;
 		switch (attack)
 		{
 		case 0://火
+			color = RED;
+			if (++t > 60) {
+				can_swap = true;
+			}
 			if (cnt % 30 == 0) {
 				Erea e = { 20.f,20.f };
 				_g->CreateObject(new BossAttackFire, GetCenterLocation(), e, RED);
@@ -347,20 +358,25 @@ void Boss::BossAtack(GameMain *_g)
 				cnt = 0;
 				f = false;
 				boss_state = BossState::MOVE;
+				t = 0;
 			}
 			break;
 
 		case 1://水
+			color = BLUE;
+			if (++t > 60) {
+				can_swap = true;
+			}
 			if (cnt % 30 == 0) {
 				Erea e = { 20.f,20.f };
 				Location l;
 				if (side) {
-					l.x = 80.f;
-					l.y = attack_num * 200.f + 250.f;
+					l.x = 300.f;
+					l.y = attack_num * 150.f + 150.f;
 				}
 				else {
 					l.x = 1200.f;
-					l.y = attack_num * 200.f + 250.f;
+					l.y = attack_num * 150.f + 150.f;
 				}
 				//_g->CreateObject(new BossAttackWater, GetCenterLocation(), e, BLUE);
 				_g->CreateObject(new BossAttackWater, l, e, BLUE);
@@ -371,18 +387,40 @@ void Boss::BossAtack(GameMain *_g)
 				f = false;
 				attack_num = 0;
 				boss_state = BossState::MOVE;
+				t = 0;
 			}
 			break;
 
 		default://木
+			color = GREEN;
+			if (++t > 20) {
+				can_swap = true;
+			}
 			if (cnt % 30 == 0) {
-				Erea e = { (float)(GetRand(400) + 200),40.f };
+				Erea e = { (float)(GetRand(400) + 400),40.f };
 				/*Location l = _g->GetPlayerLocation();
 				l.y += _g->GetPlayerErea().height + 40.f;*/
 
 				Location l;
-				l.x = GetRand(29) * 40 + 40;
+				
+				float x;
+				int i = 0;
+				do
+				{
+					x = (GetRand(29)) * 40 + 200;
+					for (int j = woodNum; j > 0; j--)
+					{
+						if (x != attackWood[j]) {
+							i = 99;
+						}
+					}
+				} while (i++ < 3);
+
+				l.x = x;
+
 				l.y = 930.f;
+
+				attackWood[woodNum++] = l.x;
 
 
 				_g->CreateObject(new BossAttackWood, l, e, GREEN);
@@ -392,6 +430,8 @@ void Boss::BossAtack(GameMain *_g)
 				cnt = 0;
 				f = false;
 				boss_state = BossState::MOVE;
+				woodNum = 0;
+				t = 0;
 			}
 			break;
 		}
@@ -409,7 +449,7 @@ void Boss::DrawHexagonSphere() const
 	float hex_size = 15.0f; // 六角形のサイズ
 
 	//// 六角形の間隔（六角形の内接円の半径の2倍）
-	float hex_height = sqrt(3) * hex_size / 2; // 六角形の高さ
+	float hex_height = (float)sqrt(3) * (float)hex_size / 2; // 六角形の高さ
 
 	for (int i = 0; i <= 9; ++i) { 
 		for (int j = -i; j <= i; ++j) {
@@ -420,7 +460,7 @@ void Boss::DrawHexagonSphere() const
 					hexa_center.y = center.y + (2.0f * hex_height * k - hex_height * j);
 
 					// 半径内にある六角形のみを描画
-					float distance = sqrt(pow(hexa_center.x - center.x, 2) + pow(hexa_center.y - center.y, 2));
+					float distance = (float)sqrt(pow(hexa_center.x - center.x, 2) + pow(hexa_center.y - center.y, 2));
 					if (distance <= 110) {
 						// 描画範囲を調整して内部を埋める
 						DrawHexagon({ hexa_center.x, hexa_center.y }, hex_size * 0.9f, color); // 0.9fは調整可能
@@ -431,9 +471,9 @@ void Boss::DrawHexagonSphere() const
 	}
 }
 
-void Boss::DrawHexagon(Location center, int size, int color) const
+void Boss::DrawHexagon(Location center, float size, int color) const
 {
-	float angle_space = 2 * PI / 6; // 六角形の各頂点の間の角度
+	float angle_space = (float)(2.0f * PI / 6.0f); // 六角形の各頂点の間の角度
 	Location vertices[6];
 
 	// 六角形の頂点座標を計算
@@ -451,38 +491,25 @@ void Boss::DrawHexagon(Location center, int size, int color) const
 void Boss::DrawWings() const
 {
 	Location center = { local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 };
-	// 羽の描画
-	//for (int i = 0; i < wing.size(); i += 4) {
-	//	DrawQuadrangleAA(local_location.x + wing[i].x, (local_location.y + wing[i].y),
-	//		local_location.x + wing[i + 1].x + 20, local_location.y + wing[i + 1].y + 10,
-	//		local_location.x + wing[i + 2].x + 10, local_location.y + wing[i + 2].y + 20,
-	//		local_location.x + wing[i + 3].x + 0, local_location.y + wing[i + 3].y + 30, 0x000000, TRUE);
-	//}
 
-	//for (int i = 0; i < wing.size(); i += 4) {
-	//	DrawQuadrangleAA((local_location.x + wing_mirror[i].x) + 250, local_location.y + wing_mirror[i].y,
-	//		(local_location.x + wing_mirror[i + 1].x - 20) + 250, local_location.y + wing_mirror[i + 1].y + 10,
-	//		(local_location.x + wing_mirror[i + 2].x - 10) + 250, local_location.y + wing_mirror[i + 2].y + 20,
-	//		(local_location.x + wing_mirror[i + 3].x - 0) + 250, local_location.y + wing_mirror[i + 3].y + 30, 0x000000, TRUE);
-	//}
 	// アニメーションに基づいて描画位置を計算
-	float angle = 0.0f;/*sin(PI * 2.f / 90.f * wing_fps) * 20.f; */// アニメーションに適した角度を計算
+	float angle = 0.0f;
 
 	// 羽の描画（）
 	for (int i = 0; i < wing.size(); i += 4) {
 		float delta_y = 0.f;
-		delta_y = sin(PI * 2.f / 60.f * wing_fps + i) * 5.f; // 2番目の羽は中程度に動く
-		angle = (sin(PI * 2.f / 60.f * wing_fps) * 5.f); // アニメーションに適した角度を計算
+		delta_y = (float)sin(PI * 2.f / 60.f * wing_fps + i) * 5.f; // 2番目の羽は中程度に動く
+		angle = (float)(sin(PI * 2.f / 60.f * wing_fps) * 5.f); // アニメーションに適した角度を計算
 
 		//３番目の羽だけ違う挙動に
 		if (i > 7 &&i < 12 ) {
-			delta_y = sin(PI * 2.f / 60.f * wing_fps + i) * 15.f; 
+			delta_y = (float)sin(PI * 2.f / 60.f * (float)wing_fps + i) * 15.f;
 		}
 		else if (i > 19 && i < 24) {
-			delta_y = sin(PI * 2.f / 60.f * wing_fps + i) * 15.f; 
+			delta_y = (float)sin(PI * 2.f / 60.f * (float)wing_fps + i) * 15.f;
 		}
 		else if (i > 31 && i < 36) {
-			delta_y = sin(PI * 2.f / 60.f * wing_fps + i) * 15.f; 
+			delta_y = (float)sin(PI * 2.f / 60.f * (float)wing_fps + i) * 15.f;
 		}
 
 		//右羽
@@ -495,6 +522,17 @@ void Boss::DrawWings() const
 			local_location.x + wing_mirror[i + 1].x - 20 + 250 - angle, local_location.y + wing_mirror[i + 1].y + 10 + angle + delta_y,
 			local_location.x + wing_mirror[i + 2].x - 10 + 250 - angle, local_location.y + wing_mirror[i + 2].y + 20 + angle + delta_y,
 			local_location.x + wing_mirror[i + 3].x + 250 - angle, local_location.y + wing_mirror[i + 3].y + 30 + angle + delta_y, 0x000000, TRUE);
+
+		//右羽
+		DrawQuadrangleAA(local_location.x + wing[i].x + angle, local_location.y + wing[i].y + angle + delta_y,
+			local_location.x + wing[i + 1].x + 20 + angle, local_location.y + wing[i + 1].y + 10 + angle + delta_y,
+			local_location.x + wing[i + 2].x + 10 + angle, local_location.y + wing[i + 2].y + 20 + angle + delta_y,
+			local_location.x + wing[i + 3].x + angle, local_location.y + wing[i + 3].y + 30 + angle + delta_y, 0xFFFFFF, FALSE, 3.0f);
+		//左羽
+		DrawQuadrangleAA(local_location.x + wing_mirror[i].x + 250 - angle, local_location.y + wing_mirror[i].y + angle + delta_y,
+			local_location.x + wing_mirror[i + 1].x - 20 + 250 - angle, local_location.y + wing_mirror[i + 1].y + 10 + angle + delta_y,
+			local_location.x + wing_mirror[i + 2].x - 10 + 250 - angle, local_location.y + wing_mirror[i + 2].y + 20 + angle + delta_y,
+			local_location.x + wing_mirror[i + 3].x + 250 - angle, local_location.y + wing_mirror[i + 3].y + 30 + angle + delta_y, 0xFFFFFF, FALSE, 3.0f);
 	}
 }
 
@@ -527,8 +565,8 @@ void Boss::UpdateWingPositions()
 	}
 
 	// マウスの位置を取得
-	float mousePos_X = KeyInput::GetMouseCursor().x;
-	float mousePos_Y = KeyInput::GetMouseCursor().y;
+	float mousePos_X = (float)KeyInput::GetMouseCursor().x;
+	float mousePos_Y = (float)KeyInput::GetMouseCursor().y;
 
 	if (KeyInput::OnKey(KEY_INPUT_T)) {
 		num += 4;

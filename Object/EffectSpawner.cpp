@@ -45,6 +45,7 @@ void EffectSpawner::Initialize()
 	swap_anim_timer = 0;
 
 	swap_se = ResourceManager::SetSound("Resource/Sounds/Effect/swap.wav");
+	swap_move_se = ResourceManager::SetSound("Resource/Sounds/Effect/swap_move.wav");
 }
 
 void EffectSpawner::Update(GameMain* _g)
@@ -168,6 +169,7 @@ void EffectSpawner::Update(GameMain* _g)
 					swap_anim[i].move_rad[j] = atan2f(swap_anim[i].goal.y - swap_anim[i].location[j].y,swap_anim[i].goal.x - swap_anim[i].location[j].x);
 					swap_anim[i].speed = (sqrtf(powf(fabsf(swap_anim[i].location[j].x - swap_anim[i].goal.x), 2) + powf(fabsf(swap_anim[i].location[j].y - swap_anim[i].goal.y), 2))  / (((float)SWAP_EFFECT_TIMER - ((float)SWAP_EFFECT_TIMER / 2.9f))/1.5f));
 					swap_anim[i].update_once[j] = true;
+					ResourceManager::StartSound(swap_move_se);
 				}
 			}
 		}

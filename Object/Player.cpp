@@ -82,11 +82,22 @@ Player::Player()
 	walk_se[2] = ResourceManager::SetSound("Resource/Sounds/Player/walk_grass.wav");
 	walk_se[3] = ResourceManager::SetSound("Resource/Sounds/Player/walk_water.wav");
 	jump_se = ResourceManager::SetSound("Resource/Sounds/Player/player_jump.wav");
-	old_jump_se = jump_se;
 	damage_se[0] = ResourceManager::SetSound("Resource/Sounds/Player/damage_fire.wav");
 	damage_se[1] = ResourceManager::SetSound("Resource/Sounds/Player/damage_grass.wav");
 	damage_se[2] = ResourceManager::SetSound("Resource/Sounds/Player/damage_water.wav");
 	cursor_se = ResourceManager::SetSound("Resource/Sounds/Player/cursor.wav");
+
+	for (int i = 0; i < 4; i++)
+	{
+		old_walk_se[i] = walk_se[i];
+	}
+	old_jump_se = jump_se;
+	for (int i = 0; i < 3; i++)
+	{
+		old_damage_se[i] = damage_se[i];
+	}
+	old_cursor_se = cursor_se;
+
 	now_riding = 0;
 	draw_color = 0;
 }
@@ -113,12 +124,9 @@ void Player::Update(GameMain* _g)
 	
 	__super::Update(_g);
 
-	//意図しない変更が発生したか測定
-	if (old_jump_se != jump_se)
-	{
-		printfDx("ジャンプSE変更");
-		old_jump_se = jump_se;
-	}
+	//意図しない変更を防止
+	SavePlayerSound();
+
 	fps = 0;
 	//移動エフェクト
 	if (vector.x != 0 || vector.y != 0)
@@ -219,7 +227,9 @@ void Player::Update(GameMain* _g)
 	
 
 	pStateOld = pState;
-	MoveActor();
+	if (hp > 0) {
+		MoveActor();
+	}
 	PlayerAnim();
 	if (swapTimer == -1)
 	{
@@ -257,25 +267,34 @@ void Player::Update(GameMain* _g)
 
 	PlayerSound();		//音声再生関連処理
 
+	
 	//damage
-	if (damageFlg == true && !damageOldFlg) {
-		hp--;
-		damageEffectFlg = true;
+	if (damageFlg == true && !damageOldFlg && d == 1) {
+		if (damageEffectFlg == false) {
+			damageEffectFlg = true;
+		}
 	}
-	if (damageEffectFlg) {
+	if (damageEffectFlg == true) {
+		if (damageEffectTime == 90) {
+			hp--;
+		}
 		damageEffectTime--;
-		if (damageEffectTime < 0) {
+		if (damageEffectTime <= 0) {
 			damageEffectFlg = false;
 			damageEffectTime = 90;
 			damageFlg = false;
 			//エフェクトが終わった後に体力が0ならプレイヤーを削除
-			if (hp <= 0)
-			{
-				_g->SetStage(_g->GetNowStage(), TRUE);
-			}
 		}
 	}
 
+	if (hp <= 0) {
+		damageEffectFlg = false;
+	}
+
+	if (damageEffectFlg >= 2) {
+		damageEffectFlg = false;
+	}
+	
 
 	for (int i = 0; i < 4; i++) {
 		stageHitFlg[0][i] = false;
@@ -313,13 +332,27 @@ void Player::Update(GameMain* _g)
 		circleAng = 0.f;
 	}
 	
+	if (hp <= 0) {
+		deathTimer++;
+		if (deathTimer > 90)
+		{
+			_g->SetGameOverFlg(true);
+			//_g->SetStage(_g->GetNowStage(), TRUE);
+		}
+	}
+
+	d = 0;
 }
 
 void Player::Draw()const
 {
 	//DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, FALSE, 2.f);
 
-	if (damageEffectFlg) {
+	if(hp <= 0){
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 - (deathTimer * 2));
+	}
+
+	if (damageEffectFlg == true) {
 		if (damageEffectTime % 10 == 0) {
 			float ang = 0.f;
 			//DrawBox(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, FALSE);
@@ -334,7 +367,7 @@ void Player::Draw()const
 	
 	}
 
-	//DrawFormatString(local_location.x, local_location.y, 0xffff00, "hp : %d", hp);
+	//DrawFormatString(local_location.x, local_location.y, 0xffff00, "d : %d", d);
 
 	if (searchedObj != nullptr && searchFlg) {
 		DrawCircleAA(searchedObj->GetLocalLocation().x + searchedObj->GetErea().width / 2,
@@ -360,7 +393,7 @@ void Player::Draw()const
 		DrawCircleAA(l[2].x, l[2].y, 15, 32, 0x6aa84f, TRUE);
 	
 	}
-	
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 }
 
 void Player::Finalize()
@@ -518,6 +551,7 @@ void Player::Hit(Object* _object)
 		case RED:
 			if (_object->GetObjectType() == WATER || _object->GetColorData() == BLUE) {
 				damageFlg = true;
+				d = 1;
 			}
 			
 			break;
@@ -525,6 +559,7 @@ void Player::Hit(Object* _object)
 		case BLUE:
 			if (_object->GetObjectType() == WOOD || _object->GetColorData() == GREEN) {
 				damageFlg = true;
+				d = 1;
 			}
 			
 			break;
@@ -532,6 +567,7 @@ void Player::Hit(Object* _object)
 		case GREEN:
 			if (_object->GetObjectType() == FIRE || _object->GetColorData() == RED) {
 				damageFlg = true;
+				d = 1;
 			}
 			
 			break;
@@ -569,6 +605,12 @@ void Player::Hit(Object* _object)
 	else if(_object->GetObjectType() == FIRE && this->color == RED)
 	{
 		now_riding = 0;
+	}
+
+	//ボスの木攻撃に当たった時、プレイヤーを跳ねさせる
+	if (_object->GetObjectType() == BLOCK && _object->GetIsBossAttack() == TRUE && _object->GetLocation().y > this->location.y)
+	{
+		vector.y = -20;
 	}
 }
 
@@ -968,6 +1010,7 @@ void Player::SelectObject()
 		}
 		//Y軸
 		if ((PadInput::TipLeftLStick(STICKL_Y) > 0.8f || PadInput::OnButton(XINPUT_BUTTON_DPAD_UP)) && oldStick[2]) {
+			ResourceManager::StartSound(cursor_se);
 			oldStick[2] = false;
 			flg = true;
 
@@ -989,6 +1032,7 @@ void Player::SelectObject()
 			}
 		}
 		else if ((PadInput::TipLeftLStick(STICKL_Y) < -0.8f || PadInput::OnButton(XINPUT_BUTTON_DPAD_DOWN)) && oldStick[3]) {
+			ResourceManager::StartSound(cursor_se); 
 			oldStick[3] = false;
 			flg = true;
 
@@ -1478,5 +1522,31 @@ Location Player::RotationLocation(Location BaseLoc, Location Loc, float r) const
 	*/
 
 	return ret;
+}
+
+void Player::SavePlayerSound()
+{
+	for (int i = 0; i < 4; i++)
+	{
+		if (old_walk_se[i] != walk_se[i])
+		{
+			walk_se[i] = old_walk_se[i];
+		}
+	}
+	if (old_jump_se != jump_se)
+	{
+		jump_se = old_jump_se;
+	}
+	for (int i = 0; i < 3; i++)
+	{
+		if (old_damage_se[i] != damage_se[i])
+		{
+			damage_se[i] = old_damage_se[i];
+		}
+	}
+	if (old_cursor_se != cursor_se)
+	{
+		cursor_se = old_cursor_se;
+	}
 }
 

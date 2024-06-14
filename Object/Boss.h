@@ -44,6 +44,7 @@ private:
 	int cunt;
 	int c;
 	int num;
+	int t = 0;
 
 	int state_change_time;		//状態変更のタイミング
 
@@ -61,6 +62,9 @@ private:
 	int attack = 0;
 	int attack_num = 0;
 	bool side = false;
+
+	float attackWood[3];
+	int woodNum = 0;
 
 public:
 	Boss();
@@ -96,7 +100,7 @@ public:
 	void DrawHexagonSphere() const;
 
 	//六角形描画
-	void DrawHexagon(Location center, int size, int color) const;
+	void DrawHexagon(Location center, float size, int color) const;
 
 	//羽を描画する
 	void DrawWings() const;

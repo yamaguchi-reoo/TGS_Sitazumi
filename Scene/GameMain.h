@@ -79,6 +79,8 @@ private:
     bool game_pause_flg;
     bool pause_after_flg;
 
+    int clear_timer;
+
     int cursor;
     Location cursor_location; 
     float circleAng;
@@ -184,6 +186,9 @@ public:
 
     //ゲームオーバーかどうかを設定
     void SetGameOverFlg(bool f) { game_over_flg = f; }
+
+    //ゲームクリアかどうかを設定
+    void SetGameClearFlg(bool f) { game_clear_flg = f; }
 
     //座標の回転
     //引数:もとになる座標、回転させたい座標、回転させたい角度
