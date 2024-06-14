@@ -14,7 +14,7 @@
 #define RADIUS 300.0f
 
 
-Boss::Boss() :vector{ 0.0f }, boss_state(BossState::ATTACK), barrier_num(0), damage_flg(false), state_change_time(0), speed(0.0f),wing_fps(0)
+Boss::Boss() :vector{ 0.0f }, boss_state(BossState::ATTACK), barrier_num(3), damage_flg(false), state_change_time(0), speed(0.0f),wing_fps(0)
 {
 	type = BOSS;
 	can_swap = TRUE;
