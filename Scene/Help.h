@@ -11,16 +11,15 @@ private:
     int MenuNumber = 3;
     int MenuY = 1;
     int wt = 0;
+    bool button_draw = false;
+    int frame = 0;
 
-    int stage;
-    Location location;
-    Player player;
+    int decision_se;    //決定SE	  
+    int cursor_se;      //カーソルSE
 
 public:
     //コンストラクタ
     Help();
-
-    Help(int _stage, Location _location, Player _player);
 
     //デストラクタ
     ~Help();
@@ -36,6 +35,7 @@ public:
 
     //描画に関することを実装
     void Draw() const override;
+
 
 
 };
