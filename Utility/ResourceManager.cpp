@@ -271,7 +271,7 @@ void ResourceManager::StartSound(int _num, bool roop_flg)
 	}
 	else
 	{
-		PlaySoundMem(sound_data[_num], DX_PLAYTYPE_BACK, FALSE);
+		PlaySoundMem(sound_data[_num], DX_PLAYTYPE_BACK);
 	}
 }
 
