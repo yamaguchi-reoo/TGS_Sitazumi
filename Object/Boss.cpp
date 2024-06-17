@@ -511,7 +511,7 @@ void Boss::DrawHexagonSphere() const
 	// バリアの半径の配列を定義
 	float hex_size = 15.0f; // 六角形のサイズ
 
-	//// 六角形の間隔（六角形の内接円の半径の2倍）
+	// 六角形の間隔（六角形の内接円の半径の2倍）
 	float hex_height = (float)sqrt(3) * (float)hex_size / 2; // 六角形の高さ
 
 	for (int i = 0; i <= 9; ++i) { 
