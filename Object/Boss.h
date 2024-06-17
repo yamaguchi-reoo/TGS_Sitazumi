@@ -35,11 +35,15 @@ private:
 	float barrier_rad[3];	//バリアの半径
 	int barrier_num;		//バリアの数
 
+	int wing_color;
+
 	bool damage_flg;				//ダメージを受けたとき
 	int damage_effect_time = 60;	//ダメージエフェクトの持続時間
 	bool damage_effect_flg = false; // ダメージエフェクトのフラグ
 
-	int damege_anim;
+	bool damage_anim_flg;
+	int damage_anim_time;
+	int shake_anim;
 
 	float speed;				//移動速度;
 
