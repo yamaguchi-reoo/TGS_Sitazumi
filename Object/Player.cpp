@@ -7,7 +7,7 @@
 #include <math.h>
 
 // Playerのhpが変わるのはメモリの破損のせいかな？
-int Player::hp = 5;
+//int Player::hp = 5;
 
 Player::Player()
 {
@@ -41,8 +41,8 @@ Player::Player()
 	oldStick[1] = 0.f;
 	oldStick[2] = 0.f;
 	oldStick[3] = 0.f;
-	for (int i = 0; i < 720 / 40; i++){
-		for (int j = 0; j < 1280 / 40; j++){
+	for (int i = 0; i < 1280 / 40; i++){
+		for (int j = 0; j < 720 / 40; j++){
 			posRelation[i][j] = -1;
 		}
 	}
@@ -63,7 +63,7 @@ Player::Player()
 	oldDirection = -1;
 	oldObjNum = 0;
 
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 5; i++)
 	{
 		angle[i] = 0.f;
 	}
@@ -306,8 +306,8 @@ void Player::Update(GameMain* _g)
 	searchedLen = 1000.f;
 	//searchedObj = nullptr;
 	objNum = 0;
-	for (int i = 0; i < 720 / 40; i++) {
-		for (int j = 0; j < 1280 / 40; j++) {
+	for (int i = 0; i < 1280 / 40; i++) {
+		for (int j = 0; j <  720 / 40; j++) {
 			posRelation[i][j] = -1;
 		}
 	}
@@ -344,6 +344,13 @@ void Player::Update(GameMain* _g)
 	}
 
 	d = 0;
+
+	if (moveFrontFlg > 1) {
+		int a;
+		a = 0;
+	}
+
+
 }
 
 void Player::Draw()const
@@ -708,17 +715,32 @@ void Player::MoveAim()
 
 bool Player::SearchColor(Object* ob)
 {
-	if (ob != nullptr && ob->GetColorData() > 0 ){
+	if (ob != nullptr && ob->GetColorData() > 0 && ob != this){
 		if(ob->GetLocalLocation().x >= 0 && ob->GetLocalLocation().x <= 1280 && ob->GetLocalLocation().y >= 0 && ob->GetLocalLocation().y <= 720) {
 			searchedObjAll[objNum] = ob;
+			
 			if (objNum > 0 && searchedObjAll[objNum - 1]->GetLocalLocation().y + 40 <= ob->GetLocalLocation().y) {
 				posRelNum[0]++;
 				posRelNum[1] = 0;
 			}
+			if (moveFrontFlg > 1) {
+				int a;
+				a = 0;
+			}
 			int x = (int)ob->GetLocalLocation().x / 40;
 			int y = (int)ob->GetLocalLocation().y / 40;
+			if (moveFrontFlg > 1) {
+				int a;
+				a = 0;
+			}
 			posRelation[y][x] = objNum;
+			if (moveFrontFlg > 1) {
+				int a;
+				a = 0;
+			}
 			objNum++;
+			
+
 		}
 	}
 	return false;
@@ -1145,47 +1167,7 @@ void Player::SelectObject()
 
 float Player::ThreePointAngle(Location l1, Location l2, Location referenceP)const
 {
-	if (l1.x == l2.x && l1.y == l2.y)return 0.f;
-
-	Location v1, v2;
-	v1.x = l1.x - referenceP.x;
-	v1.y = l1.y - referenceP.y;
-	v2.x = l2.x - referenceP.x;
-	v2.y = l2.y - referenceP.y;
-	//DrawLine(referenceP.x, referenceP.y, referenceP.x + v1.x, referenceP.y + v1.y, 0x00ff00);
-	DrawLineAA(referenceP.x, referenceP.y, referenceP.x + v2.x, referenceP.y + v2.y, 0x00ffff);
-
-	float len1, len2;
-	//len1 = sqrtf(powf(v1.x, 2) + powf(v1.y, 2));
-	//len2 = sqrtf(powf(v2.x, 2) + powf(v2.y, 2));
-	len1 = powf((v1.x * v1.x) + (v1.y + v1.y), 0.5);
-	len2 = powf((v2.x * v2.x) + (v2.y + v2.y), 0.5);
-	/*len1 = sqrtf((v1.x * v1.x) + (v1.y * v1.y));
-	len2 = sqrtf((v2.x * v2.x) + (v2.y * v2.y));*/
-
-	/*Location uv1, uv2 = { 0,0 };
-	uv1.x = v1.x / len1;
-	uv1.y = v1.y / len1;
-	uv2.x = v2.x / len2;
-	uv2.y = v2.y / len2;*/
-
-	/*float dot;
-	dot = (uv1.x * uv2.x) + (uv1.y + uv2.y);*/
-
-	float dot;
-	dot = (v1.x * v2.x) + (v1.y + v2.y);
-
-	/*float len1, len2;
-	len1 = sqrtf(powf(v1.x, 2) + powf(v1.y, 2));
-	len2 = sqrtf(powf(v2.x, 2) + powf(v2.y, 2));*/
-
-	float cos;
-	cos = dot / (len1 * len2);
-
-	float sita;
-	sita = acosf(cos) * (180.f / 3.14f);
-
-	return sita;
+	return 0;
 }
 
 float Player::GetLength(Location l1, Location l2) 
@@ -1269,10 +1251,22 @@ void Player::PlayerAnim()
 				animFlg = true;
 			}
 		}
+
+		if (vector.x > 0) {
+			float tmp;
+			tmp = vector.x / 7.5f;
+			angle[4] = 30.f * tmp;
+		}
+		else if (vector.y < 0) {
+			float tmp;
+			tmp = vector.x / 7.5f;
+			angle[4] = 30.f * tmp;
+		}
+
 		break;
 
 	case jump:
-		if (moveFrontFlg) {
+		if (moveFrontFlg == true) {
 			angle[0] = -60.f;
 			angle[1] = -60.f;
 			angle[2] = 0.f;
@@ -1293,38 +1287,53 @@ void Player::PlayerAnim()
 
 void Player::DrawPlayer() const
 {
-	if (moveFrontFlg) {
+	Location l;
+	l = RotationLocation({ local_location.x + 30, local_location.y + 80 }, { local_location.x + 35, local_location.y + 50 }, (float)(0 * M_PI / 180));
+
+	if (moveFrontFlg > 1) {
+		int a;
+		a = 0;
+	}
+
+	for (int i = 0; i < 5; i++)
+	{
+		if (angle[i] >= 10000) {
+			int a;
+			a = 0;
+		}
+		
+	}
+
+	if (moveFrontFlg == true) {
+		//腕
 		if (hp > 4) {
 			ResourceManager::DrawRotaBox(local_location.x + 25, local_location.y + 50, 28, 7, local_location.x + 35, local_location.y + 50, angle[0], draw_color, true);
 			ResourceManager::DrawRotaBox(local_location.x + 25, local_location.y + 50, 28, 7, local_location.x + 35, local_location.y + 50, angle[0], 0x000000, false);
-
 		}
 		else {
 			ResourceManager::DrawRotaBox(local_location.x + 25, local_location.y + 50, 28, 7, local_location.x + 35, local_location.y + 50, angle[0], 0x000000, true);
 			ResourceManager::DrawRotaBox(local_location.x + 25, local_location.y + 50, 28, 7, local_location.x + 35, local_location.y + 50, angle[0], 0xffffff, false);
-
-
 		}
 		if (hp > 0) {
 			//頭
-			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2), local_location.y - (erea.height) + 76, 23, 15, local_location.x, local_location.y, 0, draw_color, true);
-			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2), local_location.y - (erea.height) + 76, 23, 15, local_location.x, local_location.y, 0, 0x000000, false);
+			ResourceManager::DrawRotaBox(local_location.x + 30, local_location.y + 80 + 55, 23, 15, local_location.x + 30, local_location.y + 80, 0, draw_color, true);
+			ResourceManager::DrawRotaBox(local_location.x + 30, local_location.y + 80 + 55, 23, 15, local_location.x + 30, local_location.y + 80, 0, 0x000000, false);
 
 			//目
-			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2) - 6, local_location.y - (erea.height) + 76, 6, 7, local_location.x, local_location.y, 0, 0x000000, true);
+			ResourceManager::DrawRotaBox(local_location.x + 30 - 6, local_location.y + 80 + 56, 6, 7, local_location.x + 30, local_location.y + 80, 0, 0x000000, true);
 
 			//首
-			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2), local_location.y - (erea.height) + 62, 10, 5, local_location.x, local_location.y, 0, draw_color, true);
-			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2), local_location.y - (erea.height) + 62, 10, 5, local_location.x, local_location.y, 0, 0x000000, false);
+			ResourceManager::DrawRotaBox(local_location.x + 30, local_location.y + 80 + 42, 10, 5, local_location.x + 30, local_location.y + 80, 0, draw_color, true);
+			ResourceManager::DrawRotaBox(local_location.x + 30, local_location.y + 80 + 42, 10, 5, local_location.x + 30, local_location.y + 80, 0, 0x000000, false);
 
 			//胴体
-			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2), local_location.y - (erea.height) + 37, 21, 37, local_location.x, local_location.y, 0, draw_color, true);
-			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2), local_location.y - (erea.height) + 37, 21, 37, local_location.x, local_location.y, 0, 0x000000, false);
+			ResourceManager::DrawRotaBox(local_location.x + 30, local_location.y + 80 + 37 / 2, 21, 37, local_location.x + 30, local_location.y + 80, 0, draw_color, true);
+			ResourceManager::DrawRotaBox(local_location.x + 30, local_location.y + 80 + 37 / 2, 21, 37, local_location.x + 30, local_location.y + 80, 0, 0x000000, false);
 
 			//バッグ
-			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2) + 15, local_location.y - (erea.height) + 40, 5, 23, local_location.x, local_location.y, 0, draw_color, true);
-			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2) + 15, local_location.y - (erea.height) + 40, 5, 23, local_location.x, local_location.y, 0, 0x000000, false);
-			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2) + 15, local_location.y - (erea.height) + 40, 3, 15, local_location.x, local_location.y, 0, 0x000000, true);
+			ResourceManager::DrawRotaBox(local_location.x + 30 + 15, local_location.y + 80 + 20, 5, 23, local_location.x + 30, local_location.y + 80, 0, draw_color, true);
+			ResourceManager::DrawRotaBox(local_location.x + 30 + 15, local_location.y + 80 + 20, 5, 23, local_location.x + 30, local_location.y + 80, 0, 0x000000, false);
+			ResourceManager::DrawRotaBox(local_location.x + 30 + 15, local_location.y + 80 + 20, 3, 15, local_location.x + 30, local_location.y + 80, 0, 0x000000, true);
 		}
 		else {
 			//頭
@@ -1349,8 +1358,8 @@ void Player::DrawPlayer() const
 			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2) + 15, local_location.y - (erea.height) + 40, 3, 15, local_location.x, local_location.y, 0, 0x000000, true);
 			ResourceManager::DrawRotaBox(local_location.x - (erea.width / 2) + 15, local_location.y - (erea.height) + 40, 3, 15, local_location.x, local_location.y, 0, 0xffffff, false);
 		}
+
 		//腕
-	
 		if (hp > 3) {
 			ResourceManager::DrawRotaBox(local_location.x + 25, local_location.y + 55, 28, 7, local_location.x + 35, local_location.y + 55, angle[1], draw_color, true);
 			ResourceManager::DrawRotaBox(local_location.x + 25, local_location.y + 55, 28, 7, local_location.x + 35, local_location.y + 55, angle[1], 0x000000, false);
@@ -1368,10 +1377,8 @@ void Player::DrawPlayer() const
 
 		}
 		else {
-
 			ResourceManager::DrawRotaBox(local_location.x + 30, local_location.y + 70, 7, 27, local_location.x + 30, local_location.y + 80, angle[2], 0x000000, true);
 			ResourceManager::DrawRotaBox(local_location.x + 30, local_location.y + 70, 7, 27, local_location.x + 30, local_location.y + 80, angle[2], 0xffffff, false);
-
 		}
 		if (hp > 1) {
 			ResourceManager::DrawRotaBox(local_location.x + 30, local_location.y + 70, 7, 27, local_location.x + 30, local_location.y + 80, angle[3], draw_color, true);
@@ -1393,7 +1400,6 @@ void Player::DrawPlayer() const
 			//帽子　左側
 			DrawTriangleAA(local_location.x + (erea.width / 2), local_location.y, local_location.x + 8, local_location.y + 15, local_location.x + 20, local_location.y + 20, draw_color, true);
 			DrawTriangleAA(local_location.x + (erea.width / 2), local_location.y, local_location.x + 8, local_location.y + 15, local_location.x + 20, local_location.y + 20, 0x000000, false);
-
 		}
 		else {
 			//帽子　中央
@@ -1405,7 +1411,6 @@ void Player::DrawPlayer() const
 			//帽子　左側
 			DrawTriangleAA(local_location.x + (erea.width / 2), local_location.y, local_location.x + 8, local_location.y + 15, local_location.x + 20, local_location.y + 20, 0x000000, true);
 			DrawTriangleAA(local_location.x + (erea.width / 2), local_location.y, local_location.x + 8, local_location.y + 15, local_location.x + 20, local_location.y + 20, 0xffffff, false);
-
 		}
 	}
 	else {

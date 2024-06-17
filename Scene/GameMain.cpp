@@ -339,11 +339,23 @@ AbstractScene* GameMain::Update()
 				weather->Update(this);
 			}
 
+
+
 			//プレイヤーの更新
 			PlayerUpdate();
 
+			if (object[player_object] != nullptr) {
+				Player* p;
+				p = dynamic_cast<Player*>(object[player_object]);
+				if (p->GetDebug() > 1) {
+					int a;
+					a = 0;
+				}
+			}
+
 			//ボスの更新
 			BossUpdate();
+
 
 			//管理クラスの更新
 			effect_spawner->Update(this);
@@ -369,6 +381,15 @@ AbstractScene* GameMain::Update()
 			if (now_stage != 2 && object[player_object]->GetLocation().x > stage_width - 100 && object[player_object]->GetLocation().y > stage_height - 300)
 			{
 				SetStage(2, false);
+			}
+
+			if (object[player_object] != nullptr) {
+				Player* p;
+				p = dynamic_cast<Player*>(object[player_object]);
+				if (p->GetDebug() > 1) {
+					int a;
+					a = 0;
+				}
 			}
 		}
 
@@ -1088,13 +1109,14 @@ void GameMain::DeleteAllObject(bool _player_delete)
 
 void GameMain::PlayerUpdate()
 {
+	
 	//プレイヤーが居ないなら(DeleteObjectされていた、もしくはobject[player_object]がプレイヤーではないなら)
 	if (object[player_object] == nullptr || object[player_object]->GetObjectType() != PLAYER)
 	{
 		//プレイヤーの生成
 		CreateObject(new Player, player_respawn, { PLAYER_HEIGHT,PLAYER_WIDTH }, GREEN);
 	}
-
+	
 	//プレイヤーの更新＆色探知用
 	if (object[player_object] != nullptr)
 	{
@@ -1106,14 +1128,27 @@ void GameMain::PlayerUpdate()
 		{
 			if (object[i]->GetObjectType() != PLAYER && object[i]->GetCanSwap() == TRUE) {
 				object[player_object]->SearchColor(object[i]);
+				if (object[player_object] != nullptr) {
+					Player* p;
+					p = dynamic_cast<Player*>(object[player_object]);
+					if (p->GetDebug() > 1) {
+						int a;
+						a = 0;
+					}
+				}
 			}
+			
 			//各オブジェクトとの当たり判定
 			if (object[i]->HitBox(object[player_object]))
 			{
 				object[i]->Hit(object[player_object]);
 				object[player_object]->Hit(object[i]);
 			}
+
+
 		}
+
+
 
 		//プレイヤーが落下したときに死亡判定とする
 		if (GetPlayerLocation().y > stage_height + 100)
@@ -1124,6 +1159,7 @@ void GameMain::PlayerUpdate()
 			game_over_flg = true;
 		}
 	}
+
 }
 
 void GameMain::BossUpdate()
