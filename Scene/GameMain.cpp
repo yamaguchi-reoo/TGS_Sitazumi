@@ -109,8 +109,8 @@ AbstractScene* GameMain::Update()
 		Gstick_angle = 0;
 	}
 
-	Gdraw_stick_shift.x = cosf(Gstick_angle * M_PI * 2) * 5;
-	Gdraw_stick_shift.y = sinf(Gstick_angle * M_PI * 2) * 5;
+	Gdraw_stick_shift.x = cosf(Gstick_angle * (float)M_PI * 2) * 5;
+	Gdraw_stick_shift.y = sinf(Gstick_angle * (float)M_PI * 2) * 5;
 
 	if (GetPlayerLocation().x >= 1540.0f && GetPlayerLocation().y <= 2580.0f)
 	{
@@ -415,26 +415,6 @@ void GameMain::Draw() const
 
 	SetFontSize(12);
 	back_ground->Draw(camera_location);
-	for (int i = 0; object[i] != nullptr; i++)
-	{
-		if (player_object == i) {
-			continue;
-		}
-		if (CheckInScreen(object[i]) == true)
-		{
-			if (boss_blind_flg == true)
-			{
-				SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 - sqrtf(powf(fabsf(object[player_object]->GetLocation().x - object[i]->GetLocation().x), 2) + powf(fabsf(object[player_object]->GetLocation().y - object[i]->GetLocation().y), 2)));
-				object[i]->Draw();
-				SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
-			}
-			else
-			{
-				object[i]->Draw();
-
-			}
-		}
-	}
 	//for (int i = 0; i < attack_num; i++)
 	//{
 	//	object[boss_attack[i]]->Draw();
@@ -738,7 +718,17 @@ void GameMain::Draw() const
 		}
 		if (CheckInScreen(object[i]) == true)
 		{
-			object[i]->Draw();
+			if (boss_blind_flg == true)
+			{
+				SetDrawBlendMode(DX_BLENDMODE_ALPHA, (int)(255 - sqrtf(powf(fabsf(object[player_object]->GetLocation().x - object[i]->GetLocation().x), 2) + powf(fabsf(object[player_object]->GetLocation().y - object[i]->GetLocation().y), 2))));
+				object[i]->Draw();
+				SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
+			}
+			else
+			{
+				object[i]->Draw();
+
+			}
 		}
 	}
 
@@ -864,7 +854,7 @@ void GameMain::UpdateCamera()
 			}
 			if (object[player_object]->GetCenterLocation().x >= stage_width - (SCREEN_WIDTH / 2))
 			{
-				lock_pos.x = stage_width - (SCREEN_WIDTH / 2);
+				lock_pos.x = (float)stage_width - (SCREEN_WIDTH / 2);
 			}
 			/*lock_pos.x = object[player_object]->GetCenterLocation().x;*/
 			x_pos_set_once = true;

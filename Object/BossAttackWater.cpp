@@ -84,8 +84,8 @@ void BossAttackWater::Update(GameMain* _g)
 	}
 	f_location = local_location;
 	//radに応じた向きに進める
-	f_location.x += 30 * cosf(5.0f * (frame / 5) + M_PI) * cosf(rad);
-	f_location.y += 30 * cosf(5.0f * (frame / 5) + M_PI) * sinf(rad);
+	f_location.x += 30 * cosf(5.0f * (frame / 5) + (float)M_PI) * cosf(rad);
+	f_location.y += 30 * cosf(5.0f * (frame / 5) + (float)M_PI) * sinf(rad);
 	if (hitFlg) {
 		_g->CameraImpact(15);
 		_g->SpawnEffect(location, erea, ExplosionEffect, 10, BLUE);
