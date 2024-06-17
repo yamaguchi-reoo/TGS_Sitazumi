@@ -60,6 +60,8 @@ void BossAttackWater::Update(GameMain* _g)
 
 		if (local_location.x < 0 || local_location.x > 1280 || local_location.y < 0 || local_location.y > 720) {
 			if (this != nullptr) {
+				_g->CameraImpact(15);
+				_g->SpawnEffect(location, erea, ExplosionEffect, 10, BLUE);
 				_g->DeleteObject(object_pos, this);
 			}
 		}
@@ -110,7 +112,7 @@ void BossAttackWater::Draw() const
 
 void BossAttackWater::Hit(Object* _object)
 {
-	if ((_object->GetObjectType() == BLOCK || _object->GetObjectType() == FIRE) && _object->GetColorData() != WHITE) {
+	if ((_object->GetObjectType() == BLOCK || _object->GetObjectType() == FIRE) && _object->GetColorData() != WHITE && _object->GetIsBossAttack() == FALSE) {
 		_object->SetCanSwap(TRUE);
 		_object->SetColorData(color);
 		hitFlg = true;

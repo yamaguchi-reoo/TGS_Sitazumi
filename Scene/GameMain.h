@@ -76,6 +76,8 @@ private:
     int GColor;
     int GGNum;
 
+    bool boss_blind_flg;        //ボスステージを暗くするか
+    int boss_blind_timer;       //ボスステージで完全に暗転させる時間
     bool game_over_flg;         //ゲームオーバーか
     bool game_clear_flg;
     bool game_pause_flg;

@@ -168,7 +168,6 @@ void Player::Update(GameMain* _g)
 		if (effect_once == false)
 		{
 			_g->SpawnEffect(location, erea, LandingEffect, 15, color);
-			_g->CameraImpact(vector.y/2);
 			ResourceManager::StartSound(landing_se);
 			effect_once = true;
 		}

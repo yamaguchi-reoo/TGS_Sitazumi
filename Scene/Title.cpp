@@ -143,8 +143,8 @@ AbstractScene* Title::Update()
 		}
 	}
 
-	draw_stick_shift.x = cosf(stick_angle * M_PI * 2) * 5;
-	draw_stick_shift.y = sinf(stick_angle * M_PI * 2) * 5;
+	draw_stick_shift.x = cosf(stick_angle * (float)M_PI * 2) * 5;
+	draw_stick_shift.y = sinf(stick_angle * (float)M_PI * 2) * 5;
 
 
 	
@@ -326,11 +326,11 @@ void Title::Draw()const
 		{
 			if (swap_anim_flg == false)
 			{
-				DrawFormatString(logo_location[i].x + 325, logo_location[i].y + 60, logo_color[i], "%s", logo_string[i]);
+				DrawFormatStringF(logo_location[i].x + 325, logo_location[i].y + 60, logo_color[i], "%s", logo_string[i]);
 			}
 			else
 			{
-				DrawFormatString(logo_location[i].x + 325+GetRand(10)-5, logo_location[i].y + 60 + GetRand(10)-5, logo_color[i], "%s", logo_string[i]);
+				DrawFormatStringF(logo_location[i].x + 325+GetRand(10)-5, logo_location[i].y + 60 + GetRand(10)-5, logo_color[i], "%s", logo_string[i]);
 
 			}
 		}
@@ -344,8 +344,8 @@ void Title::Draw()const
 		{
 			//プレイヤー画像描画
 			DrawPlayer(current_menu);
-			DrawBox(player_location.x - 50, player_location.y + PLAYER_HEIGHT, player_location.x + PLAYER_WIDTH + 50, SCREEN_HEIGHT, 0x000000, TRUE);
-			DrawBox(player_location.x - 50, player_location.y + PLAYER_HEIGHT, player_location.x + PLAYER_WIDTH + 50, SCREEN_HEIGHT + 5, 0xffffff, FALSE);
+			DrawBoxAA(player_location.x - 50, player_location.y + PLAYER_HEIGHT, player_location.x + PLAYER_WIDTH + 50, SCREEN_HEIGHT, 0x000000, TRUE);
+			DrawBoxAA(player_location.x - 50, player_location.y + PLAYER_HEIGHT, player_location.x + PLAYER_WIDTH + 50, SCREEN_HEIGHT + 5, 0xffffff, FALSE);
 
 			//説明UI描画
 			DrawCircleAA(draw_stick_location.x, draw_stick_location.y, 15, 100, 0x000000, TRUE);
