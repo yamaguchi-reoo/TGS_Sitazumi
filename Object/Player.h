@@ -40,7 +40,7 @@ private:
 	int objSelectNumTmp;//オブジェクトの添え字
 	bool searchedObjFlg;//画面内に交換できるオブジェクトがあるかどうか
 	bool swap_once;		//一回だけ色を交換する
-	int posRelation[720 / 40][1280 / 40];
+	int posRelation[1280 / 40][720 / 40];
 	int posRelNum[2];
 	bool oldStick[4];
 	//bool searchFlg;
@@ -51,7 +51,7 @@ private:
 
 	bool damageFlg; //ダメージを受けたとき
 	bool damageOldFlg; //ダメージを受けたとき
-	static int hp;
+	int hp;
 	int damageEffectTime = 60;
 	bool damageEffectFlg = false;
 	bool effect_once;	//エフェクトを一回だけ出す用
@@ -68,18 +68,20 @@ private:
 	int pStateOld;//待機、移動、ジャンプ
 	bool moveFrontFlg;//向いてる方向
 	bool animFlg;
-	float angle[4];//両手両足
+	float angle[5];//両手両足
 	float mo = 0;
 	float ang = 0;
 
 	float circleAng;
 
 
+	int landing_se;		//着地SE
 	int walk_se[4];		//歩行SE格納
 	int jump_se;		//ジャンプSE格納
 	int damage_se[3];	//被ダメージSE格納
 	int cursor_se;		//色交換カーソルSE格納
 
+	int old_landing_se;			//旧着地SE
 	int old_walk_se[4];		//旧歩行SE格納
 	int old_jump_se;		//旧ジャンプSE格納
 	int old_damage_se[3];	//旧被ダメージSE格納
@@ -122,5 +124,8 @@ public:
 
 	//音源の破損防止
 	void SavePlayerSound();
+
+
+	bool GetDebug() { return moveFrontFlg; }
 };
 

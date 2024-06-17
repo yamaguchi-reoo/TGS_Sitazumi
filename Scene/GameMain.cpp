@@ -18,7 +18,7 @@
 static Location camera_location = { 0,0};	//カメラの座標
 static Location screen_origin = { (SCREEN_WIDTH / 2),(SCREEN_HEIGHT / 2) };
 
-GameMain::GameMain(int _stage) :frame(0), stage_data{ 0 }, now_stage(0), object_num(0), stage_width_num(0), stage_height_num(0), stage_width(0), stage_height(0), camera_x_lock_flg(true), camera_y_lock_flg(true), x_pos_set_once(false), y_pos_set_once(false), player_object(0), boss_object(0), weather(0), weather_timer(0), move_object_num(0), player_flg(false), player_respawn_flg(false), fadein_flg(true), create_once(false), game_over_flg(false), game_clear_flg(false), game_pause_flg(false), pause_after_flg(false), cursor(0), clear_timer(0), set_sound_once(false)
+GameMain::GameMain(int _stage) :frame(0), impact(0), stage_data{ 0 }, now_stage(0), object_num(0), stage_width_num(0), stage_height_num(0), stage_width(0), stage_height(0), camera_x_lock_flg(true), camera_y_lock_flg(true), x_pos_set_once(false), y_pos_set_once(false), player_object(0), boss_object(0), weather(0), weather_timer(0), move_object_num(0), boss_blind_flg(false), boss_blind_timer(0),player_flg(false), player_respawn_flg(false), fadein_flg(true), create_once(false), game_over_flg(false), game_clear_flg(false), game_pause_flg(false), pause_after_flg(false), cursor(0), clear_timer(0), set_sound_once(false)
 {
 	now_stage = _stage;
 }
@@ -250,12 +250,12 @@ AbstractScene* GameMain::Update()
 		}
 		else
 		{
-		if (PadInput::OnButton(XINPUT_BUTTON_START) && !game_pause_flg)
+			if (PadInput::OnButton(XINPUT_BUTTON_START) && !game_pause_flg)
 			{
 				game_pause_flg = true;
 			}
 
-		if (PadInput::OnRelease(XINPUT_BUTTON_B) && pause_after_flg)
+			if (PadInput::OnRelease(XINPUT_BUTTON_B) && pause_after_flg)
 			{
 				pause_after_flg = false;
 			}
@@ -270,9 +270,9 @@ AbstractScene* GameMain::Update()
 				for (int i = 0; i < OBJECT_NUM; i++)
 				{
 					//プレイヤーとボス以外の画面内オブジェクトの更新
-					if (i != player_object && CheckInScreen(object[i]))
+					if (((i == boss_object && boss_blind_flg == false) || i != boss_object) && i != player_object && CheckInScreen(object[i]))
 					{
-						object[i]->SetScreenPosition(camera_location);
+						object[i]->SetScreenPosition(camera_location,impact_rand);
 						object[i]->Update(this);
 						move_object_num++;
 						for (int j = i + 1; object[j] != nullptr; j++)
@@ -299,11 +299,23 @@ AbstractScene* GameMain::Update()
 				weather->Update(this);
 			}
 
+
+
 			//プレイヤーの更新
 			PlayerUpdate();
 
+			if (object[player_object] != nullptr) {
+				Player* p;
+				p = dynamic_cast<Player*>(object[player_object]);
+				if (p->GetDebug() > 1) {
+					int a;
+					a = 0;
+				}
+			}
+
 			//ボスの更新
 			BossUpdate();
+
 
 			//管理クラスの更新
 			effect_spawner->Update(this);
@@ -322,13 +334,31 @@ AbstractScene* GameMain::Update()
 				CreateObject(new Stage(1), { 120,560 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
 				CreateObject(new Stage(1), { 120,600 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
 				CreateObject(new Stage(1), { 120,640 }, { BOX_WIDTH,BOX_HEIGHT }, 0);
+				ResourceManager::StartSound(bgm_abnormal, TRUE);
+				boss_blind_timer = 10;
+				boss_blind_flg = false;
 				create_once = true;
 			}
 
+			//一定時間暗転
+			if (--boss_blind_timer < 0)
+			{
+				boss_blind_timer = 0;
+			}
 			//ボスステージに遷移
 			if (now_stage != 2 && object[player_object]->GetLocation().x > stage_width - 100 && object[player_object]->GetLocation().y > stage_height - 300)
 			{
 				SetStage(2, false);
+				boss_blind_flg = true;
+			}
+
+			if (object[player_object] != nullptr) {
+				Player* p;
+				p = dynamic_cast<Player*>(object[player_object]);
+				if (p->GetDebug() > 1) {
+					int a;
+					a = 0;
+				}
 			}
 		}
 
@@ -342,7 +372,8 @@ AbstractScene* GameMain::Update()
 
 		if (KeyInput::OnKey(KEY_INPUT_1))
 		{
-			ResourceManager::StopSound(0);
+			//ResourceManager::StopSound(0);
+			impact = 10;
 		}
 		if (KeyInput::OnKey(KEY_INPUT_2))
 		{
@@ -361,19 +392,16 @@ void GameMain::Draw() const
 
 	SetFontSize(12);
 	back_ground->Draw(camera_location);
-	
 	//for (int i = 0; i < attack_num; i++)
 	//{
 	//	object[boss_attack[i]]->Draw();
 	//}
+	
+	//エフェクトの描画
+	effect_spawner->Draw();
 
-	//フェードイン演出
-	/*if (fadein_flg == true)
-	{
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 - (frame*(255/FADEIN_TIME) +3));
-		DrawBox(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0xffffff, true);
-		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
-	}*/
+	//天気管理クラスの描画
+	weather->Draw();
 
 	if (game_clear_flg)
 	{
@@ -583,7 +611,17 @@ void GameMain::Draw() const
 		}
 		if (CheckInScreen(object[i]) == true)
 		{
-			object[i]->Draw();
+			if (boss_blind_flg == true)
+			{
+				SetDrawBlendMode(DX_BLENDMODE_ALPHA, (int)(255 - sqrtf(powf(fabsf(object[player_object]->GetLocation().x - object[i]->GetLocation().x), 2) + powf(fabsf(object[player_object]->GetLocation().y - object[i]->GetLocation().y), 2))));
+				object[i]->Draw();
+				SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
+			}
+			else
+			{
+				object[i]->Draw();
+
+			}
 		}
 	}
 
@@ -595,6 +633,19 @@ void GameMain::Draw() const
 
 	//プレイヤーを最後に描画
 	object[player_object]->Draw();
+
+	//暗転
+	if (boss_blind_timer > 0)
+	{
+		DrawBox(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0x000000, true);
+	}
+	//フェードイン演出
+	if (fadein_flg == true)
+	{
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 - (frame * (255 / FADEIN_TIME) + 3));
+		DrawBox(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0xffffff, true);
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
+	}
 }
 
 void GameMain::CreateObject(Object* _object, Location _location, Erea _erea, int _color_data)
@@ -649,6 +700,7 @@ void GameMain::DeleteObject(int i, Object* _object)
 		//オブジェクトを前に寄せる
 		for (int j = i; object[j] != nullptr; j++)
 		{
+			object[j] = nullptr;
 			object[j] = object[j + 1];
 			if (object[j] != nullptr)
 			{
@@ -695,7 +747,7 @@ void GameMain::UpdateCamera()
 			}
 			if (object[player_object]->GetCenterLocation().x >= stage_width - (SCREEN_WIDTH / 2))
 			{
-				lock_pos.x = stage_width - (SCREEN_WIDTH / 2);
+				lock_pos.x = (float)stage_width - (SCREEN_WIDTH / 2);
 			}
 			/*lock_pos.x = object[player_object]->GetCenterLocation().x;*/
 			x_pos_set_once = true;
@@ -751,10 +803,23 @@ void GameMain::UpdateCamera()
 			camera_location.x = lock_pos.x - (SCREEN_WIDTH / 2);
 			camera_location.y = lock_pos.y - (SCREEN_HEIGHT / 2);
 		}
+		//カメラ更新（ボスステージ）
 		if (now_stage == 2)
 		{
 			camera_location = { 160,40};
 		}
+
+	//カメラ振動処理
+	if (impact > 0)
+	{
+		impact--;
+		impact_rand =(GetRand(impact) - (impact / 2));
+	}
+	else
+	{
+		impact = 0;
+		impact_rand = 0;
+	}
 }
 
 void GameMain::LoadStageData(int _stage)
@@ -912,7 +977,7 @@ void GameMain::SetStage(int _stage, bool _delete_player)
 		ResourceManager::StopSound(bgm_noise);
 		ResourceManager::StopSound(bgm_abnormal);
 
-		ResourceManager::StartSound(bgm_abnormal,TRUE);
+		boss_blind_flg = true;
 	}
 }
 
@@ -942,6 +1007,11 @@ Location GameMain::GetCameraLocation()
 	return camera_location;
 }
 
+void GameMain::CameraImpact(int _num)
+{
+	impact = _num;
+}
+
 void GameMain::SpawnEffect(Location _location, Erea _erea, int _type, int _time, int _color)
 {
 	effect_spawner->SpawnEffect(_location, _erea, _type, _time, _color);
@@ -961,7 +1031,7 @@ bool GameMain::CheckInScreen(Object* _object)const
 			 _object->GetLocation().x > camera_location.x - _object->GetErea().width - 80 &&
 		     _object->GetLocation().x < camera_location.x + SCREEN_WIDTH + _object->GetErea().width + 80 &&
 		     _object->GetLocation().y > camera_location.y - _object->GetErea().height - 80 &&
-		     _object->GetLocation().y < camera_location.y + SCREEN_HEIGHT + _object->GetErea().height + 80
+		     _object->GetLocation().y < camera_location.y + SCREEN_HEIGHT + _object->GetErea().height + 160
 		    )
 			||
 		    (_object->GetObjectType()==ENEMY &&
@@ -1002,32 +1072,46 @@ void GameMain::DeleteAllObject(bool _player_delete)
 
 void GameMain::PlayerUpdate()
 {
+	
 	//プレイヤーが居ないなら(DeleteObjectされていた、もしくはobject[player_object]がプレイヤーではないなら)
 	if (object[player_object] == nullptr || object[player_object]->GetObjectType() != PLAYER)
 	{
 		//プレイヤーの生成
 		CreateObject(new Player, player_respawn, { PLAYER_HEIGHT,PLAYER_WIDTH }, GREEN);
 	}
-
+	
 	//プレイヤーの更新＆色探知用
 	if (object[player_object] != nullptr)
 	{
-		object[player_object]->SetScreenPosition(camera_location);
+		object[player_object]->SetScreenPosition(camera_location, impact_rand);
 		object[player_object]->Update(this);
 		move_object_num++;
 
 		for (int i = 0; object[i] != nullptr; i++)
 		{
-			if (object[i]->GetObjectType() != PLAYER && object[i]->GetCanSwap() == TRUE) {
+			if (object[i]->GetCanSwap() == TRUE && object[i]->GetObjectType() != PLAYER && boss_blind_flg == false) {
 				object[player_object]->SearchColor(object[i]);
+				if (object[player_object] != nullptr) {
+					Player* p;
+					p = dynamic_cast<Player*>(object[player_object]);
+					if (p->GetDebug() > 1) {
+						int a;
+						a = 0;
+					}
+				}
 			}
+			
 			//各オブジェクトとの当たり判定
 			if (object[i]->HitBox(object[player_object]))
 			{
 				object[i]->Hit(object[player_object]);
 				object[player_object]->Hit(object[i]);
 			}
+
+
 		}
+
+
 
 		//プレイヤーが落下したときに死亡判定とする
 		if (GetPlayerLocation().y > stage_height + 100)
@@ -1038,6 +1122,7 @@ void GameMain::PlayerUpdate()
 			game_over_flg = true;
 		}
 	}
+
 }
 
 void GameMain::BossUpdate()
@@ -1045,7 +1130,7 @@ void GameMain::BossUpdate()
 	//ボスをスローモーションにしないならコメント解除
 	//if (object[boss_object] != nullptr)
 	//{
-	//	object[boss_object]->SetScreenPosition(camera_location);
+	//	object[boss_object]->SetScreenPosition(camera_location,(GetRand(impact) - (impact / 2)));
 	//	object[boss_object]->Update(this);
 	//	move_object_num++;
 	//	for (int i = 0; object[i] != nullptr; i++)

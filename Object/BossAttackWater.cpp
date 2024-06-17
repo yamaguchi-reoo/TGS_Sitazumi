@@ -60,6 +60,8 @@ void BossAttackWater::Update(GameMain* _g)
 
 		if (local_location.x < 0 || local_location.x > 1280 || local_location.y < 0 || local_location.y > 720) {
 			if (this != nullptr) {
+				_g->CameraImpact(15);
+				_g->SpawnEffect(location, erea, ExplosionEffect, 10, BLUE);
 				_g->DeleteObject(object_pos, this);
 			}
 		}
@@ -82,9 +84,10 @@ void BossAttackWater::Update(GameMain* _g)
 	}
 	f_location = local_location;
 	//radに応じた向きに進める
-	f_location.x += 30 * cosf(5.0f * (frame / 5) + M_PI) * cosf(rad);
-	f_location.y += 30 * cosf(5.0f * (frame / 5) + M_PI) * sinf(rad);
+	f_location.x += 30 * cosf(5.0f * (frame / 5) + (float)M_PI) * cosf(rad);
+	f_location.y += 30 * cosf(5.0f * (frame / 5) + (float)M_PI) * sinf(rad);
 	if (hitFlg) {
+		_g->CameraImpact(15);
 		_g->SpawnEffect(location, erea, ExplosionEffect, 10, BLUE);
 		//ここで削除
 		_g->DeleteObject(object_pos,this);
@@ -101,7 +104,6 @@ void BossAttackWater::Draw() const
 			DrawCircleAA(local_location.x + (i * 6), local_location.y - (i * 6), erea.width - (i * 8), 32, GetColor(i * 25, i * 25, 255), TRUE);
 		}
 		//DrawCircleAA(local_location.x + 9, local_location.y - 12, erea.width - 10, 32, GetColor(255, 255, 255), TRUE);
-
 	}
 	DrawCircleAA(f_location.x, f_location.y, f_erea.width, 32, GetColor(100, 100, 255), TRUE);
 	DrawCircleAA(f_location.x, f_location.y, f_erea.width-2, 32, GetColor(120, 120, 255), TRUE);
@@ -110,7 +112,7 @@ void BossAttackWater::Draw() const
 
 void BossAttackWater::Hit(Object* _object)
 {
-	if ((_object->GetObjectType() == BLOCK || _object->GetObjectType() == FIRE) && _object->GetColorData() != WHITE) {
+	if ((_object->GetObjectType() == BLOCK || _object->GetObjectType() == FIRE) && _object->GetColorData() != WHITE && _object->GetIsBossAttack() == FALSE) {
 		_object->SetCanSwap(TRUE);
 		_object->SetColorData(color);
 		hitFlg = true;

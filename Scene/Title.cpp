@@ -143,8 +143,8 @@ AbstractScene* Title::Update()
 		}
 	}
 
-	draw_stick_shift.x = cosf(stick_angle * M_PI * 2) * 5;
-	draw_stick_shift.y = sinf(stick_angle * M_PI * 2) * 5;
+	draw_stick_shift.x = cosf(stick_angle * (float)M_PI * 2) * 5;
+	draw_stick_shift.y = sinf(stick_angle * (float)M_PI * 2) * 5;
 
 
 	
@@ -326,11 +326,11 @@ void Title::Draw()const
 		{
 			if (swap_anim_flg == false)
 			{
-				DrawFormatString(logo_location[i].x + 325, logo_location[i].y + 60, logo_color[i], "%s", logo_string[i]);
+				DrawFormatStringF(logo_location[i].x + 325, logo_location[i].y + 60, logo_color[i], "%s", logo_string[i]);
 			}
 			else
 			{
-				DrawFormatString(logo_location[i].x + 325+GetRand(10)-5, logo_location[i].y + 60 + GetRand(10)-5, logo_color[i], "%s", logo_string[i]);
+				DrawFormatStringF(logo_location[i].x + 325+GetRand(10)-5, logo_location[i].y + 60 + GetRand(10)-5, logo_color[i], "%s", logo_string[i]);
 
 			}
 		}
@@ -344,8 +344,8 @@ void Title::Draw()const
 		{
 			//プレイヤー画像描画
 			DrawPlayer(current_menu);
-			DrawBox(player_location.x - 50, player_location.y + PLAYER_HEIGHT, player_location.x + PLAYER_WIDTH + 50, SCREEN_HEIGHT, 0x000000, TRUE);
-			DrawBox(player_location.x - 50, player_location.y + PLAYER_HEIGHT, player_location.x + PLAYER_WIDTH + 50, SCREEN_HEIGHT + 5, 0xffffff, FALSE);
+			DrawBoxAA(player_location.x - 50, player_location.y + PLAYER_HEIGHT, player_location.x + PLAYER_WIDTH + 50, SCREEN_HEIGHT, 0x000000, TRUE);
+			DrawBoxAA(player_location.x - 50, player_location.y + PLAYER_HEIGHT, player_location.x + PLAYER_WIDTH + 50, SCREEN_HEIGHT + 5, 0xffffff, FALSE);
 
 			//説明UI描画
 			DrawCircleAA(draw_stick_location.x, draw_stick_location.y, 15, 100, 0x000000, TRUE);
@@ -393,7 +393,7 @@ void Title::Draw()const
 				}
 				if (swap_anim_timer <= 30)
 				{
-					DrawFormatStringF(menu_location[i].x + (menu_size[i].width / 2) - (GetDrawStringWidth(menu_string[i], strlen(menu_string[i])) / 2), menu_location[i].y + (menu_size[i].height / 2) - 24, 0xffffff, "%s", menu_string[i]);
+					DrawFormatStringF(menu_location[i].x + (menu_size[i].width / 2) - (GetDrawStringWidth(menu_string[i], (int)strlen(menu_string[i])) / 2), menu_location[i].y + (menu_size[i].height / 2) - 24, 0xffffff, "%s", menu_string[i]);
 					//選択中のメニューに交換カーソルを出す
 					if (current_menu == i)
 					{
@@ -435,7 +435,7 @@ void Title::Draw()const
 				cell.yidx * cellSize_,
 				cellSize_, cellSize_,
 				title_image_handle, true);
-			DrawBoxAA(cell.xidx * cellSize_,
+			DrawBox(cell.xidx * cellSize_,
 				cell.yidx * cellSize_,
 				cell.xidx * cellSize_ + cellSize_,
 				cell.yidx * cellSize_ + cellSize_,

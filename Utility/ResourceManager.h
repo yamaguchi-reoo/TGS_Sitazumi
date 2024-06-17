@@ -65,8 +65,14 @@ public:
 	//ステージアニメーション更新（mainで呼び続ける）
 	static void StageAnimUpdate();
 
+	//ステージ、属性アニメーションをハンドルに保存
+	static void SaveAnimHandle();
+
 	//ステージアニメーション描画
 	static void StageAnimDraw(Location _location,int _type);
+
+	//属性ブロックアニメーション描画
+	static void StageBlockDraw(Location _location, int _type);
 
 	//画像格納
 	static int SetGraph(const char* p);
