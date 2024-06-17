@@ -54,6 +54,8 @@ private:
 	static WaterAnim water_anim[ANIM_BLOCK_NUM];//水アニメーション用ブロック情報格納
 	static int screen;							//画像保存範囲指定
 	static int anim_handle[3];				    //画像保存用
+	static int stage_block_handle[3];		    //画像保存用
+
 public:
 	//各データ削除（mainで一回呼ぶ）
 	static void DeleteResource();

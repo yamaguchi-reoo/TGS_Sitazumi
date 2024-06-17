@@ -17,6 +17,7 @@ WoodAnim ResourceManager::wood_anim[ANIM_BLOCK_NUM];
 WaterAnim ResourceManager::water_anim[ANIM_BLOCK_NUM];
 int ResourceManager::screen = MakeScreen(BOX_WIDTH, BOX_HEIGHT);
 int ResourceManager::anim_handle[3];
+int ResourceManager::stage_block_handle[3];	
 
 void ResourceManager::DeleteResource()
 {
@@ -70,6 +71,7 @@ void ResourceManager::StageAnimUpdate()
 	for (int i = 0; i < 3; i++)
 	{
 		anim_handle[i] = MakeScreen(BOX_WIDTH, BOX_HEIGHT,TRUE);
+		stage_block_handle[i] = MakeScreen(BOX_WIDTH, BOX_HEIGHT,TRUE);
 	}
 
 	//アニメーション用変数
@@ -141,9 +143,9 @@ void ResourceManager::StageAnimUpdate()
 
 void ResourceManager::SaveAnimHandle()
 {
+	//炎
 	SetDrawScreen(anim_handle[0]);
 	ClearDrawScreen();
-	//炎
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 130);
 	DrawBoxAA(0, 0, BOX_WIDTH, BOX_HEIGHT, 0xff0000, true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
@@ -165,13 +167,9 @@ void ResourceManager::SaveAnimHandle()
 		}
 	}
 
-	//GetDrawScreenGraph(0, 0, BOX_WIDTH, BOX_HEIGHT, anim_handle[0]);	//炎をハンドルに保存
-	//ClearDrawScreen();
-
-
+	//草
 	SetDrawScreen(anim_handle[1]);
 	ClearDrawScreen();
-	//草
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 100);
 	DrawBoxAA(0, 0, BOX_WIDTH, BOX_HEIGHT, 0x00ff00, true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
@@ -182,12 +180,10 @@ void ResourceManager::SaveAnimHandle()
 			wood_anim[i].shift2.x,
 			wood_anim[i].shift2.y, 0x00ff00, true);
 	}
-	//GetDrawScreenGraph(0, 0, BOX_WIDTH, BOX_HEIGHT, anim_handle[1]);	//草をハンドルに保存
-	//ClearDrawScreen();
 
+	//水
 	SetDrawScreen(anim_handle[2]);
 	ClearDrawScreen();
-	//水
 	DrawBox(0, 0, BOX_WIDTH, BOX_HEIGHT, 0x0000ff, true);
 	for (int i = 0; i < ANIM_BLOCK_NUM; i++)
 	{
@@ -196,8 +192,54 @@ void ResourceManager::SaveAnimHandle()
 				  water_anim[i].shift1.x + water_anim[i].erea.width,
 				  water_anim[i].shift1.y + water_anim[i].erea.height, 0x0000ee, true);
 	}
-	//GetDrawScreenGraph(0, 0, BOX_WIDTH, BOX_HEIGHT, anim_handle[2]);	//水をハンドルに保存
-	//ClearDrawScreen();
+
+	//溶岩
+	SetDrawScreen(stage_block_handle[0]);
+	ClearDrawScreen();
+	DrawBox(0, 0, BOX_WIDTH, BOX_HEIGHT, 0xff0000, true);
+	for (int i = 0; i < 17; i++)
+	{
+		if (i % 2 == 0)
+		{
+			DrawCircleAA(5 , BOX_HEIGHT - (i * 4)+ (anim /3.7f), 8, 100, 0xff0000, TRUE);
+			DrawCircleAA(15, BOX_HEIGHT - (i * 4)+ (anim /3.7f), 8, 100, 0xff0000, TRUE);
+			DrawCircleAA(25, BOX_HEIGHT - (i * 4)+ (anim /3.7f), 8, 100, 0xff0000, TRUE);
+			DrawCircleAA(35, BOX_HEIGHT - (i * 4)+ (anim /3.7f), 8, 100, 0xff0000, TRUE);
+		}										 		  	
+		else												
+		{													
+			DrawCircleAA(5 , BOX_HEIGHT - (i * 4)+ (anim /3.7f), 8, 100, 0xaa0000, TRUE);
+			DrawCircleAA(15, BOX_HEIGHT - (i * 4)+ (anim /3.7f), 8, 100, 0xaa0000, TRUE);
+			DrawCircleAA(25, BOX_HEIGHT - (i * 4)+ (anim /3.7f), 8, 100, 0xaa0000, TRUE);
+			DrawCircleAA(35, BOX_HEIGHT - (i * 4)+ (anim /3.7f), 8, 100, 0xaa0000, TRUE);
+		}
+	}
+
+	//水源
+	SetDrawScreen(stage_block_handle[1]);
+	ClearDrawScreen();
+	DrawBox(0, 0, BOX_WIDTH, BOX_HEIGHT, 0xff0000, true);
+	for (int i = 0; i < 12; i++)
+	{
+		if (i % 2 == 0)																			
+		{																						
+			DrawCircleAA(5  - (anim / 3), BOX_HEIGHT - (i * 4), 8, 100,0x0000ff, TRUE);		
+			DrawCircleAA(15 - (anim / 3), BOX_HEIGHT - (i * 4), 8, 100,0x0000ff, TRUE);		
+			DrawCircleAA(25 - (anim / 3), BOX_HEIGHT - (i * 4), 8, 100,0x0000ff, TRUE);		
+			DrawCircleAA(35 - (anim / 3), BOX_HEIGHT - (i * 4), 8, 100,0x0000ff, TRUE);		
+			DrawCircleAA(45 - (anim / 3), BOX_HEIGHT - (i * 4), 8, 100,0x0000ff, TRUE);		
+			DrawCircleAA(55 - (anim / 3), BOX_HEIGHT - (i * 4), 8, 100,0x0000ff, TRUE);		
+		}				  													
+		else			  													
+		{				 													
+			DrawCircleAA(5  - (anim / 3), BOX_HEIGHT - (i * 4), 8, 100,0x0000aa, TRUE);
+			DrawCircleAA(15 - (anim / 3), BOX_HEIGHT - (i * 4), 8, 100,0x0000aa, TRUE);
+			DrawCircleAA(25 - (anim / 3), BOX_HEIGHT - (i * 4), 8, 100,0x0000aa, TRUE);
+			DrawCircleAA(35 - (anim / 3), BOX_HEIGHT - (i * 4), 8, 100,0x0000aa, TRUE);
+			DrawCircleAA(45 - (anim / 3), BOX_HEIGHT - (i * 4), 8, 100,0x0000aa, TRUE);
+			DrawCircleAA(55 - (anim / 3), BOX_HEIGHT - (i * 4), 8, 100,0x0000aa, TRUE);
+		}
+	}
 
 	SetDrawScreen(DX_SCREEN_BACK);
 }
@@ -205,60 +247,11 @@ void ResourceManager::SaveAnimHandle()
 void ResourceManager::StageAnimDraw(Location _location, int _type)
 {
 	DrawGraphF(_location.x, _location.y, anim_handle[_type - 3], TRUE);	
-		//switch (_type)
-		//{
-		//	//炎
-		//case FIRE:
-		//	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 40);
-		//	DrawBoxAA(_location.x, _location.y, _location.x + BOX_WIDTH, _location.y + BOX_HEIGHT, 0xff0000, true);
-		//	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
-		//	for (int i = 0; i < ANIM_BLOCK_NUM; i++)
-		//			{
-		//				if (i % 3 == 0)
-		//				{
-		//					DrawBoxAA(fire_anim[i].shift.x + _location.x,
-		//						fire_anim[i].shift.y + _location.y,
-		//						fire_anim[i].shift.x + fire_anim[i].erea.width + _location.x,
-		//						fire_anim[i].shift.y + fire_anim[i].erea.height + _location.y, 0xff9900, true);
-		//				}
-		//				else
-		//				{
-		//					DrawBoxAA(fire_anim[i].shift.x + _location.x,
-		//						fire_anim[i].shift.y + _location.y,
-		//						fire_anim[i].shift.x + fire_anim[i].erea.width + _location.x,
-		//						fire_anim[i].shift.y + fire_anim[i].erea.height + _location.y, 0xff0000, true);
-		//				}
-		//			}
-		//	break;
-		//	//木
-		//case WOOD:
-		//	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 40);
-		//	DrawBoxAA(_location.x, _location.y, _location.x + BOX_WIDTH, _location.y + BOX_HEIGHT, 0x00ff00, true);
-		//	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
-		//	for (int i = 0; i < ANIM_BLOCK_NUM; i++)
-		//	{
-		//		DrawLineAA(wood_anim[i].shift1.x + _location.x,
-		//			wood_anim[i].shift1.y + _location.y,
-		//			wood_anim[i].shift2.x + _location.x,
-		//			wood_anim[i].shift2.y + _location.y, 0x00ff00, true);
-		//	}
-		//	break;
-		//	//水
-		//case WATER:
-		//	DrawBoxAA(_location.x, _location.y, _location.x + BOX_WIDTH, _location.y + BOX_HEIGHT, 0x0000ff, true);
-		//	for (int i = 0; i < ANIM_BLOCK_NUM; i++)
-		//	{
-		//		DrawBoxAA(water_anim[i].shift1.x + _location.x,
-		//			water_anim[i].shift1.y + _location.y,
-		//			water_anim[i].shift1.x + water_anim[i].erea.width + _location.x,
-		//			water_anim[i].shift1.y + water_anim[i].erea.height + _location.y, 0x0000ee, true);
-		//	}
-		//	break;
-		//}
 }
 
 void ResourceManager::StageBlockDraw(Location _location, int _type)
 {
+	DrawGraphF(_location.x, _location.y, stage_block_handle[_type], TRUE);
 
 }
 

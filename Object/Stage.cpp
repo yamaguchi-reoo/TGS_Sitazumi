@@ -221,7 +221,8 @@ void Stage::Draw()const
 			break;
 			//地面(赤、緑、青)
 		case RED_BLOCK:
-			DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, draw_color, true);
+			//DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, draw_color, true);
+			ResourceManager::StageBlockDraw(local_location, 0);
 			break;
 		case GREEN_BLOCK:
 			DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, draw_color, true);
@@ -230,7 +231,9 @@ void Stage::Draw()const
 			DrawBoxAA(local_location.x + 25, local_location.y + 35, local_location.x + 30, local_location.y + 40, 0x00ee00, true);
 			break;
 		case BLUE_BLOCK:
-			DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, draw_color, true);
+			//DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, draw_color, true);
+			ResourceManager::StageBlockDraw(local_location, 1);
+
 			break;
 			//ダメージゾーンの描画
 		case FIRE_BLOCK:

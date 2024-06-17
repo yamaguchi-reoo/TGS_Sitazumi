@@ -42,6 +42,8 @@ void GameMain::Initialize()
 	bgm_noise =  ResourceManager::SetSound("Resource/Sounds/BGM/GameMainNoise.wav");
 	bgm_abnormal = ResourceManager::SetSound("Resource/Sounds/BGM/GameMainAbnormal.wav");
 
+	game_clear_bgm = ResourceManager::SetSound("Resource/Sounds/BGM/GameMainAbnormal.wav");
+
 	cursor_se = ResourceManager::SetSound("Resource/Sounds/Player/cursor.wav");
 	decision_se = ResourceManager::SetSound("Resource/Sounds/System/decision.wav");
 
@@ -106,7 +108,17 @@ AbstractScene* GameMain::Update()
 	{
 		if (game_clear_flg)
 		{
+			
 			cursorOld = cursor;
+			if (set_sound_once == false)
+			{
+				ResourceManager::StopSound(bgm_normal);
+				ResourceManager::StopSound(bgm_noise);
+				ResourceManager::StopSound(bgm_abnormal);
+				ResourceManager::StartSound(bgm_title, TRUE);
+				set_sound_once = true;
+			}
+			
 			if (clear_timer++ > 90) {
 				if (PadInput::TipLeftLStick(STICKL_X) < -0.5f || PadInput::OnButton(XINPUT_BUTTON_DPAD_LEFT))
 				{

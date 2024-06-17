@@ -91,6 +91,8 @@ private:
     int bgm_normal;             //通常BGM
     int bgm_noise;             //ノイズBGM
     int bgm_abnormal;          //異常BGM
+    int game_clear_bgm;
+
 
     int cursor_se;  //かーそるSE 
     int decision_se;    //決定SE
