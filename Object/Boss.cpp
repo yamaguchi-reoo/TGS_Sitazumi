@@ -29,19 +29,20 @@ Boss::Boss() :vector{ 0.0f }, boss_state(BossState::ATTACK), barrier_num(3), dam
 	}
 
 	// wing の初期化
-	/*for (int i = 0; i < wing.size(); i++) {
-		wing[i] = { 0.0f, 0.0f }; 
-		wing_mirror[i] = { 0.0f, 0.0f }; 
-	}*/
-	// wing の初期化
 	wing.fill({ 0.0f,0.0f });
 	wing_mirror.fill({ 0.0f,0.0f });
-
 
 	cunt = 1;
 	c = 1;
 	num = 0;
+
 	boss_anim = 0.0f;
+	shake_anim = 0;
+
+	damage_anim_flg = false;
+	damage_anim_time = 0;
+
+	wing_color = 0;
 }
 
 Boss::~Boss()
@@ -66,6 +67,11 @@ void Boss::Initialize(Location _location, Erea _erea, int _color_data, int _obje
 	barrier_rad[0] = 60;
 	barrier_rad[1] = 55;
 	barrier_rad[2] = 50;
+
+	damage_effect_time = 180;
+	damage_anim_time = 60;
+
+	wing_color = 0x000000;
 
 	LoadPosition();  // 初期化時に座標を読み込む
 }
@@ -124,13 +130,50 @@ void Boss::Update(GameMain* _g)
 		// 時間が0以下になったら
 		if (damage_effect_time <= 0)
 		{
+			damage_effect_time = 180;
 			// バリアを1つ減少
 			barrier_num--;
 			// ダメージフラグを解除
 			damage_flg = false;
+
+			//shake_anim = 0;
 		}
 	}
+	// ダメージを受けている場合のアニメーション処理
+	if (damage_anim_flg) {
+		shake_anim = GetRand(10) - 5;
 
+		damage_anim_time--;
+
+		//color = GetRand(256);
+	
+		int r = GetRand(2);
+		switch (r)
+		{
+		case 0:
+			color = RED;
+			wing_color = RED;
+			break;
+		case 1:
+			color = BLUE;
+			wing_color = BLUE;
+			break;
+		case 2:
+			color = GREEN;
+			wing_color = GREEN;
+			break;
+		default:
+			break;
+		}
+		if (damage_anim_time <= 0)
+		{
+			wing_color = 0x000000;
+			shake_anim = 0;
+			damage_anim_flg = false;
+			damage_anim_time = 60;
+
+		}
+	}
 	//竹攻撃制作中
 	/*if (GetRand(60) > 58 && !f)
 	{
@@ -140,12 +183,16 @@ void Boss::Update(GameMain* _g)
 		_g->CreateObject(new BossAttackWood, l, e, GREEN);
 		f = true;
 	}*/
+
+#ifdef _DEBUG
 	if (KeyInput::OnKey(KEY_INPUT_X))
 	{
-		cunt += 1;
+		/*cunt += 1;
 		if (cunt % 4 == 0) {
 			c += 1;
-		}
+		}*/
+	/*	damage_flg = true;
+		damage_anim_flg = true;*/
 	}
 	if (KeyInput::OnKey(KEY_INPUT_Z))
 	{
@@ -160,19 +207,20 @@ void Boss::Update(GameMain* _g)
 			}
 		}
 	}
+#endif
 }
 
 void Boss::Draw() const
 {
 	//DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, FALSE);
 
-	//本体
-	DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 35, 35, 0x000000, TRUE);
-	DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 35, 34, 0xFFFFFF, FALSE, 3.0f);
-	DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 36, 36, color, FALSE, 2.0f);
+	////本体
+	//DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 35, 35, 0x000000, TRUE);
+	//DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 35, 34, 0xFFFFFF, FALSE, 3.0f);
+	//DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 36, 36, color, FALSE, 2.0f);
 
 	//羽描画
-	DrawWings();
+	//DrawWings();
 
 	// フラグがTRUEだったらバリアを点滅させる
 	if (damage_effect_flg)
@@ -182,10 +230,16 @@ void Boss::Draw() const
 			if(barrier_num > 0) {
 				DrawHexagonSphere();
 				// バリアの描画
-				DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 115, 50, color, FALSE, 3.0f);
-				DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 112.5, 50, color, FALSE, 2.0f);
-				DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 109, 50, color, FALSE);
+				DrawCircleAA(local_location.x + BOSS_SIZE / 2 + shake_anim, local_location.y + BOSS_SIZE / 2 + boss_anim, 115, 50, color, FALSE, 3.0f);
+				DrawCircleAA(local_location.x + BOSS_SIZE / 2 + shake_anim, local_location.y + BOSS_SIZE / 2 + boss_anim, 112.5, 50, color, FALSE, 2.0f);
+				DrawCircleAA(local_location.x + BOSS_SIZE / 2 + shake_anim, local_location.y + BOSS_SIZE / 2 + boss_anim, 109, 50, color, FALSE);
 			}
+			//本体
+			DrawCircleAA(local_location.x + BOSS_SIZE / 2 + shake_anim, local_location.y + BOSS_SIZE / 2 + boss_anim, 35, 35, 0x000000, TRUE);
+			DrawCircleAA(local_location.x + BOSS_SIZE / 2 + shake_anim, local_location.y + BOSS_SIZE / 2 + boss_anim, 35, 34, 0xFFFFFF, FALSE, 3.0f);
+			DrawCircleAA(local_location.x + BOSS_SIZE / 2 + shake_anim, local_location.y + BOSS_SIZE / 2 + boss_anim, 36, 36, color, FALSE, 2.0f);
+
+			DrawWings();
 		}
 	}
 	else
@@ -198,6 +252,12 @@ void Boss::Draw() const
 			DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 112.5, 50, color, FALSE, 2.0f);
 			DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 109, 50, color, FALSE);
 		}
+		//本体
+		DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 35, 35, 0x000000, TRUE);
+		DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 35, 34, 0xFFFFFF, FALSE, 3.0f);
+		DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 36, 36, color, FALSE, 2.0f);
+
+		DrawWings();
 	}
 
 	for (int i = 0; i < barrier_num; ++i) {
@@ -230,7 +290,7 @@ void Boss::Draw() const
 	//SetFontSize(24);
 	//DrawFormatString(800, 30, color, "wingNumber : %d", cunt);
 	//DrawFormatString(800, 50, color, "num : %d", num);
-	//DrawFormatString(800, 50, color, "t : %d", t);
+	DrawFormatString(800, 50, color, "t : %d",damage_anim_time);
 	//DrawFormatString(800, 50, color, "wingmirror : %f", wing_mirror[0].x);
 	//DrawFormatString(800, 80, color, "wingmirror : %f", wing_mirror[0].y);
 
@@ -268,7 +328,9 @@ void Boss::Hit(Object* _object)
 		//バリア減るごとにクールタイムを設ける
 		if (!damage_flg) {
 			damage_flg = true;
-			damage_effect_time = 300;
+			damage_effect_time = 180;
+			damage_anim_flg = true;
+			damage_anim_time = 60;
 		}
 		// バリアがなくなった場合の処理
 		if (barrier_num == 0) {
@@ -408,7 +470,7 @@ void Boss::BossAtack(GameMain *_g)
 				int i = 0;
 				do
 				{
-					x = (GetRand(29)) * 40 + 200;
+					x = (float)(GetRand(29)) * 40 + 200;
 					for (int j = woodNum; j > 0; j--)
 					{
 						if (x != attackWood[j]) {
@@ -449,7 +511,7 @@ void Boss::DrawHexagonSphere() const
 	// バリアの半径の配列を定義
 	float hex_size = 15.0f; // 六角形のサイズ
 
-	//// 六角形の間隔（六角形の内接円の半径の2倍）
+	// 六角形の間隔（六角形の内接円の半径の2倍）
 	float hex_height = (float)sqrt(3) * (float)hex_size / 2; // 六角形の高さ
 
 	for (int i = 0; i <= 9; ++i) { 
@@ -517,12 +579,12 @@ void Boss::DrawWings() const
 		DrawQuadrangleAA(local_location.x + wing[i].x + angle, local_location.y + wing[i].y + angle + delta_y,
 			local_location.x + wing[i + 1].x + 20 + angle, local_location.y + wing[i + 1].y + 10 + angle + delta_y,
 			local_location.x + wing[i + 2].x + 10 + angle, local_location.y + wing[i + 2].y + 20 + angle + delta_y,
-			local_location.x + wing[i + 3].x + angle, local_location.y + wing[i + 3].y + 30 + angle + delta_y, 0x000000, TRUE);
+			local_location.x + wing[i + 3].x + angle, local_location.y + wing[i + 3].y + 30 + angle + delta_y, wing_color, TRUE);
 		//左羽
 		DrawQuadrangleAA(local_location.x + wing_mirror[i].x + 250 - angle, local_location.y + wing_mirror[i].y + angle + delta_y,
 			local_location.x + wing_mirror[i + 1].x - 20 + 250 - angle, local_location.y + wing_mirror[i + 1].y + 10 + angle + delta_y,
 			local_location.x + wing_mirror[i + 2].x - 10 + 250 - angle, local_location.y + wing_mirror[i + 2].y + 20 + angle + delta_y,
-			local_location.x + wing_mirror[i + 3].x + 250 - angle, local_location.y + wing_mirror[i + 3].y + 30 + angle + delta_y, 0x000000, TRUE);
+			local_location.x + wing_mirror[i + 3].x + 250 - angle, local_location.y + wing_mirror[i + 3].y + 30 + angle + delta_y, wing_color, TRUE);
 
 		//右羽
 		DrawQuadrangleAA(local_location.x + wing[i].x + angle, local_location.y + wing[i].y + angle + delta_y,
@@ -539,6 +601,7 @@ void Boss::DrawWings() const
 
 void Boss::UpdateWingPositions()
 {
+#ifdef _DEBUG
 	if (KeyInput::OnKey(KEY_INPUT_W) || KeyInput::OnPresed(KEY_INPUT_W)) {
 		wing[cunt - 1].y -= 1.0f;
 	}
@@ -589,6 +652,7 @@ void Boss::UpdateWingPositions()
 			wing[i].y += wingMove.y - 370;
 		}
 	}
+#endif
 }
 
 void Boss::InvertedWingPositions()

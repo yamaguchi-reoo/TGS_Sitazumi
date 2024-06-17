@@ -211,6 +211,6 @@ public:
     bool GetPauseAfter() { return pause_after_flg; }
 
     // チュートリアルエリアのプレイヤー描画専用
-    void DrawPlayer()const;
+    void GDrawPlayer(int xNum, int yNum, int add)const;
 };
 
