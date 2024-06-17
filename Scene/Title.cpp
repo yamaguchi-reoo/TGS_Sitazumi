@@ -435,7 +435,7 @@ void Title::Draw()const
 				cell.yidx * cellSize_,
 				cellSize_, cellSize_,
 				title_image_handle, true);
-			DrawBoxAA(cell.xidx * cellSize_,
+			DrawBox(cell.xidx * cellSize_,
 				cell.yidx * cellSize_,
 				cell.xidx * cellSize_ + cellSize_,
 				cell.yidx * cellSize_ + cellSize_,

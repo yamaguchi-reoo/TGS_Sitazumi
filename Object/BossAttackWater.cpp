@@ -85,6 +85,7 @@ void BossAttackWater::Update(GameMain* _g)
 	f_location.x += 30 * cosf(5.0f * (frame / 5) + M_PI) * cosf(rad);
 	f_location.y += 30 * cosf(5.0f * (frame / 5) + M_PI) * sinf(rad);
 	if (hitFlg) {
+		_g->CameraImpact(15);
 		_g->SpawnEffect(location, erea, ExplosionEffect, 10, BLUE);
 		//ここで削除
 		_g->DeleteObject(object_pos,this);
@@ -101,7 +102,6 @@ void BossAttackWater::Draw() const
 			DrawCircleAA(local_location.x + (i * 6), local_location.y - (i * 6), erea.width - (i * 8), 32, GetColor(i * 25, i * 25, 255), TRUE);
 		}
 		//DrawCircleAA(local_location.x + 9, local_location.y - 12, erea.width - 10, 32, GetColor(255, 255, 255), TRUE);
-
 	}
 	DrawCircleAA(f_location.x, f_location.y, f_erea.width, 32, GetColor(100, 100, 255), TRUE);
 	DrawCircleAA(f_location.x, f_location.y, f_erea.width-2, 32, GetColor(120, 120, 255), TRUE);

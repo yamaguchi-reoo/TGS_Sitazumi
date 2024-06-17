@@ -43,5 +43,5 @@ public:
 	Erea GetErea()const;
 
 	//オブジェクトのワールド座標をスクリーン座標に変換する
-	void SetScreenPosition(Location _world_to_screen);
+	void SetScreenPosition(Location _world_to_screen, int _impact);
 };

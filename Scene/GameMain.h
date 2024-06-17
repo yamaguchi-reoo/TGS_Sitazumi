@@ -31,6 +31,8 @@ class GameMain :
 {
 private:
     int frame;                                           //フレーム測定
+    int impact;                                          //画面の振動用(ずらす範囲)
+    int impact_rand;                                     //画面の振動用(実際にずらす数値)
     int stage_data[MAX_STAGE_HEIGHT][MAX_STAGE_WIDTH];   //ステージデータ格納
     int player_object;             //プレイヤーが配列の何番目に格納されているか
     int boss_object;    
@@ -146,6 +148,9 @@ public:
 
     //カメラ座標の取得
     Location GetCameraLocation();
+
+    //カメラ振動
+    void CameraImpact(int _num);
 
     //天気の取得
     int GetNowWeather()const { return now_weather; }
