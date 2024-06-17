@@ -402,18 +402,10 @@ AbstractScene* GameMain::Update()
 
 void GameMain::Draw() const
 {
+
 	SetFontSize(12);
 	back_ground->Draw(camera_location);
-	for (int i = 0; object[i] != nullptr; i++)
-	{
-		if (player_object == i) {
-			continue;
-		}
-		if (CheckInScreen(object[i]) == true)
-		{
-			object[i]->Draw();
-		}
-	}
+	
 	//for (int i = 0; i < attack_num; i++)
 	//{
 	//	object[boss_attack[i]]->Draw();
@@ -712,6 +704,17 @@ void GameMain::Draw() const
 		DrawCircleAA(580 - camera_location.x + Gdraw_stick_shift.x + 3800, stage_height - 480 - camera_location.y + Gdraw_stick_shift.y - 120, 18, 100, 0x666666, TRUE);
 	}
 	
+	for (int i = 0; object[i] != nullptr; i++)
+	{
+		if (player_object == i) {
+			continue;
+		}
+		if (CheckInScreen(object[i]) == true)
+		{
+			object[i]->Draw();
+		}
+	}
+
 	//エフェクトの描画
 	effect_spawner->Draw();
 
