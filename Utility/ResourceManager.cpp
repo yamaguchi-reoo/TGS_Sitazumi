@@ -197,23 +197,48 @@ void ResourceManager::SaveAnimHandle()
 	SetDrawScreen(stage_block_handle[0]);
 	ClearDrawScreen();
 	DrawBox(0, 0, BOX_WIDTH, BOX_HEIGHT, 0xff0000, true);
+	for (int i = 0; i < 17; i++)
+	{
+		if (i % 2 == 0)
+		{
+			DrawCircleAA(5 , BOX_HEIGHT - (i * 4)+ (anim /3.7f), 8, 100, 0xff0000, TRUE);
+			DrawCircleAA(15, BOX_HEIGHT - (i * 4)+ (anim /3.7f), 8, 100, 0xff0000, TRUE);
+			DrawCircleAA(25, BOX_HEIGHT - (i * 4)+ (anim /3.7f), 8, 100, 0xff0000, TRUE);
+			DrawCircleAA(35, BOX_HEIGHT - (i * 4)+ (anim /3.7f), 8, 100, 0xff0000, TRUE);
+		}										 		  	
+		else												
+		{													
+			DrawCircleAA(5 , BOX_HEIGHT - (i * 4)+ (anim /3.7f), 8, 100, 0xaa0000, TRUE);
+			DrawCircleAA(15, BOX_HEIGHT - (i * 4)+ (anim /3.7f), 8, 100, 0xaa0000, TRUE);
+			DrawCircleAA(25, BOX_HEIGHT - (i * 4)+ (anim /3.7f), 8, 100, 0xaa0000, TRUE);
+			DrawCircleAA(35, BOX_HEIGHT - (i * 4)+ (anim /3.7f), 8, 100, 0xaa0000, TRUE);
+		}
+	}
+
+	//水源
+	SetDrawScreen(stage_block_handle[1]);
+	ClearDrawScreen();
+	DrawBox(0, 0, BOX_WIDTH, BOX_HEIGHT, 0xff0000, true);
 	for (int i = 0; i < 12; i++)
 	{
-		if (i % 2 == anim/30)
-		{
-			DrawCircle(5, BOX_HEIGHT - (i * 4), 8, 0xff0000, TRUE);
-			DrawCircle(15, BOX_HEIGHT - (i * 4), 8, 0xff0000, TRUE);
-			DrawCircle(25, BOX_HEIGHT - (i * 4), 8, 0xff0000, TRUE);
-			DrawCircle(35, BOX_HEIGHT - (i * 4), 8, 0xff0000, TRUE);
+		if (i % 2 == 0)																			
+		{																						
+			DrawCircleAA(5  - (anim / 3), BOX_HEIGHT - (i * 4), 8, 100,0x0000ff, TRUE);		
+			DrawCircleAA(15 - (anim / 3), BOX_HEIGHT - (i * 4), 8, 100,0x0000ff, TRUE);		
+			DrawCircleAA(25 - (anim / 3), BOX_HEIGHT - (i * 4), 8, 100,0x0000ff, TRUE);		
+			DrawCircleAA(35 - (anim / 3), BOX_HEIGHT - (i * 4), 8, 100,0x0000ff, TRUE);		
+			DrawCircleAA(45 - (anim / 3), BOX_HEIGHT - (i * 4), 8, 100,0x0000ff, TRUE);		
+			DrawCircleAA(55 - (anim / 3), BOX_HEIGHT - (i * 4), 8, 100,0x0000ff, TRUE);		
+		}				  													
+		else			  													
+		{				 													
+			DrawCircleAA(5  - (anim / 3), BOX_HEIGHT - (i * 4), 8, 100,0x0000aa, TRUE);
+			DrawCircleAA(15 - (anim / 3), BOX_HEIGHT - (i * 4), 8, 100,0x0000aa, TRUE);
+			DrawCircleAA(25 - (anim / 3), BOX_HEIGHT - (i * 4), 8, 100,0x0000aa, TRUE);
+			DrawCircleAA(35 - (anim / 3), BOX_HEIGHT - (i * 4), 8, 100,0x0000aa, TRUE);
+			DrawCircleAA(45 - (anim / 3), BOX_HEIGHT - (i * 4), 8, 100,0x0000aa, TRUE);
+			DrawCircleAA(55 - (anim / 3), BOX_HEIGHT - (i * 4), 8, 100,0x0000aa, TRUE);
 		}
-		else
-		{
-			DrawCircle(5, BOX_HEIGHT - (i * 4), 8, 0xaa0000, TRUE);
-			DrawCircle(15, BOX_HEIGHT - (i * 4), 8, 0xaa0000, TRUE);
-			DrawCircle(25, BOX_HEIGHT - (i * 4), 8, 0xaa0000, TRUE);
-			DrawCircle(35, BOX_HEIGHT - (i * 4), 8, 0xaa0000, TRUE);
-		}
-
 	}
 
 	SetDrawScreen(DX_SCREEN_BACK);

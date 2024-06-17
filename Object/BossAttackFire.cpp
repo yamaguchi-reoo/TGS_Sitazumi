@@ -95,7 +95,7 @@ void BossAttackFire::Draw() const
 	ResourceManager::StageAnimDraw({ local_location.x - 20,local_location.y - 20 }, FIRE);
 	DrawCircleAA(local_location.x, local_location.y, erea.width,100, 0xff0000, TRUE);
 	ResourceManager::DrawRotaBox(local_location.x, local_location.y, erea.width, erea.height, local_location.x, local_location.y, 45, 0xff0000, TRUE);
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 120 + (frame%100));
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 120 + (frame%75));
 	DrawCircleAA(local_location.x, local_location.y, erea.width,100, 0x000000, TRUE);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 }

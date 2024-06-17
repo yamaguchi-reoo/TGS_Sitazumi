@@ -36,12 +36,6 @@ struct WaterAnim
 	float shift;		//表示位置ずれ用
 };
 
-//溶岩エフェクト
-struct LavaAnim
-{
-
-};
-
 class ResourceManager
 {
 private:
