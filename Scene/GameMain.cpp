@@ -294,12 +294,12 @@ AbstractScene* GameMain::Update()
 		}
 		else
 		{
-		if (PadInput::OnButton(XINPUT_BUTTON_START) && !game_pause_flg)
+			if (PadInput::OnButton(XINPUT_BUTTON_START) && !game_pause_flg)
 			{
 				game_pause_flg = true;
 			}
 
-		if (PadInput::OnRelease(XINPUT_BUTTON_B) && pause_after_flg)
+			if (PadInput::OnRelease(XINPUT_BUTTON_B) && pause_after_flg)
 			{
 				pause_after_flg = false;
 			}
@@ -343,11 +343,23 @@ AbstractScene* GameMain::Update()
 				weather->Update(this);
 			}
 
+
+
 			//プレイヤーの更新
 			PlayerUpdate();
 
+			if (object[player_object] != nullptr) {
+				Player* p;
+				p = dynamic_cast<Player*>(object[player_object]);
+				if (p->GetDebug() > 1) {
+					int a;
+					a = 0;
+				}
+			}
+
 			//ボスの更新
 			BossUpdate();
+
 
 			//管理クラスの更新
 			effect_spawner->Update(this);
@@ -382,6 +394,15 @@ AbstractScene* GameMain::Update()
 			{
 				SetStage(2, false);
 				boss_blind_flg = true;
+			}
+
+			if (object[player_object] != nullptr) {
+				Player* p;
+				p = dynamic_cast<Player*>(object[player_object]);
+				if (p->GetDebug() > 1) {
+					int a;
+					a = 0;
+				}
 			}
 		}
 
@@ -1179,13 +1200,14 @@ void GameMain::DeleteAllObject(bool _player_delete)
 
 void GameMain::PlayerUpdate()
 {
+	
 	//プレイヤーが居ないなら(DeleteObjectされていた、もしくはobject[player_object]がプレイヤーではないなら)
 	if (object[player_object] == nullptr || object[player_object]->GetObjectType() != PLAYER)
 	{
 		//プレイヤーの生成
 		CreateObject(new Player, player_respawn, { PLAYER_HEIGHT,PLAYER_WIDTH }, GREEN);
 	}
-
+	
 	//プレイヤーの更新＆色探知用
 	if (object[player_object] != nullptr)
 	{
@@ -1197,14 +1219,27 @@ void GameMain::PlayerUpdate()
 		{
 			if (object[i]->GetCanSwap() == TRUE && object[i]->GetObjectType() != PLAYER && boss_blind_flg == false) {
 				object[player_object]->SearchColor(object[i]);
+				if (object[player_object] != nullptr) {
+					Player* p;
+					p = dynamic_cast<Player*>(object[player_object]);
+					if (p->GetDebug() > 1) {
+						int a;
+						a = 0;
+					}
+				}
 			}
+			
 			//各オブジェクトとの当たり判定
 			if (object[i]->HitBox(object[player_object]))
 			{
 				object[i]->Hit(object[player_object]);
 				object[player_object]->Hit(object[i]);
 			}
+
+
 		}
+
+
 
 		//プレイヤーが落下したときに死亡判定とする
 		if (GetPlayerLocation().y > stage_height + 100)
@@ -1215,6 +1250,7 @@ void GameMain::PlayerUpdate()
 			game_over_flg = true;
 		}
 	}
+
 }
 
 void GameMain::BossUpdate()
