@@ -36,6 +36,7 @@ private:
 	int barrier_num;		//バリアの数
 
 	int wing_color;
+	int part_color[3];
 
 	bool damage_flg;				//ダメージを受けたとき
 	int damage_effect_time = 60;	//ダメージエフェクトの持続時間
