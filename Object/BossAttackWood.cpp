@@ -6,7 +6,7 @@ BossAttackWood::BossAttackWood()
 {
 	count = 0;
 	w_type = 0;
-
+	camera_impact_once = false;
 	
 	type = WOOD;
 	can_swap = FALSE;
@@ -38,6 +38,7 @@ void BossAttackWood::Initialize(Location _location, Erea _erea, int _color_data,
 	knot = (int)(_erea.height / 40.f);
 
 	startLoc = _location;
+
 }
 
 void BossAttackWood::Finalize()
@@ -48,6 +49,11 @@ void BossAttackWood::Update(GameMain* _g)
 {
 	__super::Update(_g);
 
+	if (camera_impact_once == false)
+	{
+		_g->CameraImpact(15);
+		camera_impact_once = true;
+	}
 	//if (count > 180) {
 	//	MoveBamboo();
 	//	if (velocity.y == 0.f) {

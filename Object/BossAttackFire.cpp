@@ -83,6 +83,7 @@ void BossAttackFire::Update(GameMain* _g)
 
 	if ((local_location.x < 0 || local_location.x > 1280 || local_location.y < 0 || local_location.y > 720) && hitFlg) {
 		_g->SpawnEffect(location, erea, ExplosionEffect, 10, RED);
+		_g->CameraImpact(15);
 		if (this != nullptr) {
 			_g->DeleteObject(object_pos,this);
 		}

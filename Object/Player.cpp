@@ -76,7 +76,8 @@ Player::Player()
 	circleAng = 0.f;
 	
 
-
+	landing_se = ResourceManager::SetSound("Resource/Sounds/Player/walk_normal.wav");
+	ResourceManager::SetSoundVolume(landing_se, 255);
 	walk_se[0] = ResourceManager::SetSound("Resource/Sounds/Player/walk_normal.wav");
 	walk_se[1] = ResourceManager::SetSound("Resource/Sounds/Player/walk_fire.wav");
 	walk_se[2] = ResourceManager::SetSound("Resource/Sounds/Player/walk_grass.wav");
@@ -167,6 +168,7 @@ void Player::Update(GameMain* _g)
 		if (effect_once == false)
 		{
 			_g->SpawnEffect(location, erea, LandingEffect, 15, color);
+			ResourceManager::StartSound(landing_se);
 			effect_once = true;
 		}
 		vector.y = 0.f;
@@ -181,7 +183,7 @@ void Player::Update(GameMain* _g)
 
 	oldSearchFlg = searchFlg;
 	//Bボタンで色の交換ができるモードと切り替え
-	if (PadInput::OnPressed(XINPUT_BUTTON_B) && !_g->GetPauseAfter()/* && searchedObjFlg*/) {
+	if (PadInput::OnPressed(XINPUT_BUTTON_B) && !_g->GetPauseAfter()/* && searchedObjFlg*/ && swapTimer < 0) {
 		SelectObject();
 		searchFlg = true;
 	}
@@ -196,7 +198,7 @@ void Player::Update(GameMain* _g)
 		//描画する色を白に
 		draw_color = WHITE;
 	}
-	else if (PadInput::OnRelease(XINPUT_BUTTON_B) /*&& !searchedObjFlg*/ /*&& searchedObj == nullptr*/) {//交換できるオブジェクトが画面内になかった時
+	else if (PadInput::OnRelease(XINPUT_BUTTON_B) && swapTimer < 0) /*&& !searchedObjFlg*/ /*&& searchedObj == nullptr*/ {//交換できるオブジェクトが画面内になかった時
 		searchFlg = false;
 	}
 	
@@ -277,6 +279,7 @@ void Player::Update(GameMain* _g)
 	if (damageEffectFlg == true) {
 		if (damageEffectTime == 90) {
 			hp--;
+			_g->CameraImpact(10);
 		}
 		damageEffectTime--;
 		if (damageEffectTime <= 0) {
