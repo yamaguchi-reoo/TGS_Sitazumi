@@ -33,6 +33,7 @@
     <ClCompile Include="Object\EnemyFrog.cpp" />
     <ClCompile Include="Object\Player.cpp" />
     <ClCompile Include="Object\Stage.cpp" />
+    <ClCompile Include="Object\TutorialText.cpp" />
     <ClCompile Include="Object\Weather.cpp" />
     <ClCompile Include="Object\WeatherManager.cpp" />
     <ClCompile Include="Scene\EditScene.cpp" />
@@ -61,6 +62,7 @@
     <ClInclude Include="Object\ColorData.h" />
     <ClInclude Include="Object\Player.h" />
     <ClInclude Include="Object\Stage.h" />
+    <ClInclude Include="Object\TutorialText.h" />
     <ClInclude Include="Object\Weather.h" />
     <ClInclude Include="Object\WeatherManager.h" />
     <ClInclude Include="Scene\AbstractScene.h" />

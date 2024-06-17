@@ -15,6 +15,7 @@
 #include "../Object/BossAttackWood.h"
 #include "../Object/BossAttackWater.h"
 #include "../Object/BossAttackFire.h"
+#include "../Object/TutorialText.h"
 
 class Player;
 
@@ -43,6 +44,7 @@ private:
     EffectSpawner* effect_spawner;                  //エフェクト管理オブジェクト
     BackGround* back_ground;                        //背景描画用
     Object* test;
+    TutorialText tutorial;
     int object_num;         //オブジェクト数
     int move_object_num;    //Updateされているオブジェクト数
     int now_stage;          //現在のステージ数
@@ -65,14 +67,6 @@ private:
     bool player_respawn_flg;    //プレイヤーをリスポーンさせるか判断
     bool create_once;           //一回だけ壁を作る
     bool fadein_flg;            //遷移してきたときのフェードイン演出
-
-    Location Gdraw_stick_location;   //描画するスティックの座標
-    Location Gdraw_stick_shift;   //描画するスティックをずらす座標
-    float Gstick_angle;          //スティックのアングルを保存
-    bool Gbutton_draw[3];           //どの画像を描画するか
-    int GNum;
-    int GColor;
-    int GGNum;
 
     bool game_over_flg;         //ゲームオーバーか
     bool game_clear_flg;
@@ -202,8 +196,5 @@ public:
     Location RotationLocation(Location BaseLoc, Location Loc, float r) const;
 
     bool GetPauseAfter() { return pause_after_flg; }
-
-    // チュートリアルエリアのプレイヤー描画専用
-    void GDrawPlayer(int xNum, int yNum, int add)const;
 };
 

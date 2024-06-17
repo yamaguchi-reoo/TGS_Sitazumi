@@ -301,9 +301,9 @@ void EnemyDeer::Draw()const
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 	}
 
-	for (int i = 0; i < 4; i++) {
+	/*for (int i = 0; i < 4; i++) {
 		DrawFormatString(1100, 20* i, 0xfffff, "%f", leg_angle[i]);
-	}
+	}*/
 }
 
 void EnemyDeer::EnemyDeerMove()

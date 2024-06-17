@@ -18,7 +18,7 @@
 static Location camera_location = { 0,0};	//カメラの座標
 static Location screen_origin = { (SCREEN_WIDTH / 2),(SCREEN_HEIGHT / 2) };
 
-GameMain::GameMain(int _stage) :frame(0), stage_data{ 0 }, now_stage(0), object_num(0), stage_width_num(0), stage_height_num(0), stage_width(0), stage_height(0), camera_x_lock_flg(true), camera_y_lock_flg(true), x_pos_set_once(false), y_pos_set_once(false), player_object(0), boss_object(0), weather(0), weather_timer(0), move_object_num(0), player_flg(false), player_respawn_flg(false), fadein_flg(true), create_once(false), game_over_flg(false), game_clear_flg(false), game_pause_flg(false), pause_after_flg(false), cursor(0), GNum(0), GColor(GREEN), Gbutton_draw{ false, false, false}, GGNum(0), clear_timer(0), set_sound_once(false)
+GameMain::GameMain(int _stage) :frame(0), stage_data{ 0 }, now_stage(0), object_num(0), stage_width_num(0), stage_height_num(0), stage_width(0), stage_height(0), camera_x_lock_flg(true), camera_y_lock_flg(true), x_pos_set_once(false), y_pos_set_once(false), player_object(0), boss_object(0), weather(0), weather_timer(0), move_object_num(0), player_flg(false), player_respawn_flg(false), fadein_flg(true), create_once(false), game_over_flg(false), game_clear_flg(false), game_pause_flg(false), pause_after_flg(false), cursor(0), clear_timer(0), set_sound_once(false)
 {
 	now_stage = _stage;
 }
@@ -94,51 +94,7 @@ AbstractScene* GameMain::Update()
 	//カメラの更新
 	UpdateCamera();
 
-	if (frame % 10 == 0)
-	{
-		Gbutton_draw[0] = !Gbutton_draw[0];
-	}
-	if (frame % 60 == 0)
-	{
-		Gbutton_draw[1] = !Gbutton_draw[1];
-	}
-	// チュートリアルエリア：左スティック
-	Gstick_angle += 0.05f;
-	if (Gstick_angle > 1)
-	{
-		Gstick_angle = 0;
-	}
-
-	Gdraw_stick_shift.x = cosf(Gstick_angle * M_PI * 2) * 5;
-	Gdraw_stick_shift.y = sinf(Gstick_angle * M_PI * 2) * 5;
-
-	if (GetPlayerLocation().x >= 1540.0f && GetPlayerLocation().y <= 2580.0f)
-	{
-		if (GColor == GREEN && GNum != 26 || GColor == BLUE && GNum < 160)
-		{
-			GNum += 2;
-		}
-		else
-		{
-			GNum;
-			GGNum++;
-			if (GGNum > 60)
-			{
-				if (GColor == GREEN)
-				{
-					GColor = BLUE;
-				}
-				else
-				{
-					GColor = GREEN;
-				}
-
-				GGNum = 0;
-				GNum = 0;
-			}
-					
-		}
-	}
+	tutorial.Update(camera_location, GetPlayerLocation(), stage_height);
 
 	//演出の終了
 	if ((frame > FADEIN_TIME || PadInput::OnButton(XINPUT_BUTTON_B)) && fadein_flg == true)
@@ -617,93 +573,9 @@ void GameMain::Draw() const
 	// 2023 - camera_location.x, stage_height - 357 - camera_location.y
 
 	// チュートリアルテキストはボスエリアで描画しない
-	if (now_stage != 2)
-	{
-		SetFontSize(50);
-		// 最初のチュートリアルテキストボックス
-		DrawBoxAA(515 - camera_location.x, stage_height - 546 - camera_location.y, 903 - camera_location.x, stage_height - 317 - camera_location.y, 0xffffff, FALSE, 3.0f);
-		DrawBoxAA(518 - camera_location.x, stage_height - 543 - camera_location.y, 900 - camera_location.x, stage_height - 320 - camera_location.y, 0x555555, TRUE, 3.0f);
-
-		// 左スティック：移動の説明
-		DrawCircleAA(580 - camera_location.x, stage_height - 480 - camera_location.y, 25, 100, 0x000000, TRUE);
-		DrawCircleAA(580 - camera_location.x, stage_height - 480 - camera_location.y, 25, 100, 0x666666, FALSE, 3.0f);
-		DrawCircleAA(580 - camera_location.x + Gdraw_stick_shift.x, stage_height - 480 - camera_location.y + Gdraw_stick_shift.y, 18, 100, 0x666666, TRUE);
-		DrawStringF(610 - camera_location.x, stage_height - 500 - camera_location.y, "：Move", 0xffffff);
-
-		if (Gbutton_draw[0] == false)
-		{
-			// A ボタンイメージ描画
-			DrawCircleAA(577 - camera_location.x, stage_height - 460 - camera_location.y + 60, 25, 100, 0x557b0e, FALSE);
-			DrawStringF(577 - camera_location.x - 12, stage_height - 460 - camera_location.y + 38, "A", 0x557b0e);
-		}
-		else
-		{
-			DrawCircleAA(577 - camera_location.x, stage_height - 460 - camera_location.y + 55, 25, 100, 0x557b0e, TRUE);
-			DrawCircleAA(577 - camera_location.x, stage_height - 460 - camera_location.y + 60, 25, 100, 0x557b0e, TRUE);
-			DrawStringF(577 - camera_location.x - 12, stage_height - 460 - camera_location.y + 33, "A", 0x000000);
-		}
-		DrawStringF(610 - camera_location.x, stage_height - 428 - camera_location.y, "：Jump", 0xffffff);
-
-		// 色ブロックに乗れるかチュートリアルテキスト
-		DrawBoxAA(1742 - camera_location.x, stage_height - 700 - camera_location.y, 2073 - camera_location.x, stage_height - 397 - camera_location.y, 0xffffff, FALSE, 3.0f);
-		DrawBoxAA(1745 - camera_location.x, stage_height - 697 - camera_location.y, 2070 - camera_location.x, stage_height - 400 - camera_location.y, 0x555555, TRUE, 3.0f);
-		
-		// 緑ブロック描画
-		if (GColor == GREEN)
-		{
-			DrawCircleAA(1960 - camera_location.x, stage_height - 630 - camera_location.y, 40, 100, 0xCC3300, FALSE, 10.0f);
-			for (int i = 0; i < 160; i += 40)
-			{
-				DrawBoxAA(1800 - camera_location.x + i, stage_height - 540 - camera_location.y, 1840 - camera_location.x + i, stage_height - 500 - camera_location.y, GColor, TRUE);
-				DrawBoxAA(1810 - camera_location.x + i, stage_height - 540 - camera_location.y + 20, 1815 - camera_location.x + i, stage_height - 540 - camera_location.y + 25, 0x999999, true);
-				DrawBoxAA(1830 - camera_location.x + i, stage_height - 540 - camera_location.y + 15, 1835 - camera_location.x + i, stage_height - 540 - camera_location.y + 20, 0x999999, true);
-				DrawBoxAA(1825 - camera_location.x + i, stage_height - 540 - camera_location.y + 35, 1830 - camera_location.x + i, stage_height - 540 - camera_location.y + 40, 0x999999, true);
-			}
-		}
-		else
-		{
-			DrawLineAA(1910 - camera_location.x, stage_height - 680 - camera_location.y, 2012 - camera_location.x, stage_height - 580 - camera_location.y, 0x3300CC, 20.0f);
-			DrawLineAA(2012 - camera_location.x, stage_height - 680 - camera_location.y, 1910 - camera_location.x, stage_height - 580 - camera_location.y, 0x3300CC, 20.0f);
-
-			// 青ブロック描画
-			for (int i = 0; i < 160; i += 40)
-			{
-				DrawBoxAA(1800 - camera_location.x + i, stage_height - 540 - camera_location.y, 1840 - camera_location.x + i, stage_height - 500 - camera_location.y, GColor, TRUE);
-			}
-		}
-		// チュートリアルテキスト プレイヤー描画
-		GDrawPlayer(0,0, GNum);
-
-		// 色交換のチュートリアルテキスト
-		DrawBoxAA(4100 - camera_location.x, stage_height - 650 - camera_location.y, 4503 - camera_location.x, stage_height - 400 - camera_location.y, 0xffffff, FALSE, 3.0f);
-		DrawBoxAA(4103 - camera_location.x, stage_height - 647 - camera_location.y, 4500 - camera_location.x, stage_height - 403 - camera_location.y, 0x555555, TRUE, 3.0f);
-
-		if (Gbutton_draw[1] == false)
-		{
-			// B ボタンイメージ描画
-			DrawCircleAA(577 - camera_location.x + 3600, stage_height - 460 - camera_location.y + 60 - 200, 25, 100, 0xc5482c, FALSE);
-			DrawStringF(577 - camera_location.x - 12 + 3600, stage_height - 460 - camera_location.y + 38 - 200, "B", 0xc5482c);
-		}
-		else
-		{
-			DrawCircleAA(577 - camera_location.x + 3600, stage_height - 460 - camera_location.y + 55 - 200, 25, 100, 0xc5482c, TRUE);
-			DrawCircleAA(577 - camera_location.x + 3600, stage_height - 460 - camera_location.y + 60 - 200, 25, 100, 0xc5482c, TRUE);
-			DrawStringF(577 - camera_location.x - 12 + 3600, stage_height - 460 - camera_location.y + 33 - 200, "B", 0x000000);
-		}
-		// チュートリアルテキスト プレイヤー描画
-		GDrawPlayer(2350, -130, 0);
-
-		// 赤ブロック
-		DrawBoxAA(1800 - camera_location.x + 2600, stage_height - 540 - camera_location.y + 40, 1840 - camera_location.x + 2600, stage_height - 500 - camera_location.y + 40,  RED, TRUE);
-
-		DrawStringF(4210 - camera_location.x, stage_height - 623 - camera_location.y, "＋", 0xffffff);
-
-		// 左スティック描画
-		DrawCircleAA(580 - camera_location.x + 3800, stage_height - 480 - camera_location.y - 120, 25, 100, 0x000000, TRUE);
-		DrawCircleAA(580 - camera_location.x + 3800, stage_height - 480 - camera_location.y - 120, 25, 100, 0x666666, FALSE, 3.0f);
-		DrawCircleAA(580 - camera_location.x + Gdraw_stick_shift.x + 3800, stage_height - 480 - camera_location.y + Gdraw_stick_shift.y - 120, 18, 100, 0x666666, TRUE);
-	}
 	
+	tutorial.Draw();
+
 	for (int i = 0; object[i] != nullptr; i++)
 	{
 		if (player_object == i) {
@@ -1203,49 +1075,6 @@ void GameMain::BossUpdate()
 void GameMain::SetNowCurrentObject(Object* _object)
 {
 	now_current_object = _object;
-}
-
-void GameMain::GDrawPlayer(int xNum, int yNum, int add_y)const
-{
-	// 1830 - camera_location.x, stage_height - 646 - camera_location.y 
-
-	//頭
-	ResourceManager::DrawRotaBox(1830 - xNum - camera_location.x, stage_height - 646 + yNum - camera_location.y - add_y, 23, 15, 1830 - camera_location.x, stage_height - 646 - camera_location.y, 0, GREEN, true);
-	ResourceManager::DrawRotaBox(1830 - xNum - camera_location.x, stage_height - 646 + yNum - camera_location.y - add_y, 23, 15, 1830 - camera_location.x, stage_height - 646 - camera_location.y, 0, 0x000000, false);
-
-	//目
-	ResourceManager::DrawRotaBox(1824 - xNum - camera_location.x, stage_height - 646 + yNum - camera_location.y - add_y, 6, 7, 1830 - camera_location.x, stage_height - 646 - camera_location.y, 0, 0x000000, true);
-
-	//首
-	ResourceManager::DrawRotaBox(1830 - xNum - camera_location.x, stage_height - 660 + yNum - camera_location.y - add_y, 10, 5, 1830 - camera_location.x, stage_height - 646 - camera_location.y, 0, GREEN, true);
-	ResourceManager::DrawRotaBox(1830 - xNum - camera_location.x, stage_height - 660 + yNum - camera_location.y - add_y, 10, 5, 1830 - camera_location.x, stage_height - 646 - camera_location.y, 0, 0x000000, false);
-
-	//胴体																					
-	ResourceManager::DrawRotaBox(1830 - xNum - camera_location.x, stage_height - 686 + yNum - camera_location.y - add_y, 21, 37, 1830 - camera_location.x, stage_height - 646 - camera_location.y, 0, GREEN, true);
-	ResourceManager::DrawRotaBox(1830 - xNum - camera_location.x, stage_height - 686 + yNum - camera_location.y - add_y, 21, 37, 1830 - camera_location.x, stage_height - 646 - camera_location.y, 0, 0x000000, false);
-
-	//バッグ
-	ResourceManager::DrawRotaBox(1845 - xNum - camera_location.x, stage_height - 686 + yNum - camera_location.y - add_y, 5, 23, 1830 - camera_location.x, stage_height - 646 - camera_location.y, 0, GREEN, true);
-	ResourceManager::DrawRotaBox(1845 - xNum - camera_location.x, stage_height - 686 + yNum - camera_location.y - add_y, 5, 23, 1830 - camera_location.x, stage_height - 646 - camera_location.y, 0, 0x000000, false);
-	ResourceManager::DrawRotaBox(1845 - xNum - camera_location.x, stage_height - 686 + yNum - camera_location.y - add_y, 3, 15, 1830 - camera_location.x, stage_height - 646 - camera_location.y, 0, 0x000000, true);
-
-	//腕
-	ResourceManager::DrawRotaBox(1815 - xNum - camera_location.x, stage_height - 616 + yNum - camera_location.y - add_y, 28, 7, 1830 - camera_location.x, stage_height - 616 - camera_location.y, 0, GREEN, true);
-	ResourceManager::DrawRotaBox(1815 - xNum - camera_location.x, stage_height - 616 + yNum - camera_location.y - add_y, 28, 7, 1830 - camera_location.x, stage_height - 616 - camera_location.y, 0, 0x000000, false);
-
-	//足												 														
-	ResourceManager::DrawRotaBox(1830 - xNum - camera_location.x, stage_height - 651 + yNum - camera_location.y - add_y, 7, 27, 1830 - camera_location.x, stage_height - 616 - camera_location.y, 0, GREEN, true);
-	ResourceManager::DrawRotaBox(1830 - xNum - camera_location.x, stage_height - 651 + yNum - camera_location.y - add_y, 7, 27, 1830 - camera_location.x, stage_height - 616 - camera_location.y, 0, 0x000000, false);
-
-	//帽子　中央
-	DrawTriangleAA(1830 + xNum - camera_location.x, stage_height - 667 - yNum - camera_location.y + add_y, 1820 + xNum - camera_location.x, stage_height - 651 - yNum - camera_location.y + add_y, 1840 + xNum - camera_location.x, stage_height - 651 - yNum - camera_location.y + add_y, GREEN, true);
-	DrawTriangleAA(1830 + xNum - camera_location.x , stage_height - 667 - yNum - camera_location.y + add_y, 1820 + xNum - camera_location.x, stage_height - 651 - yNum - camera_location.y + add_y, 1840 + xNum - camera_location.x, stage_height - 651 - yNum - camera_location.y + add_y, 0x000000, false);
-	//帽子　右側
-	DrawTriangleAA(1830 + xNum - camera_location.x, stage_height - 667 - yNum - camera_location.y + add_y, 1840 + xNum - camera_location.x, stage_height - 651 - yNum - camera_location.y + add_y, 1850 + xNum - camera_location.x, stage_height - 655 - yNum - camera_location.y + add_y, GREEN, true);
-	DrawTriangleAA(1830 + xNum - camera_location.x, stage_height - 667 - yNum - camera_location.y + add_y, 1840 + xNum - camera_location.x, stage_height - 651 - yNum - camera_location.y + add_y, 1850 + xNum - camera_location.x, stage_height - 655 - yNum - camera_location.y + add_y, 0x000000, false);
-	//帽子　左側
-	DrawTriangleAA(1830 + xNum - camera_location.x, stage_height - 667 - yNum - camera_location.y + add_y, 1810 + xNum - camera_location.x, stage_height - 655 - yNum - camera_location.y + add_y, 1820 + xNum - camera_location.x, stage_height - 651 - yNum - camera_location.y + add_y, GREEN, true);
-	DrawTriangleAA(1830 + xNum - camera_location.x, stage_height - 667 - yNum - camera_location.y + add_y, 1810 + xNum - camera_location.x, stage_height - 655 - yNum - camera_location.y + add_y, 1820 + xNum - camera_location.x, stage_height - 651 - yNum - camera_location.y + add_y, 0x000000, false);
 }
 
 Location GameMain::RotationLocation(Location BaseLoc, Location Loc, float r) const
