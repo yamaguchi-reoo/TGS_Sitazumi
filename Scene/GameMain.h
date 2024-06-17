@@ -79,6 +79,8 @@ private:
     bool game_pause_flg;
     bool pause_after_flg;
 
+    bool set_sound_once;
+
     int clear_timer;
 
     int cursor;
@@ -87,6 +89,7 @@ private:
     float circleAng;
 
 
+    int bgm_title;             //通常BGM
     int bgm_normal;             //通常BGM
     int bgm_noise;             //ノイズBGM
     int bgm_abnormal;          //異常BGM
@@ -189,7 +192,7 @@ public:
     void SetNowCurrentObject(Object* _object);
 
     //ゲームオーバーかどうかを設定
-    void SetGameOverFlg(bool f) { game_over_flg = f; }
+    void SetGameOverFlg(bool f) { game_over_flg = f;}
 
     //ゲームクリアかどうかを設定
     void SetGameClearFlg(bool f) { game_clear_flg = f; }

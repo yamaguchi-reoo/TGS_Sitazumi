@@ -18,7 +18,7 @@
 static Location camera_location = { 0,0};	//カメラの座標
 static Location screen_origin = { (SCREEN_WIDTH / 2),(SCREEN_HEIGHT / 2) };
 
-GameMain::GameMain(int _stage) :frame(0), stage_data{ 0 }, now_stage(0), object_num(0), stage_width_num(0), stage_height_num(0), stage_width(0), stage_height(0), camera_x_lock_flg(true), camera_y_lock_flg(true), x_pos_set_once(false), y_pos_set_once(false), player_object(0), boss_object(0), weather(0), weather_timer(0), move_object_num(0), player_flg(false), player_respawn_flg(false), fadein_flg(true), create_once(false), game_over_flg(false), game_clear_flg(false), game_pause_flg(false), pause_after_flg(false), cursor(0), GNum(0), GColor(GREEN), Gbutton_draw{ false, false, false}, GGNum(0), clear_timer(0)
+GameMain::GameMain(int _stage) :frame(0), stage_data{ 0 }, now_stage(0), object_num(0), stage_width_num(0), stage_height_num(0), stage_width(0), stage_height(0), camera_x_lock_flg(true), camera_y_lock_flg(true), x_pos_set_once(false), y_pos_set_once(false), player_object(0), boss_object(0), weather(0), weather_timer(0), move_object_num(0), player_flg(false), player_respawn_flg(false), fadein_flg(true), create_once(false), game_over_flg(false), game_clear_flg(false), game_pause_flg(false), pause_after_flg(false), cursor(0), GNum(0), GColor(GREEN), Gbutton_draw{ false, false, false}, GGNum(0), clear_timer(0), set_sound_once(false)
 {
 	now_stage = _stage;
 }
@@ -37,8 +37,9 @@ void GameMain::Initialize()
 	effect_spawner = new EffectSpawner();
 	effect_spawner->Initialize();
 
+	bgm_title =  ResourceManager::SetSound("Resource/Sounds/BGM/Title.wav");
 	bgm_normal = ResourceManager::SetSound("Resource/Sounds/BGM/GameMainNormal.wav");
-	bgm_noise = ResourceManager::SetSound("Resource/Sounds/BGM/GameMainNoise.wav");
+	bgm_noise =  ResourceManager::SetSound("Resource/Sounds/BGM/GameMainNoise.wav");
 	bgm_abnormal = ResourceManager::SetSound("Resource/Sounds/BGM/GameMainAbnormal.wav");
 
 	cursor_se = ResourceManager::SetSound("Resource/Sounds/Player/cursor.wav");
@@ -61,6 +62,7 @@ void GameMain::Initialize()
 void GameMain::Finalize()
 {
 	//BGMを止める
+	ResourceManager::StopSound(bgm_title);
 	ResourceManager::StopSound(bgm_normal);
 	ResourceManager::StopSound(bgm_noise);
 	ResourceManager::StopSound(bgm_abnormal);
@@ -86,9 +88,6 @@ void GameMain::Finalize()
 
 AbstractScene* GameMain::Update()
 {
-	//BGM音量更新
-	ResourceManager::SetSoundVolume(bgm_normal, 255 - (int)(camera_location.x / 100));
-	ResourceManager::SetSoundVolume(bgm_noise,  (int)(camera_location.x/100));
 
 	//フレーム測定
 	frame++;
@@ -191,6 +190,15 @@ AbstractScene* GameMain::Update()
 		else if (game_over_flg)
 		{
 			cursorOld = cursor;
+			if (set_sound_once == false)
+			{
+				ResourceManager::StopSound(bgm_normal);
+				ResourceManager::StopSound(bgm_noise);
+				ResourceManager::StopSound(bgm_abnormal);
+				ResourceManager::StartSound(bgm_title, TRUE);
+				set_sound_once = true;
+			}
+
 			if (PadInput::TipLeftLStick(STICKL_X) < -0.5f || PadInput::OnButton(XINPUT_BUTTON_DPAD_LEFT))
 			{
 				cursor = 0;
@@ -210,9 +218,22 @@ AbstractScene* GameMain::Update()
 				if (cursor == 0)
 				{
 					ResourceManager::StartSound(decision_se);
+					set_sound_once = false;
 					SetStage(now_stage, true);
 					game_over_flg = false;
 					pause_after_flg = true;
+					ResourceManager::StopSound(bgm_title);
+					//BGMの再生
+					if (now_stage == 0)
+					{
+						ResourceManager::StartSound(bgm_normal, TRUE);
+						ResourceManager::StartSound(bgm_noise, TRUE);
+					}
+					else if (now_stage == 2)
+					{
+
+						ResourceManager::StartSound(bgm_abnormal, TRUE);
+					}
 				}
 				else
 				{
@@ -228,6 +249,10 @@ AbstractScene* GameMain::Update()
 		}
 		else if (game_pause_flg)
 		{
+			//BGM音量更新
+			ResourceManager::SetSoundVolume(bgm_normal, 155 - (int)(camera_location.x / 100));
+			ResourceManager::SetSoundVolume(bgm_noise, (int)(camera_location.x / 100) - 50);
+			ResourceManager::SetSoundVolume(bgm_abnormal, 100);
 			cursorOld = cursor;
 			if (PadInput::TipLeftLStick(STICKL_X) < -0.5f || PadInput::OnButton(XINPUT_BUTTON_DPAD_LEFT))
 			{
@@ -274,6 +299,9 @@ AbstractScene* GameMain::Update()
 			{
 				pause_after_flg = false;
 			}
+		//BGM音量更新
+		ResourceManager::SetSoundVolume(bgm_normal, 255 - (int)(camera_location.x / 100));
+		ResourceManager::SetSoundVolume(bgm_noise, (int)(camera_location.x / 100));
 			//リセット
 			move_object_num = 0;
 			//各オブジェクトの更新
