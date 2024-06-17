@@ -16,19 +16,20 @@ private:
 	float Gstick_angle;          //スティックのアングルを保存
 	bool Gbutton_draw[3];           //どの画像を描画するか
 	int GNum;
-	int GColor;
-	int GGNum;
-	int frame;
-
-	int stage_height;
-
-public:
-	TutorialText();
-	~TutorialText();
-
-	void Update(Location camera, Location _p, int height);
+	int GColor;															 
+	int GGNum;															 
+	int frame;															 
+																		 
+	int stage_height;													 
+																		 
+public:																	 
+	TutorialText();														 
+	~TutorialText();													 
+																		 
+	void Update(Location camera, Location _p, int height);				 
 	void Draw()const;
 	void GDrawPlayer(int xNum, int yNum, int add_y)const;
+	void GDrawFrag()const;
 };
 
 

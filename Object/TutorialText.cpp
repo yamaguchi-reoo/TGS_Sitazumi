@@ -72,8 +72,6 @@ void TutorialText::Update(Location camera , Location _p, int height)
 
 void TutorialText::Draw() const
 {
-
-	
 	SetFontSize(50);
 	// 最初のチュートリアルテキストボックス
 	DrawBoxAA(515 - in_camera.x, stage_height - 546 - in_camera.y, 903 - in_camera.x, stage_height - 317 - in_camera.y, 0xffffff, FALSE, 3.0f);
@@ -199,4 +197,21 @@ void TutorialText::GDrawPlayer(int xNum, int yNum, int add_y)const
 	//帽子　左側
 	DrawTriangleAA(1830 + xNum - in_camera.x, stage_height - 667 - yNum - in_camera.y + add_y, 1810 + xNum - in_camera.x, stage_height - 655 - yNum - in_camera.y + add_y, 1820 + xNum - in_camera.x, stage_height - 651 - yNum - in_camera.y + add_y, GREEN, true);
 	DrawTriangleAA(1830 + xNum - in_camera.x, stage_height - 667 - yNum - in_camera.y + add_y, 1810 + xNum - in_camera.x, stage_height - 655 - yNum - in_camera.y + add_y, 1820 + xNum - in_camera.x, stage_height - 651 - yNum - in_camera.y + add_y, 0x000000, false);
+}
+
+void TutorialText::GDrawFrag()const
+{
+	//胴体
+	//ResourceManager::DrawRotaBox(location.x + (erea.width / 2), location.y + (erea.height / 2), erea.width, erea.height / 2, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, draw_color, TRUE);
+
+	//付け根側後ろ足
+	//ResourceManager::DrawRotaBox(1830 - in_camera.x + 50 - 10, location.y + 20, 30, 10, location.x + (50 / 2), location.y + (50 / 2), 0, RED, TRUE);
+	//ResourceManager::DrawRotaBox(1830 - in_camera.x + 50 - 10, location.y + 20, 30, 10, location.x + (50 / 2), location.y + (50 / 2), 0, 0x000000, FALSE);
+	
+	//後ろ足先端
+	//ResourceManager::DrawRotaBox(1830 - in_camera.x + 50 - 10, location.y + 10, 40, 10, location.x + (50 / 2), location.y + (50 / 2), 0, RED, TRUE);
+	//ResourceManager::DrawRotaBox(1830 - in_camera.x + 50 - 10, location.y + 10, 40, 10, location.x + (50 / 2), location.y + (50 / 2), 0, 0x000000, FALSE);
+	
+	//目
+	//ResourceManager::DrawRotaBox(1830 - in_camera.x, location.y + 50 - 20, 10, 10, location.x + (50 / 2), location.y + (50 / 2), 0, 0xffffff, TRUE);
 }

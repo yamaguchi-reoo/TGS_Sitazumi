@@ -602,8 +602,11 @@ void GameMain::Draw() const
 
 	// チュートリアルテキストはボスエリアで描画しない
 	
-	tutorial.Draw();
-
+	if (now_stage != 2)
+	{
+		tutorial.Draw();
+	}
+	
 	for (int i = 0; object[i] != nullptr; i++)
 	{
 		if (player_object == i) {
