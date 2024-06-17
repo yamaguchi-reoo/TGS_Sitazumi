@@ -37,11 +37,12 @@ Boss::Boss() :vector{ 0.0f }, boss_state(BossState::ATTACK), barrier_num(3), dam
 	wing.fill({ 0.0f,0.0f });
 	wing_mirror.fill({ 0.0f,0.0f });
 
-
 	cunt = 1;
 	c = 1;
 	num = 0;
+
 	boss_anim = 0.0f;
+	damege_anim = 0;
 }
 
 Boss::~Boss()
@@ -117,6 +118,7 @@ void Boss::Update(GameMain* _g)
 
 	// ダメージを受けている場合の処理
 	if (damage_flg) {
+		damege_anim = GetRand(10) - 5;
 		// 時間を減少
 		damage_effect_time--;
 		// フラグを設定
@@ -128,6 +130,8 @@ void Boss::Update(GameMain* _g)
 			barrier_num--;
 			// ダメージフラグを解除
 			damage_flg = false;
+
+			damege_anim = 0;
 		}
 	}
 
@@ -166,10 +170,10 @@ void Boss::Draw() const
 {
 	//DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, FALSE);
 
-	//本体
-	DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 35, 35, 0x000000, TRUE);
-	DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 35, 34, 0xFFFFFF, FALSE, 3.0f);
-	DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 36, 36, color, FALSE, 2.0f);
+	////本体
+	//DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 35, 35, 0x000000, TRUE);
+	//DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 35, 34, 0xFFFFFF, FALSE, 3.0f);
+	//DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 36, 36, color, FALSE, 2.0f);
 
 	//羽描画
 	DrawWings();
@@ -182,9 +186,13 @@ void Boss::Draw() const
 			if(barrier_num > 0) {
 				DrawHexagonSphere();
 				// バリアの描画
-				DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 115, 50, color, FALSE, 3.0f);
-				DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 112.5, 50, color, FALSE, 2.0f);
-				DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 109, 50, color, FALSE);
+				DrawCircleAA(local_location.x + BOSS_SIZE / 2 + damege_anim, local_location.y + BOSS_SIZE / 2 + boss_anim, 115, 50, color, FALSE, 3.0f);
+				DrawCircleAA(local_location.x + BOSS_SIZE / 2 + damege_anim, local_location.y + BOSS_SIZE / 2 + boss_anim, 112.5, 50, color, FALSE, 2.0f);
+				DrawCircleAA(local_location.x + BOSS_SIZE / 2 + damege_anim, local_location.y + BOSS_SIZE / 2 + boss_anim, 109, 50, color, FALSE);
+				//本体
+				DrawCircleAA(local_location.x + BOSS_SIZE / 2 + damege_anim, local_location.y + BOSS_SIZE / 2 + boss_anim, 35, 35, 0x000000, TRUE);
+				DrawCircleAA(local_location.x + BOSS_SIZE / 2 + damege_anim, local_location.y + BOSS_SIZE / 2 + boss_anim, 35, 34, 0xFFFFFF, FALSE, 3.0f);
+				DrawCircleAA(local_location.x + BOSS_SIZE / 2 + damege_anim, local_location.y + BOSS_SIZE / 2 + boss_anim, 36, 36, color, FALSE, 2.0f);
 			}
 		}
 	}
@@ -197,6 +205,10 @@ void Boss::Draw() const
 			DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 115, 50, color, FALSE , 3.0f);
 			DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 112.5, 50, color, FALSE, 2.0f);
 			DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 109, 50, color, FALSE);
+			//本体
+			DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 35, 35, 0x000000, TRUE);
+			DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 35, 34, 0xFFFFFF, FALSE, 3.0f);
+			DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 36, 36, color, FALSE, 2.0f);
 		}
 	}
 
@@ -268,7 +280,7 @@ void Boss::Hit(Object* _object)
 		//バリア減るごとにクールタイムを設ける
 		if (!damage_flg) {
 			damage_flg = true;
-			damage_effect_time = 300;
+			damage_effect_time = 180;
 		}
 		// バリアがなくなった場合の処理
 		if (barrier_num == 0) {
@@ -408,7 +420,7 @@ void Boss::BossAtack(GameMain *_g)
 				int i = 0;
 				do
 				{
-					x = (GetRand(29)) * 40 + 200;
+					x = (float)(GetRand(29)) * 40 + 200;
 					for (int j = woodNum; j > 0; j--)
 					{
 						if (x != attackWood[j]) {

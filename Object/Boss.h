@@ -39,8 +39,11 @@ private:
 	int damage_effect_time = 60;	//ダメージエフェクトの持続時間
 	bool damage_effect_flg = false; // ダメージエフェクトのフラグ
 
+	int damege_anim;
+
 	float speed;				//移動速度;
 
+	//計算用
 	int cunt;
 	int c;
 	int num;
@@ -54,7 +57,7 @@ private:
 	std::array<Location, 40> wing_mirror;//ミラー羽の位置情報
 
 	int wing_fps; //羽の加算用
-	float boss_anim;
+	float boss_anim;//アニメーション用
 
 	bool f = false;
 	bool oldF = false;
