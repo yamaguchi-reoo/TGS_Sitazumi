@@ -91,7 +91,7 @@ void Help::Draw()const
 
 	//DrawFormatString(30, 30, 0xffffff, "%d", hStrWidth);
 
-	DrawFormatString(1100, 60, GetColor(255, 0, 0), "%d %d", KeyInput::GetMouseCursor().x, KeyInput::GetMouseCursor().y);
+	//DrawFormatString(1100, 60, GetColor(255, 0, 0), "%d %d", KeyInput::GetMouseCursor().x, KeyInput::GetMouseCursor().y);
 	//DrawFormatString(700, 100, GetColor(255, 0, 0), "menu : %d",MenuNumber);
 
 	
@@ -107,8 +107,8 @@ void Help::Draw()const
 	DrawBoxAA(10.f, 590.f, 300.f, 700.f, 0xeeeeee, FALSE, 7.0f);
 
 	// 中心線
-	DrawLineAA(0.f, 360.f, 1280.f, 360.f, 0xff0000);
-	DrawLineAA(640.f, 0.f, 640.f, 720.f, 0xff0000);
+	//DrawLineAA(0.f, 360.f, 1280.f, 360.f, 0xff0000);
+	//DrawLineAA(640.f, 0.f, 640.f, 720.f, 0xff0000);
 
 	//SetFontSize(40);
 	//DrawString(70, 600, " GAME\nSTART", 0xffffff);
@@ -191,9 +191,9 @@ void Help::Draw()const
 
 		SetFontSize(30);
 		//DrawString(650, 370, "矢印の方向に強い", 0xffffff);			//矢印の方向に強い
-		DrawString(710, 110, "   Red\n(Fire)", 0xFFFF55);			//赤\n(火属性)
-		DrawString(450, 525, "   Blue\n(Water)", 0xFFFF55);			//青\n(水属性)
-		DrawString(1000, 520, "  Green\n(Wood)", 0xFFFF55);			//緑\n(木属性)
+		DrawString(710, 110, "  Red\n(Fire)", 0xFFFF55);			//赤\n(火属性)
+		DrawString(450, 525, "  Blue\n(Water)", 0xFFFF55);			//青\n(水属性)
+		DrawString(1000, 520, " Green\n(Wood)", 0xFFFF55);			//緑\n(木属性)
 
 		break;
 	case 4: //タイトルへ
