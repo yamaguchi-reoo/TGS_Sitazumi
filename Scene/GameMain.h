@@ -157,7 +157,7 @@ public:
     void SetNowWeather(int _wearher) { now_weather = _wearher; }
 
     //エフェクトの生成
-    void SpawnEffect(Location _location, Erea _erea, int _type, int _time,int _color);
+    void SpawnEffect(Location _location, Erea _erea, int _type, int _time,int _color, float _angle = 0.0f);
 
     //交換アニメーション
     int Swap(Object* _object1, Object* _object2);
