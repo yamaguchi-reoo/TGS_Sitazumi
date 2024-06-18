@@ -54,29 +54,7 @@ void BossAttackWood::Update(GameMain* _g)
 		_g->CameraImpact(15);
 		camera_impact_once = true;
 	}
-	//if (count > 180) {
-	//	MoveBamboo();
-	//	if (velocity.y == 0.f) {
-	//		_g->DeleteObject(object_pos);
-	//	}
-	//}
-	//else {//プレイヤーを探す
-	//	if (location.x - _g->GetPlayerLocation().x < 0.f) {//プレイヤーより右
-	//		velocity.x += 0.1f;
-	//		if (velocity.x > 5.f) {
-	//			velocity.x = 5.f;
-	//		}
-	//	}
-	//	else if (location.x - _g->GetPlayerLocation().x > 0.f) {
-	//		velocity.x -= 0.1f;
-	//		if (velocity.x < -5.f) {
-	//			velocity.x = -5.f;
-	//		}
-	//	}
-
-	//	location.x += velocity.x;
-	//}
-
+	
 
 	MoveBamboo();
 	if (velocity.y == 0.f) {

@@ -5,9 +5,8 @@
 #include "../Utility/PadInput.h"
 #include "../Utility/KeyInput.h"
 #include "../Utility/ResourceManager.h"
-#include <string.h>
 
-Help::Help()
+Help::Help():l_help_red{ 360.f, 60.f }, l_help_blue{ 420.f, 60.f }, l_help_fire{ 360, 200 }, l_help_water{ 420, 200 }, l_help_wood{ 480, 200 }, l_help_bamboo{ 540, 200 }, l_help_respawn{ 450, 340 }
 {
 
 }
@@ -88,11 +87,7 @@ AbstractScene* Help::Update()
 
 void Help::Draw()const
 {
-	//DrawString(0, 10, "Help", 0x00ff00);
-
-	//DrawFormatString(30, 30, 0xffffff, "%d", hStrWidth);
-
-	//DrawFormatString(1100, 60, GetColor(255, 0, 0), "%d %d", KeyInput::GetMouseCursor().x, KeyInput::GetMouseCursor().y);
+	DrawFormatString(1100, 60, GetColor(255, 0, 0), "%d %d", KeyInput::GetMouseCursor().x, KeyInput::GetMouseCursor().y);
 	//DrawFormatString(700, 100, GetColor(255, 0, 0), "menu : %d",MenuNumber);
 
 	
@@ -114,7 +109,7 @@ void Help::Draw()const
 	//SetFontSize(40);
 	//DrawString(70, 600, " GAME\nSTART", 0xffffff);
 
-	SetFontSize(50); //デフォルトでは 6
+	SetFontSize(49); //デフォルトでは 6
 	// 多分漢字の一文字の長さは 25
 	DrawString(40, 50, "UserGuide", 0xffffff);			//操作方法
 	DrawString(100, 190, "Stage", 0xffffff);		//色について(色ブロックとかダメージゾーンとか)
@@ -143,7 +138,7 @@ void Help::Draw()const
 		DrawCircleAA(500.f, 355.f, 30.f, 32, 0xc5482c);
 		DrawString(488, 332, "B", 0xffffff);
 		DrawString(630, 310, "B Button\n(LongPress)", 0xffffff);	//Bボタン\n(長押し)
-		DrawString(840, 330, "：ColorSwap", 0xffffff);			//：色の交換
+		DrawString(925, 330, ":ColorSwap", 0xffffff);			//：色の交換
 
 		DrawCircleAA(390.f, 500.f, 50.f, 32, 0x1c2b3e);
 		DrawCircleAA(390.f, 500.f, 30.f, 32, 0xc5482c);
@@ -153,7 +148,7 @@ void Help::Draw()const
 		DrawBox(525, 460, 555, 545, 0x211d1e, TRUE);
 		DrawBox(500, 490, 580, 515, 0x211d1e, TRUE);
 		DrawString(630, 450, "B(Pressing)\nD-Pad", 0xffffff);	//B(長押し中)\n十字カーソル
-		DrawString(925, 470, "：ColorSelect", 0xffffff);					//：色の選択
+		DrawString(925, 470, ":ColorSelect", 0xffffff);					//：色の選択
 
 		DrawCircleAA(390.f, 620.f, 50.f, 32, 0x1c2b3e);
 		DrawCircleAA(390.f, 620.f, 30.f, 32, 0xc5482c);
@@ -162,11 +157,50 @@ void Help::Draw()const
 		DrawCircleAA(540.f, 620.f, 50.f, 32, 0x1c2b3e);
 		DrawCircleAA(540.f, 620.f, 30.f, 32, 0x525156);
 		DrawString(630, 578, "B(Pressing)\nLeftStick", 0xffffff);	//B(長押し中)\n左スティック
-		DrawString(925, 590, "：ColorSelect", 0xffffff);					//：色の選択
+		DrawString(925, 590, ":ColorSelect", 0xffffff);					//：色の選択
 
 		break;
-	case 2:	//色
+	case 2:	//Stage 横並びで説明 
 		DrawLineAA(30.f, 240.f, 280.f, 240.f, 0xff0000, 5.0f);
+
+		// 色の交換できるブロックの説明
+		DrawBoxAA(360.f, 60.f, 400.f, 100.f, RED, TRUE);
+		ResourceManager::StageBlockDraw(l_help_red, 0);
+
+		DrawBoxAA(420.f, 60.f, 460.f, 100.f, BLUE, TRUE);
+		ResourceManager::StageBlockDraw(l_help_blue, 1);
+
+		DrawBoxAA(480.f, 60.f, 520.f, 100.f, GREEN, TRUE);
+		DrawBoxAA(490.f, 80.f, 495.f, 85.f, 0x00ee00, TRUE);
+		DrawBoxAA(505.f, 95.f, 510.f, 100.f, 0x00ee00, TRUE);
+		DrawBoxAA(510.f, 75.f, 515.f, 80.f, 0x00ee00, TRUE);
+		
+		DrawString(620, 60, "ColorSwap OK", 0xffffff);
+
+		// ダメージゾーンの説明
+		ResourceManager::StageAnimDraw(l_help_fire, 3);
+		ResourceManager::StageAnimDraw(l_help_water, 5);
+		ResourceManager::StageAnimDraw(l_help_wood, 4);
+
+		DrawBoxAA(l_help_bamboo.x + 3, l_help_bamboo.y, l_help_bamboo.x + BOX_WIDTH - 3, l_help_bamboo.y + BOX_HEIGHT, 0x00cc00, true);
+		DrawBoxAA(l_help_bamboo.x + 2, l_help_bamboo.y, l_help_bamboo.x + BOX_WIDTH - 2, l_help_bamboo.y + 2, 0x00ff00, true);
+		DrawBoxAA(l_help_bamboo.x + 2, l_help_bamboo.y + BOX_HEIGHT, l_help_bamboo.x + BOX_WIDTH - 2, l_help_bamboo.y + BOX_HEIGHT - 2, 0x00ff00, true);
+		DrawBoxAA(l_help_bamboo.x + 10, l_help_bamboo.y + 2, l_help_bamboo.x + 13, l_help_bamboo.y + BOX_HEIGHT - 2, 0x00ee00, true);
+
+		DrawString(620, 200, "ColorSwap NG", 0xffffff);
+
+		// 中間地点の説明
+		DrawTriangleAA(l_help_respawn.x + (BOX_WIDTH / 2), l_help_respawn.y,l_help_respawn.x + BOX_WIDTH, l_help_respawn.y + (BOX_HEIGHT / 4),l_help_respawn.x + (BOX_WIDTH / 2), l_help_respawn.y + (BOX_HEIGHT / 2), 0xffffff, TRUE);
+
+		DrawBoxAA(l_help_respawn.x + (BOX_WIDTH / 2) - 2, l_help_respawn.y, l_help_respawn.x + (BOX_WIDTH / 2) + 2, l_help_respawn.y + BOX_HEIGHT, 0xffffff, TRUE);
+		DrawBoxAA(l_help_respawn.x, l_help_respawn.y + BOX_HEIGHT - 4, l_help_respawn.x + BOX_WIDTH, l_help_respawn.y + BOX_HEIGHT, 0xffffff, TRUE);
+
+		DrawString(620, 330, "Respawn Point", 0xffffff);
+
+		// Aボタンを押すと次のページ
+		// プレイヤーについての説明
+		
+
 		break;
 	case 3: //属性
 
@@ -187,8 +221,8 @@ void Help::Draw()const
 		DrawCircleAA(1060.f, 550.f, 100.f, 32, 0x6aa84f, TRUE);
 		
 		DrawLineAA(840.f, 240.f, 980.f, 445.f, 0xffffff, 10.0f);
-		DrawLineAA(832.f, 291.f, 840.f, 240.f, 0xffffff, 10.0f);
-		DrawLineAA(840.f, 240.f, 891.f, 250.f, 0xffffff, 10.0f);
+		DrawLineAA(982.f, 440.f, 980.f, 380.f, 0xffffff, 10.0f);
+		DrawLineAA(918.f, 426.f, 973.f, 440.f, 0xffffff, 10.0f);
 
 		SetFontSize(30);
 		//DrawString(650, 370, "矢印の方向に強い", 0xffffff);			//矢印の方向に強い

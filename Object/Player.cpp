@@ -128,7 +128,15 @@ void Player::Update(GameMain* _g)
 	//意図しない変更を防止
 	SavePlayerSound();
 
-	fps = 0;
+	if (searchFlg) {
+		if (fps++ > 6000) {
+			fps = 0;
+		}
+	}
+	else {
+		fps = 0;
+	}
+
 	//移動エフェクト
 	if (vector.x != 0 || vector.y != 0)
 	{
@@ -144,14 +152,24 @@ void Player::Update(GameMain* _g)
 		switch (state)
 		{
 		case 0:
-			vector.y += 1.f;
+			if (searchFlg) {
+				vector.y += 1.f * 0.02f;
+			}
+			else {
+				vector.y += 1.f;
+			}
 			if (vector.y > 16.f) {
 				vector.y = 16.f;
 			}
 			break;
 
 		case 1:
-			vector.y += 0.5f;
+			if (searchFlg) {
+				vector.y += 0.5f * 0.02f;
+			}
+			else {
+				vector.y += 0.5f;
+			}
 			if (vector.y > 8.f) {
 				vector.y = 8.f;
 			}
@@ -274,11 +292,12 @@ void Player::Update(GameMain* _g)
 	if (damageFlg == true && !damageOldFlg && d == 1) {
 		if (damageEffectFlg == false) {
 			damageEffectFlg = true;
+			hp--;
 		}
 	}
 	if (damageEffectFlg == true) {
 		if (damageEffectTime == 90) {
-			hp--;
+			
 			_g->CameraImpact(10);
 			_g->SpawnEffect(location, erea, DamageEffect, 20, color);
 		}
@@ -360,6 +379,8 @@ void Player::Update(GameMain* _g)
 void Player::Draw()const
 {
 	//DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, FALSE, 2.f);
+	
+	//DrawFormatString(0, 180, 0xff0000, "%0.1f %0.1f", location.x, location.y);
 
 	if(hp <= 0){
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 - (deathTimer * 2));
@@ -406,6 +427,32 @@ void Player::Draw()const
 		DrawCircleAA(l[2].x, l[2].y, 15, 32, 0x6aa84f, TRUE);
 	
 	}
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
+
+	if (searchFlg) {
+		int j = 0;
+		for (int i = fps; i > 0; i--)
+		{
+			if (i % 1 == 0) {
+				j++;
+				if (j > 10) {
+					j = 10;
+					break;
+				}
+			}
+		}
+
+		int _erea = 20;
+		for (int i = 0; i < j; i++)
+		{
+			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 110 - i * 10);
+			DrawBox(i * _erea, i * _erea, SCREEN_WIDTH - i * _erea, i * _erea + _erea, 0x000000, true);//上
+			DrawBox(i * _erea, SCREEN_HEIGHT - i * _erea - _erea, SCREEN_WIDTH - i * _erea, SCREEN_HEIGHT - i * _erea, 0x000000, true);//下
+			DrawBox(i * _erea, i * _erea + _erea, i * _erea + _erea, SCREEN_HEIGHT - i * _erea - _erea, 0x000000, true);//左
+			DrawBox(SCREEN_WIDTH - i * _erea - _erea, i * _erea + _erea, SCREEN_WIDTH - i * _erea, SCREEN_HEIGHT - i * _erea - _erea, 0x000000, true);//右
+		}
+	}
+	
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 }
 
@@ -727,21 +774,12 @@ bool Player::SearchColor(Object* ob)
 				posRelNum[0]++;
 				posRelNum[1] = 0;
 			}
-			if (moveFrontFlg > 1) {
-				int a;
-				a = 0;
-			}
+			
 			int x = (int)ob->GetLocalLocation().x / 40;
 			int y = (int)ob->GetLocalLocation().y / 40;
-			if (moveFrontFlg > 1) {
-				int a;
-				a = 0;
-			}
+			
 			posRelation[y][x] = objNum;
-			if (moveFrontFlg > 1) {
-				int a;
-				a = 0;
-			}
+		
 			objNum++;
 			
 
