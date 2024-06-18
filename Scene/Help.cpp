@@ -8,6 +8,7 @@
 
 Help::Help():l_help_red{ 360.f, 60.f }, l_help_blue{ 420.f, 60.f }, l_help_fire{ 360, 200 }, l_help_water{ 420, 200 }, l_help_wood{ 480, 200 }, l_help_bamboo{ 540, 200 }, l_help_respawn{ 450, 340 }
 {
+
 }
 
 Help::~Help()

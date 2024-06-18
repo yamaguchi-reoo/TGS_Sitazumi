@@ -123,7 +123,7 @@ void Boss::Update(GameMain* _g)
 			break;
 		case BossState::DEATH:
 			_g->DeleteObject(object_pos, this);
-			_g->SetGameClearFlg(true);
+			_g->UpdateState(GameMainState::GameClear);
 			break;
 		default:
 			break;
