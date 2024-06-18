@@ -472,19 +472,21 @@ void Boss::BossAtack(GameMain *_g)
 				
 				float x;
 				int i = 0;
+				bool flg;
 				do
 				{
 					x = (float)(GetRand(29)) * 40 + 200;
-					for (int j = woodNum; j > 0; j--)
+					flg = false;
+					for (int j = 0; j < 3; j++)
 					{
-						if (x != attackWood[j]) {
-							i = 99;
+						if (x == attackWood[j])
+						{
+							flg = true;
 						}
 					}
-				} while (i++ < 3);
+				} while (flg);
 
 				l.x = x;
-
 				l.y = 930.f;
 
 				attackWood[woodNum++] = l.x;
@@ -499,6 +501,10 @@ void Boss::BossAtack(GameMain *_g)
 				boss_state = BossState::MOVE;
 				woodNum = 0;
 				t = 0;
+				for (int i = 0; i < 3; i++)
+				{
+					attackWood[i] = 0.f;
+				}
 			}
 			break;
 		}
