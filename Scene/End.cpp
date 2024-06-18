@@ -33,4 +33,6 @@ void End::Draw()const
 {
 	SetFontSize(90);
 	DrawString(0, 10, "End", 0x00ff00);
+
+	DrawFormatString(20, 20, 0xffffff, "");
 }
