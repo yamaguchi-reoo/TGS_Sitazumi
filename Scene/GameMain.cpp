@@ -906,26 +906,28 @@ void GameMain::UpdatePause()
 	ResourceManager::SetSoundVolume(bgm_noise, (int)(camera_location.x / 100) - 50);
 	ResourceManager::SetSoundVolume(bgm_abnormal, 100);
 	cursorOld = cursor;
-	if (PadInput::TipLeftLStick(STICKL_X) < -0.5f)
+
+	if (PadInput::TipLeftLStick(STICKL_X) < -0.5f && move_cursor_once == false)
 	{
-		cursor = 0;
-		if (cursorOld != cursor) {
-			ResourceManager::StartSound(cursor_se);
+		if (--cursor < 0)
+		{
+			cursor = 2;
 		}
+		ResourceManager::StartSound(cursor_se);
+		move_cursor_once = true;
 	}
-	else if (PadInput::TipLeftLStick(STICKL_X) > 0.5f)
+	else if (PadInput::TipLeftLStick(STICKL_X) > 0.5f && move_cursor_once == false)
 	{
-		cursor = 2;
-		if (cursorOld != cursor) {
-			ResourceManager::StartSound(cursor_se);
+		if (++cursor > 2)
+		{
+			cursor = 0;
 		}
+		ResourceManager::StartSound(cursor_se);
+		move_cursor_once = true;
 	}
-	else
+	else if(PadInput::TipLeftLStick(STICKL_X) < 0.2f && PadInput::TipLeftLStick(STICKL_X) > -0.2f)
 	{
-		cursor = 1;
-		if (cursorOld != cursor) {
-			ResourceManager::StartSound(cursor_se);
-		}
+		move_cursor_once = false;
 	}
 	if (PadInput::OnButton(XINPUT_BUTTON_DPAD_LEFT))
 	{
@@ -933,6 +935,7 @@ void GameMain::UpdatePause()
 		{
 			cursor = 2;
 		}
+		ResourceManager::StartSound(cursor_se);
 	}
 	if (PadInput::OnButton(XINPUT_BUTTON_DPAD_RIGHT))
 	{
@@ -940,6 +943,7 @@ void GameMain::UpdatePause()
 		{
 			cursor = 0;
 		}
+		ResourceManager::StartSound(cursor_se);
 	}
 
 	if (PadInput::OnButton(XINPUT_BUTTON_B) || PadInput::OnButton(XINPUT_BUTTON_START)) {
@@ -976,8 +980,8 @@ void GameMain::DrawPause()const
 	DrawBoxAA(200, 410, 500, 510, 0x000000, TRUE);
 	DrawBoxAA(200, 410, 500, 510, 0xffffff, FALSE);
 
-	DrawBoxAA(470, 410, 770, 510, 0x000000, TRUE);
-	DrawBoxAA(470, 410, 770, 510, 0xffffff, FALSE);
+	DrawBoxAA(480, 410, 780, 510, 0x000000, TRUE);
+	DrawBoxAA(480, 410, 780, 510, 0xffffff, FALSE);
 
 	DrawBoxAA(780, 410, 1080, 510, 0x000000, TRUE);
 	DrawBoxAA(780, 410, 1080, 510, 0xffffff, FALSE);
@@ -1059,6 +1063,7 @@ void GameMain::UpdateGameClear()
 		ResourceManager::StopSound(bgm_noise);
 		ResourceManager::StopSound(bgm_abnormal);
 		ResourceManager::StartSound(game_clear_bgm, FALSE);
+		back_ground->SetIsClear(true);
 		set_sound_once = true;
 	}
 

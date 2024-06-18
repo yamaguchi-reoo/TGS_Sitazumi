@@ -90,8 +90,9 @@ private:
     int cursor;
     int cursorOld;
     Location cursor_location; 
+    bool move_cursor_once;  //ポーズカーソルを一回だけ移動させる
     float circleAng;
-
+    
 
     int bgm_title;             //通常BGM
     int bgm_normal;             //通常BGM

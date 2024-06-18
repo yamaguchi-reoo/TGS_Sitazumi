@@ -6,8 +6,9 @@ private:
 	Erea bg_erea;		//背景の幅
 	Erea stage_erea;	//ステージの幅
 	int now_stage;			//現在のステージ数
-
+	bool is_clear;			//クリア演出中か
 	int font_handle[2];        //使用フォント
+	int bg_handle;			//背景保存
 public:
 	BackGround();
 	~BackGround();
@@ -19,4 +20,5 @@ public:
 	void DrawWood(Location _shift_location, float move_speed)const;
 	void DrawMountain(Location _shift_location, Erea _erea,float move_speed)const;
 	void SetNowStage(int _now_stage) { now_stage = _now_stage; }
+	void SetIsClear(bool _flg) { is_clear = _flg; }
 };
