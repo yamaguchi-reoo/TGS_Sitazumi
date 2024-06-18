@@ -141,20 +141,26 @@ void EnemyBat::Draw() const
 		//右羽
 		else if (i >= 6 && i  < 14) {
 			// 羽の動き
+			DrawLineAA(vertices[7].x, vertices[7].y + wing_angle, vertices[8].x + wing_angle, vertices[8].y, 0x000000);
+			DrawLineAA(vertices[6].x, vertices[6].y - 2, vertices[7].x, vertices[7].y - 2 + wing_angle, 0x000000);
+			//DrawTriangleAA(vertices[i].x - 1, vertices[i].y - 1, vertices[i + 1].x - 1, vertices[i + 1].y - 1 + wing_angle, vertices[i + 2].x + wing_angle - 1, vertices[i + 2].y - 1, 0x000000, FALSE);
 			DrawTriangleAA(vertices[i].x, vertices[i].y, vertices[i + 1].x, vertices[i + 1].y + wing_angle, vertices[i + 2].x + wing_angle, vertices[i + 2].y , draw_color, TRUE);
-			//DrawTriangleAA(vertices[i].x, vertices[i].y, vertices[i + 1].x, vertices[i + 1].y + wing_angle, vertices[i + 2].x + wing_angle, vertices[i + 2].y , 0x000000a, FALSE);
+		
 		}
 		//左羽
 		else if (i >= 15 && i < 23) {
 			// 羽の動き
+			DrawLineAA(vertices[16].x, vertices[16].y - 2 +wing_angle, vertices[17].x - wing_angle, vertices[17].y, 0x000000);
+			DrawLineAA(vertices[15].x, vertices[15].y - 2, vertices[16].x ,vertices[16].y - 2 + wing_angle, 0x000000);
+			//DrawTriangleAA(vertices[i].x + 1, vertices[i].y + 1, vertices[i + 1].x + 1, vertices[i + 1].y - 1 + wing_angle, vertices[i + 2].x - 3 - wing_angle, vertices[i + 2].y - 3, 0x000000, FALSE);
 			DrawTriangleAA(vertices[i].x, vertices[i].y, vertices[i + 1].x, vertices[i + 1].y + wing_angle, vertices[i + 2].x - wing_angle, vertices[i + 2].y, draw_color, TRUE);
-			//DrawTriangleAA(vertices[i].x, vertices[i].y, vertices[i + 1].x, vertices[i + 1].y + wing_angle, vertices[i + 2].x - wing_angle, vertices[i + 2].y, 0x000000a, FALSE);
+			
 		}
 		//ひし形の描画
 		else if (i + 3 < vertices.size())
 		{
 			DrawQuadrangleAA(vertices[i].x, vertices[i].y,vertices[i + 1].x, vertices[i + 1].y,vertices[i + 2].x, vertices[i + 2].y,vertices[i + 3].x, vertices[i + 3].y, draw_color, TRUE);
-			DrawQuadrangleAA(vertices[i].x, vertices[i].y,vertices[i + 1].x, vertices[i + 1].y,vertices[i + 2].x, vertices[i + 2].y,vertices[i + 3].x, vertices[i + 3].y, 0x000000a, FALSE);
+			DrawQuadrangleAA(vertices[i].x, vertices[i].y,vertices[i + 1].x, vertices[i + 1].y,vertices[i + 2].x, vertices[i + 2].y,vertices[i + 3].x, vertices[i + 3].y, 0x000000, FALSE);
 			i++;
 		}
 	}
@@ -186,18 +192,18 @@ void EnemyBat::Move(GameMain* _g)
 
 	if (bat_state == BatState::DEATH) {
 		//自分の色が青のとき吸われてく
-		if (this->color == BLUE)
-		{
-			if (++death_timer > 60)
-				if (this != nullptr) {
-					_g->DeleteObject(object_pos, this);
-				}
-		}
-		else {
+
+		if (++death_timer > 60) {
 			if (this != nullptr) {
 				_g->DeleteObject(object_pos, this);
 			}
 		}
+		
+		/*else {
+			if (this != nullptr) {
+				_g->DeleteObject(object_pos, this);
+			}
+		}*/
 	}
 }
 

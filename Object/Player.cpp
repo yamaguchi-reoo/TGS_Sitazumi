@@ -403,6 +403,12 @@ void Player::Draw()const
 
 	//DrawFormatString(local_location.x, local_location.y, 0xffff00, "d : %d", d);
 
+	DrawPlayerFront();
+	for (int i = 0; i < hp; i++)
+	{
+		ResourceManager::DrawHeart({ 150.f + i * 50.f,75.f }, { 40.f,40.f });
+	}
+
 	if (searchedObj != nullptr && searchFlg) {
 		DrawCircleAA(searchedObj->GetLocalLocation().x + searchedObj->GetErea().width / 2,
 			searchedObj->GetLocalLocation().y + searchedObj->GetErea().height / 2, 40, 40, 0xffff00, FALSE, 4);
@@ -648,9 +654,10 @@ void Player::Hit(Object* _object)
 		}
 	}
 
-	if ((_object->GetObjectType() == WATER && _object->GetCanSwap() == FALSE && this->color == BLUE && !stateFlg) ||
+	//ジャンプの奴
+	if (((_object->GetObjectType() == WATER && _object->GetCanSwap() == FALSE && this->color == BLUE && !stateFlg) ||
 		(_object->GetObjectType() == FIRE && _object->GetCanSwap() == FALSE && this->color == RED && !stateFlg) ||
-		(_object->GetObjectType() == WOOD && _object->GetCanSwap() == FALSE && this->color == GREEN && !stateFlg)){
+		(_object->GetObjectType() == WOOD && _object->GetCanSwap() == FALSE && this->color == GREEN && !stateFlg)) && !_object->GetIsBossAttack()){
 		state = 1;
 		stateFlg = true;
 	}
@@ -1332,20 +1339,6 @@ void Player::DrawPlayer() const
 	Location l;
 	l = RotationLocation({ local_location.x + 30, local_location.y + 80 }, { local_location.x + 35, local_location.y + 50 }, (float)(0 * M_PI / 180));
 
-	if (moveFrontFlg > 1) {
-		int a;
-		a = 0;
-	}
-
-	for (int i = 0; i < 5; i++)
-	{
-		if (angle[i] >= 10000) {
-			int a;
-			a = 0;
-		}
-		
-	}
-
 	if (moveFrontFlg == true) {
 		//腕
 		if (hp > 4) {
@@ -1568,6 +1561,130 @@ void Player::DrawPlayer() const
 
 		}
 
+	}
+}
+
+void Player::DrawPlayerFront() const
+{
+	Location uiL;
+	uiL.x = 45.f;
+	uiL.y = 45.f;
+
+	DrawCircleAA(uiL.x + (erea.width / 2), uiL.y + (erea.height / 2), 65.f, 64, 0x555555, TRUE);
+	DrawCircleAA(uiL.x + (erea.width / 2), uiL.y + (erea.height / 2), 65.f, 64, 0xffffff, FALSE, 4.f);
+	
+	if (hp > 0) {
+		//頭
+		ResourceManager::DrawRotaBox(uiL.x + 30, uiL.y + 80 + 55, 23, 15, uiL.x + 30, uiL.y + 80, 0, draw_color, true);
+		ResourceManager::DrawRotaBox(uiL.x + 30, uiL.y + 80 + 55, 23, 15, uiL.x + 30, uiL.y + 80, 0, 0x000000, false);
+
+		//目
+		ResourceManager::DrawRotaBox(uiL.x + 30 - 6, uiL.y + 80 + 56, 6, 7, uiL.x + 30, uiL.y + 80, 0, 0x000000, true);
+		ResourceManager::DrawRotaBox(uiL.x - (erea.width / 2) + 6, uiL.y - (erea.height) + 76, 6, 7, uiL.x, uiL.y, 0, 0x000000, true);
+
+
+		//首
+		ResourceManager::DrawRotaBox(uiL.x + 30, uiL.y + 80 + 42, 10, 5, uiL.x + 30, uiL.y + 80, 0, draw_color, true);
+		ResourceManager::DrawRotaBox(uiL.x + 30, uiL.y + 80 + 42, 10, 5, uiL.x + 30, uiL.y + 80, 0, 0x000000, false);
+
+		//胴体
+		ResourceManager::DrawRotaBox(uiL.x + 30, uiL.y + 80 + 37 / 2, 21, 37, uiL.x + 30, uiL.y + 80, 0, draw_color, true);
+		ResourceManager::DrawRotaBox(uiL.x + 30, uiL.y + 80 + 37 / 2, 21, 37, uiL.x + 30, uiL.y + 80, 0, 0x000000, false);
+
+		//バッグ
+		/*ResourceManager::DrawRotaBox(uiL.x + 30 + 15, uiL.y + 80 + 20, 5, 23, uiL.x + 30, uiL.y + 80, 0, draw_color, true);
+		ResourceManager::DrawRotaBox(uiL.x + 30 + 15, uiL.y + 80 + 20, 5, 23, uiL.x + 30, uiL.y + 80, 0, 0x000000, false);
+		ResourceManager::DrawRotaBox(uiL.x + 30 + 15, uiL.y + 80 + 20, 3, 15, uiL.x + 30, uiL.y + 80, 0, 0x000000, true);*/
+	}
+	else {
+		//頭
+		ResourceManager::DrawRotaBox(uiL.x - (erea.width / 2), uiL.y - (erea.height) + 76, 23, 15, uiL.x, uiL.y, 0, 0x000000, true);
+		ResourceManager::DrawRotaBox(uiL.x - (erea.width / 2), uiL.y - (erea.height) + 76, 23, 15, uiL.x, uiL.y, 0, 0xffffff, false);
+
+		//目
+		ResourceManager::DrawRotaBox(uiL.x - (erea.width / 2) - 6, uiL.y - (erea.height) + 76, 6, 7, uiL.x, uiL.y, 0, 0x000000, true);
+		ResourceManager::DrawRotaBox(uiL.x - (erea.width / 2) - 6, uiL.y - (erea.height) + 76, 6, 7, uiL.x, uiL.y, 0, 0xffffff, false);
+
+		ResourceManager::DrawRotaBox(uiL.x - (erea.width / 2) + 6, uiL.y - (erea.height) + 76, 6, 7, uiL.x, uiL.y, 0, 0x000000, true);
+		ResourceManager::DrawRotaBox(uiL.x - (erea.width / 2) + 6, uiL.y - (erea.height) + 76, 6, 7, uiL.x, uiL.y, 0, 0xffffff, false);
+
+		//首
+		ResourceManager::DrawRotaBox(uiL.x - (erea.width / 2), uiL.y - (erea.height) + 62, 10, 5, uiL.x, uiL.y, 0, 0x000000, true);
+		ResourceManager::DrawRotaBox(uiL.x - (erea.width / 2), uiL.y - (erea.height) + 62, 10, 5, uiL.x, uiL.y, 0, 0xffffff, false);
+
+		//胴体
+		ResourceManager::DrawRotaBox(uiL.x - (erea.width / 2), uiL.y - (erea.height) + 37, 21, 37, uiL.x, uiL.y, 0, 0x000000, true);
+		ResourceManager::DrawRotaBox(uiL.x - (erea.width / 2), uiL.y - (erea.height) + 37, 21, 37, uiL.x, uiL.y, 0, 0xffffff, false);
+
+		//バッグ
+		/*ResourceManager::DrawRotaBox(uiL.x - (erea.width / 2) + 15, uiL.y - (erea.height) + 40, 5, 23, uiL.x, uiL.y, 0, 0x000000, true);
+		ResourceManager::DrawRotaBox(uiL.x - (erea.width / 2) + 15, uiL.y - (erea.height) + 40, 5, 23, uiL.x, uiL.y, 0, 0xffffff, false);
+		ResourceManager::DrawRotaBox(uiL.x - (erea.width / 2) + 15, uiL.y - (erea.height) + 40, 3, 15, uiL.x, uiL.y, 0, 0x000000, true);
+		ResourceManager::DrawRotaBox(uiL.x - (erea.width / 2) + 15, uiL.y - (erea.height) + 40, 3, 15, uiL.x, uiL.y, 0, 0xffffff, false);*/
+	}
+	//左腕
+	if (hp > 4) {
+		ResourceManager::DrawRotaBox(uiL.x + 4, uiL.y + 50, 28, 7, uiL.x - 6, uiL.y + 50, 180, draw_color, true);
+		ResourceManager::DrawRotaBox(uiL.x + 4, uiL.y + 50, 28, 7, uiL.x - 6, uiL.y + 50, 180, 0x000000, false);
+		//ResourceManager::DrawRotaBox(uiL.x + 15, uiL.y + 50, 28, 7, uiL.x + 5, uiL.y + 50, 0, 0x000000, false);
+	}
+	else {
+		ResourceManager::DrawRotaBox(uiL.x + 4, uiL.y + 50, 28, 7, uiL.x - 6, uiL.y + 50, 180, 0x000000, true);
+		ResourceManager::DrawRotaBox(uiL.x + 4, uiL.y + 50, 28, 7, uiL.x - 6, uiL.y + 50, 180, 0xffffff, false);
+
+	}
+	//腕
+	if (hp > 3) {
+		ResourceManager::DrawRotaBox(uiL.x + 34, uiL.y + 50, 28, 7, uiL.x + 45, uiL.y + 50, 0, draw_color, true);
+		ResourceManager::DrawRotaBox(uiL.x + 34, uiL.y + 50, 28, 7, uiL.x + 45, uiL.y + 50, 0, 0x000000, false);
+	}
+	else {
+		ResourceManager::DrawRotaBox(uiL.x + 34, uiL.y + 50, 28, 7, uiL.x + 45, uiL.y + 50, 0, 0x000000, true);
+		ResourceManager::DrawRotaBox(uiL.x + 34, uiL.y + 50, 28, 7, uiL.x + 45, uiL.y + 50, 0, 0xffffff, false);
+	}
+
+
+	//足 前から
+	if (hp > 2) {
+		ResourceManager::DrawRotaBox(uiL.x + 25, uiL.y + 70, 7, 27, uiL.x + 25, uiL.y + 83, 0, draw_color, true);
+		ResourceManager::DrawRotaBox(uiL.x + 25, uiL.y + 70, 7, 27, uiL.x + 25, uiL.y + 83, 0, 0x000000, false);
+
+	}
+	else {
+		ResourceManager::DrawRotaBox(uiL.x + 25, uiL.y + 70, 7, 27, uiL.x + 25, uiL.y + 83, 0, 0x000000, true);
+		ResourceManager::DrawRotaBox(uiL.x + 25, uiL.y + 70, 7, 27, uiL.x + 25, uiL.y + 83, 0, 0xffffff, false);
+	}
+	if (hp > 1) {
+		ResourceManager::DrawRotaBox(uiL.x + 35, uiL.y + 70, 7, 27, uiL.x + 35, uiL.y + 83, 0, draw_color, true);
+		ResourceManager::DrawRotaBox(uiL.x + 35, uiL.y + 70, 7, 27, uiL.x + 35, uiL.y + 83, 0, 0x000000, false);
+
+	}
+	else {
+		ResourceManager::DrawRotaBox(uiL.x + 35, uiL.y + 70, 7, 27, uiL.x + 35, uiL.y + 83, 0, 0x000000, true);
+		ResourceManager::DrawRotaBox(uiL.x + 35, uiL.y + 70, 7, 27, uiL.x + 35, uiL.y + 83, 0, 0xffffff, false);
+	}
+
+	if (hp > 1) {
+		//帽子　中央
+		DrawTriangleAA(uiL.x + (erea.width / 2), uiL.y, uiL.x + 20, uiL.y + 20, uiL.x + 40, uiL.y + 20, draw_color, true);
+		DrawTriangleAA(uiL.x + (erea.width / 2), uiL.y, uiL.x + 20, uiL.y + 20, uiL.x + 40, uiL.y + 20, 0x000000, false);
+		//帽子　右側
+		DrawTriangleAA(uiL.x + (erea.width / 2), uiL.y, uiL.x + 40, uiL.y + 20, uiL.x + 52, uiL.y + 15, draw_color, true);
+		DrawTriangleAA(uiL.x + (erea.width / 2), uiL.y, uiL.x + 40, uiL.y + 20, uiL.x + 52, uiL.y + 15, 0x000000, false);
+		//帽子　左側
+		DrawTriangleAA(uiL.x + (erea.width / 2), uiL.y, uiL.x + 8, uiL.y + 15, uiL.x + 20, uiL.y + 20, draw_color, true);
+		DrawTriangleAA(uiL.x + (erea.width / 2), uiL.y, uiL.x + 8, uiL.y + 15, uiL.x + 20, uiL.y + 20, 0x000000, false);
+	}
+	else {
+		//帽子　中央
+		DrawTriangleAA(uiL.x + (erea.width / 2), uiL.y, uiL.x + 20, uiL.y + 20, uiL.x + 40, uiL.y + 20, 0x000000, true);
+		DrawTriangleAA(uiL.x + (erea.width / 2), uiL.y, uiL.x + 20, uiL.y + 20, uiL.x + 40, uiL.y + 20, 0xffffff, false);
+		//帽子　右側
+		DrawTriangleAA(uiL.x + (erea.width / 2), uiL.y, uiL.x + 40, uiL.y + 20, uiL.x + 52, uiL.y + 15, 0x000000, true);
+		DrawTriangleAA(uiL.x + (erea.width / 2), uiL.y, uiL.x + 40, uiL.y + 20, uiL.x + 52, uiL.y + 15, 0xffffff, false);
+		//帽子　左側
+		DrawTriangleAA(uiL.x + (erea.width / 2), uiL.y, uiL.x + 8, uiL.y + 15, uiL.x + 20, uiL.y + 20, 0x000000, true);
+		DrawTriangleAA(uiL.x + (erea.width / 2), uiL.y, uiL.x + 8, uiL.y + 15, uiL.x + 20, uiL.y + 20, 0xffffff, false);
 	}
 }
 
