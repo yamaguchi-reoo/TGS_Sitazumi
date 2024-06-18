@@ -219,7 +219,6 @@ void ResourceManager::SaveAnimHandle()
 	SetDrawScreen(stage_block_handle[1]);
 	ClearDrawScreen();
 	DrawBox(0, 0, BOX_WIDTH, BOX_HEIGHT, 0xff0000, true);
-
 	for (int i = 0; i < 12; i++)
 	{
 		if (i % 2 == 0)																			
@@ -239,6 +238,32 @@ void ResourceManager::SaveAnimHandle()
 			DrawCircle(35 - (anim / 3), BOX_HEIGHT - (i * 4), 8, 0x0000aa, TRUE);
 			DrawCircle(45 - (anim / 3), BOX_HEIGHT - (i * 4), 8, 0x0000aa, TRUE);
 			DrawCircle(55 - (anim / 3), BOX_HEIGHT - (i * 4), 8, 0x0000aa, TRUE);
+		}
+	}
+
+	//通常地面
+	SetDrawScreen(stage_block_handle[2]);
+	ClearDrawScreen();
+	DrawBox(0, 0, BOX_WIDTH, BOX_HEIGHT, 0xff0000, true);
+	for (int i = 0; i < 13; i++)
+	{
+		if (i % 2 == 0)
+		{
+			DrawCircle(5 , BOX_HEIGHT - (i * 4), 8, 0xaaaaaa, TRUE);
+			DrawCircle(15, BOX_HEIGHT - (i * 4), 8, 0xaaaaaa, TRUE);
+			DrawCircle(25, BOX_HEIGHT - (i * 4), 8, 0xaaaaaa, TRUE);
+			DrawCircle(35, BOX_HEIGHT - (i * 4), 8, 0xaaaaaa, TRUE);
+			DrawCircle(45, BOX_HEIGHT - (i * 4), 8, 0xaaaaaa, TRUE);
+			DrawCircle(55, BOX_HEIGHT - (i * 4), 8, 0xaaaaaa, TRUE);
+		}
+		else
+		{
+			DrawCircle(5 , BOX_HEIGHT - (i * 4), 8, 0x888888, TRUE);
+			DrawCircle(15, BOX_HEIGHT - (i * 4), 8, 0x888888, TRUE);
+			DrawCircle(25, BOX_HEIGHT - (i * 4), 8, 0x888888, TRUE);
+			DrawCircle(35, BOX_HEIGHT - (i * 4), 8, 0x888888, TRUE);
+			DrawCircle(45, BOX_HEIGHT - (i * 4), 8, 0x888888, TRUE);
+			DrawCircle(55, BOX_HEIGHT - (i * 4), 8, 0x888888, TRUE);
 		}
 	}
 
