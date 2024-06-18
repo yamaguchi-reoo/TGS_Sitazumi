@@ -131,13 +131,13 @@ void BackGround::DrawMountain(Location _shift_location,Erea _erea ,float move_sp
 {
 
 	Location shift_location = { _shift_location.x * move_speed,_shift_location.y * move_speed };
-	DrawCircleAA(SCREEN_WIDTH + shift_location.x, SCREEN_HEIGHT - shift_location.y - _erea.height, _erea.width, 50, 0x00aa00, TRUE);
+	DrawCircleAA(SCREEN_WIDTH + shift_location.x, SCREEN_HEIGHT - shift_location.y - _erea.height, _erea.width, 50, 0x007700, TRUE);
 	DrawCircleAA(SCREEN_WIDTH + shift_location.x, SCREEN_HEIGHT - shift_location.y - _erea.height, _erea.width, 50, 0x000000, FALSE);
 	DrawBoxAA(SCREEN_WIDTH + shift_location.x - _erea.width,
 		SCREEN_HEIGHT - shift_location.y - _erea.height,
 		SCREEN_WIDTH + shift_location.x + _erea.width,
 		SCREEN_HEIGHT - shift_location.y,
-		0x00aa00, TRUE);
+		0x007700, TRUE);
 	DrawLineAA(SCREEN_WIDTH + shift_location.x - _erea.width,
 		SCREEN_HEIGHT - shift_location.y - _erea.height,
 		SCREEN_WIDTH + shift_location.x - _erea.width,
