@@ -125,9 +125,6 @@ public:
 	//羽の座標をファイルから読み込む
 	void LoadPosition();
 
-	//ボスの羽アニメーション
-	void BossAnimation();
-
 	//状態を渡す
 	BossState GetBossState(){
 		return boss_state;
