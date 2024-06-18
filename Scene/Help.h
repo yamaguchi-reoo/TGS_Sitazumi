@@ -16,7 +16,7 @@ private:
     Location l_help_bamboo;
     Location l_help_respawn;
 
-    int MenuNumber = 3;
+    int MenuNumber = 4;
     int MenuY = 1;
     int wt = 0;
     bool button_draw = false;

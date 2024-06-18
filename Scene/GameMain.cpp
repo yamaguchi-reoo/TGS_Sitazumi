@@ -18,7 +18,7 @@
 static Location camera_location = { 0,0};	//カメラの座標
 static Location screen_origin = { (SCREEN_WIDTH / 2),(SCREEN_HEIGHT / 2) };
 
-GameMain::GameMain(int _stage) :frame(0), impact(0), stage_data{ 0 }, now_stage(0), object_num(0), stage_width_num(0), stage_height_num(0), stage_width(0), stage_height(0), camera_x_lock_flg(true), camera_y_lock_flg(true), x_pos_set_once(false), y_pos_set_once(false), player_object(0), boss_object(0), weather(0), weather_timer(0), move_object_num(0), boss_blind_flg(false), boss_blind_timer(0), player_flg(false), player_respawn_flg(false), fadein_flg(true), create_once(false),pause_after_flg(false), cursor(0), clear_timer(0), set_sound_once(false), gm_state(GameMainState::S_GameMain), now_scene(this)
+GameMain::GameMain(int _stage) :frame(0), impact(0), stage_data{ 0 }, now_stage(0), object_num(0), stage_width_num(0), stage_height_num(0), stage_width(0), stage_height(0), camera_x_lock_flg(true), camera_y_lock_flg(true), x_pos_set_once(false), y_pos_set_once(false), player_object(0), boss_object(0), weather(0), weather_timer(0), move_object_num(0), boss_blind_flg(false), boss_blind_timer(0), player_flg(false), player_respawn_flg(false), fadein_flg(true), create_once(false),pause_after_flg(false), cursor(0), clear_timer(0), set_sound_once(false), gm_state(GameMainState::S_GameMain), now_scene(this), HNum1(110), HNum2(330)
 {
 	now_stage = _stage;
 }
@@ -185,7 +185,7 @@ void GameMain::Draw() const
 	SetFontSize(50);
 	//DrawString(KeyInput::GetMouseCursor().x - camera_location.x, stage_height- KeyInput::GetMouseCursor().y - camera_location.y, "aaaaa", 0xff0000, TRUE);
 	//DrawFormatString(0, 40, 0xff0000, "%0.1f x %0.1f y", camera_location.x, stage_height - camera_location.y);
-	DrawFormatString(0, 140, 0xff0000, "%0.1f x %0.1f y",  camera_location.x + KeyInput::GetMouseCursor().x, stage_height - KeyInput::GetMouseCursor().y - camera_location.y);
+	//DrawFormatString(0, 140, 0xff0000, "%0.1f x %0.1f y",  camera_location.x + KeyInput::GetMouseCursor().x, stage_height - KeyInput::GetMouseCursor().y - camera_location.y);
 #endif
 
 	// 1742 - camera_location.x, stage_height - 560 - camera_location.y
@@ -1043,11 +1043,87 @@ void GameMain::UpdateHelp()
 
 void GameMain::DrawHelp()const
 {
+
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200);
 	DrawBox(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0x000000, true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 
-	DrawString(580, 436, "Help", 0xffffff);
+	DrawCircleAA(770.f + HNum1, 140.f - 50, 70.f, 32, 0xcc0000, TRUE);
+	DrawLineAA(690.f + HNum1, 244.f - 50, 580.f + HNum1, 445.f - 50, 0xffffff, 10.0f);
+	DrawLineAA(648.f + HNum1, 250.f - 50, 690.f + HNum1, 246.f - 50, 0xffffff, 10.0f);
+	DrawLineAA(687.f + HNum1, 241.f - 50, 695.f + HNum1, 285.f - 50, 0xffffff, 10.0f);
+
+	DrawCircleAA(510.f + HNum1, 550.f - 50, 70.f, 32, 0x3c78d8, TRUE);
+
+	DrawLineAA(618.f + HNum1, 554.f - 50, 930.f + HNum1, 554.f - 50, 0xffffff, 10.0f);
+	DrawLineAA(620.f + HNum1, 555.f - 50, 652.f + HNum1, 521.f - 50, 0xffffff, 10.0f);
+	DrawLineAA(620.f + HNum1, 555.f - 50, 655.f + HNum1, 576.f - 50, 0xffffff, 10.0f);
+
+	DrawCircleAA(1060.f + HNum1, 550.f - 50, 70.f, 32, 0x6aa84f, TRUE);
+
+	DrawLineAA(840.f + HNum1, 240.f - 50, 980.f + HNum1, 445.f - 50, 0xffffff, 10.0f);
+	DrawLineAA(982.f + HNum1, 440.f - 50, 980.f + HNum1, 380.f - 50, 0xffffff, 10.0f);
+	DrawLineAA(918.f + HNum1, 426.f - 50, 973.f + HNum1, 440.f - 50, 0xffffff, 10.0f);
+
+	SetFontSize(30);
+	DrawString(710 + HNum1, 110 - 50, "  Red\n(Fire)", 0xFFFF55);			//赤\n(火属性)
+	DrawString(450 + HNum1, 525 - 50, "  Blue\n(Water)", 0xFFFF55);			//青\n(水属性)
+	DrawString(1000 + HNum1, 520 - 50, " Green\n(Wood)", 0xFFFF55);			//緑\n(木属性)
+
+	DrawString(730 + HNum1, 580 - 50, "Damage", 0x00ff00);
+	DrawString(500 + HNum1, 300 - 50, "Damage", 0x0000ff);
+	DrawString(970 + HNum1, 300 - 50, "Damage", 0xff0000);
+
+	DrawFormatString(1100, 60, GetColor(255, 0, 0), "%d %d", KeyInput::GetMouseCursor().x, KeyInput::GetMouseCursor().y);
+
+	// 1030 605
+	
+	DrawCircleAA(500.f - HNum2, 85.f, 50.f, 32, 0x1c2b3e);
+	DrawCircleAA(500.f - HNum2, 85.f, 30.f, 32, 0x525156);
+	DrawString(610 - HNum2, 60, "LeftStick: Move", 0xffffff);	//左スティック：移動
+
+	DrawCircleAA(500.f - HNum2, 215.f, 50.f, 32, 0x1c2b3e);
+	DrawCircleAA(500.f - HNum2, 215.f, 30.f, 32, 0x557b0e);
+	
+	DrawString(630 - HNum2, 190, "A Button: Jump", 0xffffff);	//Aボタン：ジャンプ
+
+	DrawCircleAA(500.f - HNum2, 355.f, 50.f, 32, 0x1c2b3e);
+	DrawCircleAA(500.f - HNum2, 355.f, 30.f, 32, 0xc5482c);
+	
+	DrawString(630 - HNum2, 310, "B Button\n(LongPress)\n:ColorSwap", 0xffffff);	//Bボタン\n(長押し)
+	//DrawString(925 - HNum2, 330, ":ColorSwap", 0xffffff);			//：色の交換
+
+	DrawCircleAA(390.f - HNum2, 500.f, 50.f, 32, 0x1c2b3e);
+	DrawCircleAA(390.f - HNum2, 500.f, 30.f, 32, 0xc5482c);
+	
+	DrawCircleAA(540.f - HNum2, 500.f, 50.f, 32, 0x1c2b3e);
+	DrawBox(525 - HNum2, 460, 555 - HNum2, 545, 0x211d1e, TRUE);
+	DrawBox(500 - HNum2, 490, 580 - HNum2, 515, 0x211d1e, TRUE);
+	DrawString(630 - HNum2, 450, "B(Pressing)\nD-Pad\n:ColorSelect", 0xffffff);	//B(長押し中)\n十字カーソル
+	//DrawString(925 - HNum2, 470, ":ColorSelect", 0xffffff);					//：色の選択
+
+	DrawCircleAA(390.f - HNum2, 620.f, 50.f, 32, 0x1c2b3e);
+	DrawCircleAA(390.f - HNum2, 620.f, 30.f, 32, 0xc5482c);
+	
+	DrawCircleAA(540.f - HNum2, 620.f, 50.f, 32, 0x1c2b3e);
+	DrawCircleAA(540.f - HNum2, 620.f, 30.f, 32, 0x525156);
+	DrawString(630 - HNum2, 578, "B(Pressing)\nLeftStick\n:ColorSelect", 0xffffff);	//B(長押し中)\n左スティック
+	//DrawString(925 - HNum2, 590, ":ColorSelect", 0xffffff);					//：色の選択
+
+	SetFontSize(49);
+	DrawString(488 - HNum2, 190, "A", 0xffffff);
+	DrawString(488 - HNum2, 332, "B", 0xffffff);
+	DrawString(380 - HNum2, 478, "B", 0xffffff);
+	DrawString(440 - HNum2, 478, "＋", 0xffffff);
+	DrawString(380 - HNum2, 595, "B", 0xffffff);
+	DrawString(440 - HNum2, 595, "＋", 0xffffff);
+
+	// 1030 605
+
+	DrawBoxAA(1030, 603, 1242, 702, 0xffffff, FALSE, 2.0f);
+	DrawBoxAA(1032, 605, 1240, 700, 0x555555, TRUE, 2.0f);
+
+	DrawString(1050, 630, "B:Back", 0xffffff);
 }
 
 void GameMain::UpdateGameClear()
