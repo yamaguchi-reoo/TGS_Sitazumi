@@ -359,6 +359,8 @@ void Player::Update(GameMain* _g)
 void Player::Draw()const
 {
 	//DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, FALSE, 2.f);
+	
+	//DrawFormatString(0, 180, 0xff0000, "%0.1f %0.1f", location.x, location.y);
 
 	if(hp <= 0){
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 - (deathTimer * 2));
