@@ -83,7 +83,7 @@ AbstractScene* Help::Update()
 
 void Help::Draw()const
 {
-	DrawFormatString(1100, 60, GetColor(255, 0, 0), "%d %d", KeyInput::GetMouseCursor().x, KeyInput::GetMouseCursor().y);
+	//DrawFormatString(1100, 60, GetColor(255, 0, 0), "%d %d", KeyInput::GetMouseCursor().x, KeyInput::GetMouseCursor().y);
 	//DrawFormatString(700, 100, GetColor(255, 0, 0), "menu : %d",MenuNumber);
 
 	
@@ -236,10 +236,13 @@ void Help::Draw()const
 		DrawLineAA(918.f, 426.f, 973.f, 440.f, 0xffffff, 10.0f);
 
 		SetFontSize(30);
-		//DrawString(650, 370, "矢印の方向に強い", 0xffffff);			//矢印の方向に強い
 		DrawString(710, 110, "  Red\n(Fire)", 0xFFFF55);			//赤\n(火属性)
 		DrawString(450, 525, "  Blue\n(Water)", 0xFFFF55);			//青\n(水属性)
 		DrawString(1000, 520, " Green\n(Wood)", 0xFFFF55);			//緑\n(木属性)
+
+		DrawString(730, 580, "Damage", 0x00ff00);
+		DrawString(500, 300, "Damage", 0x0000ff);
+		DrawString(970, 300, "Damage", 0xff0000);
 
 		break;
 	case 5: //タイトルへ

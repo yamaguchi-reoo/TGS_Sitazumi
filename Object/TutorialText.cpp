@@ -41,7 +41,7 @@ void TutorialText::Update(Location camera , Location _p, int height)
 	Gdraw_stick_shift.x = cosf(Gstick_angle * M_PI * 2) * 5;
 	Gdraw_stick_shift.y = sinf(Gstick_angle * M_PI * 2) * 5;
 
-	if (_p.x >= 1540.0f && _p.y <= 2580.0f)
+	if (_p.x >= 1540.0f && _p.y <= 2680.0f && _p.x <= 2600.f && _p.y >= 2000.f)
 	{
 		if (GColor == GREEN && GNum != 26 || GColor == BLUE && GNum < 160)
 		{
@@ -70,7 +70,7 @@ void TutorialText::Update(Location camera , Location _p, int height)
 	}
 
 	// >= 5400 >=2580
-	if (_p.x >= 5400 && _p.y >= 2580 && add_x < 220)
+	if (_p.x >= 5400.f && _p.y <= 2680.f && _p.x <= 6800.f && _p.y >= 2000.f && add_x < 220)
 	{
 		add_x++;
 	}
