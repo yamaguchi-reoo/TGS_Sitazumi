@@ -120,6 +120,27 @@ void EffectSpawner::Update(GameMain* _g)
 				{
 					effect[i].spawn_flg = false;
 				}
+				break;
+			//ダメージ
+			case 7:
+				switch (effect[i].color)
+				{
+				case RED:
+					effect[i].location.y += effect[i].speed;
+					break;
+				case GREEN:
+					effect[i].location.y -= effect[i].speed;
+					break;
+				case BLUE:
+					break;
+				default:
+					break;
+				}
+				if (effect[i].timer > effect[i].effect_time)
+				{
+					effect[i].spawn_flg = false;
+				}
+				break;
 			default:
 				break;
 			}
@@ -237,6 +258,29 @@ void EffectSpawner::Draw()const
 				SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 - (effect[i].timer * (255 / effect[i].effect_time)));
 				DrawCircleAA(effect[i].local_location.x, effect[i].local_location.y, (float)effect[i].timer * 15, 100, effect[i].color);
 				SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
+				break;
+			case 7:
+				//ダメージを受けた時のプレイヤーの色に応じて挙動を変える
+				switch (effect[i].color)
+				{
+				case RED:	//赤の時ダメージ（水の演出）
+					SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 - (effect[i].timer * (255 / effect[i].effect_time)));
+					DrawCircleAA(effect[i].local_location.x, effect[i].local_location.y, (float)effect[i].effect_time - (float)effect[i].timer, 100, BLUE);
+					SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
+					break;
+				case GREEN:	//緑の時ダメージ（火の演出）
+					SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 - (effect[i].timer * (255 / effect[i].effect_time)));
+					DrawCircleAA(effect[i].local_location.x, effect[i].local_location.y, (float)effect[i].effect_time - (float)effect[i].timer, 100, RED);
+					SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
+					break;
+				case BLUE:	//青の時ダメージ（木の演出）
+					SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 - (effect[i].timer * (255 / effect[i].effect_time)));
+					DrawCircleAA(effect[i].local_location.x, effect[i].local_location.y, (float)effect[i].effect_time - (float)effect[i].timer,100, GREEN);
+					SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
+					break;
+				default:
+					break;
+				}
 				break;
 			default:
 				break;
@@ -373,15 +417,18 @@ void EffectSpawner::SpawnEffect(Location _location, Erea _erea,int _effect_type,
 		break;
 		//ダメージエフェクト
 	case DamageEffect:
-		SpawnParticle(
-			_location,
-			_erea,
-			6,
-			_time,
-			1,
-			_color,
-			_angle
-		);
+		for (int i = 0; i < 10; i++)
+		{
+			SpawnParticle(
+				{ _location.x + GetRand(_erea.width),_location.y + GetRand(_erea.height) },
+				{ 7,7 },
+				7,
+				_time,
+				1,
+				_color,
+				_angle
+			);
+		}
 		break;
 	default:
 		break;

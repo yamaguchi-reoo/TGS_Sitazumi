@@ -1,14 +1,22 @@
 #pragma once
 #include "AbstractScene.h"
 #include "DxLib.h"
-#include "../Object/Player.h"
+#include "../Object/BoxCollider.h"
 
 class Help :
     public AbstractScene
 {
 private:
 
-    int MenuNumber = 3;
+    Location l_help_red;
+    Location l_help_blue;
+    Location l_help_fire;
+    Location l_help_water;
+    Location l_help_wood;
+    Location l_help_bamboo;
+    Location l_help_respawn;
+
+    int MenuNumber = 2;
     int MenuY = 1;
     int wt = 0;
     bool button_draw = false;
