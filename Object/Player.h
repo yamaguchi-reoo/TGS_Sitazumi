@@ -118,6 +118,7 @@ public:
 
 	void PlayerAnim();
 	void DrawPlayer()const;
+	void DrawPlayerFront()const;
 
 	//引数:もとになる座標、回転させたい座標、回転させたい角度
 	Location RotationLocation(Location BaseLoc, Location Loc, float r) const;
