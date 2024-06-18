@@ -361,7 +361,7 @@ void Player::Update(GameMain* _g)
 		deathTimer++;
 		if (deathTimer > 90)
 		{
-			_g->SetGameOverFlg(true);
+			_g->UpdateState(GameMainState::GameOver);
 			//_g->SetStage(_g->GetNowStage(), TRUE);
 		}
 	}

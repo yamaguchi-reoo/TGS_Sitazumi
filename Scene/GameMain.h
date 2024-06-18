@@ -27,6 +27,14 @@ static int ColorList[4]
     0xffffff   //白
 };
 
+enum GameMainState {
+    S_GameMain = 0,   //ゲーム本編
+    Pause,          //一時停止
+    S_Help,           //ヘルプ
+    GameOver,       //ゲームオーバー
+    GameClear,      //ゲームクリア
+};
+
 class GameMain :
     public AbstractScene
 {
@@ -39,7 +47,8 @@ private:
     int boss_object;    
     //int boss_attack[128];
     int attack_num;
-
+    GameMainState gm_state;                     //現在のゲームメインの状態を格納
+    AbstractScene* now_scene;                   //現在のシーン
     Object* object[OBJECT_NUM] = { nullptr };    //オブジェクト格納
     Object* now_current_object;                       //現在交換対象になっているオブジェクト
     WeatherManager* weather;                        //天気管理オブジェクト
@@ -72,9 +81,6 @@ private:
 
     bool boss_blind_flg;        //ボスステージを暗くするか
     int boss_blind_timer;       //ボスステージで完全に暗転させる時間
-    bool game_over_flg;         //ゲームオーバーか
-    bool game_clear_flg;
-    bool game_pause_flg;
     bool pause_after_flg;
 
     bool set_sound_once;
@@ -194,16 +200,43 @@ public:
     //現在交換対象になっているオブジェクトを設定する
     void SetNowCurrentObject(Object* _object);
 
-    //ゲームオーバーかどうかを設定
-    void SetGameOverFlg(bool f) { game_over_flg = f;}
-
-    //ゲームクリアかどうかを設定
-    void SetGameClearFlg(bool f) { game_clear_flg = f; }
-
     //座標の回転
     //引数:もとになる座標、回転させたい座標、回転させたい角度
     Location RotationLocation(Location BaseLoc, Location Loc, float r) const;
 
     bool GetPauseAfter() { return pause_after_flg; }
+
+    //ゲームメイン更新
+    void UpdateGameMain();
+
+    //ゲームメイン描画
+    void DrawGameMain()const;
+
+    //ポーズ画面更新
+    void UpdatePause();
+
+    //ポーズ画面描画
+    void DrawPause()const;
+
+    //ヘルプ画面更新
+    void UpdateHelp();
+
+    //ヘルプ画面描画
+    void DrawHelp()const;
+
+    //ゲームクリア画面更新
+    void UpdateGameClear();
+
+    //ゲームクリア画面描画
+    void DrawGameClear()const;
+
+    //ゲームオーバー画面更新
+    void UpdateGameOver();
+
+    //ゲームオーバー画面描画
+    void DrawGameOver()const;
+
+    //ゲームメインの状態を変更
+    void UpdateState(GameMainState _state);
 };
 

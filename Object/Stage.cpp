@@ -213,11 +213,7 @@ void Stage::Draw()const
 			break;
 			//地面（灰）
 		case GRAY_BLOCK:
-			DrawBoxAA(local_location.x, local_location.y, local_location.x + erea.width + 1, local_location.y + erea.height + 1, 0xaaaaaa, true);
-			//地面内の小石
-			DrawBoxAA(local_location.x + 10, local_location.y + 20, local_location.x + 15, local_location.y + 25, 0x999999, true);
-			DrawBoxAA(local_location.x + 30, local_location.y + 15, local_location.x + 35, local_location.y + 20, 0x999999, true);
-			DrawBoxAA(local_location.x + 25, local_location.y + 35, local_location.x + 30, local_location.y + 40, 0x999999, true);
+			ResourceManager::StageBlockDraw(local_location, 2);
 			break;
 			//地面(赤、緑、青)
 		case RED_BLOCK:
