@@ -520,20 +520,23 @@ void Boss::DrawHexagonSphere() const
 	// 六角形の間隔（六角形の内接円の半径の2倍）
 	float hex_height = (float)sqrt(3) * (float)hex_size / 2; // 六角形の高さ
 
+	//六角形の層の数を管理
 	for (int i = 0; i <= 9; ++i) { 
+		//各層内の六角形の水平方向の位置を管理
 		for (int j = -i; j <= i; ++j) {
+			//各層内の六角形の垂直方向の位置を管理
 			for (int k = -i; k <= i; ++k) {
-				if (abs(j + k) <= i) {
-					// 六角形の中心座標を計算
-					hexa_center.x = center.x + (1.5f * hex_size * j);
-					hexa_center.y = center.y + (2.0f * hex_height * k - hex_height * j);
+				// 六角形の中心座標を計算
+				//中心の x 座標に対して、水平に 1.5f * hex_size * j だけ移動
+				hexa_center.x = center.x + (1.5f * hex_size * j);
+				//中心の y 座標に対して、垂直方向に 2.0f * hex_height * k - hex_height * j だけ移動
+				hexa_center.y = center.y + (2.0f * hex_height * k - hex_height * j);
 
-					// 半径内にある六角形のみを描画
-					float distance = (float)sqrt(pow(hexa_center.x - center.x, 2) + pow(hexa_center.y - center.y, 2));
-					if (distance <= 110) {
-						// 描画範囲を調整して内部を埋める
-						DrawHexagon({ hexa_center.x, hexa_center.y }, hex_size * 0.9f, color); // 0.9fは調整可能
-					}
+				// 半径内にある六角形のみを描画
+				float distance = (float)sqrt(pow(hexa_center.x - center.x, 2) + pow(hexa_center.y - center.y, 2));
+				if (distance <= 110) {
+					// 描画範囲を調整して内部を埋める
+					DrawHexagon({ hexa_center.x, hexa_center.y }, hex_size * 0.9f, color); // 0.9fは調整可能
 				}
 			}
 		}
@@ -546,13 +549,16 @@ void Boss::DrawHexagon(Location center, float size, int color) const
 	Location vertices[6];
 
 	// 六角形の頂点座標を計算
+	//6つの頂点を中心から等距離に配置
 	for (int i = 0; i < 6; ++i) {
 		float angle = i * angle_space;
+		//size は六角形の辺の長さで、cos(angle) は角度に対する水平方向、sin(angle) は角度に対する垂直方向
 		vertices[i] = { center.x + size * cos(angle), center.y + size * sin(angle) };
 	}
 
 	// 六角形の描画
 	for (int i = 0; i < 6; ++i) {
+		//(i + 1) % 6 は、最後の頂点から最初の頂点に戻るための処理
 		DrawLineAA(vertices[i].x, vertices[i].y + boss_anim, vertices[(i + 1) % 6].x, vertices[(i + 1) % 6].y + boss_anim, color);
 	}
 }
