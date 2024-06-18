@@ -280,6 +280,7 @@ void Player::Update(GameMain* _g)
 		if (damageEffectTime == 90) {
 			hp--;
 			_g->CameraImpact(10);
+			_g->SpawnEffect(location, erea, DamageEffect, 20, color);
 		}
 		damageEffectTime--;
 		if (damageEffectTime <= 0) {

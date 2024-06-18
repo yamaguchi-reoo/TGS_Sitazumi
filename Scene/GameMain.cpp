@@ -1027,9 +1027,9 @@ void GameMain::CameraImpact(int _num)
 	impact = _num;
 }
 
-void GameMain::SpawnEffect(Location _location, Erea _erea, int _type, int _time, int _color)
+void GameMain::SpawnEffect(Location _location, Erea _erea, int _type, int _time, int _color,float _angle)
 {
-	effect_spawner->SpawnEffect(_location, _erea, _type, _time, _color);
+	effect_spawner->SpawnEffect(_location, _erea, _type, _time, _color, _angle);
 }
 
 int GameMain::Swap(Object* _object1, Object* _object2)
