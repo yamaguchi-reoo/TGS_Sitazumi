@@ -1074,7 +1074,7 @@ void GameMain::DrawHelp()const
 	DrawString(500 + HNum1, 300 - 50, "Damage", 0x0000ff);
 	DrawString(970 + HNum1, 300 - 50, "Damage", 0xff0000);
 
-	DrawFormatString(1100, 60, GetColor(255, 0, 0), "%d %d", KeyInput::GetMouseCursor().x, KeyInput::GetMouseCursor().y);
+	//DrawFormatString(1100, 60, GetColor(255, 0, 0), "%d %d", KeyInput::GetMouseCursor().x, KeyInput::GetMouseCursor().y);
 
 	// 1030 605
 	
