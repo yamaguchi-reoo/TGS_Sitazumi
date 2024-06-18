@@ -1058,7 +1058,7 @@ void GameMain::UpdateGameClear()
 		ResourceManager::StopSound(bgm_normal);
 		ResourceManager::StopSound(bgm_noise);
 		ResourceManager::StopSound(bgm_abnormal);
-		ResourceManager::StartSound(bgm_title, TRUE);
+		ResourceManager::StartSound(game_clear_bgm, FALSE);
 		set_sound_once = true;
 	}
 
