@@ -638,13 +638,14 @@ void GameMain::PlayerUpdate()
 		{
 			if (object[i]->GetCanSwap() == TRUE && object[i]->GetObjectType() != PLAYER && boss_blind_flg == false) {
 				object[player_object]->SearchColor(object[i]);
-				if (object[player_object] != nullptr) {
-					Player* p;
-					p = dynamic_cast<Player*>(object[player_object]);
-					if (p->GetDebug() > 1) {
-						int a;
-						a = 0;
-					}
+				
+			}
+			if (object[player_object] != nullptr) {
+				Player* p;
+				p = dynamic_cast<Player*>(object[player_object]);
+				if (p->GetDebug() > 1) {
+					int a;
+					a = 0;
 				}
 			}
 			
@@ -782,15 +783,6 @@ void GameMain::UpdateGameMain()
 	//プレイヤーの更新
 	PlayerUpdate();
 
-	if (object[player_object] != nullptr) {
-		Player* p;
-		p = dynamic_cast<Player*>(object[player_object]);
-		if (p->GetDebug() > 1) {
-			int a;
-			a = 0;
-		}
-	}
-
 	//ボスの更新
 	BossUpdate();
 
@@ -830,14 +822,7 @@ void GameMain::UpdateGameMain()
 		boss_blind_flg = true;
 	}
 
-	if (object[player_object] != nullptr) {
-		Player* p;
-		p = dynamic_cast<Player*>(object[player_object]);
-		if (p->GetDebug() > 1) {
-			int a;
-			a = 0;
-		}
-	}
+	
 }
 
 void GameMain::DrawGameMain()const

@@ -27,24 +27,15 @@ private:
 	//0の行はステージのブロック一つ一つに対しての判定
 	//1の行は1フレームでステージ全体との判定
 
-	float searchedLen; //交換できるオブジェクトとの距離
 	Object* searchedObj; //一番近い色を交換できるオブジェクト
-	Object* oldSearchedObj; //前回選択していたオブジェクト
-	Object* oldSearchedObjAll[OBJECT_NUM]; //選択していたすべてのオブジェクト
 	int oldObjNum;
-	int direction; //選択方向
-	int oldDirection; //前回の選択方向
 	Object* searchedObjAll[OBJECT_NUM]; //画面内の色交換できるオブジェクト
 	int objNum;//オブジェクトの添え字
-	int objSelectNum[2];//オブジェクトの添え字
 	int objSelectNumTmp;//オブジェクトの添え字
 	bool searchedObjFlg;//画面内に交換できるオブジェクトがあるかどうか
 	bool swap_once;		//一回だけ色を交換する
-	int posRelation[1280 / 40][720 / 40];
-	int posRelNum[2];
+	int posRelation[19][32];
 	bool oldStick[4];
-	//bool searchFlg;
-	//serchFlgの定義をObjectの方に移動して、GameMainで参照出来るようにしました　
 	int swapTimer;		//交換エフェクトの時間測定
 	bool oldSearchFlg;
 	Location saveVec; //ベクトルの一時保存用
@@ -59,21 +50,17 @@ private:
 	int state; //水中とか火の中とかの状態を管理
 	bool stateFlg; //一フレーム内かを判定
 
-	int fps = 0;
-	int fps1 = 0;
+	int fps;
+	
 	float move[4] = { 0,0,0,0 };
-	Location aaa;
 
 	int pState;//待機、移動、ジャンプ
 	int pStateOld;//待機、移動、ジャンプ
 	bool moveFrontFlg;//向いてる方向
 	bool animFlg;
-	float angle[5];//両手両足
-	float mo = 0;
-	float ang = 0;
+	float angle[4];//両手両足
 
-	float circleAng;
-
+	float circleAng;//カーソルの回転
 
 	int landing_se;		//着地SE
 	int walk_se[4];		//歩行SE格納
@@ -90,7 +77,6 @@ private:
 	int now_riding;		//今乗っているブロックに応じて再生するSEを変える
 
 	int deathTimer = 0;
-	int d = 0;//へんなところでダメージを受ける対策おそらくメモリ
 
 public:
 	Player();

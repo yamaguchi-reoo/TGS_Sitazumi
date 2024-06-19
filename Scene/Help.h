@@ -16,7 +16,19 @@ private:
     Location l_help_bamboo;
     Location l_help_respawn;
 
-    int MenuNumber = 4;
+    Location player_location;
+    Location l_Deer;
+    Location l_Bat;
+    Location l_Frog;
+
+    int HPlayerColor[3];
+    int p_color;
+    int s_num;
+    int p_hp;
+
+    char sign[2];
+
+    int MenuNumber = 2;
     int MenuY = 1;
     int wt = 0;
     bool button_draw = false;
@@ -44,6 +56,12 @@ public:
     //描画に関することを実装
     void Draw() const override;
 
+    void HDrawPlayer(int c_num)const;
 
+    void HDrawDeer(int c_num)const;
+
+    void HDrawBat(int c_num)const;
+
+    void HDrawFrog(int c_num)const;
 
 };
