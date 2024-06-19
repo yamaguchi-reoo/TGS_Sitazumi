@@ -12,6 +12,7 @@ private:
 	int knot;   //竹の節の数
 	bool camera_impact_once;	//カメラ振動
 
+	int start_se;		//攻撃開始SE
 public:
 	BossAttackWood();
 	~BossAttackWood();

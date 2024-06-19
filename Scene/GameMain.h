@@ -90,6 +90,7 @@ private:
     int cursor;
     int cursorOld;
     Location cursor_location; 
+    bool move_cursor_once;  //ポーズカーソルを一回だけ移動させる
     float circleAng;
 
     int HNum1, HNum2;

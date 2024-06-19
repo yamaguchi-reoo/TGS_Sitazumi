@@ -31,6 +31,13 @@ void BossAttackWater::Initialize(Location _location, Erea _erea, int _color_data
 
 	f_location = _location;
 	f_erea = { 10,10 };
+
+	start_se = ResourceManager::SetSound("Resource/Sounds/Enemy/Boss/attack_start_water.wav");
+	end_se = ResourceManager::SetSound("Resource/Sounds/Enemy/Boss/attack_end_water.wav");
+
+	ResourceManager::StartSound(start_se);
+
+
 }
 
 void BossAttackWater::Finalize()
@@ -62,6 +69,7 @@ void BossAttackWater::Update(GameMain* _g)
 			if (this != nullptr) {
 				_g->CameraImpact(15);
 				_g->SpawnEffect(location, erea, ExplosionEffect, 10, BLUE);
+				ResourceManager::StartSound(end_se);
 				_g->DeleteObject(object_pos, this);
 			}
 		}
@@ -89,6 +97,7 @@ void BossAttackWater::Update(GameMain* _g)
 	if (hitFlg) {
 		_g->CameraImpact(15);
 		_g->SpawnEffect(location, erea, ExplosionEffect, 10, BLUE);
+		ResourceManager::StartSound(end_se);
 		//ここで削除
 		_g->DeleteObject(object_pos,this);
 	}

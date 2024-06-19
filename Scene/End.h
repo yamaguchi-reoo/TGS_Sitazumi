@@ -1,14 +1,20 @@
 #pragma once
 #include "AbstractScene.h"
 #include "DxLib.h"
+#include "../Utility/common.h"
+#include "Title.h"
+
 
 class End :
     public AbstractScene
 {
 private:
 
+    Location logo_location[7];
     int ExitNum = 0;
-
+    int shift_y;
+    int stop_time;
+    bool stop_flg;
 public:
     //コンストラクタ
     End();
