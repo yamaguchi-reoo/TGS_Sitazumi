@@ -74,6 +74,8 @@ private:
 	float attackWood[3];
 	int woodNum = 0;
 
+	int damage_se;	//被ダメージSE
+
 public:
 	Boss();
 	~Boss();
