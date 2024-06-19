@@ -425,7 +425,6 @@ void Title::Draw()const
 	else
 	{
 		//DrawGraph(0, 0, title_image_handle, TRUE);
-		SetDrawScreen(DX_SCREEN_BACK);
 		auto rate = (float)end_game_count / (float)interval_;
 		for (const auto& cell : tiles_) {
 			DrawRectGraph(

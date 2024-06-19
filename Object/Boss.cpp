@@ -16,7 +16,7 @@
 #define BLACK 0x000000
 
 
-Boss::Boss() :vector{ 0.0f }, boss_state(BossState::ATTACK), barrier_num(3), damage_flg(false), state_change_time(0), speed(0.0f),wing_fps(0)
+Boss::Boss() :vector{ 0.0f }, boss_state(BossState::ATTACK), barrier_num(3), damage_flg(false), state_change_time(0), speed(0.0f),wing_fps(0),damage_se(0)
 {
 	type = BOSS;
 	can_swap = TRUE;
@@ -84,6 +84,9 @@ void Boss::Initialize(Location _location, Erea _erea, int _color_data, int _obje
 	}
 
 	LoadPosition();  // 初期化時に座標を読み込む
+
+	damage_se = ResourceManager::SetSound("Resource/Sounds/Enemy/Boss/boss_damage.wav");
+
 }
 
 void Boss::Update(GameMain* _g)
@@ -331,6 +334,7 @@ void Boss::Hit(Object* _object)
 			damage_effect_time = 180;
 			damage_anim_flg = true;
 			damage_anim_time = 60;
+			ResourceManager::StartSound(damage_se);
 		}
 		// バリアがなくなった場合の処理
 		if (barrier_num == 0) {

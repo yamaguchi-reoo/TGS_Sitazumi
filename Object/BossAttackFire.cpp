@@ -26,6 +26,12 @@ void BossAttackFire::Initialize(Location _location, Erea _erea, int _color_data,
 	color = _color_data;
 	erea = _erea;
 	object_pos = _object_pos;
+
+	start_se = ResourceManager::SetSound("Resource/Sounds/Enemy/Boss/attack_start_fire.wav");
+	end_se = ResourceManager::SetSound("Resource/Sounds/Enemy/Boss/attack_end_fire.wav");
+
+	ResourceManager::StartSound(start_se);
+
 }
 
 void BossAttackFire::Finalize()
@@ -84,6 +90,7 @@ void BossAttackFire::Update(GameMain* _g)
 	if ((local_location.x < 0 || local_location.x > 1280 || local_location.y < 0 || local_location.y > 720) && hitFlg) {
 		_g->SpawnEffect(location, erea, ExplosionEffect, 10, RED);
 		_g->CameraImpact(15);
+		ResourceManager::StartSound(end_se);
 		if (this != nullptr) {
 			_g->DeleteObject(object_pos,this);
 		}
