@@ -39,6 +39,8 @@ void BossAttackWood::Initialize(Location _location, Erea _erea, int _color_data,
 
 	startLoc = _location;
 
+	start_se = ResourceManager::SetSound("Resource/Sounds/Enemy/Boss/attack_wood.wav");
+
 }
 
 void BossAttackWood::Finalize()
@@ -52,6 +54,7 @@ void BossAttackWood::Update(GameMain* _g)
 	if (camera_impact_once == false)
 	{
 		_g->CameraImpact(15);
+		ResourceManager::StartSound(start_se);
 		camera_impact_once = true;
 	}
 	

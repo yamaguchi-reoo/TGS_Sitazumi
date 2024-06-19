@@ -7,6 +7,10 @@ private:
 	bool flg;
 	bool hitFlg;
 	int boundCnt;
+
+	int start_se;	//攻撃開始SE
+	int end_se;		//攻撃終了SE
+
 public:
 	BossAttackFire();
 	~BossAttackFire();

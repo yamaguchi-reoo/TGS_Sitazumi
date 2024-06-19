@@ -330,7 +330,7 @@ int ResourceManager::SetSound(const char* p)
 		if (sound_data[i] == NULL)
 		{
 			sound_data[i] = LoadSoundMem(p);
-			ChangeVolumeSoundMem(150, sound_data[i]);
+			ChangeVolumeSoundMem(200, sound_data[i]);
 			sound_filepath[i] = const_cast<char*>(p);
 			return i;
 		}
