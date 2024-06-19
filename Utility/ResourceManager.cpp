@@ -16,8 +16,8 @@ FireAnim ResourceManager::fire_anim[ANIM_BLOCK_NUM];
 WoodAnim ResourceManager::wood_anim[ANIM_BLOCK_NUM];
 WaterAnim ResourceManager::water_anim[ANIM_BLOCK_NUM];
 int ResourceManager::screen = MakeScreen(BOX_WIDTH, BOX_HEIGHT);
-int ResourceManager::anim_handle[3];
-int ResourceManager::stage_block_handle[3];	
+int ResourceManager::anim_handle[3] = { MakeScreen(BOX_WIDTH, BOX_HEIGHT),MakeScreen(BOX_WIDTH, BOX_HEIGHT),MakeScreen(BOX_WIDTH, BOX_HEIGHT) };
+int ResourceManager::stage_block_handle[3] = { MakeScreen(BOX_WIDTH, BOX_HEIGHT),MakeScreen(BOX_WIDTH, BOX_HEIGHT),MakeScreen(BOX_WIDTH, BOX_HEIGHT) };
 
 void ResourceManager::DeleteResource()
 {
@@ -167,7 +167,7 @@ void ResourceManager::SaveAnimHandle()
 					  fire_anim[i].shift.y + fire_anim[i].erea.height, 0xff0000, true);
 		}
 	}
-	ClearDrawScreen();
+
 	//草
 	SetDrawScreen(anim_handle[1]);
 	ClearDrawScreen();
@@ -181,7 +181,7 @@ void ResourceManager::SaveAnimHandle()
 			wood_anim[i].shift2.x,
 			wood_anim[i].shift2.y, 0x00ff00, true);
 	}
-	ClearDrawScreen();
+
 	//水
 	SetDrawScreen(anim_handle[2]);
 	ClearDrawScreen();
@@ -193,7 +193,7 @@ void ResourceManager::SaveAnimHandle()
 				  water_anim[i].shift1.x + water_anim[i].erea.width,
 				  water_anim[i].shift1.y + water_anim[i].erea.height, 0x0000ee, true);
 	}
-	ClearDrawScreen();
+
 	//溶岩
 	SetDrawScreen(stage_block_handle[0]);
 	ClearDrawScreen();
@@ -215,7 +215,7 @@ void ResourceManager::SaveAnimHandle()
 			DrawCircleAA(35, BOX_HEIGHT - (i * 4)+ (anim /3.7f), 8, 100, 0xaa0000, TRUE);
 		}
 	}
-	ClearDrawScreen();
+
 	//水源
 	SetDrawScreen(stage_block_handle[1]);
 	ClearDrawScreen();
@@ -241,7 +241,7 @@ void ResourceManager::SaveAnimHandle()
 			DrawCircle(55 - (anim / 3), BOX_HEIGHT - (i * 4), 8, 0x0000aa, TRUE);
 		}
 	}
-	ClearDrawScreen();
+
 	//通常地面
 	SetDrawScreen(stage_block_handle[2]);
 	ClearDrawScreen();
@@ -267,7 +267,7 @@ void ResourceManager::SaveAnimHandle()
 			DrawCircle(55, BOX_HEIGHT - (i * 4), 8, 0x888888, TRUE);
 		}
 	}
-	ClearDrawScreen();
+
 	SetDrawScreen(DX_SCREEN_BACK);
 }
 
