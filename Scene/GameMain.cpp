@@ -640,14 +640,6 @@ void GameMain::PlayerUpdate()
 				object[player_object]->SearchColor(object[i]);
 				
 			}
-			if (object[player_object] != nullptr) {
-				Player* p;
-				p = dynamic_cast<Player*>(object[player_object]);
-				if (p->GetDebug() > 1) {
-					int a;
-					a = 0;
-				}
-			}
 			
 			//各オブジェクトとの当たり判定
 			if (object[i]->HitBox(object[player_object]))
@@ -841,6 +833,9 @@ void GameMain::DrawGameMain()const
 		tutorial.Draw();
 	}
 
+	int enemy_pos[32];
+	int num = 0;
+
 	//オブジェクトの描画
 	for (int i = 0; object[i] != nullptr; i++)
 	{
@@ -857,7 +852,15 @@ void GameMain::DrawGameMain()const
 			}
 			else
 			{
-				object[i]->Draw();
+				if (object[i]->GetObjectType() == ENEMY) 
+				{
+					enemy_pos[num] = i;
+					num++;
+				}
+				else 
+				{
+					object[i]->Draw();
+				}
 
 			}
 		}
@@ -868,6 +871,12 @@ void GameMain::DrawGameMain()const
 
 	//天気管理クラスの描画
 	weather->Draw();
+
+	//敵描画
+	for (int i = 0; i < num; i++)
+	{
+		object[enemy_pos[i]]->Draw();
+	}
 
 	//プレイヤーを最後に描画
 	object[player_object]->Draw();
