@@ -41,8 +41,8 @@ Player::Player()
 	oldStick[1] = 0.f;
 	oldStick[2] = 0.f;
 	oldStick[3] = 0.f;
-	for (int i = 0; i < 1280 / 40; i++){
-		for (int j = 0; j < 720 / 40; j++){
+	for (int i = 0; i < 720 / 40; i++){
+		for (int j = 0; j < 1280 / 40; j++){
 			posRelation[i][j] = -1;
 		}
 	}
@@ -289,13 +289,13 @@ void Player::Update(GameMain* _g)
 
 	
 	//damage
-	if (damageFlg == true && !damageOldFlg && d == 1) {
+	if (damageFlg && !damageOldFlg/* && d == 1*/) {
 		if (damageEffectFlg == false) {
 			damageEffectFlg = true;
 			hp--;
 		}
 	}
-	if (damageEffectFlg == true) {
+	if (damageEffectFlg) {
 		if (damageEffectTime == 90) {
 			
 			_g->CameraImpact(10);
@@ -316,11 +316,6 @@ void Player::Update(GameMain* _g)
 		vector.y = 0.f;
 	}
 
-	if (damageEffectFlg >= 2) {
-		damageEffectFlg = false;
-	}
-	
-
 	for (int i = 0; i < 4; i++) {
 		stageHitFlg[0][i] = false;
 		stageHitFlg[1][i] = false;
@@ -329,8 +324,8 @@ void Player::Update(GameMain* _g)
 	searchedLen = 1000.f;
 	//searchedObj = nullptr;
 	objNum = 0;
-	for (int i = 0; i < 1280 / 40; i++) {
-		for (int j = 0; j <  720 / 40; j++) {
+	for (int i = 0; i < 720 / 40; i++) {
+		for (int j = 0; j < 1280 / 40; j++) {
 			posRelation[i][j] = -1;
 		}
 	}
@@ -366,14 +361,6 @@ void Player::Update(GameMain* _g)
 		}
 	}
 
-	d = 0;
-
-	if (moveFrontFlg > 1) {
-		int a;
-		a = 0;
-	}
-
-
 }
 
 void Player::Draw()const
@@ -386,7 +373,7 @@ void Player::Draw()const
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 - (deathTimer * 2));
 	}
 
-	if (damageEffectFlg == true) {
+	if (damageEffectFlg) {
 		if (damageEffectTime % 10 == 0) {
 			float ang = 0.f;
 			//DrawBox(local_location.x, local_location.y, local_location.x + erea.width, local_location.y + erea.height, color, FALSE);
@@ -617,7 +604,6 @@ void Player::Hit(Object* _object)
 		case RED:
 			if (_object->GetObjectType() == WATER || _object->GetColorData() == BLUE) {
 				damageFlg = true;
-				d = 1;
 			}
 			
 			break;
@@ -625,7 +611,6 @@ void Player::Hit(Object* _object)
 		case BLUE:
 			if (_object->GetObjectType() == WOOD || _object->GetColorData() == GREEN) {
 				damageFlg = true;
-				d = 1;
 			}
 			
 			break;
@@ -633,7 +618,6 @@ void Player::Hit(Object* _object)
 		case GREEN:
 			if (_object->GetObjectType() == FIRE || _object->GetColorData() == RED) {
 				damageFlg = true;
-				d = 1;
 			}
 			
 			break;
@@ -834,53 +818,115 @@ void Player::SelectObject()
 
 					//if (oldSearchedObj->GetLocalLocation().y >= searchedObj->GetLocalLocation().y) {//前回の選択オブジェクトより上にあったら
 
-						if (searchedObj->GetLocalLocation().x <= searchedObjAll[i]->GetLocalLocation().x && //同じｘかつうえ
-							searchedObj->GetLocalLocation().y >= searchedObjAll[i]->GetLocalLocation().y)
-						{
-							if (GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation()) <= nearLen[0])
-							{
-								nearLen[0] = GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation());
-								//セレクトオブジェクトここに入れる
-								snum[0] = i;
-							}
-						}
+						//if (searchedObj->GetLocalLocation().x <= searchedObjAll[i]->GetLocalLocation().x && //同じｘかつうえ
+						//	searchedObj->GetLocalLocation().y >= searchedObjAll[i]->GetLocalLocation().y)
+						//{
+						//	if (GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation()) <= nearLen[0])
+						//	{
+						//		nearLen[0] = GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation());
+						//		//セレクトオブジェクトここに入れる
+						//		snum[0] = i;
+						//	}
+						//}
 
 
-						if (searchedObj->GetLocalLocation().x < searchedObjAll[i]->GetLocalLocation().x &&
-							searchedObj->GetLocalLocation().y > searchedObjAll[i]->GetLocalLocation().y)//ちがうｘかつ上
-						{
-							if (GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation()) <= nearLen[1])
-							{
-								nearLen[1] = GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation());
-								//セレクトオブジェクトここに入れる
-								//objSelectNumTmp = i;
-								snum[1] = i;
-							}
-						}
+						//if (searchedObj->GetLocalLocation().x < searchedObjAll[i]->GetLocalLocation().x &&
+						//	searchedObj->GetLocalLocation().y > searchedObjAll[i]->GetLocalLocation().y)//ちがうｘかつ上
+						//{
+						//	if (GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation()) <= nearLen[1])
+						//	{
+						//		nearLen[1] = GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation());
+						//		//セレクトオブジェクトここに入れる
+						//		//objSelectNumTmp = i;
+						//		snum[1] = i;
+						//	}
+						//}
 
 
-						if (searchedObj->GetLocalLocation().x < searchedObjAll[i]->GetLocalLocation().x && //おなじｘかつした
-							searchedObj->GetLocalLocation().y < searchedObjAll[i]->GetLocalLocation().y)
-						{
-							if (GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation()) <= nearLen[2])
-							{
-								nearLen[2] = GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation());
-								//セレクトオブジェクトここに入れる
-								snum[2] = i;
-							}
-						}
+						//if (searchedObj->GetLocalLocation().x < searchedObjAll[i]->GetLocalLocation().x && //おなじｘかつした
+						//	searchedObj->GetLocalLocation().y < searchedObjAll[i]->GetLocalLocation().y)
+						//{
+						//	if (GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation()) <= nearLen[2])
+						//	{
+						//		nearLen[2] = GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation());
+						//		//セレクトオブジェクトここに入れる
+						//		snum[2] = i;
+						//	}
+						//}
 
-						if (searchedObj->GetLocalLocation().x <= searchedObjAll[i]->GetLocalLocation().x && //ちがうｘかつした
-							searchedObj->GetLocalLocation().y < searchedObjAll[i]->GetLocalLocation().y)
-						{
-							if (GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation()) <= nearLen[3])
-							{
-								nearLen[3] = GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation());
-								//セレクトオブジェクトここに入れる
-								snum[3] = i;
-							}
-						}
+						//if (searchedObj->GetLocalLocation().x <= searchedObjAll[i]->GetLocalLocation().x && //ちがうｘかつした
+						//	searchedObj->GetLocalLocation().y < searchedObjAll[i]->GetLocalLocation().y)
+						//{
+						//	if (GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation()) <= nearLen[3])
+						//	{
+						//		nearLen[3] = GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation());
+						//		//セレクトオブジェクトここに入れる
+						//		snum[3] = i;
+						//	}
+						//}
 					//}
+
+
+			
+
+
+					int x = (int)searchedObj->GetLocalLocation().x / 40;
+					int y = (int)searchedObj->GetLocalLocation().y / 40;
+
+					int tmp = posRelation[y][x];
+					posRelation[y][x] = 999;
+
+					for (int i = 0; i < 720 / 40; i++)
+					{
+						for (int j = 0; j < 1280 / 40; j++)
+						{
+							if (posRelation[i][j] != -1 && posRelation[i][j] != 999) {
+								int a;
+								a = 0;
+							}
+						}
+					}
+
+					//真横探知
+					for (int j = x; j < 1280 / 40; j++)
+					{
+						if (posRelation[y][j] != -1 && posRelation[y][j] != 999) {
+							snum[0] = posRelation[y][j];
+							break;
+						}
+					}
+
+					//縦横探知
+					int h = 0;
+					while (snum[0] == -1)
+					{
+						h++;
+						for (int j = x; j < 1280 / 40; j++)
+						{
+							if (y - h > -1) {
+								if (posRelation[y - h][j] != -1 && posRelation[y][j] != 999) {
+									snum[0] = posRelation[y - h][j];
+									break;
+								}
+							}
+
+							if (y + h < 18) {
+								if (posRelation[y + h][j] != -1 && posRelation[y][j] != 999) {
+									snum[0] = posRelation[y + h][j];
+									break;
+								}
+							}
+						}	
+
+						if (y - h <= -1 && y + h >= 18) {
+							break;
+						}
+					}
+
+					if (snum[0] == -1) {
+						snum[0] = tmp;
+					}
+
 				}
 			}
 
@@ -894,7 +940,7 @@ void Player::SelectObject()
 			}*/
 
 			if (oldDirection == direction) {
-				for (int i = 0; i < OBJECT_NUM; i++)
+				/*for (int i = 0; i < OBJECT_NUM; i++)
 				{
 					if (oldSearchedObjAll[i] != nullptr) {
 						if (snum[0] > -1) {
@@ -918,13 +964,13 @@ void Player::SelectObject()
 							}
 						}
 					}
-				}
+				}*/
 			}
 
-			if (snum[0] > -1) {
+			if (snum[0] > -1 && snum[0] < 999) {
 				objSelectNumTmp = snum[0];
 			}
-			else if (snum[1] > -1) {
+			/*else if (snum[1] > -1) {
 				objSelectNumTmp = snum[1];
 			}
 			else if (snum[3] > -1) {
@@ -932,7 +978,7 @@ void Player::SelectObject()
 			}
 			else if (snum[2] > -1) {
 				objSelectNumTmp = snum[2];
-			}
+			}*/
 
 
 		}
@@ -961,56 +1007,116 @@ void Player::SelectObject()
 			{
 				if (GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation()) != 0) {
 
-					if (searchedObj->GetLocalLocation().x >= searchedObjAll[i]->GetLocalLocation().x && //同じｘかつうえ
-						searchedObj->GetLocalLocation().y >= searchedObjAll[i]->GetLocalLocation().y)
+					//if (searchedObj->GetLocalLocation().x >= searchedObjAll[i]->GetLocalLocation().x && //同じｘかつうえ
+					//	searchedObj->GetLocalLocation().y >= searchedObjAll[i]->GetLocalLocation().y)
+					//{
+					//	if (GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation()) <= nearLen[0])
+					//	//if (fabs(searchedObj->GetLocalLocation().x - searchedObjAll[i]->GetLocalLocation().x) < nearLen[0])
+					//	{
+					//		nearLen[0] = GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation());
+					//		//セレクトオブジェクトここに入れる
+					//		snum[0] = i;
+					//	}
+					//}
+
+
+					//if (searchedObj->GetLocalLocation().x > searchedObjAll[i]->GetLocalLocation().x &&
+					//	searchedObj->GetLocalLocation().y > searchedObjAll[i]->GetLocalLocation().y)//ちがうｘかつ上
+					//{
+					//	if (GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation()) <= nearLen[1])
+					//	//if (fabs(searchedObj->GetLocalLocation().x - searchedObjAll[i]->GetLocalLocation().x) < nearLen[1])
+					//	{
+					//		nearLen[1] = GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation());
+					//		//nearLen[1] = fabs(searchedObj->GetLocalLocation().x - searchedObjAll[i]->GetLocalLocation().x);
+					//		//セレクトオブジェクトここに入れる
+					//		//objSelectNumTmp = i;
+					//		snum[1] = i;
+					//	}
+					//}
+
+
+					//if (searchedObj->GetLocalLocation().x > searchedObjAll[i]->GetLocalLocation().x && //おなじｘかつした
+					//	searchedObj->GetLocalLocation().y < searchedObjAll[i]->GetLocalLocation().y)
+					//{
+					//	if (GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation()) <= nearLen[2])
+					//	//if (fabs(searchedObj->GetLocalLocation().x - searchedObjAll[i]->GetLocalLocation().x) < nearLen[2])
+					//	{
+					//		nearLen[2] = GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation());
+					//		//セレクトオブジェクトここに入れる
+					//		snum[2] = i;
+					//	}
+					//}
+
+					//if (searchedObj->GetLocalLocation().x >= searchedObjAll[i]->GetLocalLocation().x && //ちがうｘかつした
+					//	searchedObj->GetLocalLocation().y <= searchedObjAll[i]->GetLocalLocation().y)
+					//{
+					//	if (GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation()) <= nearLen[3])
+					//	//if (fabs(searchedObj->GetLocalLocation().x - searchedObjAll[i]->GetLocalLocation().x) < nearLen[3])
+					//	{
+					//		nearLen[3] = GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation());
+					//		//セレクトオブジェクトここに入れる
+					//		snum[3] = i;
+					//	}
+					//}
+
+
+
+
+					int x = (int)searchedObj->GetLocalLocation().x / 40;
+					int y = (int)searchedObj->GetLocalLocation().y / 40;
+
+					int tmp = posRelation[y][x];
+					posRelation[y][x] = 999;
+
+					for (int i = 0; i < 720 / 40; i++)
 					{
-						if (GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation()) <= nearLen[0])
-						//if (fabs(searchedObj->GetLocalLocation().x - searchedObjAll[i]->GetLocalLocation().x) < nearLen[0])
+						for (int j = 0; j < 1280 / 40; j++)
 						{
-							nearLen[0] = GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation());
-							//セレクトオブジェクトここに入れる
-							snum[0] = i;
+							if (posRelation[i][j] != -1 && posRelation[i][j] != 999) {
+								int a;
+								a = 0;
+							}
 						}
 					}
 
-
-					if (searchedObj->GetLocalLocation().x > searchedObjAll[i]->GetLocalLocation().x &&
-						searchedObj->GetLocalLocation().y > searchedObjAll[i]->GetLocalLocation().y)//ちがうｘかつ上
+					//真横探知
+					for (int j = x; j > -1; j--)
 					{
-						if (GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation()) <= nearLen[1])
-						//if (fabs(searchedObj->GetLocalLocation().x - searchedObjAll[i]->GetLocalLocation().x) < nearLen[1])
-						{
-							nearLen[1] = GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation());
-							//nearLen[1] = fabs(searchedObj->GetLocalLocation().x - searchedObjAll[i]->GetLocalLocation().x);
-							//セレクトオブジェクトここに入れる
-							//objSelectNumTmp = i;
-							snum[1] = i;
+						if (posRelation[y][j] != -1 && posRelation[y][j] != 999) {
+							snum[0] = posRelation[y][j];
+							break;
 						}
 					}
 
-
-					if (searchedObj->GetLocalLocation().x > searchedObjAll[i]->GetLocalLocation().x && //おなじｘかつした
-						searchedObj->GetLocalLocation().y < searchedObjAll[i]->GetLocalLocation().y)
+					//縦横探知
+					int h = 0;
+					while (snum[0] == -1)
 					{
-						if (GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation()) <= nearLen[2])
-						//if (fabs(searchedObj->GetLocalLocation().x - searchedObjAll[i]->GetLocalLocation().x) < nearLen[2])
+						h++;
+						for (int j = x; j > 0; j--)
 						{
-							nearLen[2] = GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation());
-							//セレクトオブジェクトここに入れる
-							snum[2] = i;
+							if (y - h > -1) {
+								if (posRelation[y - h][j] != -1 && posRelation[y][j] != 999) {
+									snum[0] = posRelation[y - h][j];
+									break;
+								}
+							}
+
+							if (y + h < 18) {
+								if (posRelation[y + h][j] != -1 && posRelation[y][j] != 999) {
+									snum[0] = posRelation[y + h][j];
+									break;
+								}
+							}
+						}
+
+						if (y - h <= -1 && y + h >= 18) {
+							break;
 						}
 					}
 
-					if (searchedObj->GetLocalLocation().x >= searchedObjAll[i]->GetLocalLocation().x && //ちがうｘかつした
-						searchedObj->GetLocalLocation().y <= searchedObjAll[i]->GetLocalLocation().y)
-					{
-						if (GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation()) <= nearLen[3])
-						//if (fabs(searchedObj->GetLocalLocation().x - searchedObjAll[i]->GetLocalLocation().x) < nearLen[3])
-						{
-							nearLen[3] = GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation());
-							//セレクトオブジェクトここに入れる
-							snum[3] = i;
-						}
+					if (snum[0] == -1) {
+						snum[0] = tmp;
 					}
 				}
 			}
@@ -1025,7 +1131,7 @@ void Player::SelectObject()
 			}*/
 
 			if (oldDirection == direction) {
-				for (int i = 0; i < OBJECT_NUM; i++)
+				/*for (int i = 0; i < OBJECT_NUM; i++)
 				{
 					if (oldSearchedObjAll[i] != nullptr) {
 						if (snum[0] > -1) {
@@ -1049,14 +1155,14 @@ void Player::SelectObject()
 							}
 						}
 					}
-				}
+				}*/
 			}
 			
 
-			if (snum[0] > -1) {
+			if (snum[0] > -1 && snum[0] < 999) {
 				objSelectNumTmp = snum[0];
 			}
-			else if (snum[1] > -1) {
+			/*else if (snum[1] > -1) {
 				objSelectNumTmp = snum[1];
 			}
 			else if (snum[3] > -1) {
@@ -1064,7 +1170,7 @@ void Player::SelectObject()
 			}
 			else if (snum[2] > -1) {
 				objSelectNumTmp = snum[2];
-			}
+			}*/
 
 			//if (snum[3] > -1) {
 			//	objSelectNumTmp = snum[3];

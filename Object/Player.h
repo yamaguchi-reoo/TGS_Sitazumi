@@ -40,7 +40,7 @@ private:
 	int objSelectNumTmp;//オブジェクトの添え字
 	bool searchedObjFlg;//画面内に交換できるオブジェクトがあるかどうか
 	bool swap_once;		//一回だけ色を交換する
-	int posRelation[1280 / 40][720 / 40];
+	int posRelation[720 / 40][1280 / 40];
 	int posRelNum[2];
 	bool oldStick[4];
 	//bool searchFlg;
@@ -62,7 +62,6 @@ private:
 	int fps = 0;
 	int fps1 = 0;
 	float move[4] = { 0,0,0,0 };
-	Location aaa;
 
 	int pState;//待機、移動、ジャンプ
 	int pStateOld;//待機、移動、ジャンプ
@@ -90,7 +89,6 @@ private:
 	int now_riding;		//今乗っているブロックに応じて再生するSEを変える
 
 	int deathTimer = 0;
-	int d = 0;//へんなところでダメージを受ける対策おそらくメモリ
 
 public:
 	Player();
