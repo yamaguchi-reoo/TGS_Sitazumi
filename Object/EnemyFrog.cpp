@@ -314,7 +314,8 @@ void EnemyFrog::FrogDraw(Location location)const
 		ResourceManager::DrawRotaBox(location.x + erea.width - 10, location.y + 10, 40, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, draw_color, TRUE);
 		ResourceManager::DrawRotaBox(location.x + erea.width - 10, location.y + 10, 40, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, 0x000000, FALSE);
 		//前足
-		//ResourceManager::DrawRotaBox(location.x + 20, location.y + 20, 20, 30, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, draw_color, TRUE);
+		ResourceManager::DrawRotaBox(location.x + 10, location.y + 10, 10, 15, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, draw_color, TRUE);
+		ResourceManager::DrawRotaBox(location.x + 10, location.y + 10, 10, 15, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, 0x000000, FALSE);
 		//目
 		ResourceManager::DrawRotaBox(location.x, location.y + erea.height - 20, 10, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, 0xffffff, TRUE);
 
@@ -329,7 +330,8 @@ void EnemyFrog::FrogDraw(Location location)const
 		ResourceManager::DrawRotaBox(location.x + erea.width - 10, location.y + erea.height - 10, 40, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, draw_color, TRUE);
 		ResourceManager::DrawRotaBox(location.x + erea.width - 10, location.y + erea.height - 10, 40, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, 0x000000, FALSE);
 		//前足
-		//ResourceManager::DrawRotaBox(location.x + 20, location.y + erea.height - 20, 20, 30, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, draw_color, TRUE);
+		ResourceManager::DrawRotaBox(location.x + 10, location.y + erea.height - 10, 10, 15, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, draw_color, TRUE);
+		ResourceManager::DrawRotaBox(location.x + 10, location.y + erea.height - 10, 10, 15, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, 0x000000, FALSE);
 		//目
 		ResourceManager::DrawRotaBox(location.x, location.y + 20, 10, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, 0xffffff, TRUE);
 
@@ -344,7 +346,8 @@ void EnemyFrog::FrogDraw(Location location)const
 		ResourceManager::DrawRotaBox(location.x + erea.width + 30, location.y + erea.height - 10, 40, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, draw_color, TRUE);
 		ResourceManager::DrawRotaBox(location.x + erea.width + 30, location.y + erea.height - 10, 40, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, 0x000000, FALSE);
 		//前足
-		//ResourceManager::DrawRotaBox(location.x, location.y + erea.height - 20, 20, 30, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, draw_color, TRUE);
+		ResourceManager::DrawRotaBox(location.x, location.y + erea.height - 10, 10, 15, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, draw_color, TRUE);
+		ResourceManager::DrawRotaBox(location.x, location.y + erea.height - 10, 10, 15, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, 0x000000, FALSE);
 		//目
 		ResourceManager::DrawRotaBox(location.x, location.y + 20, 10, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, 0xffffff, TRUE);
 
@@ -359,7 +362,8 @@ void EnemyFrog::FrogDraw(Location location)const
 		ResourceManager::DrawRotaBox(location.x + erea.width + 30, location.y + 10, 40, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, draw_color, TRUE);
 		ResourceManager::DrawRotaBox(location.x + erea.width + 30, location.y + 10, 40, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, 0x000000, FALSE);
 		//前足
-		//ResourceManager::DrawRotaBox(location.x, location.y + 20, 20, 30,location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, draw_color, TRUE);
+		ResourceManager::DrawRotaBox(location.x, location.y + 10, 10, 15,location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, draw_color, TRUE);
+		ResourceManager::DrawRotaBox(location.x, location.y + 10, 10, 15,location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, 0x000000, FALSE);
 		//目
 		ResourceManager::DrawRotaBox(location.x, location.y + erea.height - 20, 10, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, 0xffffff, TRUE);
 
