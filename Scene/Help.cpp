@@ -6,8 +6,8 @@
 #include "../Utility/KeyInput.h"
 #include "../Utility/ResourceManager.h"
 
-Help::Help():l_help_red{ 360.f, 120.f }, l_help_blue{ 420.f, 120.f }, l_help_fire{ 360, 330 }, l_help_water{ 420, 330 }, l_help_wood{ 480, 330 }, l_help_bamboo{ 540, 330 }, l_help_respawn{ 450, 600 }, player_location{ 430, 110 }, HPlayerColor{ RED, BLUE, GREEN }, p_color(0), p_hp(5), sign{ '<', '>' }, s_num(0), 
-l_Deer{ 400, 300 }, l_Bat{ 0, 0 }, l_Frog{ 0, 0 }
+Help::Help():l_help_red{ 360.f, 120.f }, l_help_blue{ 420.f, 120.f }, l_help_fire{ 360, 330 }, l_help_water{ 420, 330 }, l_help_wood{ 480, 330 }, l_help_bamboo{ 540, 330 }, l_help_respawn{ 450, 600 }, player_location{ 430, 310 }, p_color(GREEN), p_hp(5), sign{ '<', '>' }, s_num(0), 
+l_Deer{ 820, 200 }, l_Frog{ 960, 220 }, l_Bat{ 1060, 220 }, cursor_se(0), decision_se(0), DamageColor(RED)
 {
 
 }
@@ -39,12 +39,48 @@ AbstractScene* Help::Update()
 	switch (MenuNumber)
 	{
 	case 2:
+		l_help_red = { 965.f, 390.f };
+		l_help_blue = { 965.f, 390.f };
+		l_help_fire = { 965.f, 520.f };
+		l_help_water = { 965.f, 520.f };
+		l_help_wood = { 905.f, 520.f };
+		l_help_bamboo = { 1045.f, 520.f };
+
 		if (frame % 60 == 0)
 		{
-			p_color++;
-			//p_hp--;
+			p_hp--;
+
+			switch (DamageColor)
+			{
+			case 0:
+				DamageColor = RED;
+				p_color = GREEN;
+				break;
+
+			case RED:
+				DamageColor = BLUE;
+				p_color = RED;
+				break;
+
+			case BLUE:
+				DamageColor = GREEN;
+				p_color = BLUE;
+				break;
+
+			case GREEN:
+				DamageColor = RED;
+				p_color = GREEN;
+				break;
+
+			default:
+				break;
+			}
 		}
 		break;
+
+	case 3:
+		l_help_red = { 360.f, 120.f };
+		l_help_blue = { 420.f, 120.f };
 
 	case 5:
 		if (frame % 10 == 0)
@@ -95,10 +131,9 @@ AbstractScene* Help::Update()
 		}
 	}
 
-	// playerの色切り替え
-	if (p_color > 2)
+	if (p_hp < 0)
 	{
-		p_color = 0;
+		p_hp = 5;
 	}
 
 	return this;
@@ -106,7 +141,7 @@ AbstractScene* Help::Update()
 
 void Help::Draw()const
 {
-	DrawFormatString(1100, 60, GetColor(255, 0, 0), "%d %d", KeyInput::GetMouseCursor().x, KeyInput::GetMouseCursor().y);
+	//DrawFormatString(1100, 660, GetColor(255, 0, 0), "%d %d", KeyInput::GetMouseCursor().x, KeyInput::GetMouseCursor().y);
 	//DrawFormatString(700, 100, GetColor(255, 0, 0), "menu : %d",MenuNumber);
 
 	
@@ -184,24 +219,70 @@ void Help::Draw()const
 
 		DrawLineAA(30.f, 240.f, 280.f, 240.f, 0xff0000, 5.0f);
 
-		DrawBoxAA(360, 58, 562, 282, 0xffffff, FALSE, 2.0f);
-		DrawBoxAA(362, 60, 560, 280, 0x555555, TRUE, 2.0f);
+		DrawBoxAA(360, 278, 562, 472, 0xffffff, FALSE, 2.0f);
+		DrawBoxAA(362, 280, 560, 470, 0x555555, TRUE, 2.0f);
 
-		
+		DrawBoxAA(780, 118, 1202, 622, 0xffffff, FALSE, 2.0f);
+		DrawBoxAA(782, 120, 1200, 620, 0x555555, TRUE, 2.0f);
 
 
 		HDrawPlayer(p_color);
-		DrawString(385, 220, "Damage", 0xff0000);
-		
-		HDrawDeer(RED);
+		DrawString(385, 410, "Damage", 0xff0000);
 
+		DrawString(930, 130, "Enemy", 0xffffff);
+		HDrawDeer(DamageColor);
+		HDrawFrog(DamageColor);
+		HDrawBat(DamageColor);
+
+		DrawString(825, 320, " Color Block", 0xffffff);
+		DrawString(825, 450, " Damage Zone", 0xffffff);
+
+		switch (DamageColor)
+		{
+		case RED:
+			// 赤ブロック
+			ResourceManager::StageBlockDraw(l_help_red, 0);
+			//溶岩
+			ResourceManager::StageAnimDraw(l_help_fire, 3);
+			break;
+
+		case BLUE:
+			// 青ブロック
+			ResourceManager::StageBlockDraw(l_help_blue, 1);
+			//水
+			ResourceManager::StageAnimDraw(l_help_water, 5);
+			break;
+
+		case GREEN:
+			// 緑ブロック
+			DrawBoxAA(965.f, 390.f, 1005.f, 430.f, GREEN, TRUE);
+			// 緑ブロックの点々
+			DrawBoxAA(975.f, 410.f, 980.f, 415.f, 0x00ee00, TRUE);
+			DrawBoxAA(990.f, 425.f, 995.f, 430.f, 0x00ee00, TRUE);
+			DrawBoxAA(995.f, 405.f, 1000.f, 410.f, 0x00ee00, TRUE);
+
+			//木
+			ResourceManager::StageAnimDraw(l_help_wood, 4);
+
+			//竹
+			DrawBoxAA(l_help_bamboo.x + 3, l_help_bamboo.y, l_help_bamboo.x + BOX_WIDTH - 3, l_help_bamboo.y + BOX_HEIGHT, 0x00cc00, true);
+			DrawBoxAA(l_help_bamboo.x + 2, l_help_bamboo.y, l_help_bamboo.x + BOX_WIDTH - 2, l_help_bamboo.y + 2, 0x00ff00, true);
+			DrawBoxAA(l_help_bamboo.x + 2, l_help_bamboo.y + BOX_HEIGHT, l_help_bamboo.x + BOX_WIDTH - 2, l_help_bamboo.y + BOX_HEIGHT - 2, 0x00ff00, true);
+			DrawBoxAA(l_help_bamboo.x + 10, l_help_bamboo.y + 2, l_help_bamboo.x + 13, l_help_bamboo.y + BOX_HEIGHT - 2, 0x00ee00, true);
+
+		default:
+			break;
+		}
+
+		// Playerの体力
 		for (int i = 0; i < p_hp; i++)
 		{
-			ResourceManager::DrawHeart({ 400.f + i * 50.f,500.f }, { 40.f,40.f });
+			ResourceManager::DrawHeart({ 342.f + i * 50.f,220.f }, { 40.f,40.f });
 		}
 
 		SetFontSize(100);
-		DrawFormatString(700, 130, 0xffffff, "%c", sign[0]);
+		//不等号
+		DrawFormatString(650, 325, 0xffffff, "%c", sign[0]);
 
 		SetFontSize(49);
 
@@ -215,10 +296,7 @@ void Help::Draw()const
 		DrawBoxAA(342, 100, 540, 180, 0x555555, TRUE, 2.0f);
 
 		// 色の交換できるブロックの説明
-		DrawBoxAA(360.f, 60.f + 60, 400.f, 100.f + 60, RED, TRUE);
 		ResourceManager::StageBlockDraw(l_help_red, 0);
-
-		DrawBoxAA(420.f, 60.f + 60, 460.f, 100.f + 60, BLUE, TRUE);
 		ResourceManager::StageBlockDraw(l_help_blue, 1);
 
 		DrawBoxAA(480.f, 60.f + 60, 520.f, 100.f + 60, GREEN, TRUE);
@@ -346,41 +424,41 @@ void Help::Draw()const
 void Help::HDrawPlayer(int c_num)const
 {
 	//帽子　中央
-	DrawTriangleAA(player_location.x + (PLAYER_WIDTH / 2), player_location.y, player_location.x + 20, player_location.y + 20, player_location.x + 40, player_location.y + 20, HPlayerColor[c_num], true);
+	DrawTriangleAA(player_location.x + (PLAYER_WIDTH / 2), player_location.y, player_location.x + 20, player_location.y + 20, player_location.x + 40, player_location.y + 20, p_color, true);
 	DrawTriangleAA(player_location.x + (PLAYER_WIDTH / 2), player_location.y, player_location.x + 20, player_location.y + 20, player_location.x + 40, player_location.y + 20, 0x000000, false);
 	//帽子　右側	  									   					  						  						  		 
-	DrawTriangleAA(player_location.x + (PLAYER_WIDTH / 2), player_location.y, player_location.x + 40, player_location.y + 20, player_location.x + 52, player_location.y + 15, HPlayerColor[c_num], true);
+	DrawTriangleAA(player_location.x + (PLAYER_WIDTH / 2), player_location.y, player_location.x + 40, player_location.y + 20, player_location.x + 52, player_location.y + 15, p_color, true);
 	DrawTriangleAA(player_location.x + (PLAYER_WIDTH / 2), player_location.y, player_location.x + 40, player_location.y + 20, player_location.x + 52, player_location.y + 15, 0x000000, false);
 	//帽子　左側	  									   					  						  						  		 
-	DrawTriangleAA(player_location.x + (PLAYER_WIDTH / 2), player_location.y, player_location.x + 8, player_location.y + 15, player_location.x + 20, player_location.y + 20, HPlayerColor[c_num], true);
+	DrawTriangleAA(player_location.x + (PLAYER_WIDTH / 2), player_location.y, player_location.x + 8, player_location.y + 15, player_location.x + 20, player_location.y + 20, p_color, true);
 	DrawTriangleAA(player_location.x + (PLAYER_WIDTH / 2), player_location.y, player_location.x + 8, player_location.y + 15, player_location.x + 20, player_location.y + 20, 0x000000, false);
 
 	//頭
-	ResourceManager::DrawRotaBox(player_location.x - (PLAYER_WIDTH / 2), player_location.y - (PLAYER_HEIGHT)+76, 23, 15, player_location.x, player_location.y, 0, HPlayerColor[c_num], true);
+	ResourceManager::DrawRotaBox(player_location.x - (PLAYER_WIDTH / 2), player_location.y - (PLAYER_HEIGHT)+76, 23, 15, player_location.x, player_location.y, 0, p_color, true);
 	ResourceManager::DrawRotaBox(player_location.x - (PLAYER_WIDTH / 2), player_location.y - (PLAYER_HEIGHT)+76, 23, 15, player_location.x, player_location.y, 0, 0x000000, false);
 
 	//目
 	ResourceManager::DrawRotaBox(player_location.x - (PLAYER_WIDTH / 2) - 6, player_location.y - (PLAYER_HEIGHT)+76, 6, 7, player_location.x, player_location.y, 0, 0x000000, true);
 
 	//首
-	ResourceManager::DrawRotaBox(player_location.x - (PLAYER_WIDTH / 2), player_location.y - (PLAYER_HEIGHT)+62, 10, 5, player_location.x, player_location.y, 0, HPlayerColor[c_num], true);
+	ResourceManager::DrawRotaBox(player_location.x - (PLAYER_WIDTH / 2), player_location.y - (PLAYER_HEIGHT)+62, 10, 5, player_location.x, player_location.y, 0, p_color, true);
 	ResourceManager::DrawRotaBox(player_location.x - (PLAYER_WIDTH / 2), player_location.y - (PLAYER_HEIGHT)+62, 10, 5, player_location.x, player_location.y, 0, 0x000000, false);
 
 	//胴体																					
-	ResourceManager::DrawRotaBox(player_location.x - (PLAYER_WIDTH / 2), player_location.y - (PLAYER_HEIGHT)+37, 21, 37, player_location.x, player_location.y, 0, HPlayerColor[c_num], true);
+	ResourceManager::DrawRotaBox(player_location.x - (PLAYER_WIDTH / 2), player_location.y - (PLAYER_HEIGHT)+37, 21, 37, player_location.x, player_location.y, 0, p_color, true);
 	ResourceManager::DrawRotaBox(player_location.x - (PLAYER_WIDTH / 2), player_location.y - (PLAYER_HEIGHT)+37, 21, 37, player_location.x, player_location.y, 0, 0x000000, false);
 
 	//バッグ
-	ResourceManager::DrawRotaBox(player_location.x - (PLAYER_WIDTH / 2) + 15, player_location.y - (PLAYER_HEIGHT)+40, 5, 23, player_location.x, player_location.y, 0, HPlayerColor[c_num], true);
+	ResourceManager::DrawRotaBox(player_location.x - (PLAYER_WIDTH / 2) + 15, player_location.y - (PLAYER_HEIGHT)+40, 5, 23, player_location.x, player_location.y, 0, p_color, true);
 	ResourceManager::DrawRotaBox(player_location.x - (PLAYER_WIDTH / 2) + 15, player_location.y - (PLAYER_HEIGHT)+40, 5, 23, player_location.x, player_location.y, 0, 0x000000, false);
 	ResourceManager::DrawRotaBox(player_location.x - (PLAYER_WIDTH / 2) + 15, player_location.y - (PLAYER_HEIGHT)+40, 3, 15, player_location.x, player_location.y, 0, 0x000000, true);
 
 	//腕
-	ResourceManager::DrawRotaBox(player_location.x + 25, player_location.y + 55, 28, 7, player_location.x + 35, player_location.y + 55, 0, HPlayerColor[c_num], true);
+	ResourceManager::DrawRotaBox(player_location.x + 25, player_location.y + 55, 28, 7, player_location.x + 35, player_location.y + 55, 0, p_color, true);
 	ResourceManager::DrawRotaBox(player_location.x + 25, player_location.y + 55, 28, 7, player_location.x + 35, player_location.y + 55, 0, 0x000000, false);
 
 	//足												 														
-	ResourceManager::DrawRotaBox(player_location.x + 30, player_location.y + 70, 7, 27, player_location.x + 30, player_location.y + 80, 0, HPlayerColor[c_num], true);
+	ResourceManager::DrawRotaBox(player_location.x + 30, player_location.y + 70, 7, 27, player_location.x + 30, player_location.y + 80, 0, p_color, true);
 	ResourceManager::DrawRotaBox(player_location.x + 30, player_location.y + 70, 7, 27, player_location.x + 30, player_location.y + 80, 0, 0x000000, false);
 }
 
@@ -389,33 +467,44 @@ void Help::HDrawDeer(int c_num)const
 	//鹿
 	//頭
 	ResourceManager::DrawRotaBox(l_Deer.x + 16.0f, l_Deer.y + 10.0f , 30.0f, 20.0f, l_Deer.x + 16.0f, l_Deer.y + 10.0f, 0, c_num, true);
+	ResourceManager::DrawRotaBox(l_Deer.x + 16.0f, l_Deer.y + 10.0f, 30.0f, 20.0f, l_Deer.x + 16.0f, l_Deer.y + 10.0f, 0, 0x000000, FALSE);
 	//目
 	ResourceManager::DrawRotaBox(l_Deer.x + 8.0f, l_Deer.y + 10.0f, 8.0f, 9.0f, l_Deer.x + 8.0f, l_Deer.y + 10.0f, 0, 0x000000, true);
+	ResourceManager::DrawRotaBox(l_Deer.x + 8.0f, l_Deer.y + 10.0f, 8.0f, 9.0f, l_Deer.x + 8.0f, l_Deer.y + 10.0f, 0, 0x000000, FALSE);
 	//首
 	ResourceManager::DrawRotaBox(l_Deer.x + 25.0f, l_Deer.y + 38.0f, 13.0f, 24.0f, l_Deer.x + 25.0f, l_Deer.y + 38.0f, 0, c_num, true);
+	ResourceManager::DrawRotaBox(l_Deer.x + 25.0f, l_Deer.y + 38.0f, 13.0f, 24.0f, l_Deer.x + 25.0f, l_Deer.y + 38.0f, 0, 0x000000, FALSE);
 	//胴体
 	ResourceManager::DrawRotaBox(l_Deer.x + 53.0f, l_Deer.y + 63.0f, 65.0f, 15.0f, l_Deer.x + 53.0f, l_Deer.y + 63.0f, 0, c_num, true);
+	ResourceManager::DrawRotaBox(l_Deer.x + 53.0f, l_Deer.y + 63.0f, 65.0f, 15.0f, l_Deer.x + 53.0f, l_Deer.y + 63.0f, 0, 0x000000, FALSE);
 	//足　左から
 	ResourceManager::DrawRotaBox(l_Deer.x + 27.0f, l_Deer.y + 88.0f , 10.0f, 25.0f, l_Deer.x + 27.0f, l_Deer.y + 88.0f, 0, c_num, true);
+	ResourceManager::DrawRotaBox(l_Deer.x + 27.0f, l_Deer.y + 88.0f, 10.0f, 25.0f, l_Deer.x + 27.0f, l_Deer.y + 88.0f, 0, 0x000000, FALSE);
 	ResourceManager::DrawRotaBox(l_Deer.x + 43.0f, l_Deer.y + 88.0f , 10.0f, 25.0f, l_Deer.x + 43.0f, l_Deer.y + 88.0f, 0, c_num, true);
+	ResourceManager::DrawRotaBox(l_Deer.x + 43.0f, l_Deer.y + 88.0f, 10.0f, 25.0f, l_Deer.x + 43.0f, l_Deer.y + 88.0f, 0, 0x000000, FALSE);
 	ResourceManager::DrawRotaBox(l_Deer.x + 68.0f, l_Deer.y + 88.0f , 10.0f, 25.0f, l_Deer.x + 68.0f, l_Deer.y + 88.0f, 0, c_num, true);
+	ResourceManager::DrawRotaBox(l_Deer.x + 68.0f, l_Deer.y + 88.0f, 10.0f, 25.0f, l_Deer.x + 68.0f, l_Deer.y + 88.0f, 0, 0x000000, FALSE);
 	ResourceManager::DrawRotaBox(l_Deer.x + 83.0f, l_Deer.y + 88.0f , 10.0f, 25.0f, l_Deer.x + 83.0f, l_Deer.y + 88.0f, 0, c_num, true);
+	ResourceManager::DrawRotaBox(l_Deer.x + 83.0f, l_Deer.y + 88.0f, 10.0f, 25.0f, l_Deer.x + 83.0f, l_Deer.y + 88.0f, 0, 0x000000, FALSE);
 }
 
 void Help::HDrawBat(int c_num)const
 {
 	//蝙蝠
-	//耳
+	//左耳
 	DrawTriangleAA(l_Bat.x + 46, l_Bat.y, l_Bat.x + 46, l_Bat.y + 19, l_Bat.x + 55, l_Bat.y + 9, c_num, TRUE);
 	DrawTriangleAA(l_Bat.x + 46, l_Bat.y, l_Bat.x + 46, l_Bat.y + 19, l_Bat.x + 55, l_Bat.y + 9, 0x000000, FALSE);
+	//右耳
+	DrawTriangleAA(l_Bat.x + 69, l_Bat.y, l_Bat.x + 69, l_Bat.y + 19, l_Bat.x + 60, l_Bat.y + 9, c_num, TRUE);
+	DrawTriangleAA(l_Bat.x + 69, l_Bat.y, l_Bat.x + 69, l_Bat.y + 19, l_Bat.x + 60, l_Bat.y + 9, 0x000000, FALSE);
 	//右羽
 	DrawTriangleAA(l_Bat.x + 66, l_Bat.y + 33, l_Bat.x + 97, l_Bat.y + 7, l_Bat.x + 117, l_Bat.y + 65, c_num, TRUE);
 	DrawTriangleAA(l_Bat.x + 66, l_Bat.y + 33, l_Bat.x + 97, l_Bat.y + 7, l_Bat.x + 96 , l_Bat.y + 61, c_num, TRUE);
 	DrawTriangleAA(l_Bat.x + 65, l_Bat.y + 33, l_Bat.x + 97, l_Bat.y + 7, l_Bat.x + 80 , l_Bat.y + 57, c_num, TRUE);
 	//左羽
-	DrawTriangleAA(l_Bat.x + 66, l_Bat.y + 33, l_Bat.x + 97, l_Bat.y + 7, l_Bat.x + 117, l_Bat.y + 65, c_num, TRUE);
-	DrawTriangleAA(l_Bat.x + 66, l_Bat.y + 33, l_Bat.x + 97, l_Bat.y + 7, l_Bat.x + 96, l_Bat.y + 61, c_num, TRUE);
-	DrawTriangleAA(l_Bat.x + 65, l_Bat.y + 33, l_Bat.x + 97, l_Bat.y + 7, l_Bat.x + 80, l_Bat.y + 57, c_num, TRUE);
+	DrawTriangleAA(l_Bat.x + 48, l_Bat.y + 33, l_Bat.x + 20, l_Bat.y + 7, l_Bat.x - 2, l_Bat.y + 65, c_num, TRUE);
+	DrawTriangleAA(l_Bat.x + 48, l_Bat.y + 33, l_Bat.x + 20, l_Bat.y + 7, l_Bat.x + 18, l_Bat.y + 61, c_num, TRUE);
+	DrawTriangleAA(l_Bat.x + 50, l_Bat.y + 33, l_Bat.x + 20, l_Bat.y + 7, l_Bat.x + 34, l_Bat.y + 57, c_num, TRUE);
 	// 頭
 	DrawQuadrangleAA(l_Bat.x + 57, l_Bat.y + 12, l_Bat.x + 69, l_Bat.y + 23, l_Bat.x + 57, l_Bat.y + 30, l_Bat.x + 46, l_Bat.y + 23, c_num, TRUE);
 	// 胴体
@@ -426,13 +515,15 @@ void Help::HDrawFrog(int c_num)const
 {
 	//蛙
 	//胴体
-	ResourceManager::DrawRotaBox(l_Frog.x + (50 / 2), l_Frog.y + (50 / 2), 50, 50 / 2, l_Frog.x + (50 / 2), l_Frog.y + (50 / 2), 0, c_num, TRUE);
+	ResourceManager::DrawRotaBox(l_Frog.x + (50 / 2), l_Frog.y + (50 / 2), 50, 50 / 2, l_Frog.x + (50 / 2), l_Frog.y + (50 / 2), 180, c_num, TRUE);
+	ResourceManager::DrawRotaBox(l_Frog.x + (50 / 2), l_Frog.y + (50 / 2), 50, 50 / 2, l_Frog.x + (50 / 2), l_Frog.y + (50 / 2), 180, 0x000000, FALSE);
 	//付け根側後ろ足
-	ResourceManager::DrawRotaBox(l_Frog.x + 50 - 10, l_Frog.y + 50 - 20 , 30, 10, l_Frog.x + (50 / 2), l_Frog.y + (50 / 2), 0, c_num, TRUE);
-	ResourceManager::DrawRotaBox(l_Frog.x + 50 - 10, l_Frog.y + 50 - 20 , 30, 10, l_Frog.x + (50 / 2), l_Frog.y + (50 / 2), 0, 0x000000, FALSE);
+	ResourceManager::DrawRotaBox(l_Frog.x + 50 - 10, l_Frog.y + 50 - 20 , 30, 10, l_Frog.x + (50 / 2), l_Frog.y + (50 / 2), 180, c_num, TRUE);
+	ResourceManager::DrawRotaBox(l_Frog.x + 50 - 10, l_Frog.y + 50 - 20 , 30, 10, l_Frog.x + (50 / 2), l_Frog.y + (50 / 2), 180, 0x000000, FALSE);
 	//後ろ足先端
-	ResourceManager::DrawRotaBox(l_Frog.x + 50 - 10, l_Frog.y + 50 - 10 , 40, 10, l_Frog.x + (50 / 2), l_Frog.y + (50 / 2), 0, c_num, TRUE);
-	ResourceManager::DrawRotaBox(l_Frog.x + 50 - 10, l_Frog.y + 50 - 10 , 40, 10, l_Frog.x + (50 / 2), l_Frog.y + (50 / 2), 0, 0x000000, FALSE);
+	ResourceManager::DrawRotaBox(l_Frog.x + 50 - 10, l_Frog.y + 50 - 10 , 40, 10, l_Frog.x + (50 / 2), l_Frog.y + (50 / 2), 180, c_num, TRUE);
+	ResourceManager::DrawRotaBox(l_Frog.x + 50 - 10, l_Frog.y + 50 - 10 , 40, 10, l_Frog.x + (50 / 2), l_Frog.y + (50 / 2), 180, 0x000000, FALSE);
 	//目
-	ResourceManager::DrawRotaBox(l_Frog.x, l_Frog.y + 20, 10, 10, l_Frog.x + (50 / 2), l_Frog.y + (50 / 2), 0, 0xffffff, TRUE);
+	ResourceManager::DrawRotaBox(l_Frog.x, l_Frog.y + 20, 10, 10, l_Frog.x + (50 / 2), l_Frog.y + (50 / 2), 180, 0xffffff, TRUE);
+	ResourceManager::DrawRotaBox(l_Frog.x, l_Frog.y + 20, 10, 10, l_Frog.x + (50 / 2), l_Frog.y + (50 / 2), 180, 0x000000, FALSE);
 }
