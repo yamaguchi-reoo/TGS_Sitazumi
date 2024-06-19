@@ -2,7 +2,7 @@
 #include "DxLib.h"
 
 
-End::End() :shift_y(0), stop_time(0), up(0), deer_speed(2), bat_loction{ 0.0f,0.0f }, deer_location{ 0.0f,0.0f }
+End::End() :shift_y(0), stop_time(0), up(0), deer_speed(0), bat_loction{ 0.0f,0.0f }, deer_location{ 0.0f,0.0f }
 {
 	for (int i = 0; i < 7; i++)
 	{
@@ -30,8 +30,9 @@ void End::Initialize()
 	}
 
 	bat_loction = { 100.f, 200.f };
-	deer_location = { 900.f, 500.f };
+	deer_location = { 1280.f, 500.f };
 
+	deer_speed = 80.f;
 	shift_y = -600;
 }
 
@@ -140,11 +141,11 @@ void End::DeerDraw() const
 	ResourceManager::DrawRotaBox(deer_location.x + 72.0f, deer_location.y + 63.0f, 30.0f, 15.0f, deer_location.x + 72.0f, deer_location.y + 63.0f, 0.f, BLUE, true);
 
 	//足　左から
-	ResourceManager::DrawRotaBox(deer_location.x + 27.0f , deer_location.y + 88.0f, 10.0f, 25.0f, deer_location.x + 27.0f, deer_location.y + 88.0f, leg_angle[0], BLUE, true);
-	ResourceManager::DrawRotaBox(deer_location.x + 43.0f, deer_location.y + 88.0f, 10.0f, 25.0f, deer_location.x + 43.0f, deer_location.y + 88.0f, -leg_angle[1], BLUE, true);
+	ResourceManager::DrawRotaBox(deer_location.x + 27.0f - 4, deer_location.y + 88.0f, 10.0f, 25.0f, deer_location.x + 27.0f - 4, deer_location.y + 88.0f, leg_angle[0], BLUE, true);
+	ResourceManager::DrawRotaBox(deer_location.x + 43.0f, deer_location.y + 88.0f, 10.0f, 25.0f, deer_location.x + 43.0f, deer_location.y + 88.0f, leg_angle[1], BLUE, true);
 	//ResourceManager::DrawRotaBox(deer_location.x + 35.0f + d_left_leg[1], deer_location.y + 88.0f, 10.0f, 25.0f, deer_location.x + 35.0f, deer_location.y + 88.0f, -leg_angle[1], draw_color, true);
-	ResourceManager::DrawRotaBox(deer_location.x + 68.0f, deer_location.y + 88.0f, 10.0f, 25.0f, deer_location.x + 68.0f, deer_location.y + 88.0f, leg_angle[2], BLUE, true);
-	ResourceManager::DrawRotaBox(deer_location.x + 83.0f, deer_location.y + 88.0f, 10.0f, 25.0f, deer_location.x + 83.0f, deer_location.y + 88.0f, -leg_angle[3], BLUE, true);
+	ResourceManager::DrawRotaBox(deer_location.x + 68.0f - 4, deer_location.y + 88.0f, 10.0f, 25.0f, deer_location.x + 68.0f - 4, deer_location.y + 88.0f, leg_angle[2], BLUE, true);
+	ResourceManager::DrawRotaBox(deer_location.x + 83.0f, deer_location.y + 88.0f, 10.0f, 25.0f, deer_location.x + 83.0f, deer_location.y + 88.0f, leg_angle[3], BLUE, true);
 	//ResourceManager::DrawRotaBox(local_location.x + 75.0f + d_left_leg[3], local_location.y + 88.0f, 10.0f, 25.0f, local_location.x + 75.0f, local_location.y + 88.0f, -leg_angle[3], draw_color, true);
 }
 
@@ -154,19 +155,20 @@ void End::DeerUpdate()
 	// 足の回転方向を制御するフラグを追加
 	for (int i = 0; i < 4; i++) {
 		// 回転方向に基づいて角度を更新
-		leg_angle[i] += deer_speed;
+		//leg_angle[i] += deer_speed;
+		leg_angle[i] -= deer_speed;
 
-		// 角度の範囲を制限する
-		if (leg_angle[i] >= 25.0f) {
-			leg_angle[i] = 25.0f - 1;
-			//回転方向を反転
-			deer_speed = -deer_speed;
-		}
-		if (leg_angle[i] <= -5.0f) {
-			leg_angle[i] = -5.0f + 1;
-			//回転方向を反転
-			deer_speed = -deer_speed;
-		}
+		//// 角度の範囲を制限する
+		//if (leg_angle[i] >= 25.0f) {
+		//	leg_angle[i] = 25.0f - 1;
+		//	//回転方向を反転
+		//	deer_speed = -deer_speed;
+		//}
+		//if (leg_angle[i] <= -5.0f) {
+		//	leg_angle[i] = -5.0f + 1;
+		//	//回転方向を反転
+		//	deer_speed = -deer_speed;
+		//}
 	}
 }
 
