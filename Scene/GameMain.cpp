@@ -638,6 +638,14 @@ void GameMain::PlayerUpdate()
 				object[player_object]->SearchColor(object[i]);
 				
 			}
+			if (object[player_object] != nullptr) {
+				Player* p;
+				p = dynamic_cast<Player*>(object[player_object]);
+				if (p->GetDebug() > 1) {
+					int a;
+					a = 0;
+				}
+			}
 			
 			//各オブジェクトとの当たり判定
 			if (object[i]->HitBox(object[player_object]))
