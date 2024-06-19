@@ -76,18 +76,12 @@ void BossAttackFire::Update(GameMain* _g)
 	location.x += velocity.x;
 	location.y += velocity.y;
 
-	//if (hitFlg) {
-	//	_g->SpawnEffect(location, erea, ExplosionEffect, 10, RED);
-	//	//ここで削除
-	//	_g->DeleteObject(object_pos);
-	//}
-
 	if (boundCnt < 0) {
 		hitFlg = true;
 	}
 	
 
-	if ((local_location.x < 0 || local_location.x > 1280 || local_location.y < 0 || local_location.y > 720) && hitFlg) {
+	if (hitFlg) {
 		_g->SpawnEffect(location, erea, ExplosionEffect, 10, RED);
 		_g->CameraImpact(15);
 		ResourceManager::StartSound(end_se);

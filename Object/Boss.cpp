@@ -445,7 +445,6 @@ void Boss::BossAtack(GameMain *_g)
 					l.x = 1200.f;
 					l.y = attack_num * 150.f + 150.f;
 				}
-				//_g->CreateObject(new BossAttackWater, GetCenterLocation(), e, BLUE);
 				_g->CreateObject(new BossAttackWater, l, e, BLUE);
 				attack_num++;
 			}
@@ -465,11 +464,7 @@ void Boss::BossAtack(GameMain *_g)
 			}
 			if (cnt % 30 == 0) {
 				Erea e = { (float)(GetRand(400) + 400),40.f };
-				/*Location l = _g->GetPlayerLocation();
-				l.y += _g->GetPlayerErea().height + 40.f;*/
-
 				Location l;
-				
 				float x;
 				int i = 0;
 				bool flg;
