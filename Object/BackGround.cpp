@@ -89,6 +89,11 @@ void BackGround::Draw(Location _camera_location)const
 		DrawMountain({ shift_location.x - 500, shift_location.y - 50 }, { 140,70 }, 0.3f);
 		DrawMountain({ shift_location.x - 400, shift_location.y - 100 }, { 140,70 }, 0.35f);
 		DrawMountain({ shift_location.x - 300, shift_location.y - 50 }, { 110,150 }, 0.5f);
+
+		DrawCloud({ shift_location.x - 200, 200 }, { 30,30 }, 0.1f);
+		DrawCloud({ shift_location.x - 4500, 300 }, { 40,40 }, 0.2f);
+		DrawCloud({ shift_location.x+1000, 250 }, { 30,30 }, 0.2f);
+		DrawCloud({ shift_location.x - 4500, 300 }, { 35,35 }, 0.1f);
 	}
 
 	//GetDrawScreenGraph(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, bg_handle);	//背景をハンドルに保存
@@ -131,25 +136,37 @@ void BackGround::DrawMountain(Location _shift_location,Erea _erea ,float move_sp
 {
 
 	Location shift_location = { _shift_location.x * move_speed,_shift_location.y * move_speed };
-	DrawCircleAA(SCREEN_WIDTH + shift_location.x, SCREEN_HEIGHT - shift_location.y - _erea.height, _erea.width, 50, 0x007700, TRUE);
+	DrawCircleAA(SCREEN_WIDTH + shift_location.x, SCREEN_HEIGHT - shift_location.y - _erea.height, _erea.width, 50, 0x00aa00, TRUE);
 	DrawCircleAA(SCREEN_WIDTH + shift_location.x, SCREEN_HEIGHT - shift_location.y - _erea.height, _erea.width, 50, 0x000000, FALSE);
 	DrawBoxAA(SCREEN_WIDTH + shift_location.x - _erea.width,
 		SCREEN_HEIGHT - shift_location.y - _erea.height,
 		SCREEN_WIDTH + shift_location.x + _erea.width,
-		SCREEN_HEIGHT - shift_location.y,
-		0x007700, TRUE);
+		SCREEN_HEIGHT,
+		0x00aa00, TRUE);
 	DrawLineAA(SCREEN_WIDTH + shift_location.x - _erea.width,
 		SCREEN_HEIGHT - shift_location.y - _erea.height,
 		SCREEN_WIDTH + shift_location.x - _erea.width,
-		SCREEN_HEIGHT - shift_location.y,
+		SCREEN_HEIGHT,
 		0x000000, TRUE);
 	DrawLineAA(SCREEN_WIDTH + shift_location.x + _erea.width,
 		SCREEN_HEIGHT - shift_location.y - _erea.height,
 		SCREEN_WIDTH + shift_location.x + _erea.width,
-		SCREEN_HEIGHT - shift_location.y,
+		SCREEN_HEIGHT,
 		0x000000, TRUE);
 
 #ifdef _DEBUG
 	DrawStringF(SCREEN_WIDTH + shift_location.x, SCREEN_HEIGHT - shift_location.y - _erea.height, "山", 0x000000);
 #endif
+}
+
+void BackGround::DrawCloud(Location _shift_location, Erea _erea, float move_speed)const
+{
+	Location shift_location = { _shift_location.x * move_speed , _shift_location.y};
+
+	DrawCircleAA(SCREEN_WIDTH + shift_location.x, shift_location.y, _erea.width, 30, 0xaaaaaa, TRUE);
+	DrawCircleAA(SCREEN_WIDTH + shift_location.x - 3, shift_location.y-3, _erea.width-1, 30, 0xcccccc, TRUE);
+	DrawCircleAA(SCREEN_WIDTH + shift_location.x + 30 + (_erea.width / 5), shift_location.y + 2, _erea.width, 30, 0xaaaaaa, TRUE);
+	DrawCircleAA(SCREEN_WIDTH + shift_location.x + 27 + (_erea.width / 5), shift_location.y - 1, _erea.width - 1, 30, 0xcccccc, TRUE);
+	DrawCircleAA(SCREEN_WIDTH + shift_location.x + 65 + (_erea.width / 3), shift_location.y - 3, _erea.width, 30, 0xaaaaaa, TRUE);
+	DrawCircleAA(SCREEN_WIDTH + shift_location.x + 62 + (_erea.width / 3), shift_location.y - 6, _erea.width - 1, 30, 0xcccccc, TRUE);
 }

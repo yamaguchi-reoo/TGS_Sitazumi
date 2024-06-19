@@ -16,8 +16,8 @@ FireAnim ResourceManager::fire_anim[ANIM_BLOCK_NUM];
 WoodAnim ResourceManager::wood_anim[ANIM_BLOCK_NUM];
 WaterAnim ResourceManager::water_anim[ANIM_BLOCK_NUM];
 int ResourceManager::screen = MakeScreen(BOX_WIDTH, BOX_HEIGHT);
-int ResourceManager::anim_handle[3];
-int ResourceManager::stage_block_handle[3];	
+int ResourceManager::anim_handle[3] = { MakeScreen(BOX_WIDTH, BOX_HEIGHT),MakeScreen(BOX_WIDTH, BOX_HEIGHT),MakeScreen(BOX_WIDTH, BOX_HEIGHT) };
+int ResourceManager::stage_block_handle[3] = { MakeScreen(BOX_WIDTH, BOX_HEIGHT),MakeScreen(BOX_WIDTH, BOX_HEIGHT),MakeScreen(BOX_WIDTH, BOX_HEIGHT) };
 
 void ResourceManager::DeleteResource()
 {
@@ -63,16 +63,17 @@ void ResourceManager::StageAnimInitialize()
 		water_anim[i].erea.width = BOX_WIDTH /3;
 		water_anim[i].erea.height = BOX_HEIGHT /3;
 	}
+
+	//ハンドルリセット
+	for (int i = 0; i < 3; i++)
+	{
+		anim_handle[i] = MakeScreen(BOX_WIDTH, BOX_HEIGHT, TRUE);
+		stage_block_handle[i] = MakeScreen(BOX_WIDTH, BOX_HEIGHT, TRUE);
+	}
 }
 
 void ResourceManager::StageAnimUpdate()
 {
-	//ハンドルリセット
-	for (int i = 0; i < 3; i++)
-	{
-		anim_handle[i] = MakeScreen(BOX_WIDTH, BOX_HEIGHT,TRUE);
-		stage_block_handle[i] = MakeScreen(BOX_WIDTH, BOX_HEIGHT,TRUE);
-	}
 
 	//アニメーション用変数
 	if (++anim > 60)
