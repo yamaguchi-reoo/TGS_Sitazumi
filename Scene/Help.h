@@ -29,6 +29,9 @@ private:
 
     char sign[2];
 
+    bool Gameoverflg;
+    int g_cnt;
+
     int MenuNumber = 2;
     int MenuY = 1;
     int wt = 0;

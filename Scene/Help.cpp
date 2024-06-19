@@ -6,8 +6,8 @@
 #include "../Utility/KeyInput.h"
 #include "../Utility/ResourceManager.h"
 
-Help::Help():l_help_red{ 360.f, 120.f }, l_help_blue{ 420.f, 120.f }, l_help_fire{ 360, 330 }, l_help_water{ 420, 330 }, l_help_wood{ 480, 330 }, l_help_bamboo{ 540, 330 }, l_help_respawn{ 450, 600 }, player_location{ 430, 310 }, p_color(GREEN), p_hp(5), sign{ '<', '>' }, s_num(0), 
-l_Deer{ 820, 200 }, l_Frog{ 960, 220 }, l_Bat{ 1060, 220 }, cursor_se(0), decision_se(0), DamageColor(RED)
+Help::Help() :l_help_red{ 360.f, 120.f }, l_help_blue{ 420.f, 120.f }, l_help_fire{ 360, 330 }, l_help_water{ 420, 330 }, l_help_wood{ 480, 330 }, l_help_bamboo{ 540, 330 }, l_help_respawn{ 450, 600 }, player_location{ 430, 210 }, p_color(RED), p_hp(5), sign{ '<', '=' }, s_num(0),
+l_Deer{ 820, 140 }, l_Frog{ 960, 165 }, l_Bat{ 1060, 140 }, cursor_se(0), decision_se(0), DamageColor(RED), Gameoverflg(true), g_cnt(0)
 {
 
 }
@@ -39,24 +39,20 @@ AbstractScene* Help::Update()
 	switch (MenuNumber)
 	{
 	case 2:
-		l_help_red = { 965.f, 390.f };
-		l_help_blue = { 965.f, 390.f };
-		l_help_fire = { 965.f, 520.f };
-		l_help_water = { 965.f, 520.f };
-		l_help_wood = { 905.f, 520.f };
-		l_help_bamboo = { 1045.f, 520.f };
+		l_help_red = { 965.f, 340.f };
+		l_help_blue = { 965.f, 340.f };
 
-		if (frame % 60 == 0)
+		l_help_fire = { 965.f, 475.f };
+		l_help_water = { 965.f, 475.f };
+		l_help_wood = { 905.f, 475.f };
+		l_help_bamboo = { 1045.f, 475.f };
+
+		if (frame % 60 == 0 && p_hp > 0)
 		{
 			p_hp--;
 
 			switch (DamageColor)
 			{
-			case 0:
-				DamageColor = RED;
-				p_color = GREEN;
-				break;
-
 			case RED:
 				DamageColor = BLUE;
 				p_color = RED;
@@ -69,13 +65,30 @@ AbstractScene* Help::Update()
 
 			case GREEN:
 				DamageColor = RED;
-				p_color = GREEN;
+				if (p_hp < 0)
+				{
+					p_color = RED;
+				}
+				else
+				{
+					p_color = GREEN;
+				}
+				
 				break;
 
 			default:
 				break;
 			}
 		}
+		else
+		{
+			if ( p_hp <= 0 && frame % 10 == 0)
+			{
+				Gameoverflg = !Gameoverflg;
+				g_cnt++;
+			}
+		}
+
 		break;
 
 	case 3:
@@ -131,9 +144,10 @@ AbstractScene* Help::Update()
 		}
 	}
 
-	if (p_hp < 0)
+	if (p_hp <= 0 && g_cnt > 10)
 	{
 		p_hp = 5;
+		g_cnt = 0;
 	}
 
 	return this;
@@ -142,26 +156,15 @@ AbstractScene* Help::Update()
 void Help::Draw()const
 {
 	//DrawFormatString(1100, 660, GetColor(255, 0, 0), "%d %d", KeyInput::GetMouseCursor().x, KeyInput::GetMouseCursor().y);
-	//DrawFormatString(700, 100, GetColor(255, 0, 0), "menu : %d",MenuNumber);
-
 	
 	DrawBoxAA(320.f, 20.f, 1260.f, 700.f, 0xffffff, FALSE, 7.0f);
 	
-
-	//LineThicknessは線の太さ
 	//大外側
 	DrawBoxAA(10.f, 20.f, 300.f, 130.f, 0xeeeeee, FALSE, 7.0f);
 	DrawBoxAA(10.f, 160.f, 300.f, 270.f, 0xeeeeee, FALSE, 7.0f);
 	DrawBoxAA(10.f, 300.f, 300.f, 410.f, 0xeeeeee, FALSE, 7.0f);
 	DrawBoxAA(10.f, 440.f, 300.f, 560.f, 0xeeeeee, FALSE, 7.0f);
 	DrawBoxAA(10.f, 590.f, 300.f, 700.f, 0xeeeeee, FALSE, 7.0f);
-
-	// 中心線
-	//DrawLineAA(0.f, 360.f, 1280.f, 360.f, 0xff0000);
-	//DrawLineAA(640.f, 0.f, 640.f, 720.f, 0xff0000);
-
-	//SetFontSize(40);
-	//DrawString(70, 600, " GAME\nSTART", 0xffffff);
 
 	SetFontSize(49); //デフォルトでは 
 	// 多分漢字の一文字の長さは 25
@@ -219,23 +222,28 @@ void Help::Draw()const
 
 		DrawLineAA(30.f, 240.f, 280.f, 240.f, 0xff0000, 5.0f);
 
-		DrawBoxAA(360, 278, 562, 472, 0xffffff, FALSE, 2.0f);
-		DrawBoxAA(362, 280, 560, 470, 0x555555, TRUE, 2.0f);
+		DrawBoxAA(360, 178, 562, 372, 0xffffff, FALSE, 2.0f);
+		DrawBoxAA(362, 180, 560, 370, 0x555555, TRUE, 2.0f);
 
-		DrawBoxAA(780, 118, 1202, 622, 0xffffff, FALSE, 2.0f);
-		DrawBoxAA(782, 120, 1200, 620, 0x555555, TRUE, 2.0f);
+		DrawBoxAA(780, 68, 1202, 542, 0xffffff, FALSE, 2.0f);
+		DrawBoxAA(782, 70, 1200, 540, 0x555555, TRUE, 2.0f);
 
+		// Playerの体力
+		for (int i = 0; i < p_hp; i++)
+		{
+			ResourceManager::DrawHeart({ 342.f + i * 50.f,120.f }, { 40.f,40.f });
+		}
 
 		HDrawPlayer(p_color);
-		DrawString(385, 410, "Damage", 0xff0000);
+		DrawString(385, 310, "Damage", 0xff0000);
 
-		DrawString(930, 130, "Enemy", 0xffffff);
+		DrawString(930, 80, "Enemy", 0xffffff);
 		HDrawDeer(DamageColor);
 		HDrawFrog(DamageColor);
 		HDrawBat(DamageColor);
 
-		DrawString(825, 320, " Color Block", 0xffffff);
-		DrawString(825, 450, " Damage Zone", 0xffffff);
+		DrawString(825, 265, " Color Block", 0xffffff);
+		DrawString(825, 400, " Damage Zone", 0xffffff);
 
 		switch (DamageColor)
 		{
@@ -255,11 +263,11 @@ void Help::Draw()const
 
 		case GREEN:
 			// 緑ブロック
-			DrawBoxAA(965.f, 390.f, 1005.f, 430.f, GREEN, TRUE);
+			DrawBoxAA(965.f, 390.f - 50, 1005.f, 430.f - 50, GREEN, TRUE);
 			// 緑ブロックの点々
-			DrawBoxAA(975.f, 410.f, 980.f, 415.f, 0x00ee00, TRUE);
-			DrawBoxAA(990.f, 425.f, 995.f, 430.f, 0x00ee00, TRUE);
-			DrawBoxAA(995.f, 405.f, 1000.f, 410.f, 0x00ee00, TRUE);
+			DrawBoxAA(975.f, 410.f - 50, 980.f, 415.f - 50, 0x00ee00, TRUE);
+			DrawBoxAA(990.f, 425.f - 50, 995.f, 430.f - 50, 0x00ee00, TRUE);
+			DrawBoxAA(995.f, 405.f - 50, 1000.f, 410.f - 50, 0x00ee00, TRUE);
 
 			//木
 			ResourceManager::StageAnimDraw(l_help_wood, 4);
@@ -274,15 +282,24 @@ void Help::Draw()const
 			break;
 		}
 
-		// Playerの体力
-		for (int i = 0; i < p_hp; i++)
-		{
-			ResourceManager::DrawHeart({ 342.f + i * 50.f,220.f }, { 40.f,40.f });
-		}
+
+		
 
 		SetFontSize(100);
+		DrawString(380, 570, "5 Hit", 0xffffff);
+		if (Gameoverflg == false && g_cnt != 0)
+		{
+			DrawString(600, 570, "「GAME OVER」", 0xff0000);
+		}
 		//不等号
-		DrawFormatString(650, 325, 0xffffff, "%c", sign[0]);
+		if (DamageColor == RED && p_color == RED)
+		{
+			DrawFormatString(650, 225, 0xffffff, "%c", sign[1]);
+		}
+		else
+		{
+			DrawFormatString(650, 225, 0xffffff, "%c", sign[0]);
+		}
 
 		SetFontSize(49);
 
