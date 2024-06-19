@@ -24,6 +24,9 @@ private:
 	int f_c;
 
 	int add_x, add_y;
+
+
+	float circleAng;//カーソルの回転
 																		 
 public:																	 
 	TutorialText();														 
@@ -33,6 +36,10 @@ public:
 	void Draw()const;
 	void GDrawPlayer(int xNum, int yNum, int add_x, int add_y, int _c)const;
 	void GDrawFrag()const;
+	void GDrawCircle(bool f)const;
+
+	//引数:もとになる座標、回転させたい座標、回転させたい角度
+	Location RotationLocation(Location BaseLoc, Location Loc, float r) const;
 };
 
 
