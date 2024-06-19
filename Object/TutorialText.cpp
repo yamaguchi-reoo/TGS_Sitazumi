@@ -279,44 +279,28 @@ void TutorialText::GDrawFrag()const
 
 void TutorialText::GDrawCircle(bool f) const
 {
+	Location base;
 	if (f) {
 		DrawCircleAA(4410 - in_camera.x, stage_height - 530 - in_camera.y, 40, 40, 0xffff00, FALSE, 4);
-
-		Location base;
 		base.x = 4410 - in_camera.x;
 		base.y = stage_height - 530 - in_camera.y;
-
-		Location l[3];
-		l[0].x = base.x;
-		l[0].y = base.y - 40;
-
-		l[0] = RotationLocation(base, l[0], (float)(circleAng * M_PI / 180));
-		l[1] = RotationLocation(base, l[0], (float)(120.f * M_PI / 180));
-		l[2] = RotationLocation(base, l[0], (float)(240.f * M_PI / 180));
-
-		DrawCircleAA(l[0].x, l[0].y, 15, 32, 0xcc0000, TRUE);
-		DrawCircleAA(l[1].x, l[1].y, 15, 32, 0x3c78d8, TRUE);
-		DrawCircleAA(l[2].x, l[2].y, 15, 32, 0x6aa84f, TRUE);
 	}
 	else {
 		DrawCircleAA(1800 - in_camera.x + 2600 + 20, stage_height - 540 - in_camera.y + 65 + 20, 40, 40, 0xffff00, FALSE, 4);
-
-		Location base;
 		base.x = 1800 - in_camera.x + 2600 + 20;
 		base.y = stage_height - 540 - in_camera.y + 65 + 20;
-
-		Location l[3];
-		l[0].x = base.x;
-		l[0].y = base.y - 40;
-
-		l[0] = RotationLocation(base, l[0], (float)(circleAng * M_PI / 180));
-		l[1] = RotationLocation(base, l[0], (float)(120.f * M_PI / 180));
-		l[2] = RotationLocation(base, l[0], (float)(240.f * M_PI / 180));
-
-		DrawCircleAA(l[0].x, l[0].y, 15, 32, 0xcc0000, TRUE);
-		DrawCircleAA(l[1].x, l[1].y, 15, 32, 0x3c78d8, TRUE);
-		DrawCircleAA(l[2].x, l[2].y, 15, 32, 0x6aa84f, TRUE);
 	}
+	Location l[3];
+	l[0].x = base.x;
+	l[0].y = base.y - 40;
+
+	l[0] = RotationLocation(base, l[0], (float)(circleAng * M_PI / 180));
+	l[1] = RotationLocation(base, l[0], (float)(120.f * M_PI / 180));
+	l[2] = RotationLocation(base, l[0], (float)(240.f * M_PI / 180));
+
+	DrawCircleAA(l[0].x, l[0].y, 15, 32, 0xcc0000, TRUE);
+	DrawCircleAA(l[1].x, l[1].y, 15, 32, 0x3c78d8, TRUE);
+	DrawCircleAA(l[2].x, l[2].y, 15, 32, 0x6aa84f, TRUE);
 }
 
 Location TutorialText::RotationLocation(Location BaseLoc, Location Loc, float r) const
