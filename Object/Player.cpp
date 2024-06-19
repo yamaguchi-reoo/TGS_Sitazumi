@@ -18,6 +18,7 @@ Player::Player()
 
 	for (int i = 0; i < 4; i++) {
 		stageHitFlg[1][i] = false;
+		oldStick[i] = 0.f;
 	}
 
 	searchedObj = nullptr;
@@ -30,10 +31,6 @@ Player::Player()
 		searchedObjAll[i] = nullptr;
 	}
 	objNum = 0;
-	oldStick[0] = 0.f;
-	oldStick[1] = 0.f;
-	oldStick[2] = 0.f;
-	oldStick[3] = 0.f;
 	for (int i = 0; i < 19; i++){
 		for (int j = 0; j < 32; j++){
 			posRelation[i][j] = -1;
