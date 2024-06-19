@@ -1,8 +1,21 @@
 #include "End.h"
 #include "DxLib.h"
+#include <fstream>
 
 
-End::End() :shift_y(0), stop_time(0), up(0), deer_speed(0), bat_loction{ 0.0f,0.0f }, deer_location{ 0.0f,0.0f }
+End::End() :
+	shift_y(0),
+	stop_time(0),
+	boss_anim(0),
+	up(0),
+	deer_speed(0),
+	face_angle(0.0f),
+	frog_speed{ 0.0f,0.0f },
+	bat_loction{ 0.0f,0.0f },
+	deer_location{ 0.0f,0.0f },
+	frog_location{ 0.0f, 0.0f },
+	frog_erea{ 0.0f,0.0f },
+	boss_location{ 0.0f,0.0f }
 {
 	for (int i = 0; i < 7; i++)
 	{
@@ -12,6 +25,10 @@ End::End() :shift_y(0), stop_time(0), up(0), deer_speed(0), bat_loction{ 0.0f,0.
 	for (int i = 0; i < 4; i++) {
 		leg_angle[i] = 0.0f;
 	}
+
+	// wing の初期化
+	wing.fill({ 0.0f,0.0f });
+	wing_mirror.fill({ 0.0f,0.0f });
 }
 
 End::~End()
@@ -31,9 +48,16 @@ void End::Initialize()
 
 	bat_loction = { 100.f, 200.f };
 	deer_location = { 1280.f, 500.f };
+	frog_location = { -40.f,600.f };
+	frog_erea = { 50.f,50.f };
+	boss_location = { 1300.f,-150.f };
 
 	deer_speed = 80.f;
+	frog_speed = {};
+
 	shift_y = -600;
+
+	LoadPosition();  // 初期化時に座標を読み込む
 }
 
 void End::Finalize()
@@ -69,12 +93,22 @@ AbstractScene* End::Update()
 
 	DeerUpdate();
 	BatUpdate();
+	FrogUpdate();
+	BossUpdate();
 
 	return this;
 }
 
 void End::Draw()const
 {
+	//コウモリ
+	BatDraw();
+	//シカ
+	DeerDraw();
+	//カエル
+	FrogDraw();
+	//ボス
+	BossDraw();
 	//DrawFormatString(900, 20, 0xffffff, "shift_y = %d", shift_y);
 	/*SetFontSize(90);
 	DrawString(0, 10, "End", 0x00ff00);*/
@@ -112,12 +146,6 @@ void End::Draw()const
 
 	DrawString(520, 1630 + 300 - shift_y, "GameMain Music", 0x00ff00);
 	DrawString(400, 1710 + 300 - shift_y, "Dynamedion 「A Chill in the air」", 0xffffff);
-
-	//コウモリ
-	BatDraw();
-	//シカ
-	DeerDraw();
-
 }
 
 void End::DeerDraw() const
@@ -151,7 +179,7 @@ void End::DeerDraw() const
 
 void End::DeerUpdate()
 {
-	deer_location.x -= 2;
+	deer_location.x -= 5;
 	// 足の回転方向を制御するフラグを追加
 	for (int i = 0; i < 4; i++) {
 		// 回転方向に基づいて角度を更新
@@ -237,4 +265,229 @@ void End::BatUpdate()
 
 void End::FrogDraw() const
 {
+	//胴体
+	ResourceManager::DrawRotaBox(frog_location.x + (frog_erea.width / 2), frog_location.y + (frog_erea.height / 2), frog_erea.width, frog_erea.height / 2, frog_location.x + (frog_erea.width / 2), frog_location.y + (frog_erea.height / 2), face_angle, GREEN, TRUE);
+	ResourceManager::DrawRotaBox(frog_location.x + (frog_erea.width / 2), frog_location.y + (frog_erea.height / 2), frog_erea.width, frog_erea.height / 2, frog_location.x + (frog_erea.width / 2), frog_location.y + (frog_erea.height / 2), face_angle, 0x000000, FALSE);
+
+	//右着地
+	if (face_angle == 0 && frog_speed.x == 0 && frog_speed.y == 0)
+	{
+		//付け根側後ろ足
+		ResourceManager::DrawRotaBox(frog_location.x + frog_erea.width - 10, frog_location.y + 20, 30, 10, frog_location.x + (frog_erea.width / 2), frog_location.y + (frog_erea.height / 2), face_angle, GREEN, TRUE);
+		ResourceManager::DrawRotaBox(frog_location.x + frog_erea.width - 10, frog_location.y + 20, 30, 10, frog_location.x + (frog_erea.width / 2), frog_location.y + (frog_erea.height / 2), face_angle, 0x000000, FALSE);
+		//後ろ足先端
+		ResourceManager::DrawRotaBox(frog_location.x + frog_erea.width - 10, frog_location.y + 10, 40, 10, frog_location.x + (frog_erea.width / 2), frog_location.y + (frog_erea.height / 2), face_angle, GREEN, TRUE);
+		ResourceManager::DrawRotaBox(frog_location.x + frog_erea.width - 10, frog_location.y + 10, 40, 10, frog_location.x + (frog_erea.width / 2), frog_location.y + (frog_erea.height / 2), face_angle, 0x000000, FALSE);
+		//前足
+		//ResourceManager::DrawRotaBox(location.x + 20, location.y + 20, 20, 30, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, draw_color, TRUE);
+		//目
+		ResourceManager::DrawRotaBox(frog_location.x, frog_location.y + frog_erea.height - 20, 10, 10, frog_location.x + (frog_erea.width / 2), frog_location.y + (frog_erea.height / 2), face_angle, 0xffffff, TRUE);
+
+	}
+	else {
+		//付け根側後ろ足
+		ResourceManager::DrawRotaBox(frog_location.x + frog_erea.width, frog_location.y + 20, 30, 10, frog_location.x + (frog_erea.width / 2), frog_location.y + (frog_erea.height / 2), face_angle, GREEN, TRUE);
+		ResourceManager::DrawRotaBox(frog_location.x + frog_erea.width, frog_location.y + 20, 30, 10, frog_location.x + (frog_erea.width / 2), frog_location.y + (frog_erea.height / 2), face_angle, 0x000000, FALSE);
+		//後ろ足先端
+		ResourceManager::DrawRotaBox(frog_location.x + frog_erea.width + 30, frog_location.y + 10, 40, 10, frog_location.x + (frog_erea.width / 2), frog_location.y + (frog_erea.height / 2), face_angle, GREEN, TRUE);
+		ResourceManager::DrawRotaBox(frog_location.x + frog_erea.width + 30, frog_location.y + 10, 40, 10, frog_location.x + (frog_erea.width / 2), frog_location.y + (frog_erea.height / 2), face_angle, 0x000000, FALSE);
+		//前足
+		//ResourceManager::DrawRotaBox(frog_location.x, frog_location.y + 20, 20, 30,frog_location.x + (frog_erea.width / 2), frog_location.y + (frog_erea.height / 2), face_angle, draw_color, TRUE);
+		//目
+		ResourceManager::DrawRotaBox(frog_location.x, frog_location.y + frog_erea.height - 20, 10, 10, frog_location.x + (frog_erea.width / 2), frog_location.y + (frog_erea.height / 2), face_angle, 0xffffff, TRUE);
+	}
+}
+
+void End::FrogUpdate()
+{
+	if (up % 60 == 0) {
+		frog_speed.x = 4.f;
+		frog_speed.y = -20.f;
+	}
+
+	if (frog_speed.x == 0 && frog_speed.y == 0) {
+		face_angle = 0;
+	}
+	else{
+		face_angle = atanf(frog_speed.y / frog_speed.x) * 60;
+	}
+
+	if (frog_location.y < 600.f) {
+		frog_speed.y += 1.f;
+		if (frog_speed.y > 16.f) {
+			frog_speed.y = 16.f;
+		}
+	}
+	frog_location.x += frog_speed.x;
+	frog_location.y += frog_speed.y;
+}
+
+void End::BossDraw() const
+{
+	DrawWing();
+	//本体
+	DrawCircleAA(boss_location.x + 250 / 2, boss_location.y + 250 / 2 + boss_anim, 35, 35, 0x000000, TRUE);
+	DrawCircleAA(boss_location.x + 250 / 2, boss_location.y + 250 / 2 + boss_anim, 35, 34, 0xFFFFFF, FALSE, 3.0f);
+	//DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 36, 36, , FALSE, 2.0f);
+
+	// バリアの描画
+	DrawHexagonSphere();
+	//for (int i = 0; i < barrier_num; i++) {
+	DrawCircleAA(boss_location.x + 250 / 2, boss_location.y + 250 / 2 + boss_anim, 115, 50, BLUE, FALSE, 3.0f);
+	DrawCircleAA(boss_location.x + 250 / 2, boss_location.y + 250 / 2 + boss_anim, 112.5, 50, BLUE, FALSE, 2.0f);
+	DrawCircleAA(boss_location.x + 250 / 2, boss_location.y + 250 / 2 + boss_anim, 109, 50, BLUE, FALSE);
+}
+
+void End::DrawWing() const
+{
+	Location center = { boss_location.x + 250 / 2, boss_location.y + 250 / 2 };
+
+	// アニメーションに基づいて描画位置を計算
+	float angle = 0.0f;
+
+	// 羽の描画（）
+	for (int i = 0; i < wing.size(); i += 4) {
+		float delta_y = 0.f;
+		delta_y = (float)sin(PI * 2.f / 60.f * up + i) * 5.f; // 2番目の羽は中程度に動く
+		angle = (float)(sin(PI * 2.f / 60.f * up) * 5.f); // アニメーションに適した角度を計算
+
+		//３番目の羽だけ違う挙動に
+		if (i > 7 && i < 12) {
+			delta_y = (float)sin(PI * 2.f / 60.f * (float)up + i) * 15.f;
+		}
+		else if (i > 19 && i < 24) {
+			delta_y = (float)sin(PI * 2.f / 60.f * (float)up + i) * 15.f;
+		}
+		else if (i > 31 && i < 36) {
+			delta_y = (float)sin(PI * 2.f / 60.f * (float)up + i) * 15.f;
+		}
+
+		//右羽
+		DrawQuadrangleAA(boss_location.x + wing[i].x + angle, boss_location.y + wing[i].y + angle + delta_y,
+			boss_location.x + wing[i + 1].x + 20 + angle, boss_location.y + wing[i + 1].y + 10 + angle + delta_y,
+			boss_location.x + wing[i + 2].x + 10 + angle, boss_location.y + wing[i + 2].y + 20 + angle + delta_y,
+			boss_location.x + wing[i + 3].x + angle, boss_location.y + wing[i + 3].y + 30 + angle + delta_y, 0x000000, TRUE);
+		//左羽
+		DrawQuadrangleAA(boss_location.x + wing_mirror[i].x + 250 - angle, boss_location.y + wing_mirror[i].y + angle + delta_y,
+			boss_location.x + wing_mirror[i + 1].x - 20 + 250 - angle, boss_location.y + wing_mirror[i + 1].y + 10 + angle + delta_y,
+			boss_location.x + wing_mirror[i + 2].x - 10 + 250 - angle, boss_location.y + wing_mirror[i + 2].y + 20 + angle + delta_y,
+			boss_location.x + wing_mirror[i + 3].x + 250 - angle, boss_location.y + wing_mirror[i + 3].y + 30 + angle + delta_y, 0x000000, TRUE);
+
+		//右羽
+		DrawQuadrangleAA(boss_location.x + wing[i].x + angle, boss_location.y + wing[i].y + angle + delta_y,
+			boss_location.x + wing[i + 1].x + 20 + angle, boss_location.y + wing[i + 1].y + 10 + angle + delta_y,
+			boss_location.x + wing[i + 2].x + 10 + angle, boss_location.y + wing[i + 2].y + 20 + angle + delta_y,
+			boss_location.x + wing[i + 3].x + angle, boss_location.y + wing[i + 3].y + 30 + angle + delta_y, 0xFFFFFF, FALSE, 3.0f);
+		//左羽
+		DrawQuadrangleAA(boss_location.x + wing_mirror[i].x + 250 - angle, boss_location.y + wing_mirror[i].y + angle + delta_y,
+			boss_location.x + wing_mirror[i + 1].x - 20 + 250 - angle, boss_location.y + wing_mirror[i + 1].y + 10 + angle + delta_y,
+			boss_location.x + wing_mirror[i + 2].x - 10 + 250 - angle, boss_location.y + wing_mirror[i + 2].y + 20 + angle + delta_y,
+			boss_location.x + wing_mirror[i + 3].x + 250 - angle, boss_location.y + wing_mirror[i + 3].y + 30 + angle + delta_y, 0xFFFFFF, FALSE, 3.0f);
+	}
+}
+
+void End::DrawHexagonSphere() const
+{
+	// ボスの中心座標
+	Location center = { boss_location.x + 250 / 2, boss_location.y + 250 / 2 };
+	// 六角形の中心
+	Location hexa_center;
+
+	// バリアの半径の配列を定義
+	float hex_size = 15.0f; // 六角形のサイズ
+
+	// 六角形の間隔（六角形の内接円の半径の2倍）
+	float hex_height = (float)sqrt(3) * (float)hex_size / 2; // 六角形の高さ
+
+	//六角形の層の数を管理
+	for (int i = 0; i <= 9; ++i) {
+		//各層内の六角形の水平方向の位置を管理
+		for (int j = -i; j <= i; ++j) {
+			//各層内の六角形の垂直方向の位置を管理
+			for (int k = -i; k <= i; ++k) {
+				// 六角形の中心座標を計算
+				//中心の x 座標に対して、水平に 1.5f * hex_size * j だけ移動
+				hexa_center.x = center.x + (1.5f * hex_size * j);
+				//中心の y 座標に対して、垂直方向に 2.0f * hex_height * k - hex_height * j だけ移動
+				hexa_center.y = center.y + (2.0f * hex_height * k - hex_height * j);
+
+				// 半径内にある六角形のみを描画
+				float distance = (float)sqrt(pow(hexa_center.x - center.x, 2) + pow(hexa_center.y - center.y, 2));
+				if (distance <= 110) {
+					// 描画範囲を調整して内部を埋める
+					DrawHexagon({ hexa_center.x, hexa_center.y }, hex_size * 0.9f, BLUE); // 0.9fは調整可能
+				}
+			}
+		}
+	}
+}
+
+void End::DrawHexagon(Location center, float size, int color) const
+{
+	float angle_space = (float)(2.0f * PI / 6.0f); // 六角形の各頂点の間の角度
+	Location vertices[6];
+
+	// 六角形の頂点座標を計算
+	//6つの頂点を中心から等距離に配置
+	for (int i = 0; i < 6; ++i) {
+		float angle = i * angle_space;
+		//size は六角形の辺の長さで、cos(angle) は角度に対する水平方向、sin(angle) は角度に対する垂直方向
+		vertices[i] = { center.x + size * cos(angle), center.y + size * sin(angle) };
+	}
+
+	// 六角形の描画
+	for (int i = 0; i < 6; ++i) {
+		//(i + 1) % 6 は、最後の頂点から最初の頂点に戻るための処理
+		DrawLineAA(vertices[i].x, vertices[i].y + boss_anim, vertices[(i + 1) % 6].x, vertices[(i + 1) % 6].y + boss_anim, color);
+	}
+}
+
+void End::InvertedWingPositions()
+{
+	// wing_mirror を更新する
+	Location center = { boss_location.x + 250 / 2, boss_location.y + 250 / 2 };
+
+	for (size_t i = 0; i < wing.size(); ++i)
+	{
+		// wing[i] の X 座標を反転して wing_mirror[i] の X 座標にセット
+		wing_mirror[i].x = -wing[i].x; // X座標を反転
+
+		// wing[i] の Y 座標をそのまま wing_mirror[i] の Y 座標にセット
+		wing_mirror[i].y = wing[i].y;
+	}
+}
+
+void End::BossUpdate()
+{
+	boss_anim = (float)sin(PI * 2.f / 60.f * up) * 5.f;
+	InvertedWingPositions();
+	SavePosition();
+
+	boss_location.x -= 3.f;
+	boss_location.y += 2.f;
+	
+}
+
+void End::SavePosition()
+{
+	std::ofstream outfile("Resource/Dat/BossLocation.txt");
+	if (outfile.is_open()) {
+		for (int i = 0; i < wing.size(); ++i)
+		{
+			outfile << wing[i].x << " " << wing[i].y << "\n";
+		}
+		outfile.close();
+	}
+}
+
+void End::LoadPosition()
+{
+	std::ifstream infile("Resource/Dat/BossLocation.txt");
+	if (infile.is_open()) {
+		for (int i = 0; i < wing.size(); ++i)
+		{
+			infile >> wing[i].x >> wing[i].y;
+		}
+		infile.close();
+	}
 }
