@@ -7,6 +7,7 @@ End::End() :
 	shift_y(0),
 	stop_time(0),
 	boss_anim(0),
+	boss_color(0),
 	up(0),
 	deer_speed(0),
 	face_angle(0.0f),
@@ -91,6 +92,31 @@ AbstractScene* End::Update()
 		return nullptr;
 	}
 
+	/*int c = 0;
+	if (up % 20 == 0)
+	{
+		c = 1;
+	}
+	else if(up % 40 == 0){
+		c = 2;
+	}
+	if (c > 2) {
+		c = 0;
+	}
+	switch (c)
+	{
+	case 0:
+		boss_color = RED;
+		break;
+	case 1:
+		boss_color = BLUE;
+		break;
+	case 2:
+		boss_color = GREEN;
+		break;
+	default:
+		break;
+	}*/
 	DeerUpdate();
 	BatUpdate();
 	FrogUpdate();
@@ -101,6 +127,7 @@ AbstractScene* End::Update()
 
 void End::Draw()const
 {
+	DrawFormatString(100, 200, 0xffffff, "boss_color::%d", boss_color);
 	//コウモリ
 	BatDraw();
 	//シカ
@@ -333,9 +360,9 @@ void End::BossDraw() const
 	// バリアの描画
 	DrawHexagonSphere();
 	//for (int i = 0; i < barrier_num; i++) {
-	DrawCircleAA(boss_location.x + 250 / 2, boss_location.y + 250 / 2 + boss_anim, 115, 50, BLUE, FALSE, 3.0f);
-	DrawCircleAA(boss_location.x + 250 / 2, boss_location.y + 250 / 2 + boss_anim, 112.5, 50, BLUE, FALSE, 2.0f);
-	DrawCircleAA(boss_location.x + 250 / 2, boss_location.y + 250 / 2 + boss_anim, 109, 50, BLUE, FALSE);
+	DrawCircleAA(boss_location.x + 250 / 2, boss_location.y + 250 / 2 + boss_anim, 115, 50, boss_color, FALSE, 3.0f);
+	DrawCircleAA(boss_location.x + 250 / 2, boss_location.y + 250 / 2 + boss_anim, 112.5, 50, boss_color, FALSE, 2.0f);
+	DrawCircleAA(boss_location.x + 250 / 2, boss_location.y + 250 / 2 + boss_anim, 109, 50, boss_color, FALSE);
 }
 
 void End::DrawWing() const
@@ -415,7 +442,7 @@ void End::DrawHexagonSphere() const
 				float distance = (float)sqrt(pow(hexa_center.x - center.x, 2) + pow(hexa_center.y - center.y, 2));
 				if (distance <= 110) {
 					// 描画範囲を調整して内部を埋める
-					DrawHexagon({ hexa_center.x, hexa_center.y }, hex_size * 0.9f, BLUE); // 0.9fは調整可能
+					DrawHexagon({ hexa_center.x, hexa_center.y }, hex_size * 0.9f, boss_color); // 0.9fは調整可能
 				}
 			}
 		}
@@ -465,6 +492,7 @@ void End::BossUpdate()
 
 	boss_location.x -= 3.f;
 	boss_location.y += 2.f;
+
 	
 }
 

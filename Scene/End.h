@@ -37,6 +37,7 @@ private:
     std::vector<Location> vertices; //ボスの頂点情報
     std::array<Location, 40> wing;	//ボスの羽の位置情報
     std::array<Location, 40> wing_mirror;//ミラー羽の位置情報
+    int boss_color;
 
     float boss_anim;//アニメーション用
 
