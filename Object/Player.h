@@ -78,6 +78,8 @@ private:
 
 	int deathTimer = 0;
 
+	int stickTimer[2] = { 0,0 };
+
 public:
 	Player();
 	~Player();
