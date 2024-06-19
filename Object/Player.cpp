@@ -331,7 +331,9 @@ void Player::Update(GameMain* _g)
 
 void Player::Draw()const
 {
-	DrawFormatString(0, 180, 0xff0000, "%0.1f %0.1f", location.x, location.y);
+	//DrawFormatString(0, 180, 0xff0000, "%0.1f %0.1f", location.x, location.y);
+	DrawFormatString(local_location.x, local_location.y, 0xff0000, "%d", stageHitFlg[1][bottom]);
+	DrawFormatString(local_location.x, local_location.y + 50, 0xff0000, "%f", location.y);
 
 	if(hp <= 0){
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 - (deathTimer * 2));
@@ -470,9 +472,9 @@ void Player::Hit(Object* _object)
 
 		//下方向に埋まらないようにする
 		if (stageHitFlg[0][bottom]) {//下方向に埋まっていたら
-			float t = _object->GetLocation().y - (location.y + erea.height);
+			int t = (int)_object->GetLocation().y - (location.y + erea.height);
 			if (t != 0) {
-				move[bottom] = t;
+				move[bottom] = (float)t;
 			}
 		}
 
@@ -739,14 +741,11 @@ void Player::SelectObject()
 	bool flg = false;//選択したかどうか
 	if (swapTimer == -1 && searchedObjFlg && searchedObj != nullptr) {
 		//X軸
-		if ((PadInput::TipLeftLStick(STICKL_X) > 0.8f || PadInput::OnButton(XINPUT_BUTTON_DPAD_RIGHT)) && oldStick[0]) {
+		if ((PadInput::TipLeftLStick(STICKL_X) > 0.8f || PadInput::OnPressed(XINPUT_BUTTON_DPAD_RIGHT)) && oldStick[0]) {
 			ResourceManager::StartSound(cursor_se);
 			oldStick[0] = false;
 			flg = true;
-			float nearLen[4] = { 1000.f,1000.f,1000.f,1000.f };
 			int snum[4] = { -1,-1,-1,-1 };
-			//oldDirection = direction;
-			//direction = right;
 			
 			for (int i = 0;  i < objNum; i++)
 			{
@@ -817,7 +816,7 @@ void Player::SelectObject()
 			}
 	
 		}
-		else if ((PadInput::TipLeftLStick(STICKL_X) < -0.8f || PadInput::OnButton(XINPUT_BUTTON_DPAD_LEFT)) && oldStick[1]) {
+		else if ((PadInput::TipLeftLStick(STICKL_X) < -0.8f || PadInput::OnPressed(XINPUT_BUTTON_DPAD_LEFT)) && oldStick[1]) {
 			ResourceManager::StartSound(cursor_se);
 			oldStick[1] = false;
 			flg = true;
@@ -895,12 +894,24 @@ void Player::SelectObject()
 				objSelectNumTmp = snum[0];
 			}
 		}
-		else if (PadInput::TipLeftLStick(STICKL_X) < 0.1f && PadInput::TipLeftLStick(STICKL_X) > -0.1f) {
+		else if ((PadInput::TipLeftLStick(STICKL_X) < 0.1f && PadInput::TipLeftLStick(STICKL_X) > -0.1f) && (!PadInput::OnPressed(XINPUT_BUTTON_DPAD_RIGHT) && !PadInput::OnPressed(XINPUT_BUTTON_DPAD_LEFT))) {
 			oldStick[0] = true;
 			oldStick[1] = true;
+			stickTimer[0] = 0;
 		}
+
+		//スティックを倒し続けた場合
+		if (!oldStick[0] || !oldStick[1]) {
+			stickTimer[0]++;
+		}
+		if (stickTimer[0] > 15) {
+			oldStick[0] = true;
+			oldStick[1] = true;
+			stickTimer[0] = 0;
+		}
+
 		//Y軸
-		if ((PadInput::TipLeftLStick(STICKL_Y) > 0.8f || PadInput::OnButton(XINPUT_BUTTON_DPAD_UP)) && oldStick[2]) {
+		if ((PadInput::TipLeftLStick(STICKL_Y) > 0.8f || PadInput::OnPressed(XINPUT_BUTTON_DPAD_UP)) && oldStick[2]) {
 			ResourceManager::StartSound(cursor_se);
 			oldStick[2] = false;
 			flg = true;
@@ -919,7 +930,7 @@ void Player::SelectObject()
 				}
 			}
 		}
-		else if ((PadInput::TipLeftLStick(STICKL_Y) < -0.8f || PadInput::OnButton(XINPUT_BUTTON_DPAD_DOWN)) && oldStick[3]) {
+		else if ((PadInput::TipLeftLStick(STICKL_Y) < -0.8f || PadInput::OnPressed(XINPUT_BUTTON_DPAD_DOWN)) && oldStick[3]) {
 			ResourceManager::StartSound(cursor_se); 
 			oldStick[3] = false;
 			flg = true;
@@ -938,9 +949,20 @@ void Player::SelectObject()
 				}
 			}
 		}
-		else if (PadInput::TipLeftLStick(STICKL_Y) < 0.1f && PadInput::TipLeftLStick(STICKL_Y) > -0.1f) {
+		else if ((PadInput::TipLeftLStick(STICKL_Y) < 0.1f && PadInput::TipLeftLStick(STICKL_Y) > -0.1f) && (!PadInput::OnPressed(XINPUT_BUTTON_DPAD_UP) && !PadInput::OnPressed(XINPUT_BUTTON_DPAD_DOWN))) {
 			oldStick[2] = true;
 			oldStick[3] = true;
+			stickTimer[1] = 0;
+		}
+
+		//スティックを倒し続けた場合
+		if (!oldStick[2] || !oldStick[3]) {
+			stickTimer[1]++;
+		}
+		if (stickTimer[1] > 15) {
+			oldStick[2] = true;
+			oldStick[3] = true;
+			stickTimer[1] = 0;
 		}
 
 		searchedObj = searchedObjAll[objSelectNumTmp];

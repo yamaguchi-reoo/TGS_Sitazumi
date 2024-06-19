@@ -1,7 +1,7 @@
 #include "DxLib.h"
 #include "TutorialText.h"
 
-TutorialText::TutorialText() : GNum(0), GColor(GREEN), Gbutton_draw{ false, false, false, false }, GGNum(0), frame(0), Gstick_angle(0.0), stage_height(0), p_c(GREEN), add_x(0), add_y(0), f_c(RED), Gdraw_stick_shift{ 0, 0 }, in_camera{ 0, 0 }
+TutorialText::TutorialText() : GNum(0), GColor(GREEN), Gbutton_draw{ false, false, false, false }, GGNum(0), frame(0), Gstick_angle(0.0), stage_height(0), p_c(GREEN), add_x(0), add_y(0), f_c(RED), Gdraw_stick_shift{ 0, 0 }, in_camera{ 0, 0 }, circleAng(0.f)
 {
 }
 
@@ -85,6 +85,9 @@ void TutorialText::Update(Location camera , Location _p, int height)
 		frame = 0;
 	}
 
+	if (circleAng++ >= 360.f) {
+		circleAng = 0.f;
+	}
 }
 
 void TutorialText::Draw() const
@@ -180,6 +183,10 @@ void TutorialText::Draw() const
 	DrawBoxAA(1800 - in_camera.x + 2600, stage_height - 540 - in_camera.y + 65, 1840 - in_camera.x + 2600, stage_height - 500 - in_camera.y + 65, RED, TRUE);
 	//ResourceManager::StageBlockDraw(in_camera, 0);
 
+	//カーソル
+	GDrawCircle(false);
+	//ここまでカーソル
+
 	if (p_c == 0xffffff)
 	{
 		// player 緑
@@ -268,4 +275,46 @@ void TutorialText::GDrawFrag()const
 	//目
 	ResourceManager::DrawRotaBox(4382 - in_camera.x, stage_height - 538 - in_camera.y, 10, 10, 4382 - in_camera.x, stage_height - 538 - in_camera.y, 0, 0xffffff, TRUE);
 	ResourceManager::DrawRotaBox(4382 - in_camera.x, stage_height - 538 - in_camera.y, 10, 10, 4382 - in_camera.x, stage_height - 538 - in_camera.y, 0, 0x000000, FALSE);
+}
+
+void TutorialText::GDrawCircle(bool f) const
+{
+	Location base;
+	if (f) {
+		DrawCircleAA(4410 - in_camera.x, stage_height - 530 - in_camera.y, 40, 40, 0xffff00, FALSE, 4);
+		base.x = 4410 - in_camera.x;
+		base.y = stage_height - 530 - in_camera.y;
+	}
+	else {
+		DrawCircleAA(1800 - in_camera.x + 2600 + 20, stage_height - 540 - in_camera.y + 65 + 20, 40, 40, 0xffff00, FALSE, 4);
+		base.x = 1800 - in_camera.x + 2600 + 20;
+		base.y = stage_height - 540 - in_camera.y + 65 + 20;
+	}
+	Location l[3];
+	l[0].x = base.x;
+	l[0].y = base.y - 40;
+
+	l[0] = RotationLocation(base, l[0], (float)(circleAng * M_PI / 180));
+	l[1] = RotationLocation(base, l[0], (float)(120.f * M_PI / 180));
+	l[2] = RotationLocation(base, l[0], (float)(240.f * M_PI / 180));
+
+	DrawCircleAA(l[0].x, l[0].y, 15, 32, 0xcc0000, TRUE);
+	DrawCircleAA(l[1].x, l[1].y, 15, 32, 0x3c78d8, TRUE);
+	DrawCircleAA(l[2].x, l[2].y, 15, 32, 0x6aa84f, TRUE);
+}
+
+Location TutorialText::RotationLocation(Location BaseLoc, Location Loc, float r) const
+{
+	Location l;
+	l.x = Loc.x - BaseLoc.x;
+	l.y = Loc.y - BaseLoc.y;
+
+	Location ret;
+	ret.x = l.x * cosf(r) - l.y * sinf(r);
+	ret.y = l.x * sinf(r) + l.y * cosf(r);
+
+	ret.x += BaseLoc.x;
+	ret.y += BaseLoc.y;
+
+	return ret;
 }

@@ -104,6 +104,7 @@ private:
 	int change_fire;					//色更新時のSE
 	int change_wood;					//色更新時のSE
 	int change_water;					//色更新時のSE
+	int checkpoint_se;					//中間地点に触れた時のSE
 public:
 	Stage(int _type, int _stage_height = 0);
 	~Stage();
