@@ -67,6 +67,7 @@ void Stage::Initialize(Location _location, Erea _erea, int _color_data,int _obje
 	change_fire = ResourceManager::SetSound("Resource/Sounds/Effect/change_fire.wav");
 	change_wood = ResourceManager::SetSound("Resource/Sounds/Effect/change_grass.wav");
 	change_water = ResourceManager::SetSound("Resource/Sounds/Effect/change_water.wav");
+	checkpoint_se = ResourceManager::SetSound("Resource/Sounds/System/check_point.wav");
 }
 
 void Stage::Update(GameMain* _g)
@@ -106,9 +107,9 @@ void Stage::Update(GameMain* _g)
 			_g->DeleteObject(object_pos, this);
 		}
 	}
-
+	Location player_respawn = { location.x,location.y - PLAYER_HEIGHT };
 	//フラグが立っているなら
-	if (set_respawn_flg)
+	if (set_respawn_flg && _g->GetPlayerRespawnLocation().x != player_respawn.x)
 	{
 		//プレイヤーリスポーン位置を更新する
 		_g->SetPlayerRespawnLocation({ location.x,location.y - PLAYER_HEIGHT });
@@ -116,6 +117,8 @@ void Stage::Update(GameMain* _g)
 		respawn_color = RED;
 		//フラグをfalseにする
 		set_respawn_flg = false;
+		//SEを再生する
+		ResourceManager::StartSound(checkpoint_se);
 	}
 
 	//色が変わっていたら
@@ -356,7 +359,7 @@ void Stage::Hit(Object* _object)
 	}
 
 	//プレイヤーに当たった時、このブロックがプレイヤーリスポーン位置設定ブロックなら、フラグを立てる
-	if (block_type == PLAYER_RESPAWN_BLOCK && _object->GetObjectType() == PLAYER)
+	if (block_type == PLAYER_RESPAWN_BLOCK && _object->GetObjectType() == PLAYER && set_respawn_flg == false)
 	{
 		set_respawn_flg = true;
 	}

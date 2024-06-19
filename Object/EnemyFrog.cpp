@@ -68,8 +68,8 @@ void EnemyFrog::Update(GameMain* _g)
 	case FrogState::LEFT_JUMP:
 		if (frame % 60 == 0 && stageHitFlg[1][bottom] == true)
 		{
-			vector.x = -5.f;
-			vector.y = -20.f;
+			vector.x = -((float)GetRand(5) + 3);
+			vector.y = -((float)GetRand(6) + 17);
 			ResourceManager::StartSound(jump_se);
 		}
 		//空中で僅かに加速(ブロックに引っかかる対策)
@@ -81,8 +81,8 @@ void EnemyFrog::Update(GameMain* _g)
 	case FrogState::RIGHT_JUMP:
 		if (frame % 60 == 0 && stageHitFlg[1][bottom] == true)
 		{
-			vector.x = 5.f;
-			vector.y = -20.f;
+			vector.x = ((float)GetRand(5) + 3);
+			vector.y = -((float)GetRand(6) + 17);
 			ResourceManager::StartSound(jump_se);
 		}
 		//空中で僅かに加速(ブロックに引っかかる対策)
@@ -301,8 +301,19 @@ void EnemyFrog::FrogDraw(Location location)const
 #endif
 
 	//胴体
-	ResourceManager::DrawRotaBox(location.x + (erea.width / 2), location.y + (erea.height / 2), erea.width, erea.height / 2, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, draw_color, TRUE);
-	ResourceManager::DrawRotaBox(location.x + (erea.width / 2), location.y + (erea.height / 2), erea.width, erea.height / 2, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, 0x000000, FALSE);
+	if (frame % 60 < 50)
+	{
+		ResourceManager::DrawRotaBox(location.x + (erea.width / 2), location.y + (erea.height / 2), erea.width, erea.height / 2, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, draw_color, TRUE);
+		ResourceManager::DrawRotaBox(location.x + (erea.width / 2), location.y + (erea.height / 2), erea.width, erea.height / 2, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, 0x000000, FALSE);
+	}
+	else
+	{
+		ResourceManager::DrawRotaBox(location.x + (erea.width / 2)+GetRand(2), location.y + (erea.height / 2) + GetRand(2), erea.width, erea.height / 2, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, draw_color, TRUE);
+		ResourceManager::DrawRotaBox(location.x + (erea.width / 2) + GetRand(2), location.y + (erea.height / 2) + GetRand(2), erea.width, erea.height / 2, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, 0x000000, FALSE);
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, (frame % 60)*3);
+		DrawCircleAA(location.x + (erea.width / 2), location.y + (erea.height / 2), (60 - frame % 60) * 4, 30, draw_color, FALSE);
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
+	}
 
 	//右着地
 	if (face_angle == 0 && vector.x == 0 && vector.y == 0)
