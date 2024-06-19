@@ -302,6 +302,7 @@ void EnemyFrog::FrogDraw(Location location)const
 
 	//胴体
 	ResourceManager::DrawRotaBox(location.x + (erea.width / 2), location.y + (erea.height / 2), erea.width, erea.height / 2, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, draw_color, TRUE);
+	ResourceManager::DrawRotaBox(location.x + (erea.width / 2), location.y + (erea.height / 2), erea.width, erea.height / 2, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, 0x000000, FALSE);
 
 	//右着地
 	if (face_angle == 0 && vector.x == 0 && vector.y == 0)
