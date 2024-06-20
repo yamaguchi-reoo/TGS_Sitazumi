@@ -8,6 +8,7 @@ End::End() :
 	stop_time(0),
 	boss_anim(0),
 	boss_color(0),
+	boss_cnt(0),
 	up(0),
 	deer_speed(0),
 	face_angle(0.0f),
@@ -30,6 +31,10 @@ End::End() :
 	// wing の初期化
 	wing.fill({ 0.0f,0.0f });
 	wing_mirror.fill({ 0.0f,0.0f });
+
+	boss_color = 0;
+
+	t = new Title();
 }
 
 End::~End()
@@ -58,6 +63,21 @@ void End::Initialize()
 
 	shift_y = -600;
 
+	for (int i = 0; i < BG_BLOCK_WIDTH_NUM; i++)
+	{
+		for (int j = 0; j < BG_BLOCK_HEIGHT_NUM; j++)
+		{
+			bg[i][j].flg = true;
+			bg[i][j].location = { (float)i * 40,(float)j * 40 };
+			bg[i][j].erea = { 40,40 };
+			bg[i][j].move_flg = false;
+			bg[i][j].move_goal = { 0,0 };
+			bg[i][j].move_speed = 6;
+			bg[i][j].color = t->GetRandColor();
+			bg[i][j].move_rad = 0.0f;
+			bg[i][j].anim_size = 0;
+		}
+	}
 	LoadPosition();  // 初期化時に座標を読み込む
 }
 
@@ -74,12 +94,12 @@ AbstractScene* End::Update()
 		stop_time++;
 	}
 	else {
-		shift_y += 5;
+		shift_y += 3;
 	}
 
 	//タイトルロゴが止まってから一定時間たったら動くように
 	if (stop_time > 120 && shift_y < 2400) {
-		shift_y += 5;
+		shift_y += 3;
 	}
 
 	//thank you for playingが止まるように
@@ -92,31 +112,6 @@ AbstractScene* End::Update()
 		return nullptr;
 	}
 
-	/*int c = 0;
-	if (up % 20 == 0)
-	{
-		c = 1;
-	}
-	else if(up % 40 == 0){
-		c = 2;
-	}
-	if (c > 2) {
-		c = 0;
-	}
-	switch (c)
-	{
-	case 0:
-		boss_color = RED;
-		break;
-	case 1:
-		boss_color = BLUE;
-		break;
-	case 2:
-		boss_color = GREEN;
-		break;
-	default:
-		break;
-	}*/
 	DeerUpdate();
 	BatUpdate();
 	FrogUpdate();
@@ -127,7 +122,8 @@ AbstractScene* End::Update()
 
 void End::Draw()const
 {
-	DrawFormatString(100, 200, 0xffffff, "boss_color::%d", boss_color);
+	//背景
+	BackGroundDraw();
 	//コウモリ
 	BatDraw();
 	//シカ
@@ -136,9 +132,7 @@ void End::Draw()const
 	FrogDraw();
 	//ボス
 	BossDraw();
-	//DrawFormatString(900, 20, 0xffffff, "shift_y = %d", shift_y);
-	/*SetFontSize(90);
-	DrawString(0, 10, "End", 0x00ff00);*/
+
 
 	//エンドロール
 	SetFontSize(60);
@@ -159,9 +153,9 @@ void End::Draw()const
 	SetFontSize(30);
 	DrawString(500, 500 + 300 - shift_y, "Production Members", 0xff0000);
 	DrawString(530, 600 + 300 - shift_y, "Hiroki Shinzato", 0xffffff);
-	DrawString(530, 640 + 300 - shift_y, "Hiroki Shinzato", 0xffffff);
-	DrawString(530, 680 + 300 - shift_y, "Hiroki Shinzato", 0xffffff);
-	DrawString(530, 720 + 300 - shift_y, "Hiroki Shinzato", 0xffffff);
+	DrawString(530, 640 + 300 - shift_y, "Hayato Kitamura", 0xffffff);
+	DrawString(530, 680 + 300 - shift_y, "Hinata Kobayashi", 0xffffff);
+	DrawString(530, 720 + 300 - shift_y, "Reo Yamaguchi", 0xffffff);
 
 	DrawString(505, 1020 + 300 - shift_y, "Site of Music Used", 0x0000ff);
 	DrawString(535, 1120 + 300 - shift_y, "「無料効果音」", 0xffffff);
@@ -173,6 +167,28 @@ void End::Draw()const
 
 	DrawString(520, 1630 + 300 - shift_y, "GameMain Music", 0x00ff00);
 	DrawString(400, 1710 + 300 - shift_y, "Dynamedion 「A Chill in the air」", 0xffffff);
+}
+
+void End::BackGroundDraw()const
+{
+	//動いていないブロックを先に描画
+	for (int i = 0; i < BG_BLOCK_WIDTH_NUM; i++)
+	{
+		for (int j = 0; j < BG_BLOCK_HEIGHT_NUM; j++)
+		{
+			if (bg[i][j].move_flg == false && bg[i][j].flg == true)
+			{
+				DrawBoxAA(bg[i][j].location.x - bg[i][j].anim_size,
+					bg[i][j].location.y - bg[i][j].anim_size,
+					bg[i][j].location.x + bg[i][j].erea.width + bg[i][j].anim_size,
+					bg[i][j].location.y + bg[i][j].erea.height + bg[i][j].anim_size, bg[i][j].color, TRUE);
+				DrawBoxAA(bg[i][j].location.x - bg[i][j].anim_size,
+					bg[i][j].location.y - bg[i][j].anim_size,
+					bg[i][j].location.x + bg[i][j].erea.width + bg[i][j].anim_size,
+					bg[i][j].location.y + bg[i][j].erea.height + bg[i][j].anim_size, 0x444444, FALSE);
+			}
+		}
+	}
 }
 
 void End::DeerDraw() const
@@ -206,7 +222,7 @@ void End::DeerDraw() const
 
 void End::DeerUpdate()
 {
-	deer_location.x -= 5;
+	deer_location.x -= 4;
 	// 足の回転方向を制御するフラグを追加
 	for (int i = 0; i < 4; i++) {
 		// 回転方向に基づいて角度を更新
@@ -328,7 +344,7 @@ void End::FrogDraw() const
 void End::FrogUpdate()
 {
 	if (up % 60 == 0) {
-		frog_speed.x = 4.f;
+		frog_speed.x = 3.f;
 		frog_speed.y = -20.f;
 	}
 
@@ -351,6 +367,8 @@ void End::FrogUpdate()
 
 void End::BossDraw() const
 {
+
+
 	DrawWing();
 	//本体
 	DrawCircleAA(boss_location.x + 250 / 2, boss_location.y + 250 / 2 + boss_anim, 35, 35, 0x000000, TRUE);
@@ -486,12 +504,29 @@ void End::InvertedWingPositions()
 
 void End::BossUpdate()
 {
+	boss_cnt++;
+
 	boss_anim = (float)sin(PI * 2.f / 60.f * up) * 5.f;
 	InvertedWingPositions();
 	SavePosition();
 
-	boss_location.x -= 3.f;
-	boss_location.y += 2.f;
+	boss_location.x -= 2.f;
+	boss_location.y += 1.f;
+
+	int c = 0;
+	if (boss_cnt <= 60)
+	{
+		boss_color = RED;
+	}
+	else if (boss_cnt <=  120 ) {
+		boss_color = BLUE;
+	}
+	else if (boss_cnt <= 180) {
+		boss_color = GREEN;
+	}
+	else if (boss_cnt <= 240) {
+		boss_cnt = 0;
+	}
 
 	
 }

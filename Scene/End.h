@@ -31,6 +31,7 @@ private:
     Location frog_location;
     Location frog_speed;
     Erea frog_erea;
+    float face_angle;
 
     //ボス用
     Location boss_location;
@@ -38,10 +39,14 @@ private:
     std::array<Location, 40> wing;	//ボスの羽の位置情報
     std::array<Location, 40> wing_mirror;//ミラー羽の位置情報
     int boss_color;
+    int boss_cnt;
 
     float boss_anim;//アニメーション用
 
-    float face_angle;
+    //背景
+    BackGroundImage bg[BG_BLOCK_WIDTH_NUM][BG_BLOCK_HEIGHT_NUM];    //背景情報保存
+    Title* t;
+
 public:
     //コンストラクタ
     End();
@@ -60,6 +65,9 @@ public:
 
     //描画に関することを実装
     void Draw() const override;
+
+    //背景
+    void BackGroundDraw()const;
 
     //シカ描画
     void DeerDraw()const;
