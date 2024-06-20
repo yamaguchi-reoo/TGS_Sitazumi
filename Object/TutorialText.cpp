@@ -1,7 +1,7 @@
 #include "DxLib.h"
 #include "TutorialText.h"
 
-TutorialText::TutorialText() : GNum(0), GColor(GREEN), Gbutton_draw{ false, false, false, false }, GGNum(0), frame(0), Gstick_angle(0.0), stage_height(0), p_c(GREEN), add_x(0), add_y(0), f_c(RED), Gdraw_stick_shift{ 0, 0 }, in_camera{ 0, 0 }, circleAng(0.f)
+TutorialText::TutorialText() : GNum(0), GColor(GREEN), Gbutton_draw{ false, false, false, false }, GGNum(0), frame(0), Gstick_angle(0.0), stage_height(0), p_c(GREEN), add_x(0), add_y(0), f_c(RED), Gdraw_stick_shift{ 0, 0 }, in_camera{ 0, 0 }, circleAng(0.f), Box_wall_cnt(false)
 {
 }
 
@@ -41,6 +41,7 @@ void TutorialText::Update(Location camera , Location _p, int height)
 	Gdraw_stick_shift.x = cosf(Gstick_angle * M_PI * 2) * 5;
 	Gdraw_stick_shift.y = sinf(Gstick_angle * M_PI * 2) * 5;
 
+	// 赤い蛙の前
 	if (_p.x >= 1540.0f && _p.y <= 2680.0f && _p.x <= 2600.f && _p.y >= 2000.f)
 	{
 		if (GColor == GREEN && GNum != 26 || GColor == BLUE && GNum < 160)
@@ -69,15 +70,26 @@ void TutorialText::Update(Location camera , Location _p, int height)
 		}
 	}
 
-	// >= 5400 >=2580
+	// >= 5400 >=2580 青い蝙蝠の前
 	if (_p.x >= 5400.f && _p.y <= 2680.f && _p.x <= 6800.f && _p.y >= 2000.f && add_x < 220)
 	{
 		add_x++;
 	}
 	else
 	{
+
 		add_x = 0;
-		Gbutton_draw[3] = true;
+
+		if (add_x > 220 && Box_wall_cnt == false)
+		{
+			Box_wall_cnt = true;
+			Gbutton_draw[3] = true;
+		}
+		else
+		{
+			Box_wall_cnt = false;
+			Gbutton_draw[3] = false;
+		}
 	}
 
 	if (frame > 59)
@@ -183,7 +195,7 @@ void TutorialText::Draw() const
 	DrawBoxAA(1800 - in_camera.x + 2600, stage_height - 540 - in_camera.y + 65, 1840 - in_camera.x + 2600, stage_height - 500 - in_camera.y + 65, RED, TRUE);
 	//ResourceManager::StageBlockDraw(in_camera, 0);
 
-	//カーソル
+	//選択カーソル
 	GDrawCircle(false);
 	//ここまでカーソル
 

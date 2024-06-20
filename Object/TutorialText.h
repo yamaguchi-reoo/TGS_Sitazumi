@@ -18,7 +18,9 @@ private:
 	int GColor;															 
 	int GGNum;															 
 	int frame;
-																		 
+	
+	bool Box_wall_cnt;
+
 	int stage_height;
 	int p_c;
 	int f_c;
