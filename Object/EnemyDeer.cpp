@@ -216,18 +216,18 @@ void EnemyDeer::Draw()const
 		}
 
 		//足　左から
-		ResourceManager::DrawRotaBox(local_location.x + 27.0f + d_left_leg[0], local_location.y + 88.0f, 10.0f, 25.0f, local_location.x + 27.0f - d_left_leg[0], local_location.y + 88.0f, leg_angle[0], draw_color, true);
-		ResourceManager::DrawRotaBox(local_location.x + 27.0f + d_left_leg[0], local_location.y + 88.0f, 10.0f, 25.0f, local_location.x + 27.0f - d_left_leg[0], local_location.y + 88.0f, leg_angle[0], 0x000000, FALSE);
+		ResourceManager::DrawRotaBox(local_location.x + 21.0f + d_left_leg[0], local_location.y + 88.0f, 10.0f, 25.0f, local_location.x + 21.0f - d_left_leg[0], local_location.y + 88.0f, leg_angle[0], draw_color, true);
+		ResourceManager::DrawRotaBox(local_location.x + 21.0f + d_left_leg[0], local_location.y + 88.0f, 10.0f, 25.0f, local_location.x + 21.0f - d_left_leg[0], local_location.y + 88.0f, leg_angle[0], 0x000000, FALSE);
 
-		ResourceManager::DrawRotaBox(local_location.x + 43.0f + d_left_leg[1], local_location.y + 88.0f, 10.0f, 25.0f, local_location.x + 43.0f, local_location.y + 88.0f, -leg_angle[1], draw_color, true);
-		ResourceManager::DrawRotaBox(local_location.x + 43.0f + d_left_leg[1], local_location.y + 88.0f, 10.0f, 25.0f, local_location.x + 43.0f, local_location.y + 88.0f, -leg_angle[1], 0x000000, FALSE);
+		ResourceManager::DrawRotaBox(local_location.x + 37.0f + d_left_leg[1], local_location.y + 88.0f, 10.0f, 25.0f, local_location.x + 37.0f, local_location.y + 88.0f, -leg_angle[1], draw_color, true);
+		ResourceManager::DrawRotaBox(local_location.x + 37.0f + d_left_leg[1], local_location.y + 88.0f, 10.0f, 25.0f, local_location.x + 37.0f, local_location.y + 88.0f, -leg_angle[1], 0x000000, FALSE);
 		//ResourceManager::DrawRotaBox(local_location.x + 35.0f + d_left_leg[1], local_location.y + 88.0f, 10.0f, 25.0f, local_location.x + 35.0f, local_location.y + 88.0f, -leg_angle[1], draw_color, true);
 
-		ResourceManager::DrawRotaBox(local_location.x + 68.0f + d_left_leg[2], local_location.y + 88.0f, 10.0f, 25.0f, local_location.x + 68.0f, local_location.y + 88.0f, leg_angle[2], draw_color, true);
-		ResourceManager::DrawRotaBox(local_location.x + 68.0f + d_left_leg[2], local_location.y + 88.0f, 10.0f, 25.0f, local_location.x + 68.0f, local_location.y + 88.0f, leg_angle[2], 0x000000, FALSE);
+		ResourceManager::DrawRotaBox(local_location.x + 62.0f + d_left_leg[2], local_location.y + 88.0f, 10.0f, 25.0f, local_location.x + 62.0f, local_location.y + 88.0f, leg_angle[2], draw_color, true);
+		ResourceManager::DrawRotaBox(local_location.x + 62.0f + d_left_leg[2], local_location.y + 88.0f, 10.0f, 25.0f, local_location.x + 62.0f, local_location.y + 88.0f, leg_angle[2], 0x000000, FALSE);
 
-		ResourceManager::DrawRotaBox(local_location.x + 83.0f + d_left_leg[3], local_location.y + 88.0f, 10.0f, 25.0f, local_location.x + 83.0f, local_location.y + 88.0f, -leg_angle[3], draw_color, true);
-		ResourceManager::DrawRotaBox(local_location.x + 83.0f + d_left_leg[3], local_location.y + 88.0f, 10.0f, 25.0f, local_location.x + 83.0f, local_location.y + 88.0f, -leg_angle[3], 0x000000, FALSE);
+		ResourceManager::DrawRotaBox(local_location.x + 77.0f + d_left_leg[3], local_location.y + 88.0f, 10.0f, 25.0f, local_location.x + 77.f, local_location.y + 88.0f, -leg_angle[3], draw_color, true);
+		ResourceManager::DrawRotaBox(local_location.x + 77.0f + d_left_leg[3], local_location.y + 88.0f, 10.0f, 25.0f, local_location.x + 77.0f, local_location.y + 88.0f, -leg_angle[3], 0x000000, FALSE);
 		//ResourceManager::DrawRotaBox(local_location.x + 75.0f + d_left_leg[3], local_location.y + 88.0f, 10.0f, 25.0f, local_location.x + 75.0f, local_location.y + 88.0f, -leg_angle[3], draw_color, true);
 
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
