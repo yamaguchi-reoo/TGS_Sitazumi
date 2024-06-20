@@ -331,10 +331,6 @@ void Player::Update(GameMain* _g)
 
 void Player::Draw()const
 {
-	//DrawFormatString(0, 180, 0xff0000, "%0.1f %0.1f", location.x, location.y);
-	DrawFormatString(local_location.x, local_location.y, 0xff0000, "%d", stageHitFlg[1][bottom]);
-	DrawFormatString(local_location.x, local_location.y + 50, 0xff0000, "%f", location.y);
-
 	if(hp <= 0){
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 - (deathTimer * 2));
 	}

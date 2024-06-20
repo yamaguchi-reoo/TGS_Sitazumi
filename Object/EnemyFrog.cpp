@@ -295,7 +295,7 @@ void EnemyFrog::FrogDraw(Location location)const
 {
 #ifdef _DEBUG
 	//当たり判定
-	DrawBoxAA(location.x, location.y, location.x + erea.width, location.y + erea.height, draw_color, FALSE);
+	//DrawBoxAA(location.x, location.y, location.x + erea.width, location.y + erea.height, draw_color, FALSE);
 	//移動方向
 	//DrawFormatStringF(local_location.x, local_location.y, 0x00ff00, "%f %f", vector.x, vector.y);
 #endif
