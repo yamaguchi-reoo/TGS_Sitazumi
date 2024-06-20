@@ -58,7 +58,7 @@ void End::Initialize()
 	frog_erea = { 50.f,50.f };
 	boss_location = { 1300.f,-150.f };
 
-	deer_speed = 80.f;
+	deer_speed = 800.f;
 	frog_speed = {};
 
 	shift_y = -600;
