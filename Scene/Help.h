@@ -21,12 +21,16 @@ private:
     Location l_Bat;
     Location l_Frog;
 
-    int HPlayerColor[3];
     int p_color;
     int s_num;
     int p_hp;
 
+    int DamageColor;
+
     char sign[2];
+
+    bool Gameoverflg;
+    int g_cnt;
 
     int MenuNumber = 2;
     int MenuY = 1;
@@ -63,5 +67,4 @@ public:
     void HDrawBat(int c_num)const;
 
     void HDrawFrog(int c_num)const;
-
 };
