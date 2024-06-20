@@ -552,7 +552,7 @@ void Player::Hit(Object* _object)
 	}
 
 	//ダメージ
-	if (!damageEffectFlg && CheckCollision(_object->GetLocation(), _object->GetErea())) {
+	if (!damageEffectFlg && CheckCollision(_object->GetLocation(), _object->GetErea()) && _object->GetCanHit()) {
 		//色ごとの判定
 		switch (color)
 		{
