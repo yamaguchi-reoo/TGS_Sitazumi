@@ -1,6 +1,7 @@
 #include "End.h"
 #include "DxLib.h"
 #include <fstream>
+#include "../Utility/PadInput.h"
 
 
 End::End() :
@@ -12,12 +13,15 @@ End::End() :
 	up(0),
 	deer_speed(0),
 	face_angle(0.0f),
+	scroll_speed(0),
 	frog_speed{ 0.0f,0.0f },
 	bat_loction{ 0.0f,0.0f },
 	deer_location{ 0.0f,0.0f },
 	frog_location{ 0.0f, 0.0f },
 	frog_erea{ 0.0f,0.0f },
-	boss_location{ 0.0f,0.0f }
+	boss_location{ 0.0f,0.0f },
+	player_location{ 0.0f,0.0f },
+	player_erea{ 0.0f,0.0f }
 {
 	for (int i = 0; i < 7; i++)
 	{
@@ -28,6 +32,9 @@ End::End() :
 		leg_angle[i] = 0.0f;
 	}
 
+	for (int i = 0; i < 4; i++) {
+		player_angle[i] = 0;
+	}
 	// wing の初期化
 	wing.fill({ 0.0f,0.0f });
 	wing_mirror.fill({ 0.0f,0.0f });
@@ -52,15 +59,22 @@ void End::Initialize()
 		}
 	}
 
+	player_location = {};
+	player_erea = { PLAYER_HEIGHT,PLAYER_WIDTH };
+
 	bat_loction = { 100.f, 200.f };
+
 	deer_location = { 1280.f, 500.f };
+
 	frog_location = { -40.f,600.f };
 	frog_erea = { 50.f,50.f };
+
 	boss_location = { 1300.f,-150.f };
 
 	deer_speed = 800.f;
 	frog_speed = {};
 
+	scroll_speed = 3;
 	shift_y = -600;
 
 	for (int i = 0; i < BG_BLOCK_WIDTH_NUM; i++)
@@ -88,18 +102,19 @@ void End::Finalize()
 
 AbstractScene* End::Update()
 {
+
 	up++;
 	//タイトルロゴが止まるように
 	if (shift_y > -80 || shift_y > 2400) {
 		stop_time++;
 	}
 	else {
-		shift_y += 3;
+		shift_y += scroll_speed;
 	}
 
 	//タイトルロゴが止まってから一定時間たったら動くように
 	if (stop_time > 120 && shift_y < 2400) {
-		shift_y += 3;
+		shift_y += scroll_speed;
 	}
 
 	//thank you for playingが止まるように
@@ -189,6 +204,31 @@ void End::BackGroundDraw()const
 			}
 		}
 	}
+}
+
+void End::PlayerDraw()
+{
+	//頭
+	ResourceManager::DrawRotaBox(player_location.x - (player_erea.width / 2), player_location.y - (player_erea.height) + 76, 23, 15, player_location.x, player_location.y, 0, 0x000000, true);
+	ResourceManager::DrawRotaBox(player_location.x - (player_erea.width / 2), player_location.y - (player_erea.height) + 76, 23, 15, player_location.x, player_location.y, 0, 0xffffff, false);
+
+	//目
+	ResourceManager::DrawRotaBox(player_location.x - (player_erea.width / 2) - 6, player_location.y - (player_erea.height) + 76, 6, 7, player_location.x, player_location.y, 0, 0x000000, true);
+	ResourceManager::DrawRotaBox(player_location.x - (player_erea.width / 2) - 6, player_location.y - (player_erea.height) + 76, 6, 7, player_location.x, player_location.y, 0, 0xffffff, false);
+
+	//首
+	ResourceManager::DrawRotaBox(player_location.x - (player_erea.width / 2), player_location.y - (player_erea.height) + 62, 10, 5, player_location.x, player_location.y, 0, 0x000000, true);
+	ResourceManager::DrawRotaBox(player_location.x - (player_erea.width / 2), player_location.y - (player_erea.height) + 62, 10, 5, player_location.x, player_location.y, 0, 0xffffff, false);
+
+	//胴体
+	ResourceManager::DrawRotaBox(player_location.x - (player_erea.width / 2), player_location.y - (player_erea.height) + 37, 21, 37, player_location.x, player_location.y, 0, 0x000000, true);
+	ResourceManager::DrawRotaBox(player_location.x - (player_erea.width / 2), player_location.y - (player_erea.height) + 37, 21, 37, player_location.x, player_location.y, 0, 0xffffff, false);
+
+	//バッグ
+	ResourceManager::DrawRotaBox(player_location.x - (player_erea.width / 2) + 15, player_location.y - (player_erea.height) + 40, 5, 23, player_location.x, player_location.y, 0, 0x000000, true);
+	ResourceManager::DrawRotaBox(player_location.x - (player_erea.width / 2) + 15, player_location.y - (player_erea.height) + 40, 5, 23, player_location.x, player_location.y, 0, 0xffffff, false);
+	ResourceManager::DrawRotaBox(player_location.x - (player_erea.width / 2) + 15, player_location.y - (player_erea.height) + 40, 3, 15, player_location.x, player_location.y, 0, 0x000000, true);
+	ResourceManager::DrawRotaBox(player_location.x - (player_erea.width / 2) + 15, player_location.y - (player_erea.height) + 40, 3, 15, player_location.x, player_location.y, 0, 0xffffff, false);
 }
 
 void End::DeerDraw() const
