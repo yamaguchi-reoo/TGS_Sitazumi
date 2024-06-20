@@ -153,7 +153,7 @@ void Boss::Update(GameMain* _g)
 	}
 	// ダメージを受けている場合のアニメーション処理
 	if (damage_anim_flg) {
-		shake_anim = GetRand(10) - 5;
+		shake_anim = GetRand(20) - 10;
 
 		damage_anim_time--;
 
@@ -252,7 +252,7 @@ void Boss::Draw() const
 		{
 			DrawWings();
 			//本体
-			DrawCircleAA(local_location.x + BOSS_SIZE / 2 + shake_anim, local_location.y + BOSS_SIZE / 2 + boss_anim, 35, 35, part_color[1], TRUE);
+			DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 35, 35, part_color[1], TRUE);
 			DrawCircleAA(local_location.x + BOSS_SIZE / 2 + shake_anim, local_location.y + BOSS_SIZE / 2 + boss_anim, 35, 34, 0xFFFFFF, FALSE, 3.0f);
 			DrawCircleAA(local_location.x + BOSS_SIZE / 2 + shake_anim, local_location.y + BOSS_SIZE / 2 + boss_anim, 36, 36, color, FALSE, 2.0f);
 			if(barrier_num > 0) {
@@ -525,7 +525,7 @@ void Boss::DrawHexagonSphere() const
 		for (int j = -i; j <= i; ++j) {
 			//各層内の六角形の垂直方向の位置を管理
 			for (int k = -i; k <= i; ++k) {
-				// 六角形の中心座標を計算
+				//六角形の中心座標を計算
 				//中心の x 座標に対して、水平に 1.5f * hex_size * j だけ移動
 				hexa_center.x = center.x + (1.5f * hex_size * j);
 				//中心の y 座標に対して、垂直方向に 2.0f * hex_height * k - hex_height * j だけ移動
@@ -598,15 +598,15 @@ void Boss::DrawWings() const
 			local_location.x + wing_mirror[i + 3].x + 250 - angle, local_location.y + wing_mirror[i + 3].y + 30 + angle + delta_y, part_color[1], TRUE);
 
 		//右羽
-		DrawQuadrangleAA(local_location.x + wing[i].x + angle, local_location.y + wing[i].y + angle + delta_y,
-			local_location.x + wing[i + 1].x + 20 + angle, local_location.y + wing[i + 1].y + 10 + angle + delta_y,
-			local_location.x + wing[i + 2].x + 10 + angle, local_location.y + wing[i + 2].y + 20 + angle + delta_y,
-			local_location.x + wing[i + 3].x + angle, local_location.y + wing[i + 3].y + 30 + angle + delta_y, 0xFFFFFF, FALSE, 3.0f);
+		DrawQuadrangleAA(local_location.x + wing[i].x + angle + shake_anim, local_location.y + wing[i].y + angle + delta_y,
+			local_location.x + wing[i + 1].x + 20 + angle + shake_anim, local_location.y + wing[i + 1].y + 10 + angle + delta_y,
+			local_location.x + wing[i + 2].x + 10 + angle + shake_anim, local_location.y + wing[i + 2].y + 20 + angle + delta_y,
+			local_location.x + wing[i + 3].x + angle + shake_anim, local_location.y + wing[i + 3].y + 30 + angle + delta_y, 0xFFFFFF, FALSE, 3.0f);
 		//左羽
-		DrawQuadrangleAA(local_location.x + wing_mirror[i].x + 250 - angle, local_location.y + wing_mirror[i].y + angle + delta_y,
-			local_location.x + wing_mirror[i + 1].x - 20 + 250 - angle, local_location.y + wing_mirror[i + 1].y + 10 + angle + delta_y,
-			local_location.x + wing_mirror[i + 2].x - 10 + 250 - angle, local_location.y + wing_mirror[i + 2].y + 20 + angle + delta_y,
-			local_location.x + wing_mirror[i + 3].x + 250 - angle, local_location.y + wing_mirror[i + 3].y + 30 + angle + delta_y, 0xFFFFFF, FALSE, 3.0f);
+		DrawQuadrangleAA(local_location.x + wing_mirror[i].x + 250 - angle + shake_anim, local_location.y + wing_mirror[i].y + angle + delta_y,
+			local_location.x + wing_mirror[i + 1].x - 20 + 250 - angle + shake_anim, local_location.y + wing_mirror[i + 1].y + 10 + angle + delta_y,
+			local_location.x + wing_mirror[i + 2].x - 10 + 250 - angle + shake_anim, local_location.y + wing_mirror[i + 2].y + 20 + angle + delta_y,
+			local_location.x + wing_mirror[i + 3].x + 250 - angle + shake_anim, local_location.y + wing_mirror[i + 3].y + 30 + angle + delta_y, 0xFFFFFF, FALSE, 3.0f);
 	}
 }
 

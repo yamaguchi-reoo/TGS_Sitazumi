@@ -95,6 +95,11 @@ AbstractScene* Help::Update()
 		l_help_red = { 360.f, 120.f };
 		l_help_blue = { 420.f, 120.f };
 
+		l_help_fire = { 360, 330 };
+		l_help_water = { 420, 330 };
+		l_help_wood = { 480, 330 };
+		l_help_bamboo = { 540, 330 };
+
 	case 5:
 		if (frame % 10 == 0)
 		{
@@ -112,7 +117,7 @@ AbstractScene* Help::Update()
 	}
 		
 	// 下がる
-	if (PadInput::TipLeftLStick(STICKL_Y) < -0.8f && wt >= 15)
+	if (PadInput::TipLeftLStick(STICKL_Y) < -0.8f && wt >= 15 || PadInput::OnButton(XINPUT_BUTTON_DPAD_DOWN))
 	{
 		ResourceManager::StartSound(cursor_se);
 		if (++MenuNumber < 6) {}
@@ -121,7 +126,7 @@ AbstractScene* Help::Update()
 		wt = 0;
 	}
 	// 上がる
-	else if (PadInput::TipLeftLStick(STICKL_Y) > 0.8f && wt >= 15)
+	else if (PadInput::TipLeftLStick(STICKL_Y) > 0.8f && wt >= 15 || PadInput::OnButton(XINPUT_BUTTON_DPAD_UP))
 	{
 		ResourceManager::StartSound(cursor_se);
 		if (--MenuNumber > 5){}
