@@ -40,7 +40,21 @@ End::End() :
 	wing_mirror.fill({ 0.0f,0.0f });
 
 	boss_color = 0;
-
+	for (int i = 0; i < BG_BLOCK_WIDTH_NUM; i++)
+	{
+		for (int j = 0; j < BG_BLOCK_HEIGHT_NUM; j++)
+		{
+			bg[i][j].flg = true;
+			bg[i][j].location = { 0,0 };
+			bg[i][j].erea = { 0,0 };
+			bg[i][j].move_flg = false;
+			bg[i][j].move_goal = { 0,0 };
+			bg[i][j].move_speed = 0;
+			bg[i][j].color = 0;
+			bg[i][j].move_rad = 0.0f;
+			bg[i][j].anim_size = 0;
+		}
+	}
 	t = new Title();
 }
 
@@ -102,7 +116,14 @@ void End::Finalize()
 
 AbstractScene* End::Update()
 {
-
+	scroll_speed = 3;
+	if (PadInput::OnPressed(XINPUT_BUTTON_B)) {
+		scroll_speed = 15;
+		stop_time += 3;
+		if (shift_y >= 2400) {
+			ExitNum += 3;
+		}
+	}
 	up++;
 	//タイトルロゴが止まるように
 	if (shift_y > -80 || shift_y > 2400) {
