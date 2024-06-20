@@ -184,15 +184,11 @@ void GameMain::Draw() const
 	DrawFormatString(100, 160, 0xffffff, "noise:%d", (int)(camera_location.x / 100));*/
 	test->Draw();
 	//チュートリアル表示テスト
-	SetFontSize(50);
+	SetFontSize(35);
 	//DrawString(KeyInput::GetMouseCursor().x - camera_location.x, stage_height- KeyInput::GetMouseCursor().y - camera_location.y, "aaaaa", 0xff0000, TRUE);
 	//DrawFormatString(0, 40, 0xff0000, "%0.1f x %0.1f y", camera_location.x, stage_height - camera_location.y);
-	//DrawFormatString(0, 140, 0xff0000, "%0.1f x %0.1f y",  camera_location.x + KeyInput::GetMouseCursor().x, stage_height - KeyInput::GetMouseCursor().y - camera_location.y);
+	//DrawFormatString(0, 160, 0xff0000, "%0.1f x %0.1f y",  camera_location.x + KeyInput::GetMouseCursor().x, stage_height - KeyInput::GetMouseCursor().y - camera_location.y);
 #endif
-
-	// 1742 - camera_location.x, stage_height - 560 - camera_location.y
-	// 2023 - camera_location.x, stage_height - 357 - camera_location.y
-
 }
 
 void GameMain::CreateObject(Object* _object, Location _location, Erea _erea, int _color_data)

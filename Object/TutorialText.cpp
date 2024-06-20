@@ -1,7 +1,7 @@
 #include "DxLib.h"
 #include "TutorialText.h"
 
-TutorialText::TutorialText() : GNum(0), GColor(GREEN), Gbutton_draw{ false, false, false, false }, GGNum(0), frame(0), Gstick_angle(0.0), stage_height(0), p_c(GREEN), add_x(0), add_y(0), f_c(RED), Gdraw_stick_shift{ 0, 0 }, in_camera{ 0, 0 }, circleAng(0.f), Box_wall_cnt(false)
+TutorialText::TutorialText() : GNum(0), GColor(GREEN), Gbutton_draw{ false, false, false, false }, GGNum(0), frame(0), Gstick_angle(0.0), stage_height(0), p_c(GREEN), add_x(0), add_y(0), f_c(RED), Gdraw_stick_shift{ 0, 0 }, in_camera{ 0, 0 }, circleAng(0.f), cosor_flg(false), p_swap_x(0), e_swap_x(0)
 {
 }
 
@@ -21,16 +21,6 @@ void TutorialText::Update(Location camera , Location _p, int height)
 	{
 		Gbutton_draw[0] = !Gbutton_draw[0];
 	}
-	if (frame % 60 == 0)
-	{
-		Gbutton_draw[1] = !Gbutton_draw[1];
-		//Gbutton_draw[2] = false;
-	}
-	if (Gbutton_draw[2] == true)
-	{
-		p_c = 0xffffff;
-		f_c = 0xffffff;
-	}
 	// チュートリアルエリア：左スティック
 	Gstick_angle += 0.05f;
 	if (Gstick_angle > 1)
@@ -41,7 +31,7 @@ void TutorialText::Update(Location camera , Location _p, int height)
 	Gdraw_stick_shift.x = cosf(Gstick_angle * M_PI * 2) * 5;
 	Gdraw_stick_shift.y = sinf(Gstick_angle * M_PI * 2) * 5;
 
-	// 赤い蛙の前
+	// 最初の緑ブロックのところ
 	if (_p.x >= 1540.0f && _p.y <= 2680.0f && _p.x <= 2600.f && _p.y >= 2000.f)
 	{
 		if (GColor == GREEN && GNum != 26 || GColor == BLUE && GNum < 160)
@@ -70,25 +60,62 @@ void TutorialText::Update(Location camera , Location _p, int height)
 		}
 	}
 
-	// >= 5400 >=2580 青い蝙蝠の前
-	if (_p.x >= 5400.f && _p.y <= 2680.f && _p.x <= 6800.f && _p.y >= 2000.f && add_x < 220)
+	if (_p.x >= 3780.f && _p.y <= 2580.f && _p.x <= 5000.f && _p.y >= 2000.f)
 	{
-		add_x++;
-	}
-	else
-	{
+		Gbutton_draw[1] = true;
 
-		add_x = 0;
-
-		if (add_x > 220 && Box_wall_cnt == false)
+		if (cosor_flg == false)
 		{
-			Box_wall_cnt = true;
-			Gbutton_draw[3] = true;
+			cosor_flg = true;
+		}
+		p_c = WHITE;
+
+		if (p_swap_x < 230)
+		{
+			p_swap_x += 6;
 		}
 		else
 		{
-			Box_wall_cnt = false;
-			Gbutton_draw[3] = false;
+			f_c = GREEN;
+			if (e_swap_x > -240)
+			{
+				e_swap_x -= 6;
+			}
+			else
+			{
+				p_c = RED;
+			}
+		}
+		
+	}
+	else
+	{
+		Gbutton_draw[1] = false;
+		p_c = GREEN;
+		f_c = RED;
+		p_swap_x = 0;
+		e_swap_x = 0;
+	}
+
+	// >= 5400 >=2580 青い蝙蝠の前
+	if (_p.x >= 5400.f && _p.y <= 2680.f && _p.x <= 6800.f && _p.y >= 2000.f)
+	{
+		if (add_x < 220)
+		{
+			add_x += 3;
+		}
+		else
+		{
+			if (Gbutton_draw[3] == false)
+			{
+				Gbutton_draw[3] = true;
+			}
+			else if (Gbutton_draw[3] == true)
+			{
+				Gbutton_draw[3] = false;
+			}
+
+			add_x = 0;
 		}
 	}
 
@@ -169,14 +196,20 @@ void TutorialText::Draw() const
 	if (Gbutton_draw[1] == false)
 	{
 		// B ボタンイメージ描画
-		DrawCircleAA(577 - in_camera.x + 3600, stage_height - 460 - in_camera.y + 60 - 200, 25, 100, 0xc5482c, FALSE);
-		DrawStringF(577 - in_camera.x - 12 + 3600, stage_height - 460 - in_camera.y + 38 - 200, "B", 0xc5482c);
-	}
-	else
-	{
 		DrawCircleAA(577 - in_camera.x + 3600, stage_height - 460 - in_camera.y + 55 - 200, 25, 100, 0xc5482c, TRUE);
 		DrawCircleAA(577 - in_camera.x + 3600, stage_height - 460 - in_camera.y + 60 - 200, 25, 100, 0xc5482c, TRUE);
 		DrawStringF(577 - in_camera.x - 12 + 3600, stage_height - 460 - in_camera.y + 33 - 200, "B", 0x000000);
+	}
+	else
+	{
+		DrawCircleAA(577 - in_camera.x + 3600, stage_height - 460 - in_camera.y + 60 - 200, 25, 100, 0xc5482c, FALSE);
+		DrawStringF(577 - in_camera.x - 12 + 3600, stage_height - 460 - in_camera.y + 38 - 200, "B", 0xc5482c);
+	}
+
+	if (Gbutton_draw[1] == true)
+	{
+		//選択カーソル
+		GDrawCircle(cosor_flg);
 	}
 
 	DrawStringF(4210 - in_camera.x, stage_height - 623 - in_camera.y, "＆", 0xffffff);
@@ -187,32 +220,46 @@ void TutorialText::Draw() const
 	DrawCircleAA(580 - in_camera.x + Gdraw_stick_shift.x + 3710, stage_height - 480 - in_camera.y + Gdraw_stick_shift.y - 121, 18, 100, 0x666666, TRUE);
 
 	// チュートリアルテキスト プレイヤー描画
-	GDrawPlayer(2350, -130,0, 0, GREEN);
+	GDrawPlayer(2350, -130,0, 0, p_c);
 	// チュートリアルテキスト 蛙描画
 	GDrawFrag();
 
 	// 赤ブロック
 	DrawBoxAA(1800 - in_camera.x + 2600, stage_height - 540 - in_camera.y + 65, 1840 - in_camera.x + 2600, stage_height - 500 - in_camera.y + 65, RED, TRUE);
-	//ResourceManager::StageBlockDraw(in_camera, 0);
-
-	//選択カーソル
-	GDrawCircle(false);
-	//ここまでカーソル
-
-	if (p_c == 0xffffff)
+	
+	if (Gbutton_draw[1] == true && cosor_flg == true)
 	{
-		// player 緑
-		DrawBoxAA(4170 - in_camera.x, stage_height - 490 - in_camera.y, 4190 - in_camera.x, stage_height - 470 - in_camera.y, GREEN, TRUE);
-		DrawBoxAA(4170 - in_camera.x, stage_height - 490 - in_camera.y, 4190 - in_camera.x, stage_height - 470 - in_camera.y, 0x000000, FALSE);
+		if (p_swap_x < 230)
+		{
+			// player 緑
+			DrawBoxAA((4170 + p_swap_x) - in_camera.x, stage_height - 540 - in_camera.y, (4190 + p_swap_x) - in_camera.x, stage_height - 520 - in_camera.y, GREEN, TRUE);
+			DrawBoxAA((4170 + p_swap_x) - in_camera.x, stage_height - 540 - in_camera.y, (4190 + p_swap_x) - in_camera.x, stage_height - 520 - in_camera.y, 0x000000, FALSE);
+		}
 
-		// frog 赤
-		DrawBoxAA(4410 - in_camera.x, stage_height - 540 - in_camera.y, 4430 - in_camera.x, stage_height - 520 - in_camera.y, RED, TRUE);
-		DrawBoxAA(4410 - in_camera.x, stage_height - 540 - in_camera.y, 4430 - in_camera.x, stage_height - 520 - in_camera.y, 0x000000, FALSE);
+		if (e_swap_x > -240 && p_swap_x > 230)
+		{
+			// frog 赤
+			DrawBoxAA((4410 - -e_swap_x) - in_camera.x, stage_height - 540 - in_camera.y, (4430 - -e_swap_x) - in_camera.x, stage_height - 520 - in_camera.y, RED, TRUE);
+			DrawBoxAA((4410 - -e_swap_x) - in_camera.x, stage_height - 540 - in_camera.y, (4430 - -e_swap_x) - in_camera.x, stage_height - 520 - in_camera.y, 0x000000, FALSE);
+		}
+	}
+	else if(Gbutton_draw[1] == true && cosor_flg == false)
+	{
+
 	}
 
 	// ダメージゾーンのチュートリアルテキスト
 	DrawBoxAA(5950 - in_camera.x, stage_height - 500 - in_camera.y, 6243 - in_camera.x, stage_height - 260 - in_camera.y, 0xffffff, FALSE, 3.0f);
 	DrawBoxAA(5953 - in_camera.x, stage_height - 497 - in_camera.y, 6240 - in_camera.x, stage_height - 263 - in_camera.y, 0x555555, TRUE, 3.0f);
+
+	// 水描画
+	for (int i = 0; i < 6; i++)
+	{
+		for (int j = 0; j < 2; j++)
+		{
+			ResourceManager::StageAnimDraw({ (6040 + (j * BOX_WIDTH)) - in_camera.x, stage_height - (500 - (i * BOX_HEIGHT)) - in_camera.y }, 5);
+		}
+	}
 
 	if (Gbutton_draw[3] == false)
 	{
@@ -220,6 +267,8 @@ void TutorialText::Draw() const
 		// 青 バツ
 		DrawLineAA(5960 - in_camera.x, stage_height - 480 - in_camera.y, 6030 - in_camera.x, stage_height - 410 - in_camera.y, 0x3300CC, 20.0f);
 		DrawLineAA(5960 - in_camera.x, stage_height - 410 - in_camera.y, 6030 - in_camera.x, stage_height - 480 - in_camera.y, 0x3300CC, 20.0f);
+		SetFontSize(35);
+		DrawString(6122 - in_camera.x, stage_height - 460 - in_camera.y, "Damage", 0xff0000);
 	}
 	else
 	{
@@ -227,6 +276,8 @@ void TutorialText::Draw() const
 		// 赤　マル
 		DrawCircleAA(6000 - in_camera.x, stage_height - 450 - in_camera.y, 30, 100, 0xCC3300, FALSE, 10.0f);
 	}
+	
+
 }
 
 void TutorialText::GDrawPlayer(int xNum, int yNum, int add_x, int add_y, int _c)const

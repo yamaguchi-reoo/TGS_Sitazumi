@@ -19,7 +19,10 @@ private:
 	int GGNum;															 
 	int frame;
 	
-	bool Box_wall_cnt;
+	int p_swap_x;
+	int e_swap_x;
+
+	bool cosor_flg;
 
 	int stage_height;
 	int p_c;
