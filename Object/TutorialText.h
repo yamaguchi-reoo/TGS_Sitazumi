@@ -18,7 +18,12 @@ private:
 	int GColor;															 
 	int GGNum;															 
 	int frame;
-																		 
+	
+	int p_swap_x;
+	int e_swap_x;
+
+	bool cosor_flg;
+
 	int stage_height;
 	int p_c;
 	int f_c;

@@ -6,7 +6,7 @@
 #include "../Utility/KeyInput.h"
 #include "../Utility/ResourceManager.h"
 
-Help::Help() :l_help_red{ 360.f, 120.f }, l_help_blue{ 420.f, 120.f }, l_help_fire{ 360, 330 }, l_help_water{ 420, 330 }, l_help_wood{ 480, 330 }, l_help_bamboo{ 540, 330 }, l_help_respawn{ 450, 600 }, player_location{ 430, 210 }, p_color(RED), p_hp(5), sign{ '<', '=' }, s_num(0),
+Help::Help() :l_help_red{ 360.f, 120.f }, l_help_blue{ 420.f, 120.f }, l_help_fire{ 360, 330 }, l_help_water{ 420, 330 }, l_help_wood{ 480, 330 }, l_help_bamboo{ 540, 330 }, l_help_respawn{ 450, 600 }, player_location{ 430, 210 }, p_color(RED), p_hp(5), sign{ '<', '=' },
 l_Deer{ 820, 140 }, l_Frog{ 960, 165 }, l_Bat{ 1060, 140 }, cursor_se(0), decision_se(0), DamageColor(RED), Gameoverflg(true), g_cnt(0)
 {
 
@@ -38,6 +38,13 @@ AbstractScene* Help::Update()
 
 	switch (MenuNumber)
 	{
+	case 1:
+		p_hp = 5;
+		DamageColor = RED;
+		p_color = RED;
+
+		break;
+
 	case 2:
 		l_help_red = { 965.f, 340.f };
 		l_help_blue = { 965.f, 340.f };
@@ -92,6 +99,10 @@ AbstractScene* Help::Update()
 		break;
 
 	case 3:
+		p_hp = 5;
+		DamageColor = RED;
+		p_color = RED;
+
 		l_help_red = { 360.f, 120.f };
 		l_help_blue = { 420.f, 120.f };
 
@@ -100,7 +111,20 @@ AbstractScene* Help::Update()
 		l_help_wood = { 480, 330 };
 		l_help_bamboo = { 540, 330 };
 
+		break;
+
+	case 4:
+		p_hp = 5;
+		DamageColor = RED;
+		p_color = RED;
+
+		break;
+
 	case 5:
+		p_hp = 5;
+		DamageColor = RED;
+		p_color = RED;
+
 		if (frame % 10 == 0)
 		{
 			button_draw = !button_draw;
@@ -160,8 +184,6 @@ AbstractScene* Help::Update()
 
 void Help::Draw()const
 {
-	//DrawFormatString(1100, 660, GetColor(255, 0, 0), "%d %d", KeyInput::GetMouseCursor().x, KeyInput::GetMouseCursor().y);
-	
 	DrawBoxAA(320.f, 20.f, 1260.f, 700.f, 0xffffff, FALSE, 7.0f);
 	
 	//大外側
@@ -187,39 +209,50 @@ void Help::Draw()const
 		//カーソル描画
 		DrawLineAA(30.f, 100.f, 280.f, 100.f, 0xff0000, 5.0f);
 
-		DrawCircleAA(500.f, 85.f, 50.f, 32, 0x1c2b3e);
-		DrawCircleAA(500.f, 85.f, 30.f, 32, 0x525156);
-		DrawString(610, 60, "LeftStick: Move", 0xffffff);	//左スティック：移動
+		//左スティック：移動
+		DrawCircleAA(385.f, 77.f, 50.f, 32, 0x1c2b3e);
+		DrawCircleAA(385.f, 77.f, 30.f, 32, 0x525156);
+		DrawString(470, 50, "LeftStick : Move", 0xffffff);	
 
-		DrawCircleAA(500.f, 215.f, 50.f,  32, 0x1c2b3e);
-		DrawCircleAA(500.f, 215.f, 30.f, 32, 0x557b0e);
-		DrawString(488, 190, "A", 0xffffff);
-		DrawString(630, 190, "A Button: Jump", 0xffffff);	//Aボタン：ジャンプ
+		//Aボタン：ジャンプ
+		DrawCircleAA(385.f, 187.f, 50.f,  32, 0x1c2b3e);
+		DrawCircleAA(385.f, 187.f, 30.f, 32, 0x557b0e);
+		DrawString(373, 160, "A", 0xffffff);
+		DrawString(470, 164, "A Button : Jump", 0xffffff);
 
-		DrawCircleAA(500.f, 355.f, 50.f, 32, 0x1c2b3e);
-		DrawCircleAA(500.f, 355.f, 30.f, 32, 0xc5482c);
-		DrawString(488, 332, "B", 0xffffff);
-		DrawString(630, 310, "B Button\n(LongPress)", 0xffffff);	//Bボタン\n(長押し)
-		DrawString(925, 330, ":ColorSwap", 0xffffff);			//：色の交換
+		//Bボタン\n(長押し)：色の交換
+		DrawCircleAA(385.f, 295.f, 50.f, 32, 0x1c2b3e);
+		DrawCircleAA(385.f, 295.f, 30.f, 32, 0xc5482c);
+		DrawString(373, 270, "B", 0xffffff);
+		DrawString(470, 270, "B Button(LongPress):ColorSwap", 0xffffff);
 
-		DrawCircleAA(390.f, 500.f, 50.f, 32, 0x1c2b3e);
-		DrawCircleAA(390.f, 500.f, 30.f, 32, 0xc5482c);
-		DrawString(380, 478, "B", 0xffffff);
-		DrawString(440, 478, "＋", 0xffffff);
-		DrawCircleAA(540.f, 500.f, 50.f, 32, 0x1c2b3e);
-		DrawBox(525, 460, 555, 545, 0x211d1e, TRUE);
-		DrawBox(500, 490, 580, 515, 0x211d1e, TRUE);
-		DrawString(630, 450, "B(Pressing)\nD-Pad", 0xffffff);	//B(長押し中)\n十字カーソル
-		DrawString(925, 470, ":ColorSelect", 0xffffff);					//：色の選択
+		//STARTボタン : PORSE
+		DrawCircleAA(373.f, 417.f, 38.f, 100, 0x1c2b3e, TRUE);
+		DrawCircleAA(493.f, 417.f, 38.f, 100, 0x1c2b3e, TRUE);
+		DrawBoxAA(360.f, 380.f, 500.f, 455.f, 0x1c2b3e, TRUE);
+		DrawString(370, 395, "START", 0xffffff);
+		DrawString(570, 395, "START Button:PORSE", 0xffffff);
 
-		DrawCircleAA(390.f, 620.f, 50.f, 32, 0x1c2b3e);
-		DrawCircleAA(390.f, 620.f, 30.f, 32, 0xc5482c);
-		DrawString(380, 595, "B", 0xffffff);
-		DrawString(440, 595, "＋", 0xffffff);
-		DrawCircleAA(540.f, 620.f, 50.f, 32, 0x1c2b3e);
-		DrawCircleAA(540.f, 620.f, 30.f, 32, 0x525156);
-		DrawString(630, 578, "B(Pressing)\nLeftStick", 0xffffff);	//B(長押し中)\n左スティック
-		DrawString(925, 590, ":ColorSelect", 0xffffff);					//：色の選択
+		//B(長押し中) + 十字カーソル：色の選択
+		DrawCircleAA(390.f, 530.f, 50.f, 32, 0x1c2b3e);
+		DrawCircleAA(390.f, 530.f, 30.f, 32, 0xc5482c);
+		DrawString(380, 507, "B", 0xffffff);
+		DrawString(440, 507, "＋", 0xffffff);
+		DrawCircleAA(540.f, 530.f, 50.f, 32, 0x1c2b3e);
+		DrawBox(525, 490, 555, 575, 0x211d1e, TRUE);
+		DrawBox(500, 520, 580, 545, 0x211d1e, TRUE);
+		DrawString(630, 480, "B(Pressing)\nD-Pad", 0xffffff);	
+		DrawString(925, 500, ":ColorSelect", 0xffffff);		
+
+		//B(長押し中) + 左スティック：色の選択
+		DrawCircleAA(390.f, 640.f, 50.f, 32, 0x1c2b3e);
+		DrawCircleAA(390.f, 640.f, 30.f, 32, 0xc5482c);
+		DrawString(380, 615, "B", 0xffffff);
+		DrawString(440, 615, "＋", 0xffffff);
+		DrawCircleAA(540.f, 640.f, 50.f, 32, 0x1c2b3e);
+		DrawCircleAA(540.f, 640.f, 30.f, 32, 0x525156);
+		DrawString(630, 588, "B(Pressing)\nLeftStick", 0xffffff);	
+		DrawString(925, 615, ":ColorSelect", 0xffffff);	
 
 		break;
 
@@ -286,9 +319,6 @@ void Help::Draw()const
 		default:
 			break;
 		}
-
-
-		
 
 		SetFontSize(100);
 		DrawString(380, 570, "5 Hit", 0xffffff);
@@ -412,30 +442,6 @@ void Help::Draw()const
 			DrawStringF(550 - 10, 290 + 25, "B", 0x000000);
 		}
 		break;
-	//case 5:
-	//	DrawLineAA(30.f, 683.f, 280.f, 683.f, 0xff0000, 5.0f);
-	//	//Press B button
-	//	DrawString(630, 330, "Press B button", 0xffffff);
-	//	if (button_draw == false)
-	//	{
-	//		//ボタンイメージ描画
-	//		DrawCircleAA(550, 360, 37.5, 100, 0xff0000, FALSE);
-	//		DrawStringF(550 - 10, 290 + 40, "B", 0xff0000);
-
-	//		//押してる演出の描画
-	//		DrawLineAA(550 - 40, 290 + 75, 550 - 60, 290 + 70, 0xffffff, TRUE);
-	//		DrawLineAA(550 - 40, 290 + 58, 550 - 60, 290 + 53, 0xffffff, TRUE);
-	//		DrawLineAA(550 + 40, 290 + 75, 550 + 60, 290 + 70, 0xffffff, TRUE);
-	//		DrawLineAA(550 + 40, 290 + 58, 550 + 60, 290 + 53, 0xffffff, TRUE);
-	//	}
-	//	else
-	//	{
-	//		DrawCircleAA(550, 290 + 55, 37.5, 100, 0xff0000, TRUE);
-	//		DrawCircleAA(550, 290 + 70, 37.5, 100, 0xff0000, TRUE);
-	//		DrawBoxAA(550 - 20, 290 + 55, 550 + 20, 290 + 70, 0xff0000, TRUE);
-	//		DrawStringF(550 - 10, 290 + 25, "B", 0x000000);
-	//	}
-	//	break;
 	default:
 		break;
 	}
