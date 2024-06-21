@@ -75,18 +75,6 @@ private:
     int current_menu;           //選択中のメニュー
     float stick_angle;          //スティックのアングルを保存
 
-    bool end_game_flg;          //ゲーム終了のアニメーション
-    int end_game_count;          //ゲーム終了のアニメーション測定
-    int title_image_handle;     //タイトル画像のハンドル保管用
-
-    int interval_ = 60;
-    int cellSize_ = 50;
-    struct XYIdx {
-        int xidx, yidx;
-    };
-    std::mt19937 mt_;
-    std::vector<XYIdx> tiles_;
-
     int logo_img;       //タイトルロゴの格納
     Erea logo_size;         //ロゴ画像の大きさ
     int title_bgm;      //タイトルBGM
@@ -118,9 +106,6 @@ public:
 
     //描画に関することを実装
     void Draw() const override;
-
-    //ゲームを終了するときの処理
-    void GameEnd();
 
     //タイトルの背景更新
     void bgUpdate();

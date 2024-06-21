@@ -23,6 +23,7 @@ End::End() :
 	boss_location{ 0.0f,0.0f },
 	player_location{ 0.0f,0.0f },
 	player_erea{ 0.0f,0.0f }
+	end_game_flg(false)
 {
 	for (int i = 0; i < 7; i++)
 	{
@@ -109,7 +110,22 @@ void End::Initialize()
 			bg[i][j].anim_size = 0;
 		}
 	}
+
+	int xnum = (SCREEN_WIDTH / cellSize_) + 1;
+	int ynum = (SCREEN_HEIGHT / cellSize_) + 1;
+	tiles_.reserve(xnum * ynum);
+
+	for (int yidx = 0; yidx < ynum; ++yidx) {
+		for (int xidx = 0; xidx < xnum; ++xidx) {
+			tiles_.push_back({ xidx,yidx });
+		}
+	}
+	std::shuffle(tiles_.begin(), tiles_.end(), mt_);
+
 	LoadPosition();  // 初期化時に座標を読み込む
+
+	swap_se = ResourceManager::SetSound("Resource/Sounds/Effect/swap.wav");
+
 }
 
 void End::Finalize()
@@ -148,11 +164,21 @@ AbstractScene* End::Update()
 		ExitNum++;
 	}
 	//終了処理
-	if (ExitNum > 179)
+	if (ExitNum > 179 && !end_game_flg)
 	{
-		return nullptr;
+		end_game_flg = true;
+		end_image_handle = MakeScreen(SCREEN_WIDTH, SCREEN_HEIGHT);
+		GetDrawScreenGraph(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, end_image_handle);
 	}
 
+	if (end_game_flg == true)
+	{
+		EndGameUpdate();
+		if (end_anim_count > 90)
+		{
+			return nullptr;
+		}
+	}
 	DeerUpdate();
 	BatUpdate();
 	FrogUpdate();
@@ -164,6 +190,37 @@ AbstractScene* End::Update()
 
 void End::Draw()const
 {
+	if (end_game_flg)
+	{
+		//DrawGraph(0, 0, title_image_handle, TRUE);
+		auto rate = (float)end_anim_count / (float)interval_;
+		for (const auto& cell : tiles_) {
+			DrawRectGraph(
+				cell.xidx * cellSize_,
+				cell.yidx * cellSize_,
+				cell.xidx * cellSize_,
+				cell.yidx * cellSize_,
+				cellSize_, cellSize_,
+				end_image_handle, true);
+			DrawBox(cell.xidx * cellSize_,
+				cell.yidx * cellSize_,
+				cell.xidx * cellSize_ + cellSize_,
+				cell.yidx * cellSize_ + cellSize_,
+				0xffffff, FALSE);
+		}
+	}
+	else
+	{
+		//背景
+		BackGroundDraw();
+		//コウモリ
+		BatDraw();
+		//シカ
+		DeerDraw();
+		//カエル
+		FrogDraw();
+		//ボス
+		BossDraw();
 	//背景
 	BackGroundDraw();
 	//コウモリ
@@ -178,39 +235,40 @@ void End::Draw()const
 	PlayerDraw();
 
 
-	//エンドロール
-	SetFontSize(60);
-	//DrawString((SCREEN_WIDTH / 2) - 105, 200 - shift_y, "TITLE", 0xffffff);
-	DrawString(435, 240 - shift_y, "「", 0xffffff);
-	DrawString(780, 255 - shift_y, "」", 0xffffff);
-	for (int i = 0; i < 7; i++)
-	{
-		DrawFormatStringF(logo_location[i].x + 500, logo_location[i].y + 250 - shift_y, logo_color[i], "%s", logo_string[i]);
+		//エンドロール
+		SetFontSize(60);
+		//DrawString((SCREEN_WIDTH / 2) - 105, 200 - shift_y, "TITLE", 0xffffff);
+		DrawString(435, 240 - shift_y, "「", 0xffffff);
+		DrawString(780, 255 - shift_y, "」", 0xffffff);
+		for (int i = 0; i < 7; i++)
+		{
+			DrawFormatStringF(logo_location[i].x + 500, logo_location[i].y + 250 - shift_y, logo_color[i], "%s", logo_string[i]);
+		}
+
+		DrawString(340, 2400 + 300 - shift_y, "Thank     for playing", 0xffffff);
+		DrawString(530, 2400 + 300 - shift_y, "y", 0xff0000);
+		DrawString(560, 2400 + 300 - shift_y, "o", 0x0000ff);
+		DrawString(590, 2400 + 300 - shift_y, "u", 0x00ff00);
+
+
+		SetFontSize(30);
+		DrawString(500, 500 + 300 - shift_y, "Production Members", 0xff0000);
+		DrawString(530, 600 + 300 - shift_y, "Hiroki Shinzato", 0xffffff);
+		DrawString(530, 640 + 300 - shift_y, "Hayato Kitamura", 0xffffff);
+		DrawString(530, 680 + 300 - shift_y, "Hinata Kobayashi", 0xffffff);
+		DrawString(530, 720 + 300 - shift_y, "Reo Yamaguchi", 0xffffff);
+
+		DrawString(505, 1020 + 300 - shift_y, "Site of Music Used", 0x0000ff);
+		DrawString(535, 1120 + 300 - shift_y, "「無料効果音」", 0xffffff);
+		DrawString(535, 1170 + 300 - shift_y, "「効果音ラボ」", 0xffffff);
+		DrawString(515, 1220 + 300 - shift_y, "「アルスパーク」", 0xffffff);
+
+		DrawString(550, 1380 + 300 - shift_y, "Title Music", 0x00ff00);
+		DrawString(450, 1460 + 300 - shift_y, "sound jewel 「Good Night」", 0xffffff);
+
+		DrawString(520, 1630 + 300 - shift_y, "GameMain Music", 0x00ff00);
+		DrawString(400, 1710 + 300 - shift_y, "Dynamedion 「A Chill in the air」", 0xffffff);
 	}
-
-	DrawString(340, 2400 + 300 - shift_y, "Thank     for playing", 0xffffff);
-	DrawString(530, 2400 + 300 - shift_y, "y", 0xff0000);
-	DrawString(560, 2400 + 300 - shift_y, "o", 0x0000ff);
-	DrawString(590, 2400 + 300 - shift_y, "u", 0x00ff00);
-
-
-	SetFontSize(30);
-	DrawString(500, 500 + 300 - shift_y, "Production Members", 0xff0000);
-	DrawString(530, 600 + 300 - shift_y, "Hiroki Shinzato", 0xffffff);
-	DrawString(530, 640 + 300 - shift_y, "Hayato Kitamura", 0xffffff);
-	DrawString(530, 680 + 300 - shift_y, "Hinata Kobayashi", 0xffffff);
-	DrawString(530, 720 + 300 - shift_y, "Reo Yamaguchi", 0xffffff);
-
-	DrawString(505, 1020 + 300 - shift_y, "Site of Music Used", 0x0000ff);
-	DrawString(535, 1120 + 300 - shift_y, "「無料効果音」", 0xffffff);
-	DrawString(535, 1170 + 300 - shift_y, "「効果音ラボ」", 0xffffff);
-	DrawString(515, 1220 + 300 - shift_y, "「アルスパーク」", 0xffffff);
-
-	DrawString(550, 1380 + 300 - shift_y, "Title Music", 0x00ff00);
-	DrawString(450, 1460 + 300 - shift_y, "sound jewel 「Good Night」", 0xffffff);
-
-	DrawString(520, 1630 + 300 - shift_y, "GameMain Music", 0x00ff00);
-	DrawString(400, 1710 + 300 - shift_y, "Dynamedion 「A Chill in the air」", 0xffffff);
 }
 
 void End::BackGroundDraw()const
@@ -616,8 +674,6 @@ void End::BossUpdate()
 	else if (boss_cnt <= 240) {
 		boss_cnt = 0;
 	}
-
-	
 }
 
 void End::SavePosition()
@@ -641,5 +697,27 @@ void End::LoadPosition()
 			infile >> wing[i].x >> wing[i].y;
 		}
 		infile.close();
+	}
+}
+
+void End::EndGameUpdate()
+{
+	end_anim_count++;
+	SetDrawScreen(DX_SCREEN_BACK);
+	if (end_anim_count > 90) {
+		return;
+	}
+	if (end_anim_count % 5 == 0)
+	{
+		ResourceManager::StartSound(swap_se);
+	}
+	int xnum = (SCREEN_WIDTH / cellSize_) + 1;
+	int ynum = (SCREEN_HEIGHT / cellSize_) + 1;
+	int eraseNum = ((xnum * ynum) / interval_);
+	if (tiles_.size() > eraseNum) {
+		tiles_.erase(tiles_.end() - eraseNum, tiles_.end());
+	}
+	else {
+		tiles_.clear();
 	}
 }
