@@ -711,9 +711,6 @@ Location GameMain::RotationLocation(Location BaseLoc, Location Loc, float r) con
 
 void GameMain::UpdateGameMain()
 {
-
-	tutorial.Update(camera_location, GetPlayerLocation(), stage_height);
-
 	if (PadInput::OnButton(XINPUT_BUTTON_START) && gm_state != GameMainState::Pause)
 	{
 		gm_state = GameMainState::Pause;
@@ -731,6 +728,7 @@ void GameMain::UpdateGameMain()
 	//各オブジェクトの更新
 	if (object[player_object]->GetSearchFlg() == FALSE || (object[player_object]->GetSearchFlg() == TRUE && frame % 10 == 0))
 	{
+		tutorial.Update(camera_location, GetPlayerLocation(), stage_height);
 		for (int i = 0; i < OBJECT_NUM; i++)
 		{
 			//プレイヤーとボス以外の画面内オブジェクトの更新

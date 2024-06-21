@@ -239,7 +239,6 @@ void Player::Update(GameMain* _g)
 		}
 	}
 
-
 	pStateOld = pState;
 	if (hp > 0) {
 		MoveActor();
