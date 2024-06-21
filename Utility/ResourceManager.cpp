@@ -442,7 +442,7 @@ void ResourceManager::DrawHeart(Location l, Erea e)
 	triangle[1].y = l.y + ((e.height / 2) / 2);
 
 	triangle[2].x = l.x + (e.width / 2);
-	triangle[2].y = l.y + e.height /*+ ((e.height / 2) / 2)*/;
+	triangle[2].y = l.y + e.height ;
 
 
 	for (int i = 0; i < 2; i++)
@@ -450,15 +450,12 @@ void ResourceManager::DrawHeart(Location l, Erea e)
 		DrawCircleAA(circle[i].x, circle[i].y, ((e.width / 2) / 2) + 2, 64, 0xffffff, FALSE, 4.f);
 	}
 	
-
 	for (int i = 0; i < 2; i++)
 	{
 		DrawCircleAA(circle[i].x, circle[i].y, ((e.width / 2) / 2), 64, 0xcc0000);
 	}
 
 	DrawTriangleAA(triangle[0].x, triangle[0].y, triangle[1].x, triangle[1].y, triangle[2].x, triangle[2].y, 0xcc0000, TRUE);
-	DrawLineAA(triangle[0].x - 2, triangle[0].y + 2, triangle[2].x + 1, triangle[2].y + 2, 0xffffff, 4.f);
-	DrawLineAA(triangle[1].x + 2, triangle[1].y + 2, triangle[2].x - 1, triangle[2].y + 2, 0xffffff, 4.f);
-	//DrawCircle
-	//DrawTriangle
+	DrawLineAA(triangle[0].x - 2, triangle[0].y + 2, triangle[2].x + 2, triangle[2].y + 3, 0xffffff, 4.f);
+	DrawLineAA(triangle[1].x + 2, triangle[1].y + 2, triangle[2].x - 2, triangle[2].y + 3, 0xffffff, 4.f);
 }
