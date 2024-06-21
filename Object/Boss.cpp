@@ -69,8 +69,8 @@ void Boss::Initialize(Location _location, Erea _erea, int _color_data, int _obje
 		 {370.0f , SCREEN_HEIGHT - 400.0f}				 //左
 	};
 
-	barrier_rad[0] = 60;
-	barrier_rad[1] = 55;
+	barrier_rad[0] = 70;
+	barrier_rad[1] = 60;
 	barrier_rad[2] = 50;
 
 	damage_effect_time = 180;
@@ -253,8 +253,8 @@ void Boss::Draw() const
 			DrawWings();
 			//本体
 			DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 35, 35, part_color[1], TRUE);
-			DrawCircleAA(local_location.x + BOSS_SIZE / 2 + shake_anim, local_location.y + BOSS_SIZE / 2 + boss_anim, 35, 34, 0xFFFFFF, FALSE, 3.0f);
-			DrawCircleAA(local_location.x + BOSS_SIZE / 2 + shake_anim, local_location.y + BOSS_SIZE / 2 + boss_anim, 36, 36, color, FALSE, 2.0f);
+			DrawCircleAA(local_location.x + BOSS_SIZE / 2 + shake_anim, local_location.y + BOSS_SIZE / 2 + boss_anim, 36, 34, 0xFFFFFF, FALSE, 3.0f);
+			DrawCircleAA(local_location.x + BOSS_SIZE / 2 + shake_anim, local_location.y + BOSS_SIZE / 2 + boss_anim, 38, 36, color, FALSE, 2.0f);
 			if(barrier_num > 0) {
 				DrawHexagonSphere();
 				// バリアの描画
@@ -296,7 +296,7 @@ void Boss::Draw() const
 			break;
 			// それ以上のバリアは想定しないが、必要に応じて追加
 		}
-		DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, barrier_rad[i], 50, barrier_color, FALSE);
+		DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, barrier_rad[i], 50, barrier_color, FALSE, 5.f);
 	}
 }
 
