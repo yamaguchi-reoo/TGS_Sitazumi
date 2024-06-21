@@ -59,6 +59,8 @@ private:
     int end_anim_count;          //ゲーム終了のアニメーション測定
     int end_image_handle;     //タイトル画像のハンドル保管用
 
+
+
     //背景
     BackGroundImage bg[BG_BLOCK_WIDTH_NUM][BG_BLOCK_HEIGHT_NUM];    //背景情報保存
     Title* t;

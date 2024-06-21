@@ -22,7 +22,7 @@ End::End() :
 	frog_erea{ 0.0f,0.0f },
 	boss_location{ 0.0f,0.0f },
 	player_location{ 0.0f,0.0f },
-	player_erea{ 0.0f,0.0f }
+	player_erea{ 0.0f,0.0f },
 	end_game_flg(false)
 {
 	for (int i = 0; i < 7; i++)
