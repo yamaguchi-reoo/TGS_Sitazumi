@@ -77,8 +77,10 @@ private:
 	int now_riding;		//今乗っているブロックに応じて再生するSEを変える
 
 	int deathTimer = 0;
-
 	int stickTimer[2] = { 0,0 };
+
+	bool emoteFlg;
+	int emoteCnt;
 
 public:
 	Player();
@@ -91,7 +93,7 @@ public:
 	void Hit(Object* _object)override;
 
 	void MoveActor(); //キャラクターの移動
-	void MoveAim(); //照準の移動 近くの色の検知
+	
 
 	bool SearchColor(Object* ob) override;
 	bool ChangePlayerColor();
@@ -106,7 +108,7 @@ public:
 
 	void PlayerAnim();
 	void DrawPlayer()const;
-	void DrawPlayerFront()const;
+	void DrawPlayerFront(bool f)const;
 
 	//引数:もとになる座標、回転させたい座標、回転させたい角度
 	Location RotationLocation(Location BaseLoc, Location Loc, float r) const;
@@ -114,7 +116,5 @@ public:
 	//音源の破損防止
 	void SavePlayerSound();
 
-
-	bool GetDebug() { return moveFrontFlg; }
 };
 
