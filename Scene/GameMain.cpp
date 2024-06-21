@@ -1059,11 +1059,11 @@ void GameMain::DrawHelp()const
 	DrawString(145, 260, "B Button\n(LongPress)", 0xffffff);	
 	DrawString(350, 278, ":ColorSwap", 0xffffff);
 
-	//STARTボタン : PORSE
+	//STARTボタン : PAUSE
 	DrawCircleAA(73.f, 395.f, 38.f, 100, 0x1c2b3e, TRUE);
 	DrawCircleAA(173.f, 395.f, 38.f, 100, 0x1c2b3e, TRUE);
 	DrawBoxAA(60.f, 358.f, 180.f, 433.f, 0x1c2b3e, TRUE);
-	DrawString(220, 375, "START Button:PORSE", 0xffffff);
+	DrawString(220, 375, "START Button:Porse", 0xffffff);
 
 	//B(長押し中) + 十字カーソル
 	DrawCircleAA(80.f, 490.f, 50.f, 32, 0x1c2b3e);
