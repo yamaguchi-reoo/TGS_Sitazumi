@@ -56,9 +56,6 @@ void GameMain::Initialize()
 	back_ground->Initialize({ (float)stage_width,(float)stage_height });
 
 	lock_pos = camera_location;
-
-	test = new BossAttackWater();
-	test->Initialize({ 10000,1600 }, { 40,40 }, RED, 1000);
 }
 
 void GameMain::Finalize()
@@ -83,9 +80,6 @@ void GameMain::Finalize()
 
 	back_ground->Finalize();
 	delete back_ground;
-
-	test->Finalize();
-	delete test;
 }
 
 AbstractScene* GameMain::Update()
@@ -182,7 +176,6 @@ void GameMain::Draw() const
 
 	DrawFormatString(100, 140, 0xffffff, "normal:%d", 255 - (int)(camera_location.x / 100));
 	DrawFormatString(100, 160, 0xffffff, "noise:%d", (int)(camera_location.x / 100));*/
-	test->Draw();
 	//チュートリアル表示テスト
 	SetFontSize(35);
 	//DrawString(KeyInput::GetMouseCursor().x - camera_location.x, stage_height- KeyInput::GetMouseCursor().y - camera_location.y, "aaaaa", 0xff0000, TRUE);
@@ -716,9 +709,6 @@ Location GameMain::RotationLocation(Location BaseLoc, Location Loc, float r) con
 
 void GameMain::UpdateGameMain()
 {
-
-	tutorial.Update(camera_location, GetPlayerLocation(), stage_height);
-
 	if (PadInput::OnButton(XINPUT_BUTTON_START) && gm_state != GameMainState::Pause)
 	{
 		gm_state = GameMainState::Pause;
@@ -736,6 +726,7 @@ void GameMain::UpdateGameMain()
 	//各オブジェクトの更新
 	if (object[player_object]->GetSearchFlg() == FALSE || (object[player_object]->GetSearchFlg() == TRUE && frame % 10 == 0))
 	{
+		tutorial.Update(camera_location, GetPlayerLocation(), stage_height);
 		for (int i = 0; i < OBJECT_NUM; i++)
 		{
 			//プレイヤーとボス以外の画面内オブジェクトの更新

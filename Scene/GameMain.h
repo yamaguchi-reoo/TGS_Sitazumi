@@ -54,7 +54,6 @@ private:
     WeatherManager* weather;                        //天気管理オブジェクト
     EffectSpawner* effect_spawner;                  //エフェクト管理オブジェクト
     BackGround* back_ground;                        //背景描画用
-    Object* test;
     TutorialText tutorial;
     int object_num;         //オブジェクト数
     int move_object_num;    //Updateされているオブジェクト数
