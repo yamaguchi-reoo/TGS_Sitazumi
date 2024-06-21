@@ -18,7 +18,9 @@ int WINAPI WinMain(_In_ HINSTANCE  hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
     SetUseCharCodeFormat(DX_CHARCODEFORMAT_UTF8);
 
-    SetMainWindowText("下積み");         // ウィンドウタイトルを設定
+    SetMainWindowText("Swapper");         // ウィンドウタイトルを設定
+
+    SetWindowIconID(102);
 
     ChangeWindowMode(TRUE);                        // ウインドウモードで起動
 
