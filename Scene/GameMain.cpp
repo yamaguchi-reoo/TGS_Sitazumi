@@ -47,8 +47,6 @@ void GameMain::Initialize()
 	cursor_se = ResourceManager::SetSound("Resource/Sounds/Player/cursor.wav");
 	decision_se = ResourceManager::SetSound("Resource/Sounds/System/decision.wav");
 
-	ResourceManager::StartSound(bgm_normal, TRUE);
-
 	back_ground = new BackGround();
 
 	SetStage(now_stage, false);
@@ -57,8 +55,8 @@ void GameMain::Initialize()
 
 	lock_pos = camera_location;
 
-	test = new BossAttackWater();
-	test->Initialize({ 10000,1600 }, { 40,40 }, RED, 1000);
+	SetWindowIconID(102);
+
 }
 
 void GameMain::Finalize()
@@ -84,8 +82,6 @@ void GameMain::Finalize()
 	back_ground->Finalize();
 	delete back_ground;
 
-	test->Finalize();
-	delete test;
 }
 
 AbstractScene* GameMain::Update()
@@ -182,7 +178,6 @@ void GameMain::Draw() const
 
 	DrawFormatString(100, 140, 0xffffff, "normal:%d", 255 - (int)(camera_location.x / 100));
 	DrawFormatString(100, 160, 0xffffff, "noise:%d", (int)(camera_location.x / 100));*/
-	test->Draw();
 	//チュートリアル表示テスト
 	SetFontSize(35);
 	//DrawString(KeyInput::GetMouseCursor().x - camera_location.x, stage_height- KeyInput::GetMouseCursor().y - camera_location.y, "aaaaa", 0xff0000, TRUE);
@@ -1289,11 +1284,6 @@ void GameMain::UpdateGameOver()
 			{
 				ResourceManager::StartSound(bgm_normal, TRUE);
 				ResourceManager::StartSound(bgm_noise, TRUE);
-			}
-			else if (now_stage == 2)
-			{
-
-				ResourceManager::StartSound(bgm_abnormal, TRUE);
 			}
 		}
 		else
