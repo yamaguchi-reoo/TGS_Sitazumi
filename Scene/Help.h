@@ -22,7 +22,6 @@ private:
     Location l_Frog;
 
     int p_color;
-    int s_num;
     int p_hp;
 
     int DamageColor;
@@ -32,7 +31,7 @@ private:
     bool Gameoverflg;
     int g_cnt;
 
-    int MenuNumber = 2;
+    int MenuNumber = 1;
     int MenuY = 1;
     int wt = 0;
     bool button_draw = false;

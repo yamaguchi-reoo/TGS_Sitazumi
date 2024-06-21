@@ -93,8 +93,6 @@ private:
     bool move_cursor_once;  //ポーズカーソルを一回だけ移動させる
     float circleAng;
 
-    int HNum1, HNum2;
-
     int bgm_title;             //通常BGM
     int bgm_normal;             //通常BGM
     int bgm_noise;             //ノイズBGM
