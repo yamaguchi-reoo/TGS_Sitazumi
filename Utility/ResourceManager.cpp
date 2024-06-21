@@ -455,7 +455,7 @@ void ResourceManager::DrawHeart(Location l, Erea e)
 		DrawCircleAA(circle[i].x, circle[i].y, ((e.width / 2) / 2), 64, 0xcc0000);
 	}
 
-	DrawTriangleAA(triangle[0].x, triangle[0].y, triangle[1].x, triangle[1].y, triangle[2].x, triangle[2].y, 0xcc0000, TRUE);
-	DrawLineAA(triangle[0].x - 2, triangle[0].y + 2, triangle[2].x + 2, triangle[2].y + 3, 0xffffff, 4.f);
-	DrawLineAA(triangle[1].x + 2, triangle[1].y + 2, triangle[2].x - 2, triangle[2].y + 3, 0xffffff, 4.f);
+	DrawTriangleAA(triangle[0].x - 1, triangle[0].y, triangle[1].x + 1, triangle[1].y, triangle[2].x, triangle[2].y, 0xcc0000, TRUE);
+	DrawLineAA(triangle[0].x + 2, triangle[0].y + 9, triangle[2].x + 2, triangle[2].y + 1, 0xffffff, 4.f);
+	DrawLineAA(triangle[1].x - 2, triangle[1].y + 9, triangle[2].x - 2, triangle[2].y + 1, 0xffffff, 4.f);
 }
