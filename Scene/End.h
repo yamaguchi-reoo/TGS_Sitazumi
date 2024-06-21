@@ -42,6 +42,19 @@ private:
     int boss_cnt;
 
     float boss_anim;//アニメーション用
+    int interval_ = 60;
+    int cellSize_ = 50;
+    struct XYIdx {
+        int xidx, yidx;
+    };
+    std::mt19937 mt_;
+    std::vector<XYIdx> tiles_;
+
+    int swap_se;        //交換SE
+
+    bool end_game_flg;      //終了演出を開始するか
+    int end_anim_count;          //ゲーム終了のアニメーション測定
+    int end_image_handle;     //タイトル画像のハンドル保管用
 
     //背景
     BackGroundImage bg[BG_BLOCK_WIDTH_NUM][BG_BLOCK_HEIGHT_NUM];    //背景情報保存
@@ -96,4 +109,8 @@ public:
 
     //羽の座標をファイルから読み込む
     void LoadPosition();
+
+    //終了時演出の更新
+    void EndGameUpdate();
+
 };

@@ -9,7 +9,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-Title::Title() :frame(0), menu_location{ 0,0 }, menu_size{ 0,0 }, player_location{ 0,0 }, player_color(0xff0000),cursor_location{ 0,0 }, draw_stick_location{ 0,0 }, draw_stick_shift{ 0,0 }, anim_start{ 0,0 }, current_menu(0), swap_anim_flg(false), swap_anim_timer(0), stick_angle(0.0f), button_draw(false), end_game_flg(false), end_game_count(0), title_image_handle(0), bg_handle(0), circleAng(0), rise_se(0), cursor_se(0)
+Title::Title() :frame(0), menu_location{ 0,0 }, menu_size{ 0,0 }, player_location{ 0,0 }, player_color(0xff0000),cursor_location{ 0,0 }, draw_stick_location{ 0,0 }, draw_stick_shift{ 0,0 }, anim_start{ 0,0 }, current_menu(0), swap_anim_flg(false), swap_anim_timer(0), stick_angle(0.0f), button_draw(false),bg_handle(0), circleAng(0), rise_se(0), cursor_se(0)
 {
 }
 
@@ -36,16 +36,6 @@ void Title::Initialize()
 			logo_location[i].x += 90;
 		}
 	}
-	int xnum = (SCREEN_WIDTH / cellSize_) + 1;
-	int ynum = (SCREEN_HEIGHT / cellSize_) + 1;
-	tiles_.reserve(xnum * ynum);
-
-	for (int yidx = 0; yidx < ynum; ++yidx) {
-		for (int xidx = 0; xidx < xnum; ++xidx) {
-			tiles_.push_back({ xidx,yidx });
-		}
-	}
-	std::shuffle(tiles_.begin(), tiles_.end(), mt_);
 
 	logo_img = ResourceManager::SetGraph("Resource/Images/Logo1.png");
 	//GraphFilter(ResourceManager::GetGraph(logo_img), DX_GRAPH_FILTER_GAUSS, 16, 1400);
@@ -102,7 +92,7 @@ AbstractScene* Title::Update()
 	bgUpdate();
 
 	//演出中もしくはエンドアニメーション中は更新しない
-	if (swap_anim_flg == false && end_game_flg == false)
+	if (swap_anim_flg == false)
 	{
 		//選択メニュー更新（スティック）
 		if (current_menu != 0 && cursor_location.x < player_location.x && cursor_location.y < player_location.y + (PLAYER_HEIGHT / 2) - 30)
@@ -150,7 +140,7 @@ AbstractScene* Title::Update()
 	
 
 	//Bボタンでアニメーションを再生
-	if (frame >10 && PadInput::OnRelease(XINPUT_BUTTON_B) && end_game_flg == false)
+	if (frame >10 && PadInput::OnRelease(XINPUT_BUTTON_B))
 	{
 		if (swap_anim_flg == false)
 		{
@@ -169,13 +159,6 @@ AbstractScene* Title::Update()
 	//演出開始
 	if (swap_anim_flg == true)
 	{
-		//エンド画面ならすぐ終了
-		if (current_menu == 2)
-		{
-			end_game_flg = true;
-			title_image_handle = MakeScreen(SCREEN_WIDTH, SCREEN_HEIGHT);
-			GetDrawScreenGraph(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, title_image_handle);
-		}
 		//演出１つ目
 		//if (swap_anim_timer < 30)
 		//{
@@ -247,20 +230,10 @@ AbstractScene* Title::Update()
 					break;
 				case 2:
 					//ゲーム終了
-					end_game_flg = true;
-					title_image_handle = MakeScreen(SCREEN_WIDTH, SCREEN_HEIGHT);
-					GetDrawScreenGraph(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, title_image_handle);
+					return new End();
 					break;
 				}
 			}
-		}
-	}
-	if (end_game_flg == true)
-	{
-		GameEnd();
-		if (end_game_count > 90)
-		{
-			return nullptr;
 		}
 	}
 
@@ -276,8 +249,6 @@ void Title::Draw()const
 	//変更前のフォントサイズを保存
 	int old_size = GetFontSize();
 	DrawBox(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0xffffff, TRUE);
-	if (end_game_flg == false)
-	{
 		//動いていないブロックを先に描画
 		for (int i = 0; i < BG_BLOCK_WIDTH_NUM; i++)
 		{
@@ -421,50 +392,8 @@ void Title::Draw()const
 				}
 			}
 		}
-	}
-	else
-	{
-		//DrawGraph(0, 0, title_image_handle, TRUE);
-		auto rate = (float)end_game_count / (float)interval_;
-		for (const auto& cell : tiles_) {
-			DrawRectGraph(
-				cell.xidx * cellSize_,
-				cell.yidx * cellSize_,
-				cell.xidx * cellSize_,
-				cell.yidx * cellSize_,
-				cellSize_, cellSize_,
-				title_image_handle, true);
-			DrawBox(cell.xidx * cellSize_,
-				cell.yidx * cellSize_,
-				cell.xidx * cellSize_ + cellSize_,
-				cell.yidx * cellSize_ + cellSize_,
-				0xffffff, FALSE);
-		}
-	}
 	//以前のサイズに戻す
 	SetFontSize(old_size);
-}
-
-void Title::GameEnd()
-{
-	end_game_count++;
-	SetDrawScreen(DX_SCREEN_BACK);
-	if (end_game_count > 90) {
-		return;
-	}
-	if (end_game_count % 5 == 0)
-	{
-		ResourceManager::StartSound(swap_se);
-	}
-	int xnum = (SCREEN_WIDTH / cellSize_) + 1;
-	int ynum = (SCREEN_HEIGHT / cellSize_) + 1;
-	int eraseNum = ((xnum * ynum) / interval_);
-	if (tiles_.size() > eraseNum) {
-		tiles_.erase(tiles_.end() - eraseNum, tiles_.end());
-	}
-	else {
-		tiles_.clear();
-	}
 }
 
 void Title::bgUpdate()
