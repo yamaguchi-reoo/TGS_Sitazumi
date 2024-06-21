@@ -68,9 +68,9 @@ void Stage::Initialize(Location _location, Erea _erea, int _color_data,int _obje
 	change_wood = ResourceManager::SetSound("Resource/Sounds/Effect/change_grass.wav");
 	change_water = ResourceManager::SetSound("Resource/Sounds/Effect/change_water.wav");
 	checkpoint_se = ResourceManager::SetSound("Resource/Sounds/System/check_point.wav");
-	ResourceManager::SetSoundVolume(change_fire,50);
-	ResourceManager::SetSoundVolume(change_wood,50);
-	ResourceManager::SetSoundVolume(change_water,50);
+	ResourceManager::SetSoundVolume(change_fire,100);
+	ResourceManager::SetSoundVolume(change_wood,100);
+	ResourceManager::SetSoundVolume(change_water,100);
 }
 
 void Stage::Update(GameMain* _g)
