@@ -79,6 +79,9 @@
     <ClInclude Include="Utility\PadInput.h" />
     <ClInclude Include="Utility\ResourceManager.h" />
   </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resouce.rc" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>

@@ -110,6 +110,7 @@ void Player::Update(GameMain* _g)
 	
 	__super::Update(_g);
 
+
 	//意図しない変更を防止
 	SavePlayerSound();
 
@@ -733,6 +734,18 @@ bool Player::ChangePlayerColor()
 {
 	if (this != nullptr && searchedObj != nullptr) {
 		ChangeColor(searchedObj);
+		if (color == RED)
+		{
+			SetWindowIconID(101);
+		}
+		else if (color == GREEN)
+		{
+			SetWindowIconID(102);
+		}
+		else if (color == BLUE)
+		{
+			SetWindowIconID(103);
+		}
 		return true;
 	}
 	return false;

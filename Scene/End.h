@@ -3,6 +3,7 @@
 #include "DxLib.h"
 #include "../Utility/common.h"
 #include "Title.h"
+#include "../Object/Player.h"
 #include "../Object/EnemyBat.h"
 #include "../Object/EnemyFrog.h"
 
@@ -16,6 +17,8 @@ private:
     int ExitNum = 0;          //終了用
     int shift_y;              //スクロール用
     int stop_time;
+    int scroll_speed;
+    int fast_forward;           //早送り用
 
     //コウモリ用
     Location bat_loction;
@@ -56,9 +59,16 @@ private:
     int end_anim_count;          //ゲーム終了のアニメーション測定
     int end_image_handle;     //タイトル画像のハンドル保管用
 
+
+
     //背景
     BackGroundImage bg[BG_BLOCK_WIDTH_NUM][BG_BLOCK_HEIGHT_NUM];    //背景情報保存
     Title* t;
+
+    //プレイヤー
+    Location player_location;
+    Erea player_erea;
+    float player_angle[4];
 
 public:
     //コンストラクタ
@@ -81,6 +91,10 @@ public:
 
     //背景
     void BackGroundDraw()const;
+
+    //プレイヤー描画
+    void PlayerDraw()const;
+    void PlayerUpdate();
 
     //シカ描画
     void DeerDraw()const;

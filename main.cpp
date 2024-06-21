@@ -18,7 +18,9 @@ int WINAPI WinMain(_In_ HINSTANCE  hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
     SetUseCharCodeFormat(DX_CHARCODEFORMAT_UTF8);
 
-    SetMainWindowText("下積み");         // ウィンドウタイトルを設定
+    SetMainWindowText("Swapper");         // ウィンドウタイトルを設定
+
+    SetWindowIconID(102);
 
     ChangeWindowMode(TRUE);                        // ウインドウモードで起動
 
@@ -29,7 +31,7 @@ int WINAPI WinMain(_In_ HINSTANCE  hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     SetDrawScreen(DX_SCREEN_BACK);                 // 描画先画面を裏にする（ダブルバッファリング）
 
     //シーンオブジェクト作成
-    SceneManager* sceneMng = new SceneManager((AbstractScene*) new Title());
+    SceneManager* sceneMng = new SceneManager((AbstractScene*) new GameMain(0));
 
     //シーンオブジェクト初期化
     sceneMng->Initialize();
