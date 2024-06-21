@@ -18,6 +18,7 @@ private:
     int shift_y;              //スクロール用
     int stop_time;
     int scroll_speed;
+    int fast_forward;           //早送り用
 
     //コウモリ用
     Location bat_loction;
@@ -77,7 +78,8 @@ public:
     void BackGroundDraw()const;
 
     //プレイヤー描画
-    void PlayerDraw();
+    void PlayerDraw()const;
+    void PlayerUpdate();
 
     //シカ描画
     void DeerDraw()const;

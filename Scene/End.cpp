@@ -11,6 +11,7 @@ End::End() :
 	boss_color(0),
 	boss_cnt(0),
 	up(0),
+	fast_forward(0),
 	deer_speed(0),
 	face_angle(0.0f),
 	scroll_speed(0),
@@ -73,7 +74,7 @@ void End::Initialize()
 		}
 	}
 
-	player_location = {};
+	player_location = { 1300.f, 480.f };
 	player_erea = { PLAYER_HEIGHT,PLAYER_WIDTH };
 
 	bat_loction = { 100.f, 200.f };
@@ -83,13 +84,15 @@ void End::Initialize()
 	frog_location = { -40.f,600.f };
 	frog_erea = { 50.f,50.f };
 
-	boss_location = { 1300.f,-150.f };
+	boss_location = { 1315.f,-150.f };
 
 	deer_speed = 800.f;
 	frog_speed = {};
 
 	scroll_speed = 3;
 	shift_y = -600;
+
+	fast_forward = 1;
 
 	for (int i = 0; i < BG_BLOCK_WIDTH_NUM; i++)
 	{
@@ -117,8 +120,10 @@ void End::Finalize()
 AbstractScene* End::Update()
 {
 	scroll_speed = 3;
+	fast_forward = 1;
 	if (PadInput::OnPressed(XINPUT_BUTTON_B)) {
 		scroll_speed = 15;
+		fast_forward = 4;
 		stop_time += 3;
 		if (shift_y >= 2400) {
 			ExitNum += 3;
@@ -152,6 +157,7 @@ AbstractScene* End::Update()
 	BatUpdate();
 	FrogUpdate();
 	BossUpdate();
+	PlayerUpdate();
 
 	return this;
 }
@@ -168,6 +174,8 @@ void End::Draw()const
 	FrogDraw();
 	//ボス
 	BossDraw();
+	//プレイヤー
+	PlayerDraw();
 
 
 	//エンドロール
@@ -227,63 +235,83 @@ void End::BackGroundDraw()const
 	}
 }
 
-void End::PlayerDraw()
+void End::PlayerDraw()const
 {
 	//頭
-	ResourceManager::DrawRotaBox(player_location.x - (player_erea.width / 2), player_location.y - (player_erea.height) + 76, 23, 15, player_location.x, player_location.y, 0, 0x000000, true);
-	ResourceManager::DrawRotaBox(player_location.x - (player_erea.width / 2), player_location.y - (player_erea.height) + 76, 23, 15, player_location.x, player_location.y, 0, 0xffffff, false);
+	ResourceManager::DrawRotaBox(player_location.x - (player_erea.width / 2), player_location.y - (player_erea.height) + 76, 23, 15, player_location.x, player_location.y, 0, GREEN, true);
+	ResourceManager::DrawRotaBox(player_location.x - (player_erea.width / 2), player_location.y - (player_erea.height) + 76, 23, 15, player_location.x, player_location.y, 0, 0x000000, false);
 
 	//目
-	ResourceManager::DrawRotaBox(player_location.x - (player_erea.width / 2) - 6, player_location.y - (player_erea.height) + 76, 6, 7, player_location.x, player_location.y, 0, 0x000000, true);
-	ResourceManager::DrawRotaBox(player_location.x - (player_erea.width / 2) - 6, player_location.y - (player_erea.height) + 76, 6, 7, player_location.x, player_location.y, 0, 0xffffff, false);
+	ResourceManager::DrawRotaBox(player_location.x - (player_erea.width / 2) + 6, player_location.y - (player_erea.height) + 76, 6, 7, player_location.x, player_location.y, 0, 0x000000, true);
 
 	//首
-	ResourceManager::DrawRotaBox(player_location.x - (player_erea.width / 2), player_location.y - (player_erea.height) + 62, 10, 5, player_location.x, player_location.y, 0, 0x000000, true);
-	ResourceManager::DrawRotaBox(player_location.x - (player_erea.width / 2), player_location.y - (player_erea.height) + 62, 10, 5, player_location.x, player_location.y, 0, 0xffffff, false);
+	ResourceManager::DrawRotaBox(player_location.x - (player_erea.width / 2), player_location.y - (player_erea.height) + 62, 10, 5, player_location.x, player_location.y, 0, GREEN, true);
+	ResourceManager::DrawRotaBox(player_location.x - (player_erea.width / 2), player_location.y - (player_erea.height) + 62, 10, 5, player_location.x, player_location.y, 0, 0x000000, false);
 
 	//胴体
-	ResourceManager::DrawRotaBox(player_location.x - (player_erea.width / 2), player_location.y - (player_erea.height) + 37, 21, 37, player_location.x, player_location.y, 0, 0x000000, true);
-	ResourceManager::DrawRotaBox(player_location.x - (player_erea.width / 2), player_location.y - (player_erea.height) + 37, 21, 37, player_location.x, player_location.y, 0, 0xffffff, false);
+	ResourceManager::DrawRotaBox(player_location.x - (player_erea.width / 2), player_location.y - (player_erea.height) + 37, 21, 37, player_location.x, player_location.y, 0, GREEN, true);
+	ResourceManager::DrawRotaBox(player_location.x - (player_erea.width / 2), player_location.y - (player_erea.height) + 37, 21, 37, player_location.x, player_location.y, 0, 0x000000, false);
 
 	//バッグ
-	ResourceManager::DrawRotaBox(player_location.x - (player_erea.width / 2) + 15, player_location.y - (player_erea.height) + 40, 5, 23, player_location.x, player_location.y, 0, 0x000000, true);
-	ResourceManager::DrawRotaBox(player_location.x - (player_erea.width / 2) + 15, player_location.y - (player_erea.height) + 40, 5, 23, player_location.x, player_location.y, 0, 0xffffff, false);
-	ResourceManager::DrawRotaBox(player_location.x - (player_erea.width / 2) + 15, player_location.y - (player_erea.height) + 40, 3, 15, player_location.x, player_location.y, 0, 0x000000, true);
-	ResourceManager::DrawRotaBox(player_location.x - (player_erea.width / 2) + 15, player_location.y - (player_erea.height) + 40, 3, 15, player_location.x, player_location.y, 0, 0xffffff, false);
+	ResourceManager::DrawRotaBox(player_location.x - (player_erea.width / 2) - 15, player_location.y - (player_erea.height) + 40, 5, 23, player_location.x, player_location.y, 0, GREEN, true);
+	ResourceManager::DrawRotaBox(player_location.x - (player_erea.width / 2) - 15, player_location.y - (player_erea.height) + 40, 5, 23, player_location.x, player_location.y, 0, GREEN, false);
+	ResourceManager::DrawRotaBox(player_location.x - (player_erea.width / 2) - 15, player_location.y - (player_erea.height) + 40, 3, 15, player_location.x, player_location.y, 0, GREEN, true);
+
+	//腕
+	ResourceManager::DrawRotaBox(player_location.x + 15, player_location.y + 55, 28, 7, player_location.x + 25, player_location.y + 55, 20 + 180, GREEN, true);
+	ResourceManager::DrawRotaBox(player_location.x + 15, player_location.y + 55, 28, 7, player_location.x + 25, player_location.y + 55, 20 + 180, 0x000000, false);
+
+	ResourceManager::DrawRotaBox(player_location.x + 30, player_location.y + 70, 7, 27, player_location.x + 30, player_location.y + 80, 20, GREEN, true);
+	ResourceManager::DrawRotaBox(player_location.x + 30, player_location.y + 70, 7, 27, player_location.x + 30, player_location.y + 80, 20, 0x000000, false);
+
+	//帽子　中央
+	DrawTriangleAA(player_location.x + (player_erea.width / 2), player_location.y, player_location.x + 20, player_location.y + 20, player_location.x + 40, player_location.y + 20, GREEN, true);
+	DrawTriangleAA(player_location.x + (player_erea.width / 2), player_location.y, player_location.x + 20, player_location.y + 20, player_location.x + 40, player_location.y + 20, 0x000000, false);
+	//帽子　右側
+	DrawTriangleAA(player_location.x + (player_erea.width / 2), player_location.y, player_location.x + 40, player_location.y + 20, player_location.x + 52, player_location.y + 15, GREEN, true);
+	DrawTriangleAA(player_location.x + (player_erea.width / 2), player_location.y, player_location.x + 40, player_location.y + 20, player_location.x + 52, player_location.y + 15, 0x000000, false);
+	//帽子　左側
+	DrawTriangleAA(player_location.x + (player_erea.width / 2), player_location.y, player_location.x + 8, player_location.y + 15, player_location.x + 20, player_location.y + 20, GREEN, true);
+	DrawTriangleAA(player_location.x + (player_erea.width / 2), player_location.y, player_location.x + 8, player_location.y + 15, player_location.x + 20, player_location.y + 20, 0x000000, false);
+}
+
+void End::PlayerUpdate()
+{
+	player_location.x -= 4 * fast_forward;
 }
 
 void End::DeerDraw() const
 {
 
 	//頭
-	ResourceManager::DrawRotaBox(deer_location.x + 16.0f, deer_location.y + 10.0f, 30.0f, 20.0f, deer_location.x + 16.0f, deer_location.y + 10.0f, 0, BLUE, true);
+	ResourceManager::DrawRotaBox(deer_location.x + 16.0f, deer_location.y + 10.0f, 30.0f, 20.0f, deer_location.x + 16.0f, deer_location.y + 10.0f, 0, GREEN, true);
 	//目
 	ResourceManager::DrawRotaBox(deer_location.x + 8.0f, deer_location.y + 10.0f, 8.0f, 9.0f, deer_location.x + 8.0f, deer_location.y + 10.0f, 0, 0x000000, true);
 
-	ResourceManager::DrawRotaBox(deer_location.x + 25.0f, deer_location.y + 38.0f, 13.0f, 24.0f, deer_location.x + 25.0f, deer_location.y + 38.0f, 0.f, BLUE, true);
+	ResourceManager::DrawRotaBox(deer_location.x + 25.0f, deer_location.y + 38.0f, 13.0f, 24.0f, deer_location.x + 25.0f, deer_location.y + 38.0f, 0.f, GREEN, true);
 
 	//胴体 vr.1
-	ResourceManager::DrawRotaBox(deer_location.x + 53.0f, deer_location.y + 63.0f, 65.0f, 15.0f, deer_location.x + 53.0f, deer_location.y + 63.0f, 0.f, BLUE, true);
+	ResourceManager::DrawRotaBox(deer_location.x + 53.0f, deer_location.y + 63.0f, 65.0f, 15.0f, deer_location.x + 53.0f, deer_location.y + 63.0f, 0.f, GREEN, true);
 
 	//首 vr.2
-	ResourceManager::DrawRotaBox(deer_location.x + 25.0f, deer_location.y + 38.0f, 13.0f, 24.0f, deer_location.x + 25.0f, deer_location.y + 38.0f, 0.f, BLUE, true);
+	ResourceManager::DrawRotaBox(deer_location.x + 25.0f, deer_location.y + 38.0f, 13.0f, 24.0f, deer_location.x + 25.0f, deer_location.y + 38.0f, 0.f, GREEN, true);
 
 	//胴体 vr.2
-	ResourceManager::DrawRotaBox(deer_location.x + 34.0f, deer_location.y + 63.0f, 30.0f, 15.0f, deer_location.x + 34.0f, deer_location.y + 63.0f, 0.f, BLUE, true);
-	ResourceManager::DrawRotaBox(deer_location.x + 72.0f, deer_location.y + 63.0f, 30.0f, 15.0f, deer_location.x + 72.0f, deer_location.y + 63.0f, 0.f, BLUE, true);
+	ResourceManager::DrawRotaBox(deer_location.x + 34.0f, deer_location.y + 63.0f, 30.0f, 15.0f, deer_location.x + 34.0f, deer_location.y + 63.0f, 0.f, GREEN, true);
+	ResourceManager::DrawRotaBox(deer_location.x + 72.0f, deer_location.y + 63.0f, 30.0f, 15.0f, deer_location.x + 72.0f, deer_location.y + 63.0f, 0.f, GREEN, true);
 
 	//足　左から
-	ResourceManager::DrawRotaBox(deer_location.x + 27.0f - 4, deer_location.y + 88.0f, 10.0f, 25.0f, deer_location.x + 27.0f - 4, deer_location.y + 88.0f, leg_angle[0], BLUE, true);
-	ResourceManager::DrawRotaBox(deer_location.x + 43.0f, deer_location.y + 88.0f, 10.0f, 25.0f, deer_location.x + 43.0f, deer_location.y + 88.0f, leg_angle[1], BLUE, true);
+	ResourceManager::DrawRotaBox(deer_location.x + 27.0f - 4, deer_location.y + 88.0f, 10.0f, 25.0f, deer_location.x + 27.0f - 4, deer_location.y + 88.0f, leg_angle[0], GREEN, true);
+	ResourceManager::DrawRotaBox(deer_location.x + 43.0f, deer_location.y + 88.0f, 10.0f, 25.0f, deer_location.x + 43.0f, deer_location.y + 88.0f, leg_angle[1], GREEN, true);
 	//ResourceManager::DrawRotaBox(deer_location.x + 35.0f + d_left_leg[1], deer_location.y + 88.0f, 10.0f, 25.0f, deer_location.x + 35.0f, deer_location.y + 88.0f, -leg_angle[1], draw_color, true);
-	ResourceManager::DrawRotaBox(deer_location.x + 68.0f - 4, deer_location.y + 88.0f, 10.0f, 25.0f, deer_location.x + 68.0f - 4, deer_location.y + 88.0f, leg_angle[2], BLUE, true);
-	ResourceManager::DrawRotaBox(deer_location.x + 83.0f, deer_location.y + 88.0f, 10.0f, 25.0f, deer_location.x + 83.0f, deer_location.y + 88.0f, leg_angle[3], BLUE, true);
+	ResourceManager::DrawRotaBox(deer_location.x + 68.0f - 4, deer_location.y + 88.0f, 10.0f, 25.0f, deer_location.x + 68.0f - 4, deer_location.y + 88.0f, leg_angle[2], GREEN, true);
+	ResourceManager::DrawRotaBox(deer_location.x + 83.0f, deer_location.y + 88.0f, 10.0f, 25.0f, deer_location.x + 83.0f, deer_location.y + 88.0f, leg_angle[3], GREEN, true);
 	//ResourceManager::DrawRotaBox(local_location.x + 75.0f + d_left_leg[3], local_location.y + 88.0f, 10.0f, 25.0f, local_location.x + 75.0f, local_location.y + 88.0f, -leg_angle[3], draw_color, true);
 }
 
 void End::DeerUpdate()
 {
-	deer_location.x -= 4;
+	deer_location.x -= 4 * fast_forward;
 	// 足の回転方向を制御するフラグを追加
 	for (int i = 0; i < 4; i++) {
 		// 回転方向に基づいて角度を更新
@@ -363,24 +391,24 @@ void End::BatDraw() const
 
 void End::BatUpdate()
 {
-	bat_loction.x += 2.f;
+	bat_loction.x += 2.f * fast_forward;
 	bat_loction.y += (float)sin(PI * 2.f / 40.f * up) * 5.f;
 }
 
 void End::FrogDraw() const
 {
 	//胴体
-	ResourceManager::DrawRotaBox(frog_location.x + (frog_erea.width / 2), frog_location.y + (frog_erea.height / 2), frog_erea.width, frog_erea.height / 2, frog_location.x + (frog_erea.width / 2), frog_location.y + (frog_erea.height / 2), face_angle, GREEN, TRUE);
+	ResourceManager::DrawRotaBox(frog_location.x + (frog_erea.width / 2), frog_location.y + (frog_erea.height / 2), frog_erea.width, frog_erea.height / 2, frog_location.x + (frog_erea.width / 2), frog_location.y + (frog_erea.height / 2), face_angle, BLUE, TRUE);
 	ResourceManager::DrawRotaBox(frog_location.x + (frog_erea.width / 2), frog_location.y + (frog_erea.height / 2), frog_erea.width, frog_erea.height / 2, frog_location.x + (frog_erea.width / 2), frog_location.y + (frog_erea.height / 2), face_angle, 0x000000, FALSE);
 
 	//右着地
 	if (face_angle == 0 && frog_speed.x == 0 && frog_speed.y == 0)
 	{
 		//付け根側後ろ足
-		ResourceManager::DrawRotaBox(frog_location.x + frog_erea.width - 10, frog_location.y + 20, 30, 10, frog_location.x + (frog_erea.width / 2), frog_location.y + (frog_erea.height / 2), face_angle, GREEN, TRUE);
+		ResourceManager::DrawRotaBox(frog_location.x + frog_erea.width - 10, frog_location.y + 20, 30, 10, frog_location.x + (frog_erea.width / 2), frog_location.y + (frog_erea.height / 2), face_angle, BLUE, TRUE);
 		ResourceManager::DrawRotaBox(frog_location.x + frog_erea.width - 10, frog_location.y + 20, 30, 10, frog_location.x + (frog_erea.width / 2), frog_location.y + (frog_erea.height / 2), face_angle, 0x000000, FALSE);
 		//後ろ足先端
-		ResourceManager::DrawRotaBox(frog_location.x + frog_erea.width - 10, frog_location.y + 10, 40, 10, frog_location.x + (frog_erea.width / 2), frog_location.y + (frog_erea.height / 2), face_angle, GREEN, TRUE);
+		ResourceManager::DrawRotaBox(frog_location.x + frog_erea.width - 10, frog_location.y + 10, 40, 10, frog_location.x + (frog_erea.width / 2), frog_location.y + (frog_erea.height / 2), face_angle, BLUE, TRUE);
 		ResourceManager::DrawRotaBox(frog_location.x + frog_erea.width - 10, frog_location.y + 10, 40, 10, frog_location.x + (frog_erea.width / 2), frog_location.y + (frog_erea.height / 2), face_angle, 0x000000, FALSE);
 		//前足
 		//ResourceManager::DrawRotaBox(location.x + 20, location.y + 20, 20, 30, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, draw_color, TRUE);
@@ -390,10 +418,10 @@ void End::FrogDraw() const
 	}
 	else {
 		//付け根側後ろ足
-		ResourceManager::DrawRotaBox(frog_location.x + frog_erea.width, frog_location.y + 20, 30, 10, frog_location.x + (frog_erea.width / 2), frog_location.y + (frog_erea.height / 2), face_angle, GREEN, TRUE);
+		ResourceManager::DrawRotaBox(frog_location.x + frog_erea.width, frog_location.y + 20, 30, 10, frog_location.x + (frog_erea.width / 2), frog_location.y + (frog_erea.height / 2), face_angle, BLUE, TRUE);
 		ResourceManager::DrawRotaBox(frog_location.x + frog_erea.width, frog_location.y + 20, 30, 10, frog_location.x + (frog_erea.width / 2), frog_location.y + (frog_erea.height / 2), face_angle, 0x000000, FALSE);
 		//後ろ足先端
-		ResourceManager::DrawRotaBox(frog_location.x + frog_erea.width + 30, frog_location.y + 10, 40, 10, frog_location.x + (frog_erea.width / 2), frog_location.y + (frog_erea.height / 2), face_angle, GREEN, TRUE);
+		ResourceManager::DrawRotaBox(frog_location.x + frog_erea.width + 30, frog_location.y + 10, 40, 10, frog_location.x + (frog_erea.width / 2), frog_location.y + (frog_erea.height / 2), face_angle, BLUE, TRUE);
 		ResourceManager::DrawRotaBox(frog_location.x + frog_erea.width + 30, frog_location.y + 10, 40, 10, frog_location.x + (frog_erea.width / 2), frog_location.y + (frog_erea.height / 2), face_angle, 0x000000, FALSE);
 		//前足
 		//ResourceManager::DrawRotaBox(frog_location.x, frog_location.y + 20, 20, 30,frog_location.x + (frog_erea.width / 2), frog_location.y + (frog_erea.height / 2), face_angle, draw_color, TRUE);
@@ -405,7 +433,7 @@ void End::FrogDraw() const
 void End::FrogUpdate()
 {
 	if (up % 60 == 0) {
-		frog_speed.x = 3.f;
+		frog_speed.x = 3.f * fast_forward;
 		frog_speed.y = -20.f;
 	}
 
@@ -571,8 +599,8 @@ void End::BossUpdate()
 	InvertedWingPositions();
 	SavePosition();
 
-	boss_location.x -= 2.f;
-	boss_location.y += 1.f;
+	boss_location.x -= 2.f * fast_forward;
+	boss_location.y += 1.f * fast_forward;
 
 	int c = 0;
 	if (boss_cnt <= 60)

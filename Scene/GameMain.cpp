@@ -90,9 +90,9 @@ void GameMain::Finalize()
 
 AbstractScene* GameMain::Update()
 {
-	if (KeyInput::OnKey(KEY_INPUT_V)) {
-		gm_state = GameMainState::GameClear;
-	}
+	//if (KeyInput::OnKey(KEY_INPUT_V)) {
+	//	gm_state = GameMainState::GameClear;
+	//}
 	//フレーム測定
 	frame++;
 	//カメラの更新
