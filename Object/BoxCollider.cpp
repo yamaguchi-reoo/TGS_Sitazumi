@@ -95,8 +95,16 @@ Erea BoxCollider::GetErea()const
 {
 	return erea;
 }
-void BoxCollider::SetScreenPosition(Location _world_to_screen, int _impact)
+
+Erea BoxCollider::GetDrawErea()const
 {
-	local_location.x = location.x - _world_to_screen.x + _impact;
-	local_location.y = location.y - _world_to_screen.y + _impact;
+	return draw_erea;
 }
+
+void BoxCollider::SetScreenPosition(Location _world_to_screen, int _impact, float _erea_rate)
+{
+	erea_rate = _erea_rate;
+	draw_erea = {erea.height * erea_rate, erea.width * erea_rate };
+
+	local_location.x = location.x - _world_to_screen.x + ((erea.width * erea_rate - erea.width) * (location.x - _world_to_screen.x) / erea.width) + _impact;
+	local_location.y = location.y - _world_to_screen.y + ((erea.height * erea_rate - erea.height) * (location.y - _world_to_screen.y) / erea.height) + _impact;}

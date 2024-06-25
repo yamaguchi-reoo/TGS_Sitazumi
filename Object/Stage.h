@@ -130,4 +130,3 @@ public:
 	//立体感用描画
 	void DrawSolidBody(int color)const;
 };
-

@@ -48,6 +48,7 @@ private:
 	static int sound_freq;										//音声の再生速度
 
 	//ステージアニメーション用
+	static float erea_rate;						//大きさ
 	static int anim;							//アニメーション測定
 	static FireAnim fire_anim[ANIM_BLOCK_NUM];	//炎アニメーション用ブロック情報格納
 	static WoodAnim wood_anim[ANIM_BLOCK_NUM];	//木アニメーション用ブロック情報格納
@@ -107,4 +108,6 @@ public:
 	static void DrawRotaBox(float _x, float _y, float _w, float _h, float _cx, float _cy,float _rad,int _color,bool _fill);
 
 	static void DrawHeart(Location l, Erea e);
+
+	static void SetEreaRate(float _rate);
 };

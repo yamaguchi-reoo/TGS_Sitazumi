@@ -62,6 +62,7 @@ private:
     int stage_height_num;   //ステージの縦のブロック数
     int stage_width;        //ステージの横の大きさ
     int stage_height;       //ステージの縦の大きさ
+    float erea_rate;        //見た目の大きさの倍率
 
     bool camera_x_lock_flg;   //カメラが動けるか判断(強制戦闘時以外)
     bool camera_y_lock_flg;   //カメラが動けるか判断(強制戦闘時以外)
@@ -81,7 +82,7 @@ private:
     bool boss_blind_flg;        //ボスステージを暗くするか
     int boss_blind_timer;       //ボスステージで完全に暗転させる時間
     bool pause_after_flg;
-
+    
     bool set_sound_once;
 
     int clear_timer;

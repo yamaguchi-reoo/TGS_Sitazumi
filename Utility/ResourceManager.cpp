@@ -11,6 +11,7 @@ int ResourceManager::div_image_data[DIV_IMAGE_NUM][DIV_IMAGE_MAX];
 int ResourceManager::sound_data[SOUND_NUM];
 int ResourceManager::sound_freq = 50000;
 
+float ResourceManager::erea_rate;
 int ResourceManager::anim;			
 FireAnim ResourceManager::fire_anim[ANIM_BLOCK_NUM];
 WoodAnim ResourceManager::wood_anim[ANIM_BLOCK_NUM];
@@ -45,6 +46,7 @@ void ResourceManager::DeleteResource()
 
 void ResourceManager::StageAnimInitialize()
 {
+	erea_rate = 1.0f;
 	anim = 0;
 	////エフェクトのアニメーション用初期定義
 	for (int i = 0; i < ANIM_BLOCK_NUM; i++)
@@ -148,7 +150,7 @@ void ResourceManager::SaveAnimHandle()
 	SetDrawScreen(anim_handle[0]);
 	ClearDrawScreen();
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 130);
-	DrawBoxAA(0, 0, BOX_WIDTH, BOX_HEIGHT, 0xff0000, true);
+	DrawBoxAA(0, 0, BOX_WIDTH * erea_rate, BOX_HEIGHT * erea_rate, 0xff0000, true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 	for (int i = 0; i < ANIM_BLOCK_NUM; i++)
 	{
@@ -273,12 +275,12 @@ void ResourceManager::SaveAnimHandle()
 
 void ResourceManager::StageAnimDraw(Location _location, int _type)
 {
-	DrawGraphF(_location.x, _location.y, anim_handle[_type - 3], TRUE);	
+	DrawRotaGraphF(_location.x + ((BOX_WIDTH * erea_rate) / 2), _location.y + ((BOX_HEIGHT * erea_rate) / 2), erea_rate, 0, anim_handle[_type - 3], TRUE);
 }
 
 void ResourceManager::StageBlockDraw(Location _location, int _type)
 {
-	DrawGraphF(_location.x, _location.y, stage_block_handle[_type], TRUE);
+	DrawRotaGraphF(_location.x + ((BOX_WIDTH * erea_rate) / 2), _location.y + ((BOX_HEIGHT * erea_rate) / 2), erea_rate, 0, stage_block_handle[_type], TRUE);
 
 }
 
@@ -458,4 +460,9 @@ void ResourceManager::DrawHeart(Location l, Erea e)
 	DrawTriangleAA(triangle[0].x - 1, triangle[0].y, triangle[1].x + 1, triangle[1].y, triangle[2].x, triangle[2].y, 0xcc0000, TRUE);
 	DrawLineAA(triangle[0].x + 2, triangle[0].y + 9, triangle[2].x + 2, triangle[2].y + 1, 0xffffff, 4.f);
 	DrawLineAA(triangle[1].x - 2, triangle[1].y + 9, triangle[2].x - 2, triangle[2].y + 1, 0xffffff, 4.f);
+}
+
+void ResourceManager::SetEreaRate(float _rate) 
+{
+	erea_rate = _rate; 
 }

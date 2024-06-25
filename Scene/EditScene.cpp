@@ -9,7 +9,7 @@
 
 Location camera_location = { 0,0 };
 
-EditScene::EditScene(int _stage) : current_type(0), ui_current_type(0), tool_pickup_flg(false), current_leftbutton_flg(false), current_rightbutton_flg(false), current_upbutton_flg(false), current_downbutton_flg(false), button_interval(0), now_select_erea(0), current_type_select(-1), now_current_type(0), current_type_location{ 0 }, current_type_erea{ 0 }, disp_num(0), double_click(20), player_spawn_location{ 0,0 }, minimap_location{ 0,0 }, minimap_size(0), minimap_pickup_flg(false), minimap_button{ 0,0 }, minimap_disp_flg(true)
+EditScene::EditScene(int _stage) : erea_rate(1.0), current_type(0), ui_current_type(0), tool_pickup_flg(false), current_leftbutton_flg(false), current_rightbutton_flg(false), current_upbutton_flg(false), current_downbutton_flg(false), button_interval(0), now_select_erea(0), current_type_select(-1), now_current_type(0), current_type_location{ 0 }, current_type_erea{ 0 }, disp_num(0), double_click(20), player_spawn_location{ 0,0 }, minimap_location{ 0,0 }, minimap_size(0), minimap_pickup_flg(false), minimap_button{ 0,0 }, minimap_disp_flg(true)
 {
 	now_stage = _stage;
 }
@@ -79,7 +79,7 @@ AbstractScene* EditScene::Update()
 	{
 		for (int j = 0; j < stage_width_num; j++)
 		{
-			stage[i][j]->SetScreenPosition(camera_location, 0);
+			stage[i][j]->SetScreenPosition(camera_location, 0, erea_rate);
 			if (CheckInScreen(stage[i][j])==true)
 			{
 				stage[i][j]->Update();

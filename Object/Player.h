@@ -82,6 +82,7 @@ private:
 	bool emoteFlg;
 	int emoteCnt;
 
+	int player_handle;	//プレイヤー保存用
 public:
 	Player();
 	~Player();

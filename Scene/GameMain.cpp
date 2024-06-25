@@ -18,7 +18,7 @@
 static Location camera_location = { 0,0 };	//カメラの座標
 static Location screen_origin = { (SCREEN_WIDTH / 2),(SCREEN_HEIGHT / 2) };
 
-GameMain::GameMain(int _stage) :frame(0), impact(0), stage_data{ 0 }, now_stage(0), object_num(0), stage_width_num(0), stage_height_num(0), stage_width(0), stage_height(0), camera_x_lock_flg(true), camera_y_lock_flg(true), x_pos_set_once(false), y_pos_set_once(false), player_object(0), boss_object(0), weather(0), weather_timer(0), move_object_num(0), boss_blind_flg(false), boss_blind_timer(0), player_flg(false), player_respawn_flg(false), fadein_flg(true), create_once(false),pause_after_flg(false), cursor(0), clear_timer(0), set_sound_once(false), gm_state(GameMainState::S_GameMain), now_scene(this)
+GameMain::GameMain(int _stage) :erea_rate(1.0),frame(0), impact(0), stage_data{ 0 }, now_stage(0), object_num(0), stage_width_num(0), stage_height_num(0), stage_width(0), stage_height(0), camera_x_lock_flg(true), camera_y_lock_flg(true), x_pos_set_once(false), y_pos_set_once(false), player_object(0), boss_object(0), weather(0), weather_timer(0), move_object_num(0), boss_blind_flg(false), boss_blind_timer(0), player_flg(false), player_respawn_flg(false), fadein_flg(true), create_once(false),pause_after_flg(false), cursor(0), clear_timer(0), set_sound_once(false), gm_state(GameMainState::S_GameMain), now_scene(this)
 {
 	now_stage = _stage;
 }
@@ -73,6 +73,7 @@ void GameMain::Finalize()
 		object[i]->Finalize();
 		delete object[i];
 	}
+
 	weather->Finalize();
 	delete weather;
 
@@ -93,6 +94,8 @@ AbstractScene* GameMain::Update()
 	frame++;
 	//カメラの更新
 	UpdateCamera();
+	//サイズの更新
+	ResourceManager::SetEreaRate(erea_rate);
 
 	//演出の終了
 	if ((frame > FADEIN_TIME || PadInput::OnRelease(XINPUT_BUTTON_B)) && fadein_flg == true)
@@ -132,14 +135,13 @@ AbstractScene* GameMain::Update()
 			return new EditScene(now_stage);
 		}
 
-		if (KeyInput::OnKey(KEY_INPUT_1))
+		if (KeyInput::OnPresed(KEY_INPUT_1))
 		{
-			//ResourceManager::StopSound(0);
-			impact = 10;
+			erea_rate += 0.1f;
 		}
-		if (KeyInput::OnKey(KEY_INPUT_2))
+		if (KeyInput::OnPresed(KEY_INPUT_2))
 		{
-			SetStage(2, false);
+			erea_rate -= 0.1f;
 		}
 #endif
 	}
@@ -621,7 +623,7 @@ void GameMain::PlayerUpdate()
 	//プレイヤーの更新＆色探知用
 	if (object[player_object] != nullptr)
 	{
-		object[player_object]->SetScreenPosition(camera_location, impact_rand);
+		object[player_object]->SetScreenPosition(camera_location, impact_rand, erea_rate);
 		object[player_object]->Update(this);
 		move_object_num++;
 
@@ -734,7 +736,7 @@ void GameMain::UpdateGameMain()
 			//プレイヤーとボス以外の画面内オブジェクトの更新
 			if (((i == boss_object && boss_blind_flg == false) || i != boss_object) && i != player_object && CheckInScreen(object[i]))
 			{
-				object[i]->SetScreenPosition(camera_location, impact_rand);
+				object[i]->SetScreenPosition(camera_location, impact_rand, erea_rate);
 				object[i]->Update(this);
 				move_object_num++;
 				for (int j = i + 1; object[j] != nullptr; j++)

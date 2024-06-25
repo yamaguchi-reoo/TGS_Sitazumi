@@ -104,6 +104,7 @@ class EditScene :
 {
 
 private:
+    float erea_rate;                                      //ステージの見た目の倍率
     int now_select_erea;                                  //現在選択中のエリア(0=ツールボックス 1=ステージ)
     int now_stage;                                        //現在編集中のステージ
     CURSOR cursor;                                        //マウスカーソル

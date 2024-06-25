@@ -22,6 +22,9 @@ protected:
 	Location location;			//中心座標
 	Location local_location;	//画面上での座標
 	Erea erea;					//範囲
+	Erea draw_erea;				//描画時の大きさ
+	float erea_rate;			//描画の倍率
+
 public:
 
 	//当たり判定 (0,0 = 当たっていない それ以外 = 相手の中心座標)
@@ -42,6 +45,9 @@ public:
 	//直径の取得
 	Erea GetErea()const;
 
+	//見た目のサイズの取得
+	Erea GetDrawErea()const;
+
 	//オブジェクトのワールド座標をスクリーン座標に変換する
-	void SetScreenPosition(Location _world_to_screen, int _impact);
+	void SetScreenPosition(Location _world_to_screen, int _impact,float _erea_rate);
 };
