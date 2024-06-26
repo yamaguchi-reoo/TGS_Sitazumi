@@ -199,6 +199,7 @@ void GameMain::CreateObject(Object* _object, Location _location, Erea _erea, int
 			if (object[i]->GetObjectType() == PLAYER)
 			{
 				player_object = i;
+				player_flg = true;
 			}
 			if (object[i]->GetObjectType() == BOSS)
 			{
@@ -449,7 +450,6 @@ void GameMain::SetStage(int _stage, bool _delete_player)
 					//player_respawn = { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT };
 					//プレイヤーの生成
 					CreateObject(new Player, player_respawn, { PLAYER_HEIGHT,PLAYER_WIDTH }, GREEN);
-					player_flg = true;
 				}
 				//プレイヤーが居るなら
 				else
@@ -513,7 +513,7 @@ void GameMain::SetStage(int _stage, bool _delete_player)
 	{
 		ResourceManager::StopSound(bgm_normal);
 		ResourceManager::StopSound(bgm_noise);
-		ResourceManager::StopSound(bgm_abnormal);
+		//ResourceManager::StopSound(bgm_abnormal);
 
 		boss_blind_flg = true;
 	}
@@ -572,9 +572,9 @@ bool GameMain::CheckInScreen(Object* _object)const
 		     _object->GetLocation().y < camera_location.y + SCREEN_HEIGHT + _object->GetErea().height + 160
 		    )
 			||
-		    (_object->GetObjectType()==ENEMY &&
+		    (_object->GetObjectType() == ENEMY &&
 		     _object->GetLocation().x > camera_location.x - _object->GetErea().width&&
-		     _object->GetLocation().x < camera_location.x + SCREEN_WIDTH + _object->GetErea().width&&
+		     _object->GetLocation().x < camera_location.x + SCREEN_WIDTH + _object->GetErea().width &&
 		     _object->GetLocation().y > camera_location.y - _object->GetErea().height&&
 		     _object->GetLocation().y < camera_location.y + SCREEN_HEIGHT + _object->GetErea().height
 		     ) 
@@ -729,12 +729,12 @@ void GameMain::UpdateGameMain()
 	if (object[player_object]->GetSearchFlg() == FALSE || (object[player_object]->GetSearchFlg() == TRUE && frame % 10 == 0))
 	{
 		tutorial.Update(camera_location, GetPlayerLocation(), stage_height);
-		for (int i = 0; i < OBJECT_NUM; i++)
+		for (int i = 0; object[i] != nullptr; i++)
 		{
+			object[i]->SetScreenPosition(camera_location, impact_rand);
 			//プレイヤーとボス以外の画面内オブジェクトの更新
 			if (((i == boss_object && boss_blind_flg == false) || i != boss_object) && i != player_object && CheckInScreen(object[i]))
 			{
-				object[i]->SetScreenPosition(camera_location, impact_rand);
 				object[i]->Update(this);
 				move_object_num++;
 				for (int j = i + 1; object[j] != nullptr; j++)
@@ -1125,6 +1125,9 @@ void GameMain::DrawHelp()const
 
 void GameMain::UpdateGameClear()
 {
+	//クレジットを見てほしいのでカーソルを動かせないように
+	cursor = 1;
+
 	cursorOld = cursor;
 	if (set_sound_once == false)
 	{
@@ -1243,6 +1246,9 @@ void GameMain::DrawGameClear()const
 
 void GameMain::UpdateGameOver()
 {
+	//タイトルに戻ってほしくないのでカーソルを動かせないように
+	cursor = 0;
+
 	cursorOld = cursor;
 	if (set_sound_once == false)
 	{
