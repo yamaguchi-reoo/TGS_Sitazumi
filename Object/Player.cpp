@@ -341,8 +341,6 @@ void Player::Update(GameMain* _g)
 
 void Player::Draw()const
 {
-	//DrawFormatString(0, 200, 0xff0000, "%0.1f %0.1f", location.x, location.y);
-
 	if(hp <= 0){
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 - (deathTimer * 2));
 	}
@@ -397,12 +395,9 @@ void Player::Draw()const
 		int j = 0;
 		for (int i = fps; i > 0; i--)
 		{
-			if (i % 1 == 0) {
-				j++;
-				if (j > 10) {
-					j = 10;
-					break;
-				}
+			if (j++ > 10) {
+				j = 10;
+				break;
 			}
 		}
 
@@ -772,17 +767,6 @@ void Player::SelectObject()
 					int tmp = posRelation[y][x];
 					posRelation[y][x] = 999;
 
-					for (int i = 0; i < 720 / 40; i++)
-					{
-						for (int j = 0; j < 1280 / 40; j++)
-						{
-							if (posRelation[i][j] != -1 && posRelation[i][j] != 999) {
-								int a;
-								a = 0;
-							}
-						}
-					}
-
 					//真横探知
 					for (int j = x; j < 1280 / 40; j++)
 					{
@@ -836,9 +820,6 @@ void Player::SelectObject()
 			oldStick[1] = false;
 			flg = true;
 
-			//oldDirection = direction;
-			//direction = left;
-
 			float nearLen[4] = { 1000.f,1000.f,1000.f,1000.f };
 			int snum[4] = { -1,-1,-1,-1 };
 			
@@ -851,17 +832,6 @@ void Player::SelectObject()
 
 					int tmp = posRelation[y][x];
 					posRelation[y][x] = 999;
-
-					for (int i = 0; i < 720 / 40; i++)
-					{
-						for (int j = 0; j < 1280 / 40; j++)
-						{
-							if (posRelation[i][j] != -1 && posRelation[i][j] != 999) {
-								int a;
-								a = 0;
-							}
-						}
-					}
 
 					//真横探知
 					for (int j = x; j > -1; j--)
@@ -1349,7 +1319,7 @@ void Player::DrawPlayerFront(bool f) const
 
 			//目
 			ResourceManager::DrawRotaBox(uiL.x + 30 - 6, uiL.y + 80 + 56, 6, 7, uiL.x + 30, uiL.y + 80, 0, 0x000000, true);
-			ResourceManager::DrawRotaBox(uiL.x - (erea.width / 2) + 6, uiL.y - (erea.height) + 76, 6, 7, uiL.x, uiL.y, 0, 0x000000, true);
+			ResourceManager::DrawRotaBox(uiL.x - 30 + 6, uiL.y - 100 + 76, 6, 7, uiL.x, uiL.y, 0, 0x000000, true);
 
 
 			//首
