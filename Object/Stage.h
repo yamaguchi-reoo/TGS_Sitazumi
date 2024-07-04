@@ -100,6 +100,7 @@ private:
 	int respawn_color;					//リスポーン位置設定ブロックの色
 	int touch_object;					//弱点のブロックに触れている時間を測る
 	bool default_object;				//ステージに始めから設置されているオブジェクトか判断
+	bool se_play_once;					//SEを一回だけ再生する
 
 	int change_fire;					//色更新時のSE
 	int change_wood;					//色更新時のSE

@@ -47,8 +47,6 @@ void GameMain::Initialize()
 	cursor_se = ResourceManager::SetSound("Resource/Sounds/Player/cursor.wav");
 	decision_se = ResourceManager::SetSound("Resource/Sounds/System/decision.wav");
 
-	ResourceManager::StartSound(bgm_normal, TRUE);
-
 	back_ground = new BackGround();
 
 	SetStage(now_stage, false);
@@ -56,6 +54,9 @@ void GameMain::Initialize()
 	back_ground->Initialize({ (float)stage_width,(float)stage_height });
 
 	lock_pos = camera_location;
+
+	SetWindowIconID(102);
+
 }
 
 void GameMain::Finalize()
@@ -80,6 +81,7 @@ void GameMain::Finalize()
 
 	back_ground->Finalize();
 	delete back_ground;
+
 }
 
 AbstractScene* GameMain::Update()
@@ -197,6 +199,7 @@ void GameMain::CreateObject(Object* _object, Location _location, Erea _erea, int
 			if (object[i]->GetObjectType() == PLAYER)
 			{
 				player_object = i;
+				player_flg = true;
 			}
 			if (object[i]->GetObjectType() == BOSS)
 			{
@@ -447,7 +450,6 @@ void GameMain::SetStage(int _stage, bool _delete_player)
 					//player_respawn = { (float)j * BOX_WIDTH ,(float)i * BOX_HEIGHT };
 					//プレイヤーの生成
 					CreateObject(new Player, player_respawn, { PLAYER_HEIGHT,PLAYER_WIDTH }, GREEN);
-					player_flg = true;
 				}
 				//プレイヤーが居るなら
 				else
@@ -511,7 +513,7 @@ void GameMain::SetStage(int _stage, bool _delete_player)
 	{
 		ResourceManager::StopSound(bgm_normal);
 		ResourceManager::StopSound(bgm_noise);
-		ResourceManager::StopSound(bgm_abnormal);
+		//ResourceManager::StopSound(bgm_abnormal);
 
 		boss_blind_flg = true;
 	}
@@ -570,9 +572,9 @@ bool GameMain::CheckInScreen(Object* _object)const
 		     _object->GetLocation().y < camera_location.y + SCREEN_HEIGHT + _object->GetErea().height + 160
 		    )
 			||
-		    (_object->GetObjectType()==ENEMY &&
+		    (_object->GetObjectType() == ENEMY &&
 		     _object->GetLocation().x > camera_location.x - _object->GetErea().width&&
-		     _object->GetLocation().x < camera_location.x + SCREEN_WIDTH + _object->GetErea().width&&
+		     _object->GetLocation().x < camera_location.x + SCREEN_WIDTH + _object->GetErea().width &&
 		     _object->GetLocation().y > camera_location.y - _object->GetErea().height&&
 		     _object->GetLocation().y < camera_location.y + SCREEN_HEIGHT + _object->GetErea().height
 		     ) 
@@ -727,12 +729,12 @@ void GameMain::UpdateGameMain()
 	if (object[player_object]->GetSearchFlg() == FALSE || (object[player_object]->GetSearchFlg() == TRUE && frame % 10 == 0))
 	{
 		tutorial.Update(camera_location, GetPlayerLocation(), stage_height);
-		for (int i = 0; i < OBJECT_NUM; i++)
+		for (int i = 0; object[i] != nullptr; i++)
 		{
+			object[i]->SetScreenPosition(camera_location, impact_rand);
 			//プレイヤーとボス以外の画面内オブジェクトの更新
 			if (((i == boss_object && boss_blind_flg == false) || i != boss_object) && i != player_object && CheckInScreen(object[i]))
 			{
-				object[i]->SetScreenPosition(camera_location, impact_rand);
 				object[i]->Update(this);
 				move_object_num++;
 				for (int j = i + 1; object[j] != nullptr; j++)
@@ -1057,11 +1059,11 @@ void GameMain::DrawHelp()const
 	DrawString(145, 260, "B Button\n(LongPress)", 0xffffff);	
 	DrawString(350, 278, ":ColorSwap", 0xffffff);
 
-	//STARTボタン : PORSE
+	//STARTボタン : PAUSE
 	DrawCircleAA(73.f, 395.f, 38.f, 100, 0x1c2b3e, TRUE);
 	DrawCircleAA(173.f, 395.f, 38.f, 100, 0x1c2b3e, TRUE);
 	DrawBoxAA(60.f, 358.f, 180.f, 433.f, 0x1c2b3e, TRUE);
-	DrawString(220, 375, "START Button:PORSE", 0xffffff);
+	DrawString(220, 375, "START Button:Porse", 0xffffff);
 
 	//B(長押し中) + 十字カーソル
 	DrawCircleAA(80.f, 490.f, 50.f, 32, 0x1c2b3e);
@@ -1123,6 +1125,9 @@ void GameMain::DrawHelp()const
 
 void GameMain::UpdateGameClear()
 {
+	//クレジットを見てほしいのでカーソルを動かせないように
+	cursor = 1;
+
 	cursorOld = cursor;
 	if (set_sound_once == false)
 	{
@@ -1241,6 +1246,9 @@ void GameMain::DrawGameClear()const
 
 void GameMain::UpdateGameOver()
 {
+	//タイトルに戻ってほしくないのでカーソルを動かせないように
+	cursor = 0;
+
 	cursorOld = cursor;
 	if (set_sound_once == false)
 	{
@@ -1280,11 +1288,6 @@ void GameMain::UpdateGameOver()
 			{
 				ResourceManager::StartSound(bgm_normal, TRUE);
 				ResourceManager::StartSound(bgm_noise, TRUE);
-			}
-			else if (now_stage == 2)
-			{
-
-				ResourceManager::StartSound(bgm_abnormal, TRUE);
 			}
 		}
 		else

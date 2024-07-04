@@ -5,7 +5,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-Stage::Stage(int _type, int _stage_height) :old_color(0),inv_flg(false), debug_flg(false), anim(0), hit_flg(false), hit_timer(-1), weather(0), change_weather_flg(false), delete_fire(0), draw_wood_flg(false), set_respawn_flg(false),respawn_color(WHITE), touch_object(0), default_object(true), change_fire(0),change_water(0),change_wood(0)
+Stage::Stage(int _type, int _stage_height) :old_color(0),inv_flg(false), debug_flg(false), anim(0), hit_flg(false), hit_timer(-1), weather(0), change_weather_flg(false), delete_fire(0), draw_wood_flg(false), set_respawn_flg(false),respawn_color(WHITE), touch_object(0), default_object(true), change_fire(0),change_water(0),change_wood(0), se_play_once(false)
 {
 	//炎
 	if (_type == RED_BLOCK || _type == FIRE_BLOCK)
@@ -68,6 +68,9 @@ void Stage::Initialize(Location _location, Erea _erea, int _color_data,int _obje
 	change_wood = ResourceManager::SetSound("Resource/Sounds/Effect/change_grass.wav");
 	change_water = ResourceManager::SetSound("Resource/Sounds/Effect/change_water.wav");
 	checkpoint_se = ResourceManager::SetSound("Resource/Sounds/System/check_point.wav");
+	ResourceManager::SetSoundVolume(change_fire,100);
+	ResourceManager::SetSoundVolume(change_wood,100);
+	ResourceManager::SetSoundVolume(change_water,100);
 }
 
 void Stage::Update(GameMain* _g)
@@ -109,7 +112,7 @@ void Stage::Update(GameMain* _g)
 	}
 	Location player_respawn = { location.x,location.y - PLAYER_HEIGHT };
 	//フラグが立っているなら
-	if (set_respawn_flg && _g->GetPlayerRespawnLocation().x != player_respawn.x)
+	if (set_respawn_flg)
 	{
 		//プレイヤーリスポーン位置を更新する
 		_g->SetPlayerRespawnLocation({ location.x,location.y - PLAYER_HEIGHT });
@@ -118,7 +121,11 @@ void Stage::Update(GameMain* _g)
 		//フラグをfalseにする
 		set_respawn_flg = false;
 		//SEを再生する
-		ResourceManager::StartSound(checkpoint_se);
+		if (se_play_once == false)
+		{
+			ResourceManager::StartSound(checkpoint_se);
+			se_play_once = true;
+		}
 	}
 
 	//色が変わっていたら
@@ -359,9 +366,13 @@ void Stage::Hit(Object* _object)
 	}
 
 	//プレイヤーに当たった時、このブロックがプレイヤーリスポーン位置設定ブロックなら、フラグを立てる
-	if (block_type == PLAYER_RESPAWN_BLOCK && _object->GetObjectType() == PLAYER && set_respawn_flg == false)
+	if (block_type == PLAYER_RESPAWN_BLOCK && _object->GetObjectType() == PLAYER)
 	{
 		set_respawn_flg = true;
+	}
+	else if (set_respawn_flg == false)
+	{
+		se_play_once = false;
 	}
 
 	//属性の相性が悪いブロックに継続的に当たっていた時、色を変える

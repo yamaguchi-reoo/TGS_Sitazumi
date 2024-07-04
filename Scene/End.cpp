@@ -468,8 +468,6 @@ void End::FrogDraw() const
 		//後ろ足先端
 		ResourceManager::DrawRotaBox(frog_location.x + frog_erea.width - 10, frog_location.y + 10, 40, 10, frog_location.x + (frog_erea.width / 2), frog_location.y + (frog_erea.height / 2), face_angle, BLUE, TRUE);
 		ResourceManager::DrawRotaBox(frog_location.x + frog_erea.width - 10, frog_location.y + 10, 40, 10, frog_location.x + (frog_erea.width / 2), frog_location.y + (frog_erea.height / 2), face_angle, 0x000000, FALSE);
-		//前足
-		//ResourceManager::DrawRotaBox(location.x + 20, location.y + 20, 20, 30, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, draw_color, TRUE);
 		//目
 		ResourceManager::DrawRotaBox(frog_location.x, frog_location.y + frog_erea.height - 20, 10, 10, frog_location.x + (frog_erea.width / 2), frog_location.y + (frog_erea.height / 2), face_angle, 0xffffff, TRUE);
 
@@ -482,7 +480,8 @@ void End::FrogDraw() const
 		ResourceManager::DrawRotaBox(frog_location.x + frog_erea.width + 30, frog_location.y + 10, 40, 10, frog_location.x + (frog_erea.width / 2), frog_location.y + (frog_erea.height / 2), face_angle, BLUE, TRUE);
 		ResourceManager::DrawRotaBox(frog_location.x + frog_erea.width + 30, frog_location.y + 10, 40, 10, frog_location.x + (frog_erea.width / 2), frog_location.y + (frog_erea.height / 2), face_angle, 0x000000, FALSE);
 		//前足
-		//ResourceManager::DrawRotaBox(frog_location.x, frog_location.y + 20, 20, 30,frog_location.x + (frog_erea.width / 2), frog_location.y + (frog_erea.height / 2), face_angle, draw_color, TRUE);
+		ResourceManager::DrawRotaBox(frog_location.x + 10, frog_location.y + 10, 10, 15, frog_location.x + (frog_erea.width / 2), frog_location.y + (frog_erea.height / 2), face_angle, BLUE, TRUE);
+		ResourceManager::DrawRotaBox(frog_location.x + 10, frog_location.y + 10, 10, 15, frog_location.x + (frog_erea.width / 2), frog_location.y + (frog_erea.height / 2), face_angle, 0x000000, FALSE);
 		//目
 		ResourceManager::DrawRotaBox(frog_location.x, frog_location.y + frog_erea.height - 20, 10, 10, frog_location.x + (frog_erea.width / 2), frog_location.y + (frog_erea.height / 2), face_angle, 0xffffff, TRUE);
 	}

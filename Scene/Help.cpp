@@ -224,14 +224,14 @@ void Help::Draw()const
 		DrawCircleAA(385.f, 295.f, 50.f, 32, 0x1c2b3e);
 		DrawCircleAA(385.f, 295.f, 30.f, 32, 0xc5482c);
 		DrawString(373, 270, "B", 0xffffff);
-		DrawString(470, 270, "B Button(LongPress):ColorSwap", 0xffffff);
+		DrawString(470, 270, "B Button(LongPress): ColorSwap", 0xffffff);
 
-		//STARTボタン : PORSE
+		//STARTボタン : PAUSE
 		DrawCircleAA(373.f, 417.f, 38.f, 100, 0x1c2b3e, TRUE);
 		DrawCircleAA(493.f, 417.f, 38.f, 100, 0x1c2b3e, TRUE);
 		DrawBoxAA(360.f, 380.f, 500.f, 455.f, 0x1c2b3e, TRUE);
 		DrawString(370, 395, "START", 0xffffff);
-		DrawString(570, 395, "START Button:PORSE", 0xffffff);
+		DrawString(570, 395, "START Button : Pause", 0xffffff);
 
 		//B(長押し中) + 十字カーソル：色の選択
 		DrawCircleAA(390.f, 530.f, 50.f, 32, 0x1c2b3e);
@@ -551,6 +551,9 @@ void Help::HDrawFrog(int c_num)const
 	//後ろ足先端
 	ResourceManager::DrawRotaBox(l_Frog.x + 50 - 10, l_Frog.y + 50 - 10 , 40, 10, l_Frog.x + (50 / 2), l_Frog.y + (50 / 2), 180, c_num, TRUE);
 	ResourceManager::DrawRotaBox(l_Frog.x + 50 - 10, l_Frog.y + 50 - 10 , 40, 10, l_Frog.x + (50 / 2), l_Frog.y + (50 / 2), 180, 0x000000, FALSE);
+
+		ResourceManager::DrawRotaBox(l_Frog.x + 10, l_Frog.y + 50 - 10 , 10, 15, l_Frog.x + (50 / 2), l_Frog.y + (50 / 2), 180, c_num, TRUE);
+		ResourceManager::DrawRotaBox(l_Frog.x + 10, l_Frog.y + 50 - 10 , 10, 15, l_Frog.x + (50 / 2), l_Frog.y + (50 / 2), 180, 0x000000, FALSE);
 	//目
 	ResourceManager::DrawRotaBox(l_Frog.x, l_Frog.y + 20, 10, 10, l_Frog.x + (50 / 2), l_Frog.y + (50 / 2), 180, 0xffffff, TRUE);
 	ResourceManager::DrawRotaBox(l_Frog.x, l_Frog.y + 20, 10, 10, l_Frog.x + (50 / 2), l_Frog.y + (50 / 2), 180, 0x000000, FALSE);
