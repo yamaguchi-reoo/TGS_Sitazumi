@@ -902,20 +902,6 @@ void Player::SelectObject()
 			flg = true;
 			int num = -1;
 
-			//float nearLen = 1000.f;
-			//for (int i = 0; i < objNum; i++)
-			//{
-			//	if (searchedObj->GetLocalLocation().y > searchedObjAll[i]->GetLocalLocation().y)
-			//	{
-			//		if (GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation()) < nearLen)
-			//		{
-			//			nearLen = GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation());
-			//			//セレクトオブジェクトここに入れる
-			//			objSelectNumTmp = i;
-			//		}
-			//	}
-			//}
-
 			for (int i = 0; i < objNum; i++)
 			{
 				if (GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation()) != 0) {
@@ -949,15 +935,15 @@ void Player::SelectObject()
 								}
 							}
 
-							if (x + w < 33) {
-								if (posRelation[j][x - w] != -1 && posRelation[j][x - w] != 999) {
-									num = posRelation[j][x - w];
+							if (x + w < 32) {
+								if (posRelation[j][x + w] != -1 && posRelation[j][x + w] != 999) {
+									num = posRelation[j][x + w];
 									break;
 								}
 							}
 						}
 
-						if (y - w <= -1 && y + w >= 33) {
+						if (x - w <= -1 && x + w >= 32) {
 							break;
 						}
 					}
@@ -977,19 +963,63 @@ void Player::SelectObject()
 			ResourceManager::StartSound(cursor_se); 
 			oldStick[3] = false;
 			flg = true;
+			int num = -1;
 
-			float nearLen = 1000.f;
 			for (int i = 0; i < objNum; i++)
 			{
-				if (searchedObj->GetLocalLocation().y < searchedObjAll[i]->GetLocalLocation().y)
-				{
-					if (GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation()) < nearLen)
+				if (GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation()) != 0) {
+
+					int x = (int)searchedObj->GetLocalLocation().x / 40;
+					int y = (int)searchedObj->GetLocalLocation().y / 40;
+
+					int tmp = posRelation[y][x];
+					posRelation[y][x] = 999;
+
+					//真上探知
+					for (int j = y; j < 720 / 40; j++)
 					{
-						nearLen = GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation());
-						//セレクトオブジェクトここに入れる
-						objSelectNumTmp = i;
+						if (posRelation[j][x] != -1 && posRelation[j][x] != 999) {
+							num = posRelation[j][x];
+							break;
+						}
 					}
+
+					//縦横探知
+					int w = 0;
+					while (num == -1)
+					{
+						w++;
+						for (int j = y + 1; j < 720 / 40; j++)
+						{
+							if (x - w > -1) {
+								if (posRelation[j][x - w] != -1 && posRelation[j][x - w] != 999) {
+									num = posRelation[j][x - w];
+									break;
+								}
+							}
+
+							if (x + w < 32) {
+								if (posRelation[j][x + w] != -1 && posRelation[j][x + w] != 999) {
+									num = posRelation[j][x + w];
+									break;
+								}
+							}
+						}
+
+						if (x - w <= -1 && x + w >= 32) {
+							break;
+						}
+					}
+
+					if (num == -1) {
+						num = tmp;
+					}
+
 				}
+			}
+
+			if (num > -1 && num < 999) {
+				objSelectNumTmp = num;
 			}
 		}
 		else if ((PadInput::TipLeftLStick(STICKL_Y) < 0.1f && PadInput::TipLeftLStick(STICKL_Y) > -0.1f) && (!PadInput::OnPressed(XINPUT_BUTTON_DPAD_UP) && !PadInput::OnPressed(XINPUT_BUTTON_DPAD_DOWN))) {
