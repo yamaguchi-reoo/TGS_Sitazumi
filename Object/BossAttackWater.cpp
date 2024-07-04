@@ -75,8 +75,9 @@ void BossAttackWater::Update(GameMain* _g)
 		}
 	}
 	else {
-		Location player = _g->GetPlayerLocation();
-		if (player.x - location.x > 0) {
+		//Location player = _g->GetPlayerLocation();
+		//if (player.x - location.x > 0) {
+		if(location.x < 640.f){
 			velocity.x = 3.f;
 		}
 		else {
