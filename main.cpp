@@ -73,11 +73,11 @@ int WINAPI WinMain(_In_ HINSTANCE  hInstance, _In_opt_ HINSTANCE hPrevInstance, 
             //Escapeキーまたはバックボタンを押したら強制終了
             if (PadInput::OnPressed(XINPUT_BUTTON_BACK) || (KeyInput::OnPresed(KEY_INPUT_ESCAPE))) 
             {
-                if (++break_timer > 60)
+                if (++break_timer > 20)
                 {
                     break;
                 }
-                DrawFormatString((SCREEN_WIDTH / 2)-50, (SCREEN_HEIGHT / 2), 0xffffff, "ゲーム終了まで...%d", 60 - break_timer);
+                DrawFormatString((SCREEN_WIDTH / 2)-60, (SCREEN_HEIGHT / 2), 0xffffff, "ゲーム終了まで...%d", 20 - break_timer);
             }
             else
             {

@@ -733,7 +733,7 @@ void GameMain::UpdateGameMain()
 		tutorial.Update(camera_location, GetPlayerLocation(), stage_height);
 		for (int i = 0; object[i] != nullptr; i++)
 		{
-			object[i]->SetScreenPosition(camera_location, impact_rand);
+			object[i]->SetScreenPosition(camera_location, impact_rand,erea_rate);
 			//プレイヤーとボス以外の画面内オブジェクトの更新
 			if (((i == boss_object && boss_blind_flg == false) || i != boss_object) && i != player_object && CheckInScreen(object[i]))
 			{
