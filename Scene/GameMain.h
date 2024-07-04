@@ -100,14 +100,14 @@ private:
     int game_clear_bgm;
 
 
-    int cursor_se;  //かーそるSE 
+    int cursor_se;  //カーソルSE 
     int decision_se;    //決定SE
 public:
 
     //コンストラクタ
     GameMain(int _stage);
 
-    GameMain(int _stage, Location _respawn_locatoin, Player p);
+    /*GameMain(int _stage, Location _respawn_locatoin, Player p);*/
 
     //デストラクタ
     ~GameMain();
