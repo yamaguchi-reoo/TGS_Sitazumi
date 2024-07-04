@@ -341,8 +341,6 @@ void Player::Update(GameMain* _g)
 
 void Player::Draw()const
 {
-	//DrawFormatString(0, 200, 0xff0000, "%0.1f %0.1f", location.x, location.y);
-
 	if(hp <= 0){
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 - (deathTimer * 2));
 	}
@@ -397,12 +395,9 @@ void Player::Draw()const
 		int j = 0;
 		for (int i = fps; i > 0; i--)
 		{
-			if (i % 1 == 0) {
-				j++;
-				if (j > 10) {
-					j = 10;
-					break;
-				}
+			if (j++ > 10) {
+				j = 10;
+				break;
 			}
 		}
 
@@ -772,17 +767,6 @@ void Player::SelectObject()
 					int tmp = posRelation[y][x];
 					posRelation[y][x] = 999;
 
-					for (int i = 0; i < 720 / 40; i++)
-					{
-						for (int j = 0; j < 1280 / 40; j++)
-						{
-							if (posRelation[i][j] != -1 && posRelation[i][j] != 999) {
-								int a;
-								a = 0;
-							}
-						}
-					}
-
 					//真横探知
 					for (int j = x; j < 1280 / 40; j++)
 					{
@@ -836,9 +820,6 @@ void Player::SelectObject()
 			oldStick[1] = false;
 			flg = true;
 
-			//oldDirection = direction;
-			//direction = left;
-
 			float nearLen[4] = { 1000.f,1000.f,1000.f,1000.f };
 			int snum[4] = { -1,-1,-1,-1 };
 			
@@ -851,17 +832,6 @@ void Player::SelectObject()
 
 					int tmp = posRelation[y][x];
 					posRelation[y][x] = 999;
-
-					for (int i = 0; i < 720 / 40; i++)
-					{
-						for (int j = 0; j < 1280 / 40; j++)
-						{
-							if (posRelation[i][j] != -1 && posRelation[i][j] != 999) {
-								int a;
-								a = 0;
-							}
-						}
-					}
 
 					//真横探知
 					for (int j = x; j > -1; j--)
@@ -930,38 +900,126 @@ void Player::SelectObject()
 			ResourceManager::StartSound(cursor_se);
 			oldStick[2] = false;
 			flg = true;
+			int num = -1;
 
-			float nearLen = 1000.f;
 			for (int i = 0; i < objNum; i++)
 			{
-				if (searchedObj->GetLocalLocation().y > searchedObjAll[i]->GetLocalLocation().y)
-				{
-					if (GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation()) < nearLen)
+				if (GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation()) != 0) {
+
+					int x = (int)searchedObj->GetLocalLocation().x / 40;
+					int y = (int)searchedObj->GetLocalLocation().y / 40;
+
+					int tmp = posRelation[y][x];
+					posRelation[y][x] = 999;
+
+					//真上探知
+					for (int j = y; j > -1; j--)
 					{
-						nearLen = GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation());
-						//セレクトオブジェクトここに入れる
-						objSelectNumTmp = i;
+						if (posRelation[j][x] != -1 && posRelation[j][x] != 999) {
+							num = posRelation[j][x];
+							break;
+						}
 					}
+
+					//縦横探知
+					int w = 0;
+					while (num == -1)
+					{
+						w++;
+						for (int j = y - 1; j > 0; j--)
+						{
+							if (x - w > -1) {
+								if (posRelation[j][x - w] != -1 && posRelation[j][x - w] != 999) {
+									num = posRelation[j][x - w];
+									break;
+								}
+							}
+
+							if (x + w < 32) {
+								if (posRelation[j][x + w] != -1 && posRelation[j][x + w] != 999) {
+									num = posRelation[j][x + w];
+									break;
+								}
+							}
+						}
+
+						if (x - w <= -1 && x + w >= 32) {
+							break;
+						}
+					}
+
+					if (num == -1) {
+						num = tmp;
+					}
+
 				}
+			}
+
+			if (num > -1 && num < 999) {
+				objSelectNumTmp = num;
 			}
 		}
 		else if ((PadInput::TipLeftLStick(STICKL_Y) < -0.8f || PadInput::OnPressed(XINPUT_BUTTON_DPAD_DOWN)) && oldStick[3]) {
 			ResourceManager::StartSound(cursor_se); 
 			oldStick[3] = false;
 			flg = true;
+			int num = -1;
 
-			float nearLen = 1000.f;
 			for (int i = 0; i < objNum; i++)
 			{
-				if (searchedObj->GetLocalLocation().y < searchedObjAll[i]->GetLocalLocation().y)
-				{
-					if (GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation()) < nearLen)
+				if (GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation()) != 0) {
+
+					int x = (int)searchedObj->GetLocalLocation().x / 40;
+					int y = (int)searchedObj->GetLocalLocation().y / 40;
+
+					int tmp = posRelation[y][x];
+					posRelation[y][x] = 999;
+
+					//真上探知
+					for (int j = y; j < 720 / 40; j++)
 					{
-						nearLen = GetLength(searchedObj->GetLocalLocation(), searchedObjAll[i]->GetLocalLocation());
-						//セレクトオブジェクトここに入れる
-						objSelectNumTmp = i;
+						if (posRelation[j][x] != -1 && posRelation[j][x] != 999) {
+							num = posRelation[j][x];
+							break;
+						}
 					}
+
+					//縦横探知
+					int w = 0;
+					while (num == -1)
+					{
+						w++;
+						for (int j = y + 1; j < 720 / 40; j++)
+						{
+							if (x - w > -1) {
+								if (posRelation[j][x - w] != -1 && posRelation[j][x - w] != 999) {
+									num = posRelation[j][x - w];
+									break;
+								}
+							}
+
+							if (x + w < 32) {
+								if (posRelation[j][x + w] != -1 && posRelation[j][x + w] != 999) {
+									num = posRelation[j][x + w];
+									break;
+								}
+							}
+						}
+
+						if (x - w <= -1 && x + w >= 32) {
+							break;
+						}
+					}
+
+					if (num == -1) {
+						num = tmp;
+					}
+
 				}
+			}
+
+			if (num > -1 && num < 999) {
+				objSelectNumTmp = num;
 			}
 		}
 		else if ((PadInput::TipLeftLStick(STICKL_Y) < 0.1f && PadInput::TipLeftLStick(STICKL_Y) > -0.1f) && (!PadInput::OnPressed(XINPUT_BUTTON_DPAD_UP) && !PadInput::OnPressed(XINPUT_BUTTON_DPAD_DOWN))) {
@@ -1349,7 +1407,7 @@ void Player::DrawPlayerFront(bool f) const
 
 			//目
 			ResourceManager::DrawRotaBox(uiL.x + 30 - 6, uiL.y + 80 + 56, 6, 7, uiL.x + 30, uiL.y + 80, 0, 0x000000, true);
-			ResourceManager::DrawRotaBox(uiL.x - (erea.width / 2) + 6, uiL.y - (erea.height) + 76, 6, 7, uiL.x, uiL.y, 0, 0x000000, true);
+			ResourceManager::DrawRotaBox(uiL.x - 30 + 6, uiL.y - 100 + 76, 6, 7, uiL.x, uiL.y, 0, 0x000000, true);
 
 
 			//首
