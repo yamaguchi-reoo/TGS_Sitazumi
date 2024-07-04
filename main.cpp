@@ -45,6 +45,9 @@ int WINAPI WinMain(_In_ HINSTANCE  hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     //フォント変更 候補:"Franklin Gothic" "HGS創英角ｺﾞｼｯｸUB" "HGｺﾞｼｯｸE" ステージ後半で変更"Wingdings"
     ChangeFont("Franklin Gothic");
 
+    //終了するか判断
+    int break_timer = 0;
+
     try
     {
         // ゲームループし、シーンマネジャーでシーンの更新
@@ -55,6 +58,7 @@ int WINAPI WinMain(_In_ HINSTANCE  hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
             PadInput::UpdateKey();  //パッドの入力処理
             KeyInput::UpdateKey();  //キーボードの入力処理
+
             ResourceManager::StageAnimUpdate();     //ステージアニメーションの更新
 
             // シーンマネジャーでシーンの描画開始
@@ -67,8 +71,17 @@ int WINAPI WinMain(_In_ HINSTANCE  hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
             //強制終了
             //Escapeキーまたはバックボタンを押したら強制終了
-            if (PadInput::OnButton(XINPUT_BUTTON_BACK) || (KeyInput::OnKey(KEY_INPUT_ESCAPE))) {
-                break;
+            if (PadInput::OnPressed(XINPUT_BUTTON_BACK) || (KeyInput::OnPresed(KEY_INPUT_ESCAPE))) 
+            {
+                if (++break_timer > 60)
+                {
+                    break;
+                }
+                DrawFormatString((SCREEN_WIDTH / 2)-50, (SCREEN_HEIGHT / 2), 0xffffff, "ゲーム終了まで...%d", 60 - break_timer);
+            }
+            else
+            {
+                break_timer = 0;
             }
             ScreenFlip(); // 裏画面の内容を表画面に反映する
 

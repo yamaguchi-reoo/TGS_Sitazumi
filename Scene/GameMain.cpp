@@ -135,14 +135,14 @@ AbstractScene* GameMain::Update()
 			return new EditScene(now_stage);
 		}
 
-		if (KeyInput::OnPresed(KEY_INPUT_1))
-		{
-			erea_rate += 0.1f;
-		}
-		if (KeyInput::OnPresed(KEY_INPUT_2))
-		{
-			erea_rate -= 0.1f;
-		}
+		//if (KeyInput::OnPresed(KEY_INPUT_1))
+		//{
+		//	erea_rate += 0.1f;
+		//}
+		//if (KeyInput::OnPresed(KEY_INPUT_2))
+		//{
+		//	erea_rate -= 0.1f;
+		//}
 #endif
 	}
 		return now_scene;
