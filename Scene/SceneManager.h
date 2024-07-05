@@ -4,6 +4,9 @@
 class SceneManager : public AbstractScene {
 private:
 	AbstractScene* mScene; // 現在のシーン
+	AbstractScene* p;
+	bool QuitFlg;
+	int cursor;
 public:
 	// コンストラクタ
 	SceneManager(AbstractScene* scene) : mScene(scene) {}

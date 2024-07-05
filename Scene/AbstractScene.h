@@ -6,7 +6,7 @@ public:
 	virtual ~AbstractScene() {};
 
 	//イニシャライズ
-	virtual void Initialize()=0;
+	virtual void Initialize() = 0;
 
 	//ファイナライズ
 	virtual void Finalize() = 0;
