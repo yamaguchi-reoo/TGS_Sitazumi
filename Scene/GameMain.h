@@ -32,6 +32,7 @@ enum GameMainState {
     Pause,          //一時停止
     S_Help,           //ヘルプ
     GameOver,       //ゲームオーバー
+    Check,          //本当にタイトルに戻るか確認
     GameClear,      //ゲームクリア
 };
 
@@ -81,7 +82,7 @@ private:
     bool boss_blind_flg;        //ボスステージを暗くするか
     int boss_blind_timer;       //ボスステージで完全に暗転させる時間
     bool pause_after_flg;
-
+    GameMainState before_check_scene;     //チェックシーンに来る前のシーンを格納
     bool set_sound_once;
 
     int clear_timer;
@@ -234,6 +235,12 @@ public:
 
     //ゲームオーバー画面描画
     void DrawGameOver()const;
+
+    //チェック画面更新
+    void UpdateCheck();
+
+    //チェック画面描画
+    void DrawCheck()const;
 
     //ゲームメインの状態を変更
     void UpdateState(GameMainState _state);
