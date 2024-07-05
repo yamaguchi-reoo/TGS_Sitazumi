@@ -48,6 +48,7 @@ private:
 
 	float speed;				//移動速度;
 
+	int boss_color;
 	//計算用
 	int cunt;
 	int c;
@@ -68,10 +69,11 @@ private:
 	bool oldF = false;
 	int cnt = 100;
 	int attack = 0;
+	int old_attack = 0;
 	int attack_num = 0;
 	bool side = false;
 
-	float attackWood[3];
+	float attackWood[6];
 	int woodNum = 0;
 
 	int damage_se;	//被ダメージSE
