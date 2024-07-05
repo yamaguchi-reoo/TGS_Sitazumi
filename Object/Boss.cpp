@@ -477,26 +477,28 @@ void Boss::BossAtack(GameMain *_g)
 				float x;
 				int i = 0;
 				bool flg;
-				do
+				for (int i = 0; i < 2; i++)
 				{
-					x = (float)(GetRand(29)) * 40 + 200;
-					flg = false;
-					for (int j = 0; j < 3; j++)
+					do
 					{
-						if (x == attackWood[j])
+						x = (float)(GetRand(29)) * 40 + 200;
+						flg = false;
+						for (int j = 0; j < 3; j++)
 						{
-							flg = true;
+							if (x == attackWood[j])
+							{
+								flg = true;
+							}
 						}
-					}
-				} while (flg);
+					} while (flg);
 
-				l.x = x;
-				l.y = 930.f;
+					l.x = x;
+					l.y = 930.f;
+					attackWood[woodNum++] = l.x;
+					_g->CreateObject(new BossAttackWood, l, e, GREEN);
+				}
+				
 
-				attackWood[woodNum++] = l.x;
-
-
-				_g->CreateObject(new BossAttackWood, l, e, GREEN);
 				f = false;
 			}
 			if (cnt > 300) {
