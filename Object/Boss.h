@@ -73,7 +73,7 @@ private:
 	int attack_num = 0;
 	bool side = false;
 
-	float attackWood[3];
+	float attackWood[6];
 	int woodNum = 0;
 
 	int damage_se;	//被ダメージSE
