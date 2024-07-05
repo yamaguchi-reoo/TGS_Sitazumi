@@ -48,6 +48,7 @@ private:
 
 	float speed;				//移動速度;
 
+	int boss_color;
 	//計算用
 	int cunt;
 	int c;

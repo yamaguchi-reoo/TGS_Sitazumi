@@ -15,6 +15,9 @@
 
 #define BLACK 0x000000
 
+#define BOSS_RED   0x800000
+#define BOSS_BLUE  0x000080
+#define BOSS_GREEN 0x005E15
 
 Boss::Boss() :vector{ 0.0f }, boss_state(BossState::ATTACK), barrier_num(3), damage_flg(false), state_change_time(0), speed(0.0f),wing_fps(0),damage_se(0)
 {
@@ -48,6 +51,8 @@ Boss::Boss() :vector{ 0.0f }, boss_state(BossState::ATTACK), barrier_num(3), dam
 	damage_anim_time = 0;
 
 	wing_color = 0;
+
+	boss_color = BOSS_RED;
 }
 
 Boss::~Boss()
@@ -197,15 +202,22 @@ void Boss::Update(GameMain* _g)
 
 		}
 	}
-	//竹攻撃制作中
-	/*if (GetRand(60) > 58 && !f)
+
+	//ボスの色
+	switch (color)
 	{
-		Erea e = { 1200,40 };
-		Location l = _g->GetPlayerLocation();
-		l.y += _g->GetPlayerErea().height + 40;
-		_g->CreateObject(new BossAttackWood, l, e, GREEN);
-		f = true;
-	}*/
+	case RED:
+		boss_color = BOSS_RED;
+		break;
+	case BLUE:
+		boss_color = BOSS_BLUE;
+		break;
+	case GREEN:
+		boss_color = BOSS_GREEN;
+		break;
+	default:
+		break;
+	}
 
 #ifdef _DEBUG
 	if (KeyInput::OnKey(KEY_INPUT_X))
@@ -252,7 +264,7 @@ void Boss::Draw() const
 		{
 			DrawWings();
 			//本体
-			DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 35, 35, part_color[1], TRUE);
+			DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 35, 35, boss_color, TRUE);
 			DrawCircleAA(local_location.x + BOSS_SIZE / 2 + shake_anim, local_location.y + BOSS_SIZE / 2 + boss_anim, 36, 34, 0xFFFFFF, FALSE, 3.0f);
 			DrawCircleAA(local_location.x + BOSS_SIZE / 2 + shake_anim, local_location.y + BOSS_SIZE / 2 + boss_anim, 38, 36, color, FALSE, 2.0f);
 			if(barrier_num > 0) {
@@ -268,9 +280,9 @@ void Boss::Draw() const
 	{
 		DrawWings();
 		//本体
-		DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 35, 35, 0x000000, TRUE);
+		DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 35, 35, boss_color, TRUE);
 		DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 35, 34, 0xFFFFFF, FALSE, 3.0f);
-		DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 36, 36, color, FALSE, 2.0f);
+		//DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, 36, 36, color, FALSE, 2.0f);
 
 		if (barrier_num > 0) {
 			// バリアの描画
@@ -282,22 +294,22 @@ void Boss::Draw() const
 		}
 	}
 
-	for (int i = 0; i < barrier_num; ++i) {
-		int barrier_color = RED;
-		switch (barrier_num - i) {
-		case 1:
-			barrier_color = GREEN;
-			break;
-		case 2:
-			barrier_color = BLUE;
-			break;
-		case 3:
-			barrier_color = RED;
-			break;
-			// それ以上のバリアは想定しないが、必要に応じて追加
-		}
-		DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, barrier_rad[i], 50, barrier_color, FALSE, 5.f);
-	}
+	//for (int i = 0; i < barrier_num; ++i) {
+	//	int barrier_color = RED;
+	//	switch (barrier_num - i) {
+	//	case 1:
+	//		barrier_color = GREEN;
+	//		break;
+	//	case 2:
+	//		barrier_color = BLUE;
+	//		break;
+	//	case 3:
+	//		barrier_color = RED;
+	//		break;
+	//		// それ以上のバリアは想定しないが、必要に応じて追加
+	//	}
+	//	DrawCircleAA(local_location.x + BOSS_SIZE / 2, local_location.y + BOSS_SIZE / 2 + boss_anim, barrier_rad[i], 50, barrier_color, FALSE, 5.f);
+	//}
 }
 
 void Boss::Finalize()
@@ -590,12 +602,12 @@ void Boss::DrawWings() const
 		DrawQuadrangleAA(local_location.x + wing[i].x + angle, local_location.y + wing[i].y + angle + delta_y,
 			local_location.x + wing[i + 1].x + 20 + angle, local_location.y + wing[i + 1].y + 10 + angle + delta_y,
 			local_location.x + wing[i + 2].x + 10 + angle, local_location.y + wing[i + 2].y + 20 + angle + delta_y,
-			local_location.x + wing[i + 3].x + angle, local_location.y + wing[i + 3].y + 30 + angle + delta_y, part_color[1], TRUE);
+			local_location.x + wing[i + 3].x + angle, local_location.y + wing[i + 3].y + 30 + angle + delta_y, boss_color, TRUE);
 		//左羽
 		DrawQuadrangleAA(local_location.x + wing_mirror[i].x + 250 - angle, local_location.y + wing_mirror[i].y + angle + delta_y,
 			local_location.x + wing_mirror[i + 1].x - 20 + 250 - angle, local_location.y + wing_mirror[i + 1].y + 10 + angle + delta_y,
 			local_location.x + wing_mirror[i + 2].x - 10 + 250 - angle, local_location.y + wing_mirror[i + 2].y + 20 + angle + delta_y,
-			local_location.x + wing_mirror[i + 3].x + 250 - angle, local_location.y + wing_mirror[i + 3].y + 30 + angle + delta_y, part_color[1], TRUE);
+			local_location.x + wing_mirror[i + 3].x + 250 - angle, local_location.y + wing_mirror[i + 3].y + 30 + angle + delta_y, boss_color, TRUE);
 
 		//右羽
 		DrawQuadrangleAA(local_location.x + wing[i].x + angle + shake_anim, local_location.y + wing[i].y + angle + delta_y,
@@ -680,27 +692,40 @@ void Boss::InvertedWingPositions()
 		wing_mirror[i].y = wing[i].y;
 	}
 }
-
+// ボスの羽の位置をファイルに保存する
 void Boss::SavePosition()
 {
+	// ファイルを開く（書き込みモード）
 	std::ofstream outfile("Resource/Dat/BossLocation.txt");
+
+	// ファイルが正しく開かれているかチェック
 	if (outfile.is_open()) {
+		// wing ベクトル内のすべての羽の位置をファイルに書き込む
 		for (int i = 0; i < wing.size(); ++i)
 		{
+			// x 座標と y 座標をスペースで区切ってファイルに書き込む
 			outfile << wing[i].x << " " << wing[i].y << "\n";
 		}
+		// ファイルを閉じる
 		outfile.close();
 	}
 }
 
+// ボスの羽の位置をファイルから読み込む関数
 void Boss::LoadPosition()
 {
+	// ファイルを開く（読み込みモード）
 	std::ifstream infile("Resource/Dat/BossLocation.txt");
+
+	// ファイルが正しく開かれているかチェック
 	if (infile.is_open()) {
+		// wing ベクトル内のすべての羽の位置をファイルから読み込む
 		for (int i = 0; i < wing.size(); ++i)
 		{
+			// ファイルから x 座標と y 座標を読み込み、それぞれにセットする
 			infile >> wing[i].x >> wing[i].y;
 		}
+		// ファイルを閉じる
 		infile.close();
 	}
 }
