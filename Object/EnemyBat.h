@@ -42,6 +42,8 @@ private:
 
 	bool se_once;		//一回だけ再生	
 
+	bool tracking_flg;
+
 public:
 	EnemyBat();
 	~EnemyBat();

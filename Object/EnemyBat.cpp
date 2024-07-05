@@ -8,7 +8,7 @@
 
 #define ENEMY_SPEED 2.f
 
-EnemyBat::EnemyBat() :up(0), bat_state(BatState::LEFT), wing_angle(0.0f), vector{ 0.0f },death_timer(0), se_once(false)
+EnemyBat::EnemyBat() :up(0), bat_state(BatState::IDLE), wing_angle(0.0f), vector{ 0.0f },death_timer(0), se_once(false),tracking_flg(false)
 {
 	type = ENEMY;
 	can_swap = TRUE;
@@ -86,6 +86,7 @@ void EnemyBat::Update(GameMain* _g)
 	//}
 	//プレイヤーの一定範囲内に入ったら
 	if (length < 450 && bat_state != BatState::DEATH) {
+		tracking_flg = true;
 		// 移動方向を決定
 		dx /= length;
 		dy /= length;
@@ -112,7 +113,7 @@ void EnemyBat::Draw() const
 
 	//各頂点をlocal_locationに置き換えた
 
-	const std::vector<Location> vertices = {
+	std::vector<Location> vertices = {
 		// 耳
 		{local_location.x + 46, local_location.y}, {local_location.x + 46, local_location.y + 19}, {local_location.x + 55, local_location.y + 9},
 		{local_location.x + 69, local_location.y}, {local_location.x + 69, local_location.y + 19}, {local_location.x + 60, local_location.y + 9},
@@ -130,45 +131,96 @@ void EnemyBat::Draw() const
 		{local_location.x + 57, local_location.y + 34}, {local_location.x + 69, local_location.y + 52}, {local_location.x + 57, local_location.y + 73}, {local_location.x + 46, local_location.y + 52},
 	};
 
+	const std::vector<Location> vertices_mirror;
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 - (death_timer * 4));
+
+
 	//配列の各頂点を利用して三角形を描画する
-	for (int i = 0; i + 2 < vertices.size(); i += 3) {
-		//耳
-		if (i < 5) {
-			DrawTriangleAA(vertices[i].x, vertices[i].y,vertices[i + 1].x, vertices[i + 1].y,vertices[i + 2].x, vertices[i + 2].y, draw_color, TRUE);
-			DrawTriangleAA(vertices[i].x, vertices[i].y, vertices[i + 1].x, vertices[i + 1].y, vertices[i + 2].x, vertices[i + 2].y, 0x000000, FALSE);
-		}
-		//右羽
-		else if (i >= 6 && i  < 14) {
-			// 羽の動き
-			DrawLineAA(vertices[7].x, vertices[7].y + wing_angle, vertices[8].x + wing_angle, vertices[8].y, 0x000000);
-			DrawLineAA(vertices[6].x, vertices[6].y - 2, vertices[7].x, vertices[7].y - 2 + wing_angle, 0x000000);
-			//DrawTriangleAA(vertices[i].x - 1, vertices[i].y - 1, vertices[i + 1].x - 1, vertices[i + 1].y - 1 + wing_angle, vertices[i + 2].x + wing_angle - 1, vertices[i + 2].y - 1, 0x000000, FALSE);
-			DrawTriangleAA(vertices[i].x, vertices[i].y, vertices[i + 1].x, vertices[i + 1].y + wing_angle, vertices[i + 2].x + wing_angle, vertices[i + 2].y , draw_color, TRUE);
-		
-		}
-		//左羽
-		else if (i >= 15 && i < 23) {
-			// 羽の動き
-			DrawLineAA(vertices[16].x, vertices[16].y - 2 +wing_angle, vertices[17].x - wing_angle, vertices[17].y, 0x000000);
-			DrawLineAA(vertices[15].x, vertices[15].y - 2, vertices[16].x ,vertices[16].y - 2 + wing_angle, 0x000000);
-			//DrawTriangleAA(vertices[i].x + 1, vertices[i].y + 1, vertices[i + 1].x + 1, vertices[i + 1].y - 1 + wing_angle, vertices[i + 2].x - 3 - wing_angle, vertices[i + 2].y - 3, 0x000000, FALSE);
-			DrawTriangleAA(vertices[i].x, vertices[i].y, vertices[i + 1].x, vertices[i + 1].y + wing_angle, vertices[i + 2].x - wing_angle, vertices[i + 2].y, draw_color, TRUE);
-			
-		}
-		//ひし形の描画
-		else if (i + 3 < vertices.size())
+	if (bat_state == BatState::IDLE && tracking_flg != true) {
+		for (int i = 0; i < vertices.size(); i++)
 		{
-			DrawQuadrangleAA(vertices[i].x, vertices[i].y,vertices[i + 1].x, vertices[i + 1].y,vertices[i + 2].x, vertices[i + 2].y,vertices[i + 3].x, vertices[i + 3].y, draw_color, TRUE);
-			DrawQuadrangleAA(vertices[i].x, vertices[i].y,vertices[i + 1].x, vertices[i + 1].y,vertices[i + 2].x, vertices[i + 2].y,vertices[i + 3].x, vertices[i + 3].y, 0x000000, FALSE);
-			i++;
+			// wing[i] の X 座標を反転して wing_mirror[i] の X 座標にセット
+			vertices[i].x = vertices[i].x; // X座標を反転
+
+			// wing[i] の Y 座標をそのまま wing_mirror[i] の Y 座標にセット
+			vertices[i].y = 2 * local_location.y + erea.height - vertices[i].y;
+		}
+		for (int i = 0; i + 2 < vertices.size(); i += 3) {
+			//耳
+			if (i < 5) {
+				DrawTriangleAA(vertices[i].x, vertices[i].y, vertices[i + 1].x, vertices[i + 1].y, vertices[i + 2].x, vertices[i + 2].y, draw_color, TRUE);
+				DrawTriangleAA(vertices[i].x, vertices[i].y, vertices[i + 1].x, vertices[i + 1].y, vertices[i + 2].x, vertices[i + 2].y, 0x000000, FALSE);
+			}
+			//右羽
+			else if (i >= 6 && i < 14) {
+				// 羽の動き
+				DrawLineAA(vertices[7].x, vertices[7].y + wing_angle, vertices[8].x + wing_angle, vertices[8].y, 0x000000);
+				DrawLineAA(vertices[6].x, vertices[6].y - 2, vertices[7].x, vertices[7].y - 2 + wing_angle, 0x000000);
+				//DrawTriangleAA(vertices[i].x - 1, vertices[i].y - 1, vertices[i + 1].x - 1, vertices[i + 1].y - 1 + wing_angle, vertices[i + 2].x + wing_angle - 1, vertices[i + 2].y - 1, 0x000000, FALSE);
+				DrawTriangleAA(vertices[i].x, vertices[i].y, vertices[i + 1].x, vertices[i + 1].y + wing_angle, vertices[i + 2].x + wing_angle, vertices[i + 2].y, draw_color, TRUE);
+
+			}
+			//左羽
+			else if (i >= 15 && i < 23) {
+				// 羽の動き
+				DrawLineAA(vertices[16].x, vertices[16].y - 2 + wing_angle, vertices[17].x - wing_angle, vertices[17].y, 0x000000);
+				DrawLineAA(vertices[15].x, vertices[15].y - 2, vertices[16].x, vertices[16].y - 2 + wing_angle, 0x000000);
+				//DrawTriangleAA(vertices[i].x + 1, vertices[i].y + 1, vertices[i + 1].x + 1, vertices[i + 1].y - 1 + wing_angle, vertices[i + 2].x - 3 - wing_angle, vertices[i + 2].y - 3, 0x000000, FALSE);
+				DrawTriangleAA(vertices[i].x, vertices[i].y, vertices[i + 1].x, vertices[i + 1].y + wing_angle, vertices[i + 2].x - wing_angle, vertices[i + 2].y, draw_color, TRUE);
+
+			}
+			//ひし形の描画
+			else if (i + 3 < vertices.size())
+			{
+				DrawQuadrangleAA(vertices[i].x, vertices[i].y, vertices[i + 1].x, vertices[i + 1].y, vertices[i + 2].x, vertices[i + 2].y, vertices[i + 3].x, vertices[i + 3].y, draw_color, TRUE);
+				DrawQuadrangleAA(vertices[i].x, vertices[i].y, vertices[i + 1].x, vertices[i + 1].y, vertices[i + 2].x, vertices[i + 2].y, vertices[i + 3].x, vertices[i + 3].y, 0x000000, FALSE);
+				i++;
+			}
+		}
+	}	
+	if (tracking_flg == true) {
+		for (int i = 0; i + 2 < vertices.size(); i += 3) {
+			//耳
+			if (i < 5) {
+				DrawTriangleAA(vertices[i].x, vertices[i].y, vertices[i + 1].x, vertices[i + 1].y, vertices[i + 2].x, vertices[i + 2].y, draw_color, TRUE);
+				DrawTriangleAA(vertices[i].x, vertices[i].y, vertices[i + 1].x, vertices[i + 1].y, vertices[i + 2].x, vertices[i + 2].y, 0x000000, FALSE);
+			}
+			//右羽
+			else if (i >= 6 && i < 14) {
+				// 羽の動き
+				DrawLineAA(vertices[7].x, vertices[7].y + wing_angle, vertices[8].x + wing_angle, vertices[8].y, 0x000000);
+				DrawLineAA(vertices[6].x, vertices[6].y - 2, vertices[7].x, vertices[7].y - 2 + wing_angle, 0x000000);
+				//DrawTriangleAA(vertices[i].x - 1, vertices[i].y - 1, vertices[i + 1].x - 1, vertices[i + 1].y - 1 + wing_angle, vertices[i + 2].x + wing_angle - 1, vertices[i + 2].y - 1, 0x000000, FALSE);
+				DrawTriangleAA(vertices[i].x, vertices[i].y, vertices[i + 1].x, vertices[i + 1].y + wing_angle, vertices[i + 2].x + wing_angle, vertices[i + 2].y, draw_color, TRUE);
+
+			}
+			//左羽
+			else if (i >= 15 && i < 23) {
+				// 羽の動き
+				DrawLineAA(vertices[16].x, vertices[16].y - 2 + wing_angle, vertices[17].x - wing_angle, vertices[17].y, 0x000000);
+				DrawLineAA(vertices[15].x, vertices[15].y - 2, vertices[16].x, vertices[16].y - 2 + wing_angle, 0x000000);
+				//DrawTriangleAA(vertices[i].x + 1, vertices[i].y + 1, vertices[i + 1].x + 1, vertices[i + 1].y - 1 + wing_angle, vertices[i + 2].x - 3 - wing_angle, vertices[i + 2].y - 3, 0x000000, FALSE);
+				DrawTriangleAA(vertices[i].x, vertices[i].y, vertices[i + 1].x, vertices[i + 1].y + wing_angle, vertices[i + 2].x - wing_angle, vertices[i + 2].y, draw_color, TRUE);
+
+			}
+			//ひし形の描画
+			else if (i + 3 < vertices.size())
+			{
+				DrawQuadrangleAA(vertices[i].x, vertices[i].y, vertices[i + 1].x, vertices[i + 1].y, vertices[i + 2].x, vertices[i + 2].y, vertices[i + 3].x, vertices[i + 3].y, draw_color, TRUE);
+				DrawQuadrangleAA(vertices[i].x, vertices[i].y, vertices[i + 1].x, vertices[i + 1].y, vertices[i + 2].x, vertices[i + 2].y, vertices[i + 3].x, vertices[i + 3].y, 0x000000, FALSE);
+				i++;
+			}
 		}
 	}
+
+
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 	/*
 	if (hit_flg[0]) {
 		DrawString(200, 200, "hit", 0xfffff);
 	}*/
+
+
 }
 
 void EnemyBat::Finalize()
@@ -178,6 +230,9 @@ void EnemyBat::Finalize()
 
 void EnemyBat::Move(GameMain* _g)
 {
+	if (bat_state == BatState::IDLE) {
+		wing_angle = 0.0f;
+	}
 	//左移動
 	if (bat_state == BatState::LEFT) {
 		location.x -= vector.x;
