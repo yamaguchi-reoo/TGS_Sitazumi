@@ -69,6 +69,7 @@ private:
 	bool oldF = false;
 	int cnt = 100;
 	int attack = 0;
+	int old_attack = 0;
 	int attack_num = 0;
 	bool side = false;
 
