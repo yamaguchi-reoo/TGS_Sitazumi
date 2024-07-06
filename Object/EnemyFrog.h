@@ -1,6 +1,7 @@
 #pragma once
 #include "Object.h"
 
+#define JUMP_COOLDOWN 40	//蛙の次のジャンプまでの時間
 
 enum class FrogState {
 	LEFT_JUMP=0,
@@ -28,6 +29,7 @@ private:
 	bool stageHitFlg[2][4]; //カエルとステージの当たり判定
 	float move[4];			//各方向加速度格納用
 
+	int jump_cooldown_timer; //次のジャンプまでの時間測定
 	float face_angle;		//顔の向き
 	int death_timer;	//死亡演出
 	bool effect_once;	//エフェクトを一回だけ出す用
