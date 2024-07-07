@@ -110,22 +110,27 @@ void Stage::Update(GameMain* _g)
 			_g->DeleteObject(object_pos, this);
 		}
 	}
+
 	Location player_respawn = { location.x,location.y - PLAYER_HEIGHT };
+
 	//フラグが立っているなら
-	if (set_respawn_flg)
+	if (set_respawn_flg && (player_respawn.x != _g->GetPlayerRespawnLocation().x || player_respawn.y != _g->GetPlayerRespawnLocation().y))
 	{
+		respawn_color = WHITE;
 		//プレイヤーリスポーン位置を更新する
-		_g->SetPlayerRespawnLocation({ location.x,location.y - PLAYER_HEIGHT });
-		//このブロックの見た目の色を変える
-		respawn_color = RED;
+		_g->SetPlayerRespawnLocation(player_respawn);
 		//フラグをfalseにする
 		set_respawn_flg = false;
 		//SEを再生する
-		if (se_play_once == false)
-		{
-			ResourceManager::StartSound(checkpoint_se);
-			se_play_once = true;
-		}
+		ResourceManager::StartSound(checkpoint_se);
+	}
+	if(player_respawn.x == _g->GetPlayerRespawnLocation().x && player_respawn.y == _g->GetPlayerRespawnLocation().y)
+	{
+		respawn_color = _g->GetPlayerColor();
+	}
+	else
+	{
+		respawn_color = WHITE;
 	}
 
 	//色が変わっていたら
@@ -369,10 +374,6 @@ void Stage::Hit(Object* _object)
 	if (block_type == PLAYER_RESPAWN_BLOCK && _object->GetObjectType() == PLAYER)
 	{
 		set_respawn_flg = true;
-	}
-	else if (set_respawn_flg == false)
-	{
-		se_play_once = false;
 	}
 
 	//属性の相性が悪いブロックに継続的に当たっていた時、色を変える

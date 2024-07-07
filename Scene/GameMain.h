@@ -196,6 +196,9 @@ public:
     //プレイヤーリスポーン座標の設定
     void SetPlayerRespawnLocation(Location _location) { player_respawn = _location; }
 
+    //プレイヤーの色取得
+    int GetPlayerColor()const { return object[player_object]->GetColorData(); }
+
     //現在のステージの取得
     int GetNowStage()const { return now_stage; }
 
