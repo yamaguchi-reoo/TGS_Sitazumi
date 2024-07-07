@@ -4,7 +4,9 @@
 #define JUMP_COOLDOWN 40	//蛙の次のジャンプまでの時間
 
 enum class FrogState {
-	LEFT_JUMP=0,
+	RIGHT_IDOL=0,
+	LEFT_IDOL,
+	LEFT_JUMP,
 	RIGHT_JUMP,
 	DEATH
 };
@@ -28,8 +30,10 @@ private:
 	Location vector; //カエルのベクトル
 	bool stageHitFlg[2][4]; //カエルとステージの当たり判定
 	float move[4];			//各方向加速度格納用
+	Location old_location;	//ジャンプ前の座標格納
 
 	int jump_cooldown_timer; //次のジャンプまでの時間測定
+	int jump_timer;			 //ジャンプしている間の時間測定
 	float face_angle;		//顔の向き
 	int death_timer;	//死亡演出
 	bool effect_once;	//エフェクトを一回だけ出す用
@@ -49,7 +53,8 @@ public:
 		return false;
 	}
 
-	void FrogDraw(Location location)const;		//カエルの描画
+	void JumpFrogDraw(Location location,float _angle)const;		//ジャンプ中カエルの描画
+	void IdolFrogDraw(Location location,bool _direction)const;		//通常カエルの描画
 	void Move(GameMain* _g);		//移動系処理
 	void UpdataState(GameMain* _g);	//カエルの状態更新
 	bool CheckCollision(Location l, Erea e); //ステージとの当たり判定
