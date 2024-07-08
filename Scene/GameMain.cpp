@@ -784,7 +784,7 @@ void GameMain::UpdateGameMain()
 	effect_spawner->Update(this);
 
 	////背景の更新
-	//back_ground->Update();
+	back_ground->Update();
 
 	//プレイヤーがボスエリアに入ったら退路を閉じる
 	if (now_stage == 2 && object[player_object]->GetLocalLocation().x > 160 && object[player_object]->GetLocalLocation().x < 200 && create_once == false)
