@@ -18,7 +18,7 @@
 static Location camera_location = { 0,0 };	//カメラの座標
 static Location screen_origin = { (SCREEN_WIDTH / 2),(SCREEN_HEIGHT / 2) };
 
-GameMain::GameMain(int _stage) :frame(0), impact(0), stage_data{ 0 }, now_stage(0), object_num(0), stage_width_num(0), stage_height_num(0), stage_width(0), stage_height(0), camera_x_lock_flg(true), camera_y_lock_flg(true), x_pos_set_once(false), y_pos_set_once(false), player_object(0), boss_object(0), weather(0), weather_timer(0), move_object_num(0), boss_blind_flg(false), boss_blind_timer(0), player_flg(false), player_respawn_flg(false), fadein_flg(true), create_once(false),pause_after_flg(false), cursor(0), clear_timer(0), set_sound_once(false), gm_state(GameMainState::S_GameMain), now_scene(this)
+GameMain::GameMain(int _stage) :frame(0), impact(0), stage_data{ 0 }, now_stage(0), object_num(0), stage_width_num(0), stage_height_num(0), stage_width(0), stage_height(0), camera_x_lock_flg(true), camera_y_lock_flg(true), x_pos_set_once(false), y_pos_set_once(false), player_object(0), boss_object(0), weather(0), weather_timer(0), move_object_num(0), boss_blind_flg(false), boss_blind_timer(0), player_flg(false), player_respawn_flg(false), fadein_flg(true), create_once(false),pause_after_flg(false), cursor(0), clear_timer(0), set_sound_once(false), gm_state(GameMainState::S_GameMain), now_scene(this), blackout(0)
 {
 	now_stage = _stage;
 }
@@ -56,6 +56,8 @@ void GameMain::Initialize()
 	lock_pos = camera_location;
 
 	SetWindowIconID(102);
+
+	blackout =255;
 
 }
 
@@ -116,6 +118,9 @@ AbstractScene* GameMain::Update()
 		case GameMainState::GameClear:	//ゲームクリア
 			UpdateGameClear();
 			break;
+		case GameMainState::Check:
+			UpdateCheck();
+			break;
 		case GameMainState::GameOver:	//ゲームオーバー
 			UpdateGameOver();
 			break;
@@ -123,7 +128,10 @@ AbstractScene* GameMain::Update()
 			printfDx("存在しないゲームモード");
 			break;
 		}
-
+		if (KeyInput::OnKey(KEY_INPUT_C))
+		{
+			gm_state = GameMainState::GameClear;
+		}
 
 #ifdef _DEBUG
 		//ステージをいじるシーンへ遷移
@@ -165,12 +173,17 @@ void GameMain::Draw() const
 		DrawGameMain();
 		DrawGameClear();
 		break;
+	case GameMainState::Check:
+		DrawGameMain();
+		DrawGameOver();
+		DrawCheck();
+		break;
 	case GameMainState::GameOver:
 		DrawGameMain();
 		DrawGameOver();
 		break;
 	}
-	
+
 #ifdef _DEBUG
 	SetFontSize(12);
 	/*DrawFormatString(100, 100, 0xffffff, "Object数:%d", object_num);
@@ -769,7 +782,7 @@ void GameMain::UpdateGameMain()
 	effect_spawner->Update(this);
 
 	////背景の更新
-	//back_ground->Update();
+	back_ground->Update();
 
 	//プレイヤーがボスエリアに入ったら退路を閉じる
 	if (now_stage == 2 && object[player_object]->GetLocalLocation().x > 160 && object[player_object]->GetLocalLocation().x < 200 && create_once == false)
@@ -944,7 +957,9 @@ void GameMain::UpdatePause()
 		else
 		{
 			ResourceManager::StartSound(decision_se);
-			now_scene = new Title();
+			cursor = 0;
+			before_check_scene = gm_state;
+			gm_state = GameMainState::Check;
 		}
 	}
 
@@ -1137,43 +1152,14 @@ void GameMain::UpdateGameClear()
 		set_sound_once = true;
 	}
 
-	if (clear_timer++ > 90) {
-		if (PadInput::TipLeftLStick(STICKL_X) < -0.5f || PadInput::OnButton(XINPUT_BUTTON_DPAD_LEFT))
-		{
-			cursor = 0;
-			if (cursorOld == 1) {
-				ResourceManager::StartSound(cursor_se);
-			}
-		}
-		else if (PadInput::TipLeftLStick(STICKL_X) > 0.5f || PadInput::OnButton(XINPUT_BUTTON_DPAD_RIGHT))
-		{
-			cursor = 1;
-			if (cursorOld == 0) {
-				ResourceManager::StartSound(cursor_se);
-			}
-		}
+	if (clear_timer++ > 250) {
 
-		if (PadInput::OnButton(XINPUT_BUTTON_B)) {
-			if (cursor == 0)
-			{
-				ResourceManager::StartSound(decision_se);
-				now_scene = new Title();
-			}
-			else
-			{
-				ResourceManager::StartSound(decision_se);
-				now_scene = new End();
-			}
-		}
+		ResourceManager::StartSound(decision_se);
+		now_scene = new End();
 
-
-		if (circleAng++ >= 360.f) {
-			circleAng = 0.f;
-		}
-
-		if (clear_timer > 900) {
-			clear_timer = 91;
-		}
+	}
+	if (clear_timer < 250 && clear_timer > 150) {
+		blackout -= 3;
 	}
 }
 
@@ -1186,11 +1172,6 @@ void GameMain::DrawGameClear()const
 	}
 
 	if (clear_timer > 90) {
-
-		DrawBoxAA(200, 410, 500, 510, 0x000000, TRUE);
-		DrawBoxAA(200, 410, 500, 510, 0xffffff, FALSE);
-		DrawBoxAA(780, 410, 1080, 510, 0x000000, TRUE);
-		DrawBoxAA(780, 410, 1080, 510, 0xffffff, FALSE);
 
 		int fontsize = 192 / 2;
 		SetFontSize(fontsize * 2);
@@ -1205,47 +1186,16 @@ void GameMain::DrawGameClear()const
 		DrawString(200 + fontsize * 8, 100, "R", 0x0000ff);
 
 		SetFontSize(48);
-		DrawString(285, 436, "TITLE", 0xffffff);
-		DrawString(890, 436, "END", 0xffffff);
-
-		Location circleLoc;
-
-		if (cursor == 0) {
-			circleLoc.x = 350.f;
-			circleLoc.y = 460.f;
-		}
-		else {
-			circleLoc.x = 930.f;
-			circleLoc.y = 460.f;
-		}
-
-		DrawCircleAA(circleLoc.x, circleLoc.y, 40.f * 2.3f, 40, 0xffff00, FALSE, 4.f * 2.3f);
-
-		Location base;
-		base.x = circleLoc.x;
-		base.y = circleLoc.y;
-
-		Location l[3];
-		l[0].x = base.x;
-		l[0].y = base.y - 40.f * 2.3f;
-
-		l[0] = RotationLocation(base, l[0], (float)(circleAng * M_PI / 180));
-
-		l[1] = RotationLocation(base, l[0], (float)(120.f * M_PI / 180));
-
-		l[2] = RotationLocation(base, l[0], (float)(240.f * M_PI / 180));
-
-
-		DrawCircleAA(l[0].x, l[0].y, 15.f * 1.5f, 32, 0xcc0000, TRUE);
-		DrawCircleAA(l[1].x, l[1].y, 15.f * 1.5f, 32, 0x3c78d8, TRUE);
-		DrawCircleAA(l[2].x, l[2].y, 15.f * 1.5f, 32, 0x6aa84f, TRUE);
+	}
+	SetDrawBright(blackout, blackout, blackout);
+	
+	if (clear_timer > 250) {
+		SetDrawBright(255, 255, 255);
 	}
 }
 
 void GameMain::UpdateGameOver()
 {
-	//タイトルに戻ってほしくないのでカーソルを動かせないように
-	cursor = 0;
 
 	cursorOld = cursor;
 	if (set_sound_once == false)
@@ -1273,8 +1223,9 @@ void GameMain::UpdateGameOver()
 	}
 
 	if (PadInput::OnButton(XINPUT_BUTTON_B)) {
-		if (cursor == 0)
+		switch (cursor)
 		{
+		case 0:
 			ResourceManager::StartSound(decision_se);
 			set_sound_once = false;
 			SetStage(now_stage, true);
@@ -1287,11 +1238,14 @@ void GameMain::UpdateGameOver()
 				ResourceManager::StartSound(bgm_normal, TRUE);
 				ResourceManager::StartSound(bgm_noise, TRUE);
 			}
-		}
-		else
-		{
-			ResourceManager::StartSound(decision_se);
-			now_scene = new Title();
+			break;
+		case 1:
+			cursor = 0;
+			before_check_scene = gm_state;
+			gm_state = GameMainState::Check;
+			break;
+		default:
+			break;
 		}
 	}
 
@@ -1357,6 +1311,99 @@ void GameMain::DrawGameOver()const
 	DrawCircleAA(l[0].x, l[0].y, 15.f * 1.5f, 32, 0xcc0000, TRUE);
 	DrawCircleAA(l[1].x, l[1].y, 15.f * 1.5f, 32, 0x3c78d8, TRUE);
 	DrawCircleAA(l[2].x, l[2].y, 15.f * 1.5f, 32, 0x6aa84f, TRUE);
+}
+
+void GameMain::UpdateCheck()
+{
+
+	cursorOld = cursor;
+
+	if (PadInput::TipLeftLStick(STICKL_X) < -0.5f || PadInput::OnButton(XINPUT_BUTTON_DPAD_LEFT))
+	{
+		cursor = 0;
+		if (cursorOld == 1) {
+			ResourceManager::StartSound(cursor_se);
+		}
+	}
+	else if (PadInput::TipLeftLStick(STICKL_X) > 0.5f || PadInput::OnButton(XINPUT_BUTTON_DPAD_RIGHT))
+	{
+		cursor = 1;
+		if (cursorOld == 0) {
+			ResourceManager::StartSound(cursor_se);
+		}
+	}
+
+	if (PadInput::OnButton(XINPUT_BUTTON_B)) {
+		switch (cursor)
+		{
+		case 0:
+			ResourceManager::StartSound(decision_se);
+			gm_state = before_check_scene;
+			break;
+		case 1:
+			ResourceManager::StartSound(decision_se);
+			now_scene = new Title();
+			break;
+		default:
+			break;
+		}
+	}
+
+
+	if (circleAng++ >= 360.f) {
+		circleAng = 0.f;
+	}
+}
+
+void GameMain::DrawCheck()const
+{
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200);
+	DrawBox(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0x000000, true);
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
+
+	DrawString((SCREEN_WIDTH / 2) - 150, (SCREEN_HEIGHT / 2) - 240, "Are you sure?", 0xffffff);
+
+	DrawBoxAA(200, 410, 500, 510, 0x000000, TRUE);
+	DrawBoxAA(200, 410, 500, 510, 0xffffff, FALSE);
+	DrawBoxAA(780, 410, 1080, 510, 0x000000, TRUE);
+	DrawBoxAA(780, 410, 1080, 510, 0xffffff, FALSE);
+
+	SetFontSize(48);
+	DrawString(300, 436, "NO", 0xffffff);
+	DrawString(870, 436, "YES", 0xffffff);
+
+	Location circleLoc;
+
+	if (cursor == 0) {
+		circleLoc.x = 350.f;
+		circleLoc.y = 460.f;
+	}
+	else {
+		circleLoc.x = 930.f;
+		circleLoc.y = 460.f;
+	}
+
+	DrawCircleAA(circleLoc.x, circleLoc.y, 40.f * 2.3f, 40, 0xffff00, FALSE, 4.f * 2.3f);
+
+	Location base;
+	base.x = circleLoc.x;
+	base.y = circleLoc.y;
+
+	Location l[3];
+	l[0].x = base.x;
+	l[0].y = base.y - 40.f * 2.3f;
+
+	l[0] = RotationLocation(base, l[0], (float)(circleAng * M_PI / 180));
+
+	l[1] = RotationLocation(base, l[0], (float)(120.f * M_PI / 180));
+
+	l[2] = RotationLocation(base, l[0], (float)(240.f * M_PI / 180));
+
+
+	DrawCircleAA(l[0].x, l[0].y, 15.f * 1.5f, 32, 0xcc0000, TRUE);
+	DrawCircleAA(l[1].x, l[1].y, 15.f * 1.5f, 32, 0x3c78d8, TRUE);
+	DrawCircleAA(l[2].x, l[2].y, 15.f * 1.5f, 32, 0x6aa84f, TRUE);
+
 }
 
 void GameMain::UpdateState(GameMainState _state)

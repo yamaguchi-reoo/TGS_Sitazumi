@@ -170,22 +170,16 @@ void Boss::Update(GameMain* _g)
 			color = RED;
 			wing_color = RED;
 			//part_color[0] = RED;
-			part_color[1] = BLUE;
-			part_color[2] = GREEN;
 			break;
 		case 1:
 			color = BLUE;
 			wing_color = BLUE;
 			//part_color[0] = BLUE;
-			part_color[1] = GREEN;
-			part_color[2] = RED;
 			break;
 		case 2:
 			color = GREEN;
 			wing_color = GREEN;
 			//part_color[0] = GREEN;
-			part_color[1] = RED;
-			part_color[2] = BLUE;
 			break;
 		default:
 			break;

@@ -1,7 +1,7 @@
 #include "DxLib.h"
 #include "BackGround.h"
 
-BackGround::BackGround():stage_erea{0.0}, now_stage(0), is_clear(false)
+BackGround::BackGround():stage_erea{0.0}, now_stage(0), is_clear(false), mountain_handle(0), cloud_handle(0)
 {
 	bg_erea.width = 12000;
 	bg_erea.height = 2000;
@@ -28,14 +28,15 @@ void BackGround::Finalize()
 
 void BackGround::Update()
 {
-
+	//山の更新
+	SetDrawScreen(mountain_handle);
 }
 
 void BackGround::Draw(Location _camera_location)const
 {
 	Location shift_location = { -_camera_location.x / (stage_erea.width / (bg_erea.width / 12)) ,-_camera_location.y / (stage_erea.height / (bg_erea.height / 10)) };
 	int r = 0, g = 0, b = 0;
-	float bg_color = (_camera_location.x / 80);
+	int bg_color = (_camera_location.x / 80);
 
 
 	for (int i = 0; i < 50; i++)
@@ -48,28 +49,28 @@ void BackGround::Draw(Location _camera_location)const
 		}
 		else
 		{
-			if ((i * 3) + 50 - (int)bg_color > 255)
+			if ((i * 3) + 50 - bg_color > 255)
 			{
 				r = 255;
 				g = 255;
 			}
-			else if ((i * 3) + 50 - (int)bg_color < 0)
+			else if ((i * 3) + 50 - bg_color < 0)
 			{
 				r = 0;
 				g = 0;
 			}
 			else
 			{
-				r = (i * 3) + 50 - (int)bg_color;
-				g = (i * 3) + 50 - (int)bg_color;
+				r = (i * 3) + 50 - bg_color;
+				g = (i * 3) + 50 - bg_color;
 			}
-			if (255 - (int)bg_color < 0)
+			if (255 - bg_color < 0)
 			{
 				b = 0;
 			}
 			else
 			{
-				b = 255 - (int)bg_color;
+				b = 255 - bg_color;
 			}
 		}
 		//青空
@@ -81,19 +82,19 @@ void BackGround::Draw(Location _camera_location)const
 	if (now_stage != 2)
 	{
 		//後でランダムな形で生成するようにする
-		DrawMountain({ shift_location.x - 200, shift_location.y - 50 }, { 300,300 }, 0.1f);
-		DrawMountain({ shift_location.x - 6400, shift_location.y }, { 310,300 }, 0.1f);
-		DrawMountain({ shift_location.x - 8400, shift_location.y + 50 }, { 200,300 }, 0.1);
-		DrawMountain(shift_location, { 150,150 }, 0.2f);
-		DrawMountain({ shift_location.x - 500, shift_location.y - 50 }, { 140,70 }, 0.3f);
-		DrawMountain({ shift_location.x - 500, shift_location.y - 50 }, { 140,70 }, 0.3f);
-		DrawMountain({ shift_location.x - 400, shift_location.y - 100 }, { 140,70 }, 0.35f);
-		DrawMountain({ shift_location.x - 300, shift_location.y - 50 }, { 110,150 }, 0.5f);
+		DrawMountain({ shift_location.x - 200, shift_location.y - 50 }, { 300,300 }, 0.1f,bg_color);
+		DrawMountain({ shift_location.x - 6400, shift_location.y }, { 310,300 }, 0.1f, bg_color);
+		DrawMountain({ shift_location.x - 8400, shift_location.y + 50 }, { 200,300 }, 0.1f, bg_color);
+		DrawMountain(shift_location, { 150,150 }, 0.2f, bg_color);
+		DrawMountain({ shift_location.x - 500, shift_location.y - 50 }, { 140,70 }, 0.3f, bg_color);
+		DrawMountain({ shift_location.x - 500, shift_location.y - 50 }, { 140,70 }, 0.3f, bg_color);
+		DrawMountain({ shift_location.x - 400, shift_location.y - 100 }, { 140,70 }, 0.35f, bg_color);
+		DrawMountain({ shift_location.x - 300, shift_location.y - 50 }, { 110,150 }, 0.5f, bg_color);
 
-		DrawCloud({ shift_location.x - 200, 200 }, { 30,30 }, 0.1f);
-		DrawCloud({ shift_location.x - 4500, 300 }, { 40,40 }, 0.2f);
-		DrawCloud({ shift_location.x+1000, 250 }, { 30,30 }, 0.2f);
-		DrawCloud({ shift_location.x - 4500, 300 }, { 35,35 }, 0.1f);
+		DrawCloud({ shift_location.x - 200, 200 }, { 30,30 }, 0.1f, bg_color);
+		DrawCloud({ shift_location.x - 4500, 300 }, { 40,40 }, 0.2f, bg_color);
+		DrawCloud({ shift_location.x+1000, 250 }, { 30,30 }, 0.2f, bg_color);
+		DrawCloud({ shift_location.x - 4500, 300 }, { 35,35 }, 0.1f, bg_color);
 	}
 
 	//GetDrawScreenGraph(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, bg_handle);	//背景をハンドルに保存
@@ -104,7 +105,7 @@ void BackGround::Draw(Location _camera_location)const
 
 	for (int i = 0; i < 50; i++)
 	{
-		if (GetRand((int)bg_color) > 100)
+		if (GetRand(bg_color) > 100)
 		{
 			if (GetRand(1) == 1)
 			{
@@ -132,10 +133,11 @@ void BackGround::DrawWood(Location _shift_location, float move_speed)const
 
 }
 
-void BackGround::DrawMountain(Location _shift_location,Erea _erea ,float move_speed)const
+void BackGround::DrawMountain(Location _shift_location,Erea _erea ,float _move_speed, int  _bg_color)const
 {
+	if(GetRand(_bg_color) > 100)SetDrawBlendMode(DX_BLENDMODE_INVSRC,220);
 
-	Location shift_location = { _shift_location.x * move_speed,_shift_location.y * move_speed };
+	Location shift_location = { _shift_location.x * _move_speed,_shift_location.y * _move_speed };
 	DrawCircleAA(SCREEN_WIDTH + shift_location.x, SCREEN_HEIGHT - shift_location.y - _erea.height, _erea.width, 50, 0x00aa00, TRUE);
 	DrawCircleAA(SCREEN_WIDTH + shift_location.x, SCREEN_HEIGHT - shift_location.y - _erea.height, _erea.width, 50, 0x000000, FALSE);
 	DrawBoxAA(SCREEN_WIDTH + shift_location.x - _erea.width,
@@ -153,15 +155,17 @@ void BackGround::DrawMountain(Location _shift_location,Erea _erea ,float move_sp
 		SCREEN_WIDTH + shift_location.x + _erea.width,
 		SCREEN_HEIGHT,
 		0x000000, TRUE);
-
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND,255);
 #ifdef _DEBUG
 	DrawStringF(SCREEN_WIDTH + shift_location.x, SCREEN_HEIGHT - shift_location.y - _erea.height, "山", 0x000000);
 #endif
 }
 
-void BackGround::DrawCloud(Location _shift_location, Erea _erea, float move_speed)const
+void BackGround::DrawCloud(Location _shift_location, Erea _erea, float move_speed, int _bg_color)const
 {
 	Location shift_location = { _shift_location.x * move_speed , _shift_location.y};
+
+	if (GetRand(_bg_color) > 100)SetDrawBlendMode(DX_BLENDMODE_ADD, 220);
 
 	DrawCircleAA(SCREEN_WIDTH + shift_location.x, shift_location.y, _erea.width, 30, 0xaaaaaa, TRUE);
 	DrawCircleAA(SCREEN_WIDTH + shift_location.x - 3, shift_location.y-3, _erea.width-1, 30, 0xcccccc, TRUE);
@@ -169,4 +173,6 @@ void BackGround::DrawCloud(Location _shift_location, Erea _erea, float move_spee
 	DrawCircleAA(SCREEN_WIDTH + shift_location.x + 27 + (_erea.width / 5), shift_location.y - 1, _erea.width - 1, 30, 0xcccccc, TRUE);
 	DrawCircleAA(SCREEN_WIDTH + shift_location.x + 65 + (_erea.width / 3), shift_location.y - 3, _erea.width, 30, 0xaaaaaa, TRUE);
 	DrawCircleAA(SCREEN_WIDTH + shift_location.x + 62 + (_erea.width / 3), shift_location.y - 6, _erea.width - 1, 30, 0xcccccc, TRUE);
+	
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 }
