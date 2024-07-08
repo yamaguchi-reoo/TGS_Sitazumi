@@ -3,6 +3,8 @@
 
 TutorialText::TutorialText() : GNum(0), GColor(GREEN), Gbutton_draw{ false, false, false, false }, GGNum(0), frame(0), Gstick_angle(0.0), stage_height(0), p_c(GREEN), add_x(0), add_y(0), f_c(RED), Gdraw_stick_shift{ 0, 0 }, in_camera{ 0, 0 }, circleAng(0.f), cosor_flg(false), p_swap_x(0), e_swap_x(0)
 {
+	firenum = 0;
+	reflection = false;
 }
 
 TutorialText::~TutorialText()
@@ -118,6 +120,32 @@ void TutorialText::Update(Location camera , Location _p, int height)
 			add_x = 0;
 		}
 	}
+
+	/*if (reflection == false)
+	{
+		if (firenum < 390)
+		{
+			firenum += 5;
+		}
+		else
+		{
+			reflection = true;
+		}
+	}
+	else
+	{
+		if (reflection == true)
+		{
+			if (firenum)
+			{
+				firenum -= 5;
+			}
+			else
+			{
+				reflection = false;
+			}
+		}
+	}*/
 
 	if (frame > 59)
 	{
@@ -277,6 +305,24 @@ void TutorialText::Draw() const
 		DrawCircleAA(6000 - in_camera.x, stage_height - 450 - in_camera.y, 30, 100, 0xCC3300, FALSE, 10.0f);
 	}
 	
+	// ボスエリアのチュートリアルテキスト
+	//DrawBoxAA(15415 - in_camera.x, stage_height - 680 - in_camera.y, 16003 - in_camera.x, stage_height - 360 - in_camera.y, 0xffffff, FALSE, 3.0f);
+	//DrawBoxAA(15418 - in_camera.x, stage_height - 677 - in_camera.y, 16000 - in_camera.x, stage_height - 363 - in_camera.y, 0x555555, TRUE, 3.0f);
+
+	//SetFontSize(150);
+	//// ボス(黒丸)
+	//DrawCircleAA(15830 - in_camera.x, stage_height - 550 - in_camera.y, 100, 100, 0xff0000, TRUE);
+	//DrawCircleAA(15830 - in_camera.x, stage_height - 550 - in_camera.y, 100, 100, 0xffffff, FALSE, 2.0f);
+	//DrawStringF(15755 - in_camera.x, stage_height - 620 - in_camera.y, "？", 0xffffff);
+
+	//// 火球
+	//ResourceManager::StageAnimDraw({ 15830 - in_camera.x - 20 - firenum,stage_height - 550 - in_camera.y - 20 }, FIRE);
+	//DrawCircleAA(15830 - in_camera.x - firenum, stage_height - 550 - in_camera.y, 20, 100, 0xff0000, TRUE);
+	//ResourceManager::DrawRotaBox(15830 - in_camera.x - firenum, stage_height - 550 - in_camera.y, 20, 20, 15830 - in_camera.x - firenum, stage_height - 550 - in_camera.y, 45, 0xff0000, TRUE);
+	//SetDrawBlendMode(DX_BLENDMODE_ALPHA, 120 + (frame % 75));
+	//DrawCircleAA(15830 - in_camera.x - firenum, stage_height - 550 - in_camera.y, 20, 100, 0x000000, TRUE);
+	//SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
+
 
 }
 
