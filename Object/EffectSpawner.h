@@ -47,7 +47,7 @@ struct SwapAnim
 	bool update_once[SWAP_EFFECT_NUM];           //交換エフェクト移動の向きを一回だけ変更する用
 	int color;             //色情報
 	int timer;              //エフェクト時間
-	float speed;              //エフェクト速度
+	float speed[SWAP_EFFECT_NUM];              //エフェクト速度
 };
 
 class EffectSpawner
