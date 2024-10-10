@@ -8,6 +8,9 @@ EnemyFrog::EnemyFrog():
 	frog_state(FrogState::LEFT_JUMP), 
 	vector{0,0}, 
 	death_timer(0), 
+	old_location{0,0},
+	jump_cooldown_timer(0),
+	jump_timer(0),
 	face_angle(0.0f),
 	effect_once(false),
 	jump_se(0)
@@ -65,12 +68,33 @@ void EnemyFrog::Update(GameMain* _g)
 	//カエルの状態に応じて更新
 	switch (frog_state)
 	{
-	case FrogState::LEFT_JUMP:
-		if (frame % 60 == 0 && stageHitFlg[1][bottom] == true)
+	case FrogState::RIGHT_IDOL:
+		jump_timer = 0;
+		if (++jump_cooldown_timer > JUMP_COOLDOWN)
+		{
+			vector.x = ((float)GetRand(5) + 3);
+			vector.y = -((float)GetRand(6) + 17);
+			//ジャンプ前の座標を保存
+			old_location = location;
+			ResourceManager::StartSound(jump_se);
+			jump_cooldown_timer = 0;
+		}
+		//空中で僅かに加速(ブロックに引っかかる対策)
+		if (vector.x == 0 && stageHitFlg[1][bottom] == false)
+		{
+			vector.x = 0.5f;
+		}
+		break;
+	case FrogState::LEFT_IDOL:
+		jump_timer = 0;
+		if (++jump_cooldown_timer > JUMP_COOLDOWN)
 		{
 			vector.x = -((float)GetRand(5) + 3);
 			vector.y = -((float)GetRand(6) + 17);
+			//ジャンプ前の座標を保存
+			old_location = location;
 			ResourceManager::StartSound(jump_se);
+			jump_cooldown_timer = 0;
 		}
 		//空中で僅かに加速(ブロックに引っかかる対策)
 		if (vector.x == 0 && stageHitFlg[1][bottom] == false)
@@ -78,18 +102,9 @@ void EnemyFrog::Update(GameMain* _g)
 			vector.x = -0.5f;
 		}
 		break;
+	case FrogState::LEFT_JUMP:
 	case FrogState::RIGHT_JUMP:
-		if (frame % 60 == 0 && stageHitFlg[1][bottom] == true)
-		{
-			vector.x = ((float)GetRand(5) + 3);
-			vector.y = -((float)GetRand(6) + 17);
-			ResourceManager::StartSound(jump_se);
-		}
-		//空中で僅かに加速(ブロックに引っかかる対策)
-		if (vector.x == 0 && stageHitFlg[1][bottom] == false)
-		{
-			vector.x = 0.5f;
-		}
+		jump_timer++;
 		break;
 	case FrogState::DEATH:
 		_g->SpawnEffect(location, erea, DeathEffect, 15, color);
@@ -114,17 +129,36 @@ void EnemyFrog::Update(GameMain* _g)
 
 void EnemyFrog::Draw()const
 {
-	//残像描画
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA, (255 - (death_timer * 4)) - 500);
-	FrogDraw({ local_location.x - (vector.x * 2),local_location.y - (vector.y * 2) });
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA, (255 - (death_timer * 4)) - 100);
-	FrogDraw({ local_location.x - (vector.x * 3),local_location.y - (vector.y * 3) });
-	//カエル描画
+	////残像描画
+	//SetDrawBlendMode(DX_BLENDMODE_ALPHA, (255 - (death_timer * 4)) - 500);
+	//JumpFrogDraw({ local_location.x - (vector.x * 2),local_location.y - (vector.y * 2) },face_angle);
+
+	//SetDrawBlendMode(DX_BLENDMODE_ALPHA, (255 - (death_timer * 4)) - 100);
+	//JumpFrogDraw({ local_location.x - (vector.x * 3),local_location.y - (vector.y * 3) }, face_angle);
+
+
+
+	//SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
+	//DrawFormatStringF(local_location.x, local_location.y, 0x000000, "%d",frog_state);
+
+	//死亡演出中なら透明に
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 - (death_timer * 4));
-	FrogDraw(local_location);
-
-	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
-
+	//蛙描画
+	switch (frog_state)
+	{
+	case FrogState::RIGHT_IDOL:
+	case FrogState::LEFT_IDOL:
+		IdolFrogDraw(local_location, (int)frog_state);
+		break;
+	case FrogState::LEFT_JUMP:
+	case FrogState::RIGHT_JUMP:
+		JumpFrogDraw(local_location, face_angle);
+		break;
+	case FrogState::DEATH:
+		break;
+	default:
+		break;
+	}
 }
 
 void EnemyFrog::Finalize()
@@ -291,7 +325,7 @@ void EnemyFrog::Hit(Object* _object)
 	}
 }
 
-void EnemyFrog::FrogDraw(Location location)const
+void EnemyFrog::JumpFrogDraw(Location location, float _angle)const
 {
 #ifdef _DEBUG
 	//当たり判定
@@ -300,84 +334,117 @@ void EnemyFrog::FrogDraw(Location location)const
 	//DrawFormatStringF(local_location.x, local_location.y, 0x00ff00, "%f %f", vector.x, vector.y);
 #endif
 
+		//目
+	int eye_color;
+	//瞬き
+	eye_color = (frame / 2) % 10 == 0 ? draw_color : 0xffffff;
+
+	//足の位置
+	int leg_pos;
+	leg_pos = jump_timer < 10 ? jump_timer : 10;
+
 	//胴体
-	if (frame % 60 < 50)
+	if (jump_cooldown_timer < JUMP_COOLDOWN/2)
 	{
-		ResourceManager::DrawRotaBox(location.x + (erea.width / 2), location.y + (erea.height / 2), erea.width, erea.height / 2, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, draw_color, TRUE);
-		ResourceManager::DrawRotaBox(location.x + (erea.width / 2), location.y + (erea.height / 2), erea.width, erea.height / 2, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, 0x000000, FALSE);
+		ResourceManager::DrawRotaBox(location.x + (erea.width / 2), location.y + (erea.height / 2), erea.width, erea.height / 2, location.x + (erea.width / 2), location.y + (erea.height / 2), _angle, draw_color, TRUE);
+		ResourceManager::DrawRotaBox(location.x + (erea.width / 2), location.y + (erea.height / 2), erea.width, erea.height / 2, location.x + (erea.width / 2), location.y + (erea.height / 2), _angle, 0x000000, FALSE);
 	}
 	else
 	{
-		ResourceManager::DrawRotaBox(location.x + (erea.width / 2)+GetRand(2), location.y + (erea.height / 2) + GetRand(2), erea.width, erea.height / 2, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, draw_color, TRUE);
-		ResourceManager::DrawRotaBox(location.x + (erea.width / 2) + GetRand(2), location.y + (erea.height / 2) + GetRand(2), erea.width, erea.height / 2, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, 0x000000, FALSE);
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, (frame % 60)*3);
-		DrawCircleAA(location.x + (erea.width / 2), location.y + (erea.height / 2), (60 - frame % 60) * 4, 30, draw_color, FALSE);
+		ResourceManager::DrawRotaBox(location.x + (erea.width / 2)+GetRand(2), location.y + (erea.height / 2) + GetRand(2), erea.width, erea.height / 2, location.x + (erea.width / 2), location.y + (erea.height / 2), _angle, draw_color, TRUE);
+		ResourceManager::DrawRotaBox(location.x + (erea.width / 2) + GetRand(2), location.y + (erea.height / 2) + GetRand(2), erea.width, erea.height / 2, location.x + (erea.width / 2), location.y + (erea.height / 2), _angle, 0x000000, FALSE);
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA,jump_cooldown_timer*4);
+		DrawCircleAA(location.x + (erea.width / 2), location.y + (erea.height / 2), (JUMP_COOLDOWN - jump_cooldown_timer) * 4, 30, draw_color, FALSE);
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 	}
 
-	//右着地
-	if (face_angle == 0 && vector.x == 0 && vector.y == 0)
-	{
-		//付け根側後ろ足
-		ResourceManager::DrawRotaBox(location.x + erea.width - 10, location.y + 20, 30, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, draw_color, TRUE);
-		ResourceManager::DrawRotaBox(location.x + erea.width - 10, location.y + 20, 30, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, 0x000000, FALSE);
-		//後ろ足先端
-		ResourceManager::DrawRotaBox(location.x + erea.width - 10, location.y + 10, 40, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, draw_color, TRUE);
-		ResourceManager::DrawRotaBox(location.x + erea.width - 10, location.y + 10, 40, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, 0x000000, FALSE);
-		//前足
-		ResourceManager::DrawRotaBox(location.x + 10, location.y + 10, 10, 15, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, draw_color, TRUE);
-		ResourceManager::DrawRotaBox(location.x + 10, location.y + 10, 10, 15, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, 0x000000, FALSE);
-		//目
-		ResourceManager::DrawRotaBox(location.x, location.y + erea.height - 20, 10, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, 0xffffff, TRUE);
-
-	}
-	//左着地
-	else if (face_angle == 180 && vector.x == 0 && vector.y == 0)
-	{
-		//付け根側後ろ足
-		ResourceManager::DrawRotaBox(location.x + erea.width - 10, location.y + erea.height - 20, 30, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, draw_color, TRUE);
-		ResourceManager::DrawRotaBox(location.x + erea.width - 10, location.y + erea.height - 20, 30, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, 0x000000, FALSE);
-		//後ろ足先端
-		ResourceManager::DrawRotaBox(location.x + erea.width - 10, location.y + erea.height - 10, 40, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, draw_color, TRUE);
-		ResourceManager::DrawRotaBox(location.x + erea.width - 10, location.y + erea.height - 10, 40, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, 0x000000, FALSE);
-		//前足
-		ResourceManager::DrawRotaBox(location.x + 10, location.y + erea.height - 10, 10, 15, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, draw_color, TRUE);
-		ResourceManager::DrawRotaBox(location.x + 10, location.y + erea.height - 10, 10, 15, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, 0x000000, FALSE);
-		//目
-		ResourceManager::DrawRotaBox(location.x, location.y + 20, 10, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, 0xffffff, TRUE);
-
-	}
 	//左向き
-	else if (face_angle > 90 && face_angle < 270)
+	if (face_angle > 90 && face_angle < 270)
 	{
 		//付け根側後ろ足
-		ResourceManager::DrawRotaBox(location.x + erea.width, location.y + erea.height - 20, 30, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, draw_color, TRUE);
-		ResourceManager::DrawRotaBox(location.x + erea.width, location.y + erea.height - 20, 30, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, 0x000000, FALSE);
+		ResourceManager::DrawRotaBox(location.x + erea.width + leg_pos, location.y + erea.height - 20, 30, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), _angle, draw_color, TRUE);
+		ResourceManager::DrawRotaBox(location.x + erea.width + leg_pos, location.y + erea.height - 20, 30, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), _angle, 0x000000, FALSE);
 		//後ろ足先端
-		ResourceManager::DrawRotaBox(location.x + erea.width + 30, location.y + erea.height - 10, 40, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, draw_color, TRUE);
-		ResourceManager::DrawRotaBox(location.x + erea.width + 30, location.y + erea.height - 10, 40, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, 0x000000, FALSE);
+		ResourceManager::DrawRotaBox(location.x + erea.width + leg_pos*4.5f, location.y + erea.height - 10, 40, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), _angle, draw_color, TRUE);
+		ResourceManager::DrawRotaBox(location.x + erea.width + leg_pos*4.5f, location.y + erea.height - 10, 40, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), _angle, 0x000000, FALSE);
 		//前足
-		ResourceManager::DrawRotaBox(location.x, location.y + erea.height - 10, 10, 15, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, draw_color, TRUE);
-		ResourceManager::DrawRotaBox(location.x, location.y + erea.height - 10, 10, 15, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, 0x000000, FALSE);
+		ResourceManager::DrawRotaBox(location.x, location.y + erea.height - 10, 10, 15, location.x + (erea.width / 2), location.y + (erea.height / 2), _angle, draw_color, TRUE);
+		ResourceManager::DrawRotaBox(location.x, location.y + erea.height - 10, 10, 15, location.x + (erea.width / 2), location.y + (erea.height / 2), _angle, 0x000000, FALSE);
 		//目
-		ResourceManager::DrawRotaBox(location.x, location.y + 20, 10, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, 0xffffff, TRUE);
+		ResourceManager::DrawRotaBox(location.x, location.y + 20, 10, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), _angle, eye_color, TRUE);
 
 	}
 	//右向き
 	else
 	{
 		//付け根側後ろ足
-		ResourceManager::DrawRotaBox(location.x + erea.width, location.y + 20, 30, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, draw_color, TRUE);
-		ResourceManager::DrawRotaBox(location.x + erea.width, location.y + 20, 30, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, 0x000000, FALSE);
+		ResourceManager::DrawRotaBox(location.x + erea.width + leg_pos, location.y + 20, 30, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), _angle, draw_color, TRUE);
+		ResourceManager::DrawRotaBox(location.x + erea.width + leg_pos, location.y + 20, 30, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), _angle, 0x000000, FALSE);
 		//後ろ足先端
-		ResourceManager::DrawRotaBox(location.x + erea.width + 30, location.y + 10, 40, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, draw_color, TRUE);
-		ResourceManager::DrawRotaBox(location.x + erea.width + 30, location.y + 10, 40, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, 0x000000, FALSE);
+		ResourceManager::DrawRotaBox(location.x + erea.width + leg_pos * 4.5f, location.y + 10, 40, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), _angle, draw_color, TRUE);
+		ResourceManager::DrawRotaBox(location.x + erea.width + leg_pos * 4.5f, location.y + 10, 40, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), _angle, 0x000000, FALSE);
 		//前足
-		ResourceManager::DrawRotaBox(location.x, location.y + 10, 10, 15,location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, draw_color, TRUE);
-		ResourceManager::DrawRotaBox(location.x, location.y + 10, 10, 15,location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, 0x000000, FALSE);
+		ResourceManager::DrawRotaBox(location.x, location.y + 10, 10, 15,location.x + (erea.width / 2), location.y + (erea.height / 2), _angle, draw_color, TRUE);
+		ResourceManager::DrawRotaBox(location.x, location.y + 10, 10, 15,location.x + (erea.width / 2), location.y + (erea.height / 2), _angle, 0x000000, FALSE);
 		//目
-		ResourceManager::DrawRotaBox(location.x, location.y + erea.height - 20, 10, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), face_angle, 0xffffff, TRUE);
+		ResourceManager::DrawRotaBox(location.x, location.y + erea.height - 20, 10, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), _angle, eye_color, TRUE);
 
+	}
+}
+
+void EnemyFrog::IdolFrogDraw(Location location, bool _direction)const
+{
+	//胴体
+	if (jump_cooldown_timer < JUMP_COOLDOWN / 2)
+	{
+		ResourceManager::DrawRotaBox(location.x + (erea.width / 2), location.y + (erea.height / 2), erea.width, erea.height / 2, location.x + (erea.width / 2), location.y + (erea.height / 2), 0, draw_color, TRUE);
+		ResourceManager::DrawRotaBox(location.x + (erea.width / 2), location.y + (erea.height / 2), erea.width, erea.height / 2, location.x + (erea.width / 2), location.y + (erea.height / 2), 0, 0x000000, FALSE);
+	}
+	else
+	{
+		ResourceManager::DrawRotaBox(location.x + (erea.width / 2) + GetRand(2), location.y + (erea.height / 2) + GetRand(2), erea.width, erea.height / 2, location.x + (erea.width / 2), location.y + (erea.height / 2), 0, draw_color, TRUE);
+		ResourceManager::DrawRotaBox(location.x + (erea.width / 2) + GetRand(2), location.y + (erea.height / 2) + GetRand(2), erea.width, erea.height / 2, location.x + (erea.width / 2), location.y + (erea.height / 2), 0, 0x000000, FALSE);
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, jump_cooldown_timer * 4);
+		DrawCircleAA(location.x + (erea.width / 2), location.y + (erea.height / 2), (JUMP_COOLDOWN - jump_cooldown_timer) * 4, 30, draw_color, FALSE);
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
+	}
+
+	//目
+	int eye_color;
+	//瞬き
+	eye_color = (frame / 2) % 10 == 0 ? draw_color : 0xffffff;
+
+
+	//左着地
+	if(_direction)
+	{
+		//付け根側後ろ足
+		ResourceManager::DrawRotaBox(location.x + erea.width - 10, location.y + erea.height - 20, 30, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), 180, draw_color, TRUE);
+		ResourceManager::DrawRotaBox(location.x + erea.width - 10, location.y + erea.height - 20, 30, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), 180, 0x000000, FALSE);
+		//後ろ足先端
+		ResourceManager::DrawRotaBox(location.x + erea.width - 10, location.y + erea.height - 10, 40, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), 180, draw_color, TRUE);
+		ResourceManager::DrawRotaBox(location.x + erea.width - 10, location.y + erea.height - 10, 40, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), 180, 0x000000, FALSE);
+		//前足
+		ResourceManager::DrawRotaBox(location.x + 10, location.y + erea.height - 10, 10, 15, location.x + (erea.width / 2), location.y + (erea.height / 2), 180, draw_color, TRUE);
+		ResourceManager::DrawRotaBox(location.x + 10, location.y + erea.height - 10, 10, 15, location.x + (erea.width / 2), location.y + (erea.height / 2), 180, 0x000000, FALSE);
+		//目
+		ResourceManager::DrawRotaBox(location.x, location.y + 20, 10, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), 180, eye_color, TRUE);
+
+	}
+	//右着地
+	else
+	{
+		//付け根側後ろ足
+		ResourceManager::DrawRotaBox(location.x + erea.width - 10, location.y + 20, 30, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), 0, draw_color, TRUE);
+		ResourceManager::DrawRotaBox(location.x + erea.width - 10, location.y + 20, 30, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), 0, 0x000000, FALSE);
+		//後ろ足先端
+		ResourceManager::DrawRotaBox(location.x + erea.width - 10, location.y + 10, 40, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), 0, draw_color, TRUE);
+		ResourceManager::DrawRotaBox(location.x + erea.width - 10, location.y + 10, 40, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), 0, 0x000000, FALSE);
+		//前足
+		ResourceManager::DrawRotaBox(location.x + 10, location.y + 10, 10, 15, location.x + (erea.width / 2), location.y + (erea.height / 2), 0, draw_color, TRUE);
+		ResourceManager::DrawRotaBox(location.x + 10, location.y + 10, 10, 15, location.x + (erea.width / 2), location.y + (erea.height / 2), 0, 0x000000, FALSE);
+
+		ResourceManager::DrawRotaBox(location.x, location.y + erea.height - 20, 10, 10, location.x + (erea.width / 2), location.y + (erea.height / 2), 0, eye_color, TRUE);
 	}
 }
 
@@ -403,6 +470,7 @@ void EnemyFrog::Move(GameMain* _g)
 		}
 		if (frog_state == FrogState::RIGHT_JUMP)
 		{
+
 			face_angle = atanf(vector.y / vector.x) * 60;
 		}
 	}
@@ -413,14 +481,31 @@ void EnemyFrog::Move(GameMain* _g)
 
 void EnemyFrog::UpdataState(GameMain* _g)
 {
-	if (frog_state != FrogState::DEATH && stageHitFlg[1][bottom] == true)
+	//死んでいたら更新を止める
+	if (frog_state == FrogState::DEATH)return;
+	//地面についているか判断
+	if (stageHitFlg[1][bottom])
 	{
 		//カエルとプレイヤーの座標を比較して、カエルがプレイヤーに向かって行くように
 		if (location.x > _g->GetPlayerLocation().x)
 		{
-			frog_state = FrogState::LEFT_JUMP;
+			//ジャンプ後にX座標が変わらなければ、反対方向に飛ぶ
+			frog_state = old_location.x == location.x ?  FrogState::RIGHT_IDOL: FrogState::LEFT_IDOL;
 		}
 		else
+		{
+			//ジャンプ後にX座標が変わらなければ、反対方向に飛ぶ
+			frog_state = old_location.x == location.x ? FrogState::LEFT_IDOL : FrogState::RIGHT_IDOL;
+		}
+	}
+	//地面についていなくて、StateがIDOLなら変更する
+	else
+	{
+		if (frog_state == FrogState::LEFT_IDOL)
+		{
+			frog_state = FrogState::LEFT_JUMP;
+		}
+		if (frog_state == FrogState::RIGHT_IDOL)
 		{
 			frog_state = FrogState::RIGHT_JUMP;
 		}

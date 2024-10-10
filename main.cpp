@@ -45,7 +45,7 @@ int WINAPI WinMain(_In_ HINSTANCE  hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     //フォント変更 候補:"Franklin Gothic" "HGS創英角ｺﾞｼｯｸUB" "HGｺﾞｼｯｸE" ステージ後半で変更"Wingdings"
     ChangeFont("Franklin Gothic");
 
-    //終了するか判断
+    //長押し強制終了用
     int break_timer = 0;
 
     try

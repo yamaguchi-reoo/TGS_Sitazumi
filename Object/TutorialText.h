@@ -19,6 +19,9 @@ private:
 	int GGNum;															 
 	int frame;
 	
+	float firenum;
+	bool reflection;
+
 	int p_swap_x;
 	int e_swap_x;
 

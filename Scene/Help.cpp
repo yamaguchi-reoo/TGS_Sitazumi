@@ -552,8 +552,8 @@ void Help::HDrawFrog(int c_num)const
 	ResourceManager::DrawRotaBox(l_Frog.x + 50 - 10, l_Frog.y + 50 - 10 , 40, 10, l_Frog.x + (50 / 2), l_Frog.y + (50 / 2), 180, c_num, TRUE);
 	ResourceManager::DrawRotaBox(l_Frog.x + 50 - 10, l_Frog.y + 50 - 10 , 40, 10, l_Frog.x + (50 / 2), l_Frog.y + (50 / 2), 180, 0x000000, FALSE);
 
-		ResourceManager::DrawRotaBox(l_Frog.x + 10, l_Frog.y + 50 - 10 , 10, 15, l_Frog.x + (50 / 2), l_Frog.y + (50 / 2), 180, c_num, TRUE);
-		ResourceManager::DrawRotaBox(l_Frog.x + 10, l_Frog.y + 50 - 10 , 10, 15, l_Frog.x + (50 / 2), l_Frog.y + (50 / 2), 180, 0x000000, FALSE);
+	ResourceManager::DrawRotaBox(l_Frog.x + 10, l_Frog.y + 50 - 10 , 10, 15, l_Frog.x + (50 / 2), l_Frog.y + (50 / 2), 180, c_num, TRUE);
+	ResourceManager::DrawRotaBox(l_Frog.x + 10, l_Frog.y + 50 - 10 , 10, 15, l_Frog.x + (50 / 2), l_Frog.y + (50 / 2), 180, 0x000000, FALSE);
 	//目
 	ResourceManager::DrawRotaBox(l_Frog.x, l_Frog.y + 20, 10, 10, l_Frog.x + (50 / 2), l_Frog.y + (50 / 2), 180, 0xffffff, TRUE);
 	ResourceManager::DrawRotaBox(l_Frog.x, l_Frog.y + 20, 10, 10, l_Frog.x + (50 / 2), l_Frog.y + (50 / 2), 180, 0x000000, FALSE);

@@ -12,7 +12,7 @@ BossAttackFire::BossAttackFire()
 	flg = false;
 	hitFlg = false;
 
-	boundCnt = 1;
+	boundCnt = 3;
 }
 
 BossAttackFire::~BossAttackFire()
